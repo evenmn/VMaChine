@@ -18,7 +18,7 @@ plt.legend()
 plt.show()
 
 '''
-data1 = np.loadtxt("../data/Energy.dat")
+data1 = np.loadtxt("../data/energy.dat")
 #data2 = np.loadtxt("../data/energy_eta_0p05.txt")
 #data3 = np.loadtxt("../data/energy_eta_0p1.txt")
 #data4 = np.loadtxt("../data/energy_eta_0p5.txt")
@@ -27,8 +27,8 @@ x = np.linspace(0, len(data1) - 1, len(data1))
 
 label_size = {"size":"14"}
 
-#plt.axhline(asymptote, linestyle='--', color='r', label="Exact")
-plt.plot(x, data1, label="$\eta=0.01$")
+plt.axhline(asymptote, linestyle='--', color='r', label="Exact")
+plt.plot(x, data1, label="$\eta=0.1$")
 #plt.plot(x, data2, label="$\eta=0.05$")
 #plt.plot(x, data3, label="$\eta=0.1$")
 #plt.plot(x, data4, label="$\eta=0.5$")

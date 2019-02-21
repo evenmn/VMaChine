@@ -40,9 +40,9 @@ int main() {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = 2;
-    int     numberOfSteps       = int(1e6);
+    int     numberOfSteps       = int(1e7);
     int     numberOfIterations  = 50;
-    double  eta                 = 0.1;         // Learning rate
+    double  eta                 = 0.1;          // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length

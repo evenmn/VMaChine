@@ -12,5 +12,6 @@ public:
 
 private:
     double m_gamma = 0;
+    int    m_step = 0;
     Eigen::MatrixXd m_v;
 };
