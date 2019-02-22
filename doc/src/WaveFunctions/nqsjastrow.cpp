@@ -43,6 +43,8 @@ void NQSJastrow::initializeArrays(Eigen::VectorXd positions) {
     m_positions = positions;
     m_v = m_b + m_W.transpose() * positions;
 
+    m_n = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
+    m_p = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     for(int i=0; i<m_numberOfHiddenNodes; i++) {
         m_n(i) = 1/(1 + exp(-m_v(i)));
         m_p(i) = 1/(1 + exp(+m_v(i)));

@@ -10,6 +10,8 @@ public:
     Eigen::MatrixXd updateMatrix(Eigen::VectorXd positions, double basis(double, int));
     Eigen::VectorXd dA_row(Eigen::VectorXd positions, int k);
     Eigen::MatrixXd dA_matrix(Eigen::VectorXd positions);
+    Eigen::VectorXd d2A_row(Eigen::VectorXd positions, int k);
+    Eigen::MatrixXd d2A_matrix(Eigen::VectorXd positions);
 
     void updateArrays(Eigen::VectorXd positions, int pRand);
     void resetArrays();
@@ -38,4 +40,12 @@ private:
     Eigen::MatrixXd m_dD_dn;
     Eigen::MatrixXd m_dD_upOld;
     Eigen::MatrixXd m_dD_dnOld;
+    Eigen::MatrixXd m_d2D_up;
+    Eigen::MatrixXd m_d2D_dn;
+    Eigen::MatrixXd m_d2D_upOld;
+    Eigen::MatrixXd m_d2D_dnOld;
+    Eigen::MatrixXd m_D_up_inv;
+    Eigen::MatrixXd m_D_dn_inv;
+    Eigen::MatrixXd m_D_up_old_inv;
+    Eigen::MatrixXd m_D_dn_old_inv;
 };
