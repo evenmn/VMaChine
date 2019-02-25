@@ -40,8 +40,8 @@ int main() {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = 2;
-    int     numberOfSteps       = int(1e6);
-    int     numberOfIterations  = 50;
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 20;
     double  eta                 = 0.1;          // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
@@ -62,6 +62,7 @@ int main() {
     system->setNumberOfHiddenNodes      (numberOfHiddenNodes);
     system->setNumberOfMetropolisSteps  (numberOfSteps);
     system->setMaxNumberOfParametersPerElement (maxNumberOfParametersPerElement);
+    system->setTotalNumberOfSteps       ();
     system->setNumberOfOrbitals         ();
     system->setNumberOfFreeDimensions   ();
 
