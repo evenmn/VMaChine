@@ -42,7 +42,7 @@ double ImportanceSampling::GreenFuncSum(const Eigen::VectorXd oldPositions) {
 bool ImportanceSampling::acceptMove() {
     m_positions     = m_system->getParticles();
     double psiOld   = m_system->evaluateWaveFunctionSqrd();
-    int pRand       = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
+    int pRand = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 
     Eigen::VectorXd oldPositions = m_positions;
     m_positions(pRand) += m_diff * QuantumForce(m_positions, pRand) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
