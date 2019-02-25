@@ -21,11 +21,14 @@ void System::runMetropolisSteps(const int numberOfIterations) {
     m_sampler->openOutputFiles("../data/");
     for (int iter = 0; iter < numberOfIterations; iter++) {
         clock_t start_time = clock();
-        for (int i=0; i < m_numberOfMetropolisSteps; i++) {
+        for (int i=0; i < m_totalNumberOfSteps; i++) {
             bool acceptedStep = m_metropolis->acceptMove();
             m_positions       = m_metropolis->updatePositions();
-            if(double(i)/m_numberOfMetropolisSteps >= m_equilibrationFraction) {
+            if(i >= (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
                 m_sampler->sample(acceptedStep, i);
+                if(iter == numberOfIterations-1) {
+                    m_sampler->printImmediatelyToFile(m_positions);
+                }
             }
         }
         clock_t end_time = clock();
@@ -104,6 +107,10 @@ void System::setStepLength(const double stepLength) {
     m_stepLength = stepLength;
 }
 
+void System::setTotalNumberOfSteps() {
+    m_totalNumberOfSteps = int(m_numberOfMetropolisSteps*(1 + m_equilibrationFraction));
+}
+
 void System::setEquilibrationFraction(const double equilibrationFraction) {
     assert(equilibrationFraction >= 0);
     m_equilibrationFraction = equilibrationFraction;
@@ -173,8 +180,8 @@ void System::resetAllArrays() {
 }
 
 void System::updateAllParameters(const Eigen::MatrixXd parameters) {
-    for(auto& i : m_waveFunctionVector) {
-        i->updateParameters(parameters);
+    for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
+        m_waveFunctionVector[unsigned(i)]->updateParameters(parameters, i);
     }
 }
 

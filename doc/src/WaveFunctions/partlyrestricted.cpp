@@ -3,9 +3,8 @@
 #include <iostream>
 #include "../system.h"
 
-PartlyRestricted::PartlyRestricted(System* system, const int elementNumber) :
+PartlyRestricted::PartlyRestricted(System* system) :
         WaveFunction(system) {
-    m_elementNumber                     = elementNumber;
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     double sigma                        = m_system->getWidth();
@@ -30,7 +29,8 @@ void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions) {
     m_xCx = positions.transpose() * m_c * positions;
 }
 
-void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters) {
+void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
+    m_elementNumber = elementNumber;
     Eigen::Map<Eigen::MatrixXd> c(parameters.row(m_elementNumber).data(), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     m_c = c;
 }

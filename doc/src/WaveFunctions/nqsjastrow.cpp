@@ -4,10 +4,8 @@
 #include "../system.h"
 #include <iostream>
 
-NQSJastrow::NQSJastrow(System* system, const int elementNumber) :
+NQSJastrow::NQSJastrow(System* system) :
         WaveFunction(system) {
-
-    m_elementNumber                     = elementNumber;
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
@@ -51,7 +49,8 @@ void NQSJastrow::initializeArrays(const Eigen::VectorXd positions) {
     }
 }
 
-void NQSJastrow::updateParameters(Eigen::MatrixXd parameters) {
+void NQSJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
+    m_elementNumber = elementNumber;
     Eigen::VectorXd XXX = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(XXX.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     m_W = W;

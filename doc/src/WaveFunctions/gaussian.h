@@ -3,11 +3,11 @@
 
 class Gaussian : public WaveFunction {
 public:
-    Gaussian(class System* system, const int elementNumber);
+    Gaussian(class System* system);
     void updateArrays(const Eigen::VectorXd positions, const int pRand);
     void resetArrays();
     void initializeArrays(const Eigen::VectorXd positions);
-    void updateParameters(const Eigen::MatrixXd parameters);
+    void updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
     double evaluate();
     double evaluateSqrd();
     double computeFirstDerivative(const Eigen::VectorXd positions, const int k);

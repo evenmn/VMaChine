@@ -3,9 +3,8 @@
 #include <iostream>
 #include "../system.h"
 
-Gaussian::Gaussian(System* system, const int elementNumber) :
+Gaussian::Gaussian(System* system) :
         WaveFunction(system) {
-    m_elementNumber      = elementNumber;
     m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
     m_maxNumberOfParametersPerElement = m_system->getMaxNumberOfParametersPerElement();
     m_omega              = m_system->getFrequency();
@@ -24,7 +23,8 @@ void Gaussian::resetArrays() {
     m_positions = m_oldPositions;
 }
 
-void Gaussian::updateParameters(const Eigen::MatrixXd parameters) {
+void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+    m_elementNumber = elementNumber;
     m_alpha = parameters(m_elementNumber,0);
 }
 

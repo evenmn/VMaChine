@@ -3,9 +3,8 @@
 #include <iostream>
 #include "../system.h"
 
-MLGaussian::MLGaussian(System* system, const int elementNumber) :
+MLGaussian::MLGaussian(System* system) :
         WaveFunction(system) {
-    m_elementNumber                     = elementNumber;
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_omega                             = m_system->getFrequency();
@@ -13,7 +12,8 @@ MLGaussian::MLGaussian(System* system, const int elementNumber) :
     m_sigmaSqrd = sigma*sigma;
 }
 
-void MLGaussian::updateParameters(const Eigen::MatrixXd parameters) {
+void MLGaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+    m_elementNumber = elementNumber;
     m_a = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
 }
 

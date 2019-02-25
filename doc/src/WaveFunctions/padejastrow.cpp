@@ -4,10 +4,8 @@
 #include "../system.h"
 #include <iostream>
 
-PadeJastrow::PadeJastrow(System* system, const int elementNumber) :
+PadeJastrow::PadeJastrow(System* system) :
         WaveFunction(system) {
-
-    m_elementNumber                     = elementNumber;
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
@@ -83,7 +81,8 @@ void PadeJastrow::resetArrays() {
     m_distanceMatrix = m_oldDistanceMatrix;
 }
 
-void PadeJastrow::updateParameters(const Eigen::MatrixXd parameters) {
+void PadeJastrow::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+    m_elementNumber = elementNumber;
     Eigen::VectorXd X = parameters.row(m_elementNumber).segment(1, m_numberOfParticles*m_numberOfParticles);
     Eigen::Map<Eigen::MatrixXd> beta(X.data(), m_numberOfParticles, m_numberOfParticles);
     m_beta  = beta.transpose();

@@ -3,7 +3,7 @@
 
 class SlaterDeterminant : public WaveFunction {
 public:
-    SlaterDeterminant(class System* system, const int elementNumber);
+    SlaterDeterminant(class System* system);
     Eigen::MatrixXd list();
     double updateElement(const Eigen::VectorXd positions, double basis(double, int), const int i, const int j);
     Eigen::VectorXd updateRow(const Eigen::VectorXd positions, double basis(double, int), const int i);
@@ -16,7 +16,7 @@ public:
     void updateArrays(const Eigen::VectorXd positions, const int pRand);
     void resetArrays();
     void initializeArrays(const Eigen::VectorXd positions);
-    void updateParameters(const Eigen::MatrixXd parameters);
+    void updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
     double evaluate();
     double evaluateSqrd();
     double computeFirstDerivative(const Eigen::VectorXd positions, const int k);

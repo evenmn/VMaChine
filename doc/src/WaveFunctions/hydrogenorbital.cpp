@@ -3,12 +3,11 @@
 #include "wavefunction.h"
 #include "../system.h"
 
-HydrogenOrbital::HydrogenOrbital(System* system, const int elementNumber) :
+HydrogenOrbital::HydrogenOrbital(System* system) :
         WaveFunction(system) {
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_maxNumberOfParametersPerElement = m_system->getMaxNumberOfParametersPerElement();
-    m_elementNumber = elementNumber;
 }
 
 double HydrogenOrbital::calculateRadialVectorElement(const Eigen::VectorXd positions, const int par) {
@@ -47,7 +46,8 @@ void HydrogenOrbital::resetArrays() {
     m_radialVector    = m_oldRadialVector;
 }
 
-void HydrogenOrbital::updateParameters(const Eigen::MatrixXd parameters) {
+void HydrogenOrbital::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+    m_elementNumber = elementNumber;
     m_alpha = parameters(m_elementNumber, 0);
 }
 

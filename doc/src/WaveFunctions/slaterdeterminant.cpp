@@ -3,9 +3,8 @@
 #include <iostream>
 #include "../system.h"
 
-SlaterDeterminant::SlaterDeterminant(System* system, const int elementNumber) :
+SlaterDeterminant::SlaterDeterminant(System* system) :
         WaveFunction(system) {
-    m_elementNumber                     = elementNumber;
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfOrbitals                  = m_system->getNumberOfOrbitals();
@@ -113,7 +112,8 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     m_d2D_dn = d2A_matrix(m_positions.tail(m_numberOfFreeDimensions/2));
 }
 
-void SlaterDeterminant::updateParameters(const Eigen::MatrixXd parameters) {
+void SlaterDeterminant::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+    m_elementNumber = elementNumber;
 }
 
 Eigen::MatrixXd SlaterDeterminant::list() {

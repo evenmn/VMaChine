@@ -11,6 +11,7 @@ public:
     void setNumberOfHiddenNodes         (const int numberOfHiddenNodes);
     void setNumberOfOrbitals            ();
     void setNumberOfFreeDimensions      ();
+    void setTotalNumberOfSteps          ();
     void setNumberOfMetropolisSteps     (const int steps);
     void setMaxNumberOfParametersPerElement (const int maxNumberOfParametersPerElement);
     void setNumberOfWaveFunctionElements (const int numberOfWaveFunctionElements);
@@ -41,6 +42,7 @@ public:
     int                                 getNumberOfOrbitals()        { return m_numberOfOrbitals; }
     int                                 getNumberOfFreeDimensions()  { return m_numberOfFreeDimensions; }
     int                                 getNumberOfMetropolisSteps() { return m_numberOfMetropolisSteps; }
+    int                                 getTotalNumberOfSteps()      { return m_totalNumberOfSteps; }
     int                                 getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
     int                                 getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
     double                              getEquilibrationFraction()   { return m_equilibrationFraction; }
@@ -73,6 +75,7 @@ private:
     int                                 m_numberOfOrbitals          = 0;
     int                                 m_numberOfWaveFunctionElements = 0;
     int                                 m_maxNumberOfParametersPerElement = 0;
+    int                                 m_totalNumberOfSteps        = 0;
     bool                                m_interaction               = false;
     double                              m_equilibrationFraction     = 0.0;
     double                              m_stepLength                = 0.1;
