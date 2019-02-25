@@ -3,7 +3,7 @@
 
 class Constant : public InitialWeights {
 public:
-    Constant(System* system, double factor);
+    Constant(System* system, const double factor);
     void setupInitialWeights();
 
 private:

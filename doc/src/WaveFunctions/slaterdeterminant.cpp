@@ -3,8 +3,7 @@
 #include <iostream>
 #include "../system.h"
 
-SlaterDeterminant::SlaterDeterminant(System* system,
-                               int elementNumber) :
+SlaterDeterminant::SlaterDeterminant(System* system, const int elementNumber) :
         WaveFunction(system) {
     m_elementNumber                     = elementNumber;
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
@@ -52,18 +51,18 @@ double d2H(double x, int n) {
     }
 }
 
-void SlaterDeterminant::updateArrays(Eigen::VectorXd positions, int pRand) {
+void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     int particle = int(pRand/m_numberOfDimensions);
     m_oldPositions  = m_positions;
     m_positions = positions;
     if(particle < m_numberOfParticlesHalf) {
         m_D_upOld               = m_D_up;
         m_dD_upOld              = m_dD_up;
-        m_d2D_upOld              = m_d2D_up;
+        m_d2D_upOld             = m_d2D_up;
         m_D_up_old_inv          = m_D_up_inv;
         m_D_up.row(particle)    = updateRow(m_positions.head(m_numberOfFreeDimensions/2), H, particle);
         m_dD_up.row(particle)   = dA_row(m_positions.head(m_numberOfFreeDimensions/2), particle);
-        m_d2D_up.row(particle)   = d2A_row(m_positions.head(m_numberOfFreeDimensions/2), particle);
+        m_d2D_up.row(particle)  = d2A_row(m_positions.head(m_numberOfFreeDimensions/2), particle);
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
             R = m_D_up(particle, j) * m_D_up_old_inv(j, particle);
@@ -74,11 +73,11 @@ void SlaterDeterminant::updateArrays(Eigen::VectorXd positions, int pRand) {
         int particle2 = particle - m_numberOfParticlesHalf;
         m_D_dnOld               = m_D_dn;
         m_dD_dnOld              = m_dD_dn;
-        m_d2D_dnOld              = m_d2D_dn;
+        m_d2D_dnOld             = m_d2D_dn;
         m_D_dn_old_inv          = m_D_dn_inv;
-        m_D_dn.row(particle2)    = updateRow(m_positions.tail(m_numberOfFreeDimensions/2), H, particle2);
-        m_dD_dn.row(particle2)   = dA_row(m_positions.tail(m_numberOfFreeDimensions/2), particle2);
-        m_d2D_dn.row(particle2)   = d2A_row(m_positions.tail(m_numberOfFreeDimensions/2), particle2);
+        m_D_dn.row(particle2)   = updateRow(m_positions.tail(m_numberOfFreeDimensions/2), H, particle2);
+        m_dD_dn.row(particle2)  = dA_row(m_positions.tail(m_numberOfFreeDimensions/2), particle2);
+        m_d2D_dn.row(particle2) = d2A_row(m_positions.tail(m_numberOfFreeDimensions/2), particle2);
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
             R = m_D_dn(particle2, j) * m_D_dn_old_inv(j, particle2);
@@ -99,7 +98,7 @@ void SlaterDeterminant::resetArrays() {
     m_d2D_dn    = m_d2D_dnOld;
 }
 
-void SlaterDeterminant::initializeArrays(Eigen::VectorXd positions) {
+void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
     m_D_up = updateMatrix(m_positions.head(m_numberOfFreeDimensions/2), H);
     m_D_dn = updateMatrix(m_positions.tail(m_numberOfFreeDimensions/2), H);
@@ -114,7 +113,7 @@ void SlaterDeterminant::initializeArrays(Eigen::VectorXd positions) {
     m_d2D_dn = d2A_matrix(m_positions.tail(m_numberOfFreeDimensions/2));
 }
 
-void SlaterDeterminant::updateParameters(Eigen::MatrixXd parameters) {
+void SlaterDeterminant::updateParameters(const Eigen::MatrixXd parameters) {
 }
 
 Eigen::MatrixXd SlaterDeterminant::list() {
@@ -154,7 +153,7 @@ Eigen::MatrixXd SlaterDeterminant::list() {
     return order;
 }
 
-Eigen::VectorXd SlaterDeterminant::dA_row(const Eigen::VectorXd positions, int k) {
+Eigen::VectorXd SlaterDeterminant::dA_row(const Eigen::VectorXd positions, const int k) {
     //Update row of dA
 
     Eigen::VectorXd dA = Eigen::VectorXd::Zero(m_numberOfParticlesHalf);
@@ -190,7 +189,7 @@ Eigen::MatrixXd SlaterDeterminant::dA_matrix(const Eigen::VectorXd positions) {
     return dA;
 }
 
-Eigen::VectorXd SlaterDeterminant::d2A_row(const Eigen::VectorXd positions, int k) {
+Eigen::VectorXd SlaterDeterminant::d2A_row(const Eigen::VectorXd positions, const int k) {
     //Update row of dA
     Eigen::VectorXd d2A = Eigen::VectorXd::Zero(m_numberOfParticlesHalf);
     Eigen::MatrixXd order = list();
@@ -225,7 +224,7 @@ Eigen::MatrixXd SlaterDeterminant::d2A_matrix(const Eigen::VectorXd positions) {
     return d2A;
 }
 
-double SlaterDeterminant::updateElement(Eigen::VectorXd positions, double basis(double, int), int i, int j) {
+double SlaterDeterminant::updateElement(const Eigen::VectorXd positions, double basis(double, int), const int i, const int j) {
     // Updates an element in A-matrix
 
     Eigen::MatrixXd order = list();
@@ -238,7 +237,7 @@ double SlaterDeterminant::updateElement(Eigen::VectorXd positions, double basis(
     return element;
 }
 
-Eigen::VectorXd SlaterDeterminant::updateRow(Eigen::VectorXd positions, double basis(double, int), int i) {
+Eigen::VectorXd SlaterDeterminant::updateRow(const Eigen::VectorXd positions, double basis(double, int), const int i) {
     // Updates a row in A-matrix
 
     Eigen::VectorXd A = Eigen::VectorXd::Ones(m_numberOfParticlesHalf);
@@ -249,7 +248,7 @@ Eigen::VectorXd SlaterDeterminant::updateRow(Eigen::VectorXd positions, double b
     return A;
 }
 
-Eigen::MatrixXd SlaterDeterminant::updateMatrix(Eigen::VectorXd positions, double basis(double, int)) {
+Eigen::MatrixXd SlaterDeterminant::updateMatrix(const Eigen::VectorXd positions, double basis(double, int)) {
     // Update the entire matrix
 
     Eigen::MatrixXd A = Eigen::MatrixXd::Ones(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
@@ -270,7 +269,7 @@ double SlaterDeterminant::evaluateSqrd() {
     return WF * WF;
 }
 
-double SlaterDeterminant::computeFirstDerivative(Eigen::VectorXd positions, int k) {
+double SlaterDeterminant::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
     Eigen::MatrixXd D_up = updateMatrix(positions.head(m_numberOfFreeDimensions/2), H);
     Eigen::MatrixXd D_dn = updateMatrix(positions.tail(m_numberOfFreeDimensions/2), H);
     Eigen::MatrixXd dD_up = dA_matrix(positions.head(m_numberOfFreeDimensions/2));
@@ -326,7 +325,7 @@ double SlaterDeterminant::computeSecondDerivative() {
     return 0;
 }
 
-Eigen::VectorXd SlaterDeterminant::computeFirstEnergyDerivative(int k) {
+Eigen::VectorXd SlaterDeterminant::computeFirstEnergyDerivative(const int k) {
     return Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 }
 

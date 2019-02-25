@@ -3,8 +3,7 @@
 #include <iostream>
 #include "../system.h"
 
-PartlyRestricted::PartlyRestricted(System* system,
-                               int elementNumber) :
+PartlyRestricted::PartlyRestricted(System* system, const int elementNumber) :
         WaveFunction(system) {
     m_elementNumber                     = elementNumber;
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
@@ -13,7 +12,7 @@ PartlyRestricted::PartlyRestricted(System* system,
     m_sigmaSqrd2 = sigma*sigma*sigma*sigma;
 }
 
-void PartlyRestricted::updateArrays(Eigen::VectorXd positions, int pRand) {
+void PartlyRestricted::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     m_oldPositions = m_positions;
     m_positions = positions;
 
@@ -26,7 +25,7 @@ void PartlyRestricted::resetArrays() {
     m_xCx       = m_oldXCx;
 }
 
-void PartlyRestricted::initializeArrays(Eigen::VectorXd positions) {
+void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
     m_xCx = positions.transpose() * m_c * positions;
 }
@@ -60,7 +59,7 @@ double PartlyRestricted::evaluateSqrd() {
     return exp(-Sum);
 }
 
-double PartlyRestricted::computeFirstDerivative(Eigen::VectorXd positions, int k) {
+double PartlyRestricted::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
     //return - double(m_c.row(k) * positions) / m_sigmaSqrd2;
 
     double Sum = 0;
@@ -74,7 +73,7 @@ double PartlyRestricted::computeSecondDerivative() {
     return -m_c.diagonal().sum();
 }
 
-Eigen::VectorXd PartlyRestricted::computeFirstEnergyDerivative(int k) {
+Eigen::VectorXd PartlyRestricted::computeFirstEnergyDerivative(const int k) {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     for(int j=0; j<m_numberOfFreeDimensions; j++) {

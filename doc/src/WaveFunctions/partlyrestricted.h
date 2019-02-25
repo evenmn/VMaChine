@@ -3,16 +3,16 @@
 
 class PartlyRestricted : public WaveFunction {
 public:
-    PartlyRestricted(class System* system, int elementNumber);
-    void updateArrays(Eigen::VectorXd positions, int pRand);
+    PartlyRestricted(class System* system, const int elementNumber);
+    void updateArrays(const Eigen::VectorXd positions, const int pRand);
     void resetArrays();
-    void initializeArrays(Eigen::VectorXd positions);
+    void initializeArrays(const Eigen::VectorXd positions);
     void updateParameters(Eigen::MatrixXd parameters);
     double evaluate();
     double evaluateSqrd();
-    double computeFirstDerivative(Eigen::VectorXd positions, int k);
+    double computeFirstDerivative(const Eigen::VectorXd positions, const int k);
     double computeSecondDerivative();
-    Eigen::VectorXd computeFirstEnergyDerivative(int k);
+    Eigen::VectorXd computeFirstEnergyDerivative(const int k);
     Eigen::VectorXd computeSecondEnergyDerivative();
 private:
     int     m_elementNumber = 0;

@@ -5,7 +5,7 @@
 #include "../sampler.h"
 #include "../WaveFunctions/wavefunction.h"
 
-GradientDescent::GradientDescent(System* system, double gamma) :
+GradientDescent::GradientDescent(System* system, const double gamma) :
         Optimization(system) {
     m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
     m_numberOfWaveFunctionElements    = m_system->getNumberOfWaveFunctionElements();

@@ -3,25 +3,25 @@
 
 class SlaterDeterminant : public WaveFunction {
 public:
-    SlaterDeterminant(class System* system, int elementNumber);
+    SlaterDeterminant(class System* system, const int elementNumber);
     Eigen::MatrixXd list();
-    double updateElement(Eigen::VectorXd positions, double basis(double, int), int i, int j);
-    Eigen::VectorXd updateRow(Eigen::VectorXd positions, double basis(double, int), int i);
-    Eigen::MatrixXd updateMatrix(Eigen::VectorXd positions, double basis(double, int));
-    Eigen::VectorXd dA_row(Eigen::VectorXd positions, int k);
-    Eigen::MatrixXd dA_matrix(Eigen::VectorXd positions);
-    Eigen::VectorXd d2A_row(Eigen::VectorXd positions, int k);
-    Eigen::MatrixXd d2A_matrix(Eigen::VectorXd positions);
+    double updateElement(const Eigen::VectorXd positions, double basis(double, int), const int i, const int j);
+    Eigen::VectorXd updateRow(const Eigen::VectorXd positions, double basis(double, int), const int i);
+    Eigen::MatrixXd updateMatrix(const Eigen::VectorXd positions, double basis(double, int));
+    Eigen::VectorXd dA_row(const Eigen::VectorXd positions, const int k);
+    Eigen::MatrixXd dA_matrix(const Eigen::VectorXd positions);
+    Eigen::VectorXd d2A_row(const Eigen::VectorXd positions, const int k);
+    Eigen::MatrixXd d2A_matrix(const Eigen::VectorXd positions);
 
-    void updateArrays(Eigen::VectorXd positions, int pRand);
+    void updateArrays(const Eigen::VectorXd positions, const int pRand);
     void resetArrays();
-    void initializeArrays(Eigen::VectorXd positions);
-    void updateParameters(Eigen::MatrixXd parameters);
+    void initializeArrays(const Eigen::VectorXd positions);
+    void updateParameters(const Eigen::MatrixXd parameters);
     double evaluate();
     double evaluateSqrd();
-    double computeFirstDerivative(Eigen::VectorXd positions, int k);
+    double computeFirstDerivative(const Eigen::VectorXd positions, const int k);
     double computeSecondDerivative();
-    Eigen::VectorXd computeFirstEnergyDerivative(int k);
+    Eigen::VectorXd computeFirstEnergyDerivative(const int k);
     Eigen::VectorXd computeSecondEnergyDerivative();
 private:
     int     m_elementNumber     = 2;

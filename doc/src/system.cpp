@@ -14,19 +14,14 @@
 #include <ctime>
 #include <string>
 
-void System::runMetropolisSteps(int numberOfMetropolisSteps, int numberOfIterations) {
+void System::runMetropolisSteps(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
-    m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
-    m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
-    std::string path = "../data/";                       //Path to data folder
-    std::string energy_filename = generate_filename("energy", ".dat");
-    std::ofstream energy;
-    energy.open(path + energy_filename);                    //Open energy file based on parameters
+    m_sampler->openOutputFiles("../data/");
     for (int iter = 0; iter < numberOfIterations; iter++) {
         clock_t start_time = clock();
-        for (int i=0; i < numberOfMetropolisSteps; i++) {
+        for (int i=0; i < m_numberOfMetropolisSteps; i++) {
             bool acceptedStep = m_metropolis->acceptMove();
             m_positions       = m_metropolis->updatePositions();
             if(double(i)/m_numberOfMetropolisSteps >= m_equilibrationFraction) {
@@ -35,24 +30,24 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps, int numberOfIterati
         }
         clock_t end_time = clock();
         m_sampler->computeAverages();
-        m_sampler->printOutputToTerminal(iter, double(end_time - start_time)/CLOCKS_PER_SEC);
-        energy << m_sampler->getEnergy() << "\n";
+        m_sampler->printOutputToTerminal(iter, numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
+        m_sampler->printOutputToFile();
         m_parameters -= m_optimization->updateParameters();
         updateAllParameters(m_parameters);
     }
-    if(energy.is_open())  energy.close();
+    m_sampler->closeOutputFiles();
 }
 
-int factorial(int n) {
+int factorial(const int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
-double binomial(int n, int p) {
+double binomial(const int n, const int p) {
     //Binomial coefficients, equal to magic numbers
     return factorial(n+p)/(factorial(n)*factorial(p));
 }
 
-int orbitals(int numberOfParticles, int numberOfDimensions) {
+int orbitals(const int numberOfParticles, const int numberOfDimensions) {
 
     int counter = 0;
     while(true) {
@@ -73,12 +68,12 @@ void System::setNumberOfOrbitals() {
     m_numberOfOrbitals = orbitals(m_numberOfParticles, m_numberOfDimensions);
 }
 
-void System::setNumberOfParticles(int numberOfParticles) {
+void System::setNumberOfParticles(const int numberOfParticles) {
     assert(numberOfParticles > 0);
     m_numberOfParticles = numberOfParticles;
 }
 
-void System::setNumberOfDimensions(int numberOfDimensions) {
+void System::setNumberOfDimensions(const int numberOfDimensions) {
     assert(numberOfDimensions > 0);
     m_numberOfDimensions = numberOfDimensions;
 }
@@ -87,44 +82,48 @@ void System::setNumberOfFreeDimensions() {
     m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
 }
 
-void System::setNumberOfHiddenNodes(int numberOfHiddenNodes) {
+void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes) {
     assert(numberOfHiddenNodes > 0);
     m_numberOfHiddenNodes = numberOfHiddenNodes;
 }
 
-void System::setNumberOfWaveFunctionElements(int numberOfWaveFunctionElements) {
+void System::setNumberOfMetropolisSteps(const int steps) {
+    m_numberOfMetropolisSteps = steps;
+}
+
+void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionElements) {
     m_numberOfWaveFunctionElements = numberOfWaveFunctionElements;
 }
 
-void System::setMaxNumberOfParametersPerElement(int maxNumberOfParametersPerElement) {
+void System::setMaxNumberOfParametersPerElement(const int maxNumberOfParametersPerElement) {
     m_maxNumberOfParametersPerElement = maxNumberOfParametersPerElement;
 }
 
-void System::setStepLength(double stepLength) {
+void System::setStepLength(const double stepLength) {
     assert(stepLength >= 0);
     m_stepLength = stepLength;
 }
 
-void System::setEquilibrationFraction(double equilibrationFraction) {
+void System::setEquilibrationFraction(const double equilibrationFraction) {
     assert(equilibrationFraction >= 0);
     m_equilibrationFraction = equilibrationFraction;
 }
 
-void System::setInteraction(bool interaction) {
+void System::setInteraction(const bool interaction) {
     m_interaction = interaction;
 }
 
-void System::setFrequency(double omega) {
+void System::setFrequency(const double omega) {
     assert(omega > 0);
     m_omega = omega;
 }
 
-void System::setLearningRate(double eta) {
+void System::setLearningRate(const double eta) {
     assert(eta > 0);
     m_eta = eta;
 }
 
-void System::setWidth(double sigma) {
+void System::setWidth(const double sigma) {
     assert(sigma > 0);
     m_sigma = sigma;
 }
@@ -161,9 +160,9 @@ void System::setGradients() {
     m_gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }
 
-void System::updateAllArrays(Eigen::VectorXd particles, int pRand) {
+void System::updateAllArrays(const Eigen::VectorXd positions, const int pRand) {
     for(auto& i : m_waveFunctionVector) {
-        i->updateArrays(particles, pRand);
+        i->updateArrays(positions, pRand);
     }
 }
 
@@ -173,7 +172,7 @@ void System::resetAllArrays() {
     }
 }
 
-void System::updateAllParameters(Eigen::MatrixXd parameters) {
+void System::updateAllParameters(const Eigen::MatrixXd parameters) {
     for(auto& i : m_waveFunctionVector) {
         i->updateParameters(parameters);
     }
@@ -208,8 +207,4 @@ double System::getKineticEnergy() {
         KineticEnergy += NablaLnPsi * NablaLnPsi;
     }
     return -0.5 * KineticEnergy;
-}
-
-std::string System::generate_filename(std::string name, std::string extension) {
-    return name + extension;
 }

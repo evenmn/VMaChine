@@ -40,7 +40,7 @@ int main() {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = 2;
-    int     numberOfSteps       = int(1e7);
+    int     numberOfSteps       = int(1e6);
     int     numberOfIterations  = 50;
     double  eta                 = 0.1;          // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
@@ -60,6 +60,7 @@ int main() {
     system->setNumberOfParticles        (numberOfParticles);
     system->setNumberOfDimensions       (numberOfDimensions);
     system->setNumberOfHiddenNodes      (numberOfHiddenNodes);
+    system->setNumberOfMetropolisSteps  (numberOfSteps);
     system->setMaxNumberOfParametersPerElement (maxNumberOfParametersPerElement);
     system->setNumberOfOrbitals         ();
     system->setNumberOfFreeDimensions   ();
@@ -83,6 +84,6 @@ int main() {
     system->setMetropolis               (new ImportanceSampling(system));
     system->setOptimization             (new GradientDescent(system, 0.1));
     system->setGradients                ();
-    system->runMetropolisSteps          (numberOfSteps, numberOfIterations);
+    system->runMetropolisSteps          (numberOfIterations);
     return 0;
 }

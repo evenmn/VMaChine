@@ -4,7 +4,7 @@
 
 class GradientDescent : public Optimization {
 public:
-    GradientDescent(System* system, double gamma);
+    GradientDescent(System* system, const double gamma);
     Eigen::VectorXd getImmediateGradients(WaveFunction* waveFunction);
     Eigen::MatrixXd getAllImmediateGradients();
     Eigen::MatrixXd updateParameters();

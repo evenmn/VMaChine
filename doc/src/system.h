@@ -5,20 +5,21 @@
 
 class System {
 public:
-    void runMetropolisSteps             (int numberOfMetropolisSteps, int numberOfIterations);
-    void setNumberOfParticles           (int numberOfParticles);
-    void setNumberOfDimensions          (int numberOfDimensions);
-    void setNumberOfHiddenNodes         (int numberOfHiddenNodes);
+    void runMetropolisSteps             (const int numberOfIterations);
+    void setNumberOfParticles           (const int numberOfParticles);
+    void setNumberOfDimensions          (const int numberOfDimensions);
+    void setNumberOfHiddenNodes         (const int numberOfHiddenNodes);
     void setNumberOfOrbitals            ();
     void setNumberOfFreeDimensions      ();
-    void setMaxNumberOfParametersPerElement (int maxNumberOfParametersPerElement);
-    void setNumberOfWaveFunctionElements (int numberOfWaveFunctionElements);
-    void setStepLength                  (double stepLength);
-    void setEquilibrationFraction       (double equilibrationFraction);
-    void setFrequency                   (double omega);
-    void setWidth                       (double sigma);
-    void setLearningRate                (double eta);
-    void setInteraction                 (bool interaction);
+    void setNumberOfMetropolisSteps     (const int steps);
+    void setMaxNumberOfParametersPerElement (const int maxNumberOfParametersPerElement);
+    void setNumberOfWaveFunctionElements (const int numberOfWaveFunctionElements);
+    void setStepLength                  (const double stepLength);
+    void setEquilibrationFraction       (const double equilibrationFraction);
+    void setFrequency                   (const double omega);
+    void setWidth                       (const double sigma);
+    void setLearningRate                (const double eta);
+    void setInteraction                 (const bool interaction);
     void setGradients                   ();
     void setHamiltonian                 (class Hamiltonian* hamiltonian);
     void setInitialState                (class InitialState* initialState);
@@ -55,13 +56,13 @@ public:
     Eigen::VectorXd                     getRadialVector()            { return m_radialVector; }
     std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionVector; }
 
-    void            updateAllArrays          (Eigen::VectorXd particles, int pRand);
+    void            updateAllArrays          (const Eigen::VectorXd positions, const int pRand);
     void            resetAllArrays           ();
-    void            updateAllParameters      (Eigen::MatrixXd parameters);
+    void            updateAllParameters      (const Eigen::MatrixXd parameters);
     double          evaluateWaveFunction     ();
     double          evaluateWaveFunctionSqrd ();
     double          getKineticEnergy         ();
-    std::string     generate_filename        (std::string name, std::string extension);
+    std::string     generate_filename        (std::string name, const std::string extension);
 
 private:
     int                                 m_numberOfHiddenNodes       = 0;

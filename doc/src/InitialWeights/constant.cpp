@@ -4,7 +4,7 @@
 #include "RNG/parkmiller.h"
 #include "../system.h"
 
-Constant::Constant(System* system, double factor)  :  InitialWeights(system) {
+Constant::Constant(System* system, const double factor)  :  InitialWeights(system) {
     m_numberOfDimensions              = m_system->getNumberOfDimensions();
     m_numberOfParticles               = m_system->getNumberOfParticles();
     m_numberOfElements                = m_system->getNumberOfWaveFunctionElements();

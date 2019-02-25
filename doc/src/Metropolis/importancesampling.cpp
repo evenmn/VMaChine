@@ -40,7 +40,7 @@ double ImportanceSampling::GreenFuncSum(const Eigen::VectorXd oldPositions) {
 }
 
 bool ImportanceSampling::acceptMove() {
-    m_positions     = m_system->getParticles();
+    m_positions     = m_system->getPositions();
     double psiOld   = m_system->evaluateWaveFunctionSqrd();
     int pRand = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 

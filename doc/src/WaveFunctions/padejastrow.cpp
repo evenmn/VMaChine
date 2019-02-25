@@ -4,7 +4,7 @@
 #include "../system.h"
 #include <iostream>
 
-PadeJastrow::PadeJastrow(System* system, int elementNumber) :
+PadeJastrow::PadeJastrow(System* system, const int elementNumber) :
         WaveFunction(system) {
 
     m_elementNumber                     = elementNumber;
@@ -14,7 +14,7 @@ PadeJastrow::PadeJastrow(System* system, int elementNumber) :
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
 }
 
-double PadeJastrow::calculateDistanceMatrixElement(int i, int j, Eigen::VectorXd particles) {
+double PadeJastrow::calculateDistanceMatrixElement(const int i, const int j, const Eigen::VectorXd particles) {
     // Update element (i,j) in Dist_inv_invance matrix
 
     double dist = 0;
@@ -25,25 +25,17 @@ double PadeJastrow::calculateDistanceMatrixElement(int i, int j, Eigen::VectorXd
     return sqrt(dist);
 }
 
-Eigen::MatrixXd PadeJastrow::calculateDistanceMatrix(Eigen::VectorXd particles) {
-    bool loops = true;
-
-    if(loops) {
-        Eigen::MatrixXd distanceMatrix = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
-        for(int i=0; i<m_numberOfParticles; i++) {
-            for(int j=0; j<i; j++) {
-                distanceMatrix(i,j) = calculateDistanceMatrixElement(i,j,particles);
-            }
+Eigen::MatrixXd PadeJastrow::calculateDistanceMatrix(const Eigen::VectorXd particles) {
+    Eigen::MatrixXd distanceMatrix = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
+    for(int i=0; i<m_numberOfParticles; i++) {
+        for(int j=0; j<i; j++) {
+            distanceMatrix(i,j) = calculateDistanceMatrixElement(i,j,particles);
         }
-        return distanceMatrix;
     }
-    else if((loops=false)) {
-        Eigen::Map<Eigen::MatrixXd> r(particles.data(), m_numberOfParticles, m_numberOfDimensions);
-        return Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
-    }
+    return distanceMatrix;
 }
 
-void PadeJastrow::calculateDistanceMatrixCross(int par, Eigen::VectorXd particles, Eigen::MatrixXd &distanceMatrix) {
+void PadeJastrow::calculateDistanceMatrixCross(const int par, const Eigen::VectorXd particles, Eigen::MatrixXd &distanceMatrix) {
     // Update distance matrix when position of particle "par" is changed
 
     // Update row
@@ -56,7 +48,7 @@ void PadeJastrow::calculateDistanceMatrixCross(int par, Eigen::VectorXd particle
     }
 }
 
-void PadeJastrow::initializeArrays(Eigen::VectorXd positions) {
+void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
     m_distanceMatrix = calculateDistanceMatrix(positions);
     m_f     = (Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticles) + m_gamma * m_distanceMatrix).cwiseInverse();
@@ -68,7 +60,7 @@ void PadeJastrow::initializeArrays(Eigen::VectorXd positions) {
     }
 }
 
-void PadeJastrow::updateArrays(Eigen::VectorXd positions, int pRand) {
+void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     m_oldPositions = m_positions;
     m_positions = positions;
 
@@ -91,7 +83,7 @@ void PadeJastrow::resetArrays() {
     m_distanceMatrix = m_oldDistanceMatrix;
 }
 
-void PadeJastrow::updateParameters(Eigen::MatrixXd parameters) {
+void PadeJastrow::updateParameters(const Eigen::MatrixXd parameters) {
     Eigen::VectorXd X = parameters.row(m_elementNumber).segment(1, m_numberOfParticles*m_numberOfParticles);
     Eigen::Map<Eigen::MatrixXd> beta(X.data(), m_numberOfParticles, m_numberOfParticles);
     m_beta  = beta.transpose();
@@ -120,7 +112,7 @@ double PadeJastrow::evaluateSqrd() {
     return exp(2 * PadeJastrowFactor);
 }
 
-double PadeJastrow::computeFirstDerivative(Eigen::VectorXd positions, int k) {
+double PadeJastrow::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
     int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
     int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
@@ -147,7 +139,7 @@ double PadeJastrow::computeSecondDerivative() {
     return derivative;
 }
 
-Eigen::VectorXd PadeJastrow::computeFirstEnergyDerivative(int k) {
+Eigen::VectorXd PadeJastrow::computeFirstEnergyDerivative(const int k) {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     int k_p = int(k/m_numberOfDimensions);  //Particle associated with k

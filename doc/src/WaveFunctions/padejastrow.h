@@ -3,21 +3,21 @@
 
 class PadeJastrow : public WaveFunction {
 public:
-    PadeJastrow(class System* system, int elementNumber);
-    void updateArrays(Eigen::VectorXd positions, int pRand);
+    PadeJastrow(class System* system, const int elementNumber);
+    void updateArrays(const Eigen::VectorXd positions, const int pRand);
     void resetArrays();
-    void initializeArrays(Eigen::VectorXd positions);
-    void updateParameters(Eigen::MatrixXd parameters);
+    void initializeArrays(const Eigen::VectorXd positions);
+    void updateParameters(const Eigen::MatrixXd parameters);
     double evaluate();
     double evaluateSqrd();
-    double computeFirstDerivative(Eigen::VectorXd positions, int k);
+    double computeFirstDerivative(const Eigen::VectorXd positions, const int k);
     double computeSecondDerivative();
-    Eigen::VectorXd computeFirstEnergyDerivative(int k);
+    Eigen::VectorXd computeFirstEnergyDerivative(const int k);
     Eigen::VectorXd computeSecondEnergyDerivative();
 
-    Eigen::MatrixXd calculateDistanceMatrix(Eigen::VectorXd particles);
-    double calculateDistanceMatrixElement(int i, int j, Eigen::VectorXd particles);
-    void calculateDistanceMatrixCross(int par, Eigen::VectorXd particles, Eigen::MatrixXd &distanceMatrix);
+    Eigen::MatrixXd calculateDistanceMatrix(const Eigen::VectorXd particles);
+    double calculateDistanceMatrixElement(const int i, const int j, const Eigen::VectorXd particles);
+    void calculateDistanceMatrixCross(const int par, const Eigen::VectorXd particles, Eigen::MatrixXd &distanceMatrix);
 
     //double f(int i, int j);
     Eigen::MatrixXd f();

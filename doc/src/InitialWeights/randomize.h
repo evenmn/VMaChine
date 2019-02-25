@@ -3,7 +3,7 @@
 
 class Randomize : public InitialWeights {
 public:
-    Randomize(System* system, double factor);
+    Randomize(System* system, const double factor);
     void setupInitialWeights();
 
 private:

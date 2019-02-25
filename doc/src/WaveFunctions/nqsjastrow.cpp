@@ -4,7 +4,7 @@
 #include "../system.h"
 #include <iostream>
 
-NQSJastrow::NQSJastrow(System* system, int elementNumber) :
+NQSJastrow::NQSJastrow(System* system, const int elementNumber) :
         WaveFunction(system) {
 
     m_elementNumber                     = elementNumber;
@@ -17,7 +17,7 @@ NQSJastrow::NQSJastrow(System* system, int elementNumber) :
     m_sigmaSqrd                         = sigma*sigma;
 }
 
-void NQSJastrow::updateArrays(Eigen::VectorXd positions, int pRand) {
+void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     m_oldPositions = m_positions;
     m_positions = positions;
 
@@ -39,7 +39,7 @@ void NQSJastrow::resetArrays() {
     m_p         = m_oldP;
 }
 
-void NQSJastrow::initializeArrays(Eigen::VectorXd positions) {
+void NQSJastrow::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
     m_v = m_b + m_W.transpose() * positions;
 
@@ -79,7 +79,7 @@ double NQSJastrow::evaluateSqrd() {
     return Prod * Prod;
 }
 
-double NQSJastrow::computeFirstDerivative(Eigen::VectorXd positions, int k) {
+double NQSJastrow::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
     double Sum1 = 0;
     for(int j=0; j<m_numberOfHiddenNodes; j++) {
         double Sum2 = 0;
@@ -101,7 +101,7 @@ double NQSJastrow::computeSecondDerivative() {
     return Sum / (m_sigmaSqrd * m_sigmaSqrd);
 }
 
-Eigen::VectorXd NQSJastrow::computeFirstEnergyDerivative(int k) {
+Eigen::VectorXd NQSJastrow::computeFirstEnergyDerivative(const int k) {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     // Update b
