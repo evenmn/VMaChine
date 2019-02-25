@@ -38,10 +38,10 @@ using namespace std;
 
 int main() {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 6;
     int     numberOfHiddenNodes = 2;
-    int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 20;
+    int     numberOfSteps       = int(pow(2,16));
+    int     numberOfIterations  = 50;
     double  eta                 = 0.1;          // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
@@ -72,7 +72,7 @@ int main() {
     //WaveFunctionElements.push_back      (new class MLGaussian           (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class NQSJastrowReal       (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 

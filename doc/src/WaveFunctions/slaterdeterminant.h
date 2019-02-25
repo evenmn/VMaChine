@@ -30,6 +30,8 @@ private:
     int m_numberOfOrbitals      = 0;
     int m_numberOfParticlesHalf = 0;
 
+    Eigen::VectorXd m_Xa;
+    Eigen::VectorXd m_a;
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_oldPositions;
     Eigen::MatrixXd m_D_up;
