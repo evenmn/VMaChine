@@ -94,9 +94,9 @@ void Sampler::printOutputToFile() {
 }
 
 void Sampler::closeOutputFiles() {
-    if(m_energyFile.is_open())   { m_energyFile.close(); }
-    if(m_oneBodyFile.is_open())  { m_oneBodyFile.close(); }
-    if(m_cumulativeFile.is_open())          { m_cumulativeFile.close(); }
+    if(m_energyFile.is_open())      { m_energyFile.close(); }
+    if(m_oneBodyFile.is_open())     { m_oneBodyFile.close(); }
+    if(m_cumulativeFile.is_open())  { m_cumulativeFile.close(); }
 }
 
 void Sampler::printImmediatelyToFile(const Eigen::VectorXd positions) {
