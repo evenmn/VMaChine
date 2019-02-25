@@ -53,18 +53,17 @@ double d2H(double x, int n) {
 }
 
 void SlaterDeterminant::updateArrays(Eigen::VectorXd positions, int pRand) {
-    std::cout << "updateArrays1" << std::endl;
     int particle = int(pRand/m_numberOfDimensions);
     m_oldPositions  = m_positions;
     m_positions = positions;
-    std::cout << pRand << std::endl;
-    if(particle < m_numberOfParticles/2) {
-        std::cout << "updateArrays" << std::endl;
+    if(particle < m_numberOfParticlesHalf) {
         m_D_upOld               = m_D_up;
         m_dD_upOld              = m_dD_up;
+        m_d2D_upOld              = m_d2D_up;
         m_D_up_old_inv          = m_D_up_inv;
         m_D_up.row(particle)    = updateRow(m_positions.head(m_numberOfFreeDimensions/2), H, particle);
         m_dD_up.row(particle)   = dA_row(m_positions.head(m_numberOfFreeDimensions/2), particle);
+        m_d2D_up.row(particle)   = d2A_row(m_positions.head(m_numberOfFreeDimensions/2), particle);
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
             R = m_D_up(particle, j) * m_D_up_old_inv(j, particle);
@@ -72,19 +71,20 @@ void SlaterDeterminant::updateArrays(Eigen::VectorXd positions, int pRand) {
         m_D_up_inv.row(particle) /= R;
     }
     else {
-        std::cout << "updateArrays" << std::endl;
+        int particle2 = particle - m_numberOfParticlesHalf;
         m_D_dnOld               = m_D_dn;
         m_dD_dnOld              = m_dD_dn;
+        m_d2D_dnOld              = m_d2D_dn;
         m_D_dn_old_inv          = m_D_dn_inv;
-        m_D_dn.row(particle)    = updateRow(m_positions.tail(m_numberOfFreeDimensions/2), H, particle);
-        m_dD_dn.row(particle)   = dA_row(m_positions.tail(m_numberOfFreeDimensions/2), particle);
+        m_D_dn.row(particle2)    = updateRow(m_positions.tail(m_numberOfFreeDimensions/2), H, particle2);
+        m_dD_dn.row(particle2)   = dA_row(m_positions.tail(m_numberOfFreeDimensions/2), particle2);
+        m_d2D_dn.row(particle2)   = d2A_row(m_positions.tail(m_numberOfFreeDimensions/2), particle2);
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
-            R = m_D_dn(particle, j) * m_D_dn_old_inv(j, particle);
+            R = m_D_dn(particle2, j) * m_D_dn_old_inv(j, particle2);
         }
-        m_D_dn_inv.row(particle) /= R;
+        m_D_dn_inv.row(particle2) /= R;
     }
-    std::cout << "updateArrays2" << std::endl;
 }
 
 void SlaterDeterminant::resetArrays() {
@@ -176,7 +176,7 @@ Eigen::VectorXd SlaterDeterminant::dA_row(const Eigen::VectorXd positions, int k
             }
         }
     }
-    return dA;
+    return dA.transpose();
 }
 
 
@@ -192,7 +192,6 @@ Eigen::MatrixXd SlaterDeterminant::dA_matrix(const Eigen::VectorXd positions) {
 
 Eigen::VectorXd SlaterDeterminant::d2A_row(const Eigen::VectorXd positions, int k) {
     //Update row of dA
-
     Eigen::VectorXd d2A = Eigen::VectorXd::Zero(m_numberOfParticlesHalf);
     Eigen::MatrixXd order = list();
 
@@ -212,7 +211,7 @@ Eigen::VectorXd SlaterDeterminant::d2A_row(const Eigen::VectorXd positions, int 
             }
         }
     }
-    return d2A;
+    return d2A.transpose();
 }
 
 
@@ -267,17 +266,18 @@ double SlaterDeterminant::evaluate() {
 }
 
 double SlaterDeterminant::evaluateSqrd() {
-    std::cout << "evaluateSqrd" << std::endl;
     double WF = evaluate();
     return WF * WF;
 }
 
 double SlaterDeterminant::computeFirstDerivative(Eigen::VectorXd positions, int k) {
-    std::cout << "computeFirstDerivative1" << std::endl;
     Eigen::MatrixXd D_up = updateMatrix(positions.head(m_numberOfFreeDimensions/2), H);
     Eigen::MatrixXd D_dn = updateMatrix(positions.tail(m_numberOfFreeDimensions/2), H);
     Eigen::MatrixXd dD_up = dA_matrix(positions.head(m_numberOfFreeDimensions/2));
     Eigen::MatrixXd dD_dn = dA_matrix(positions.tail(m_numberOfFreeDimensions/2));
+    Eigen::MatrixXd d2D_up = d2A_matrix(positions.head(m_numberOfFreeDimensions/2));
+    Eigen::MatrixXd d2D_dn = d2A_matrix(positions.tail(m_numberOfFreeDimensions/2));
+
     double Sum = 0;
     for(int j=0; j<m_numberOfParticlesHalf; j++) {
         if(k<m_numberOfFreeDimensions/2) {
@@ -285,16 +285,15 @@ double SlaterDeterminant::computeFirstDerivative(Eigen::VectorXd positions, int 
         }
 
         else {
-            k -= m_numberOfFreeDimensions/2;
-            Sum += dD_dn(k, j) * D_dn.inverse()(j, int(k/m_numberOfDimensions));
+            int l  = k - m_numberOfFreeDimensions/2;
+            Sum += dD_dn(l, j) * D_dn.inverse()(j, int(l/m_numberOfDimensions));
         }
     }
-    std::cout << "computeFirstDerivative2" << std::endl;
     return Sum;
 }
 
 double SlaterDeterminant::computeSecondDerivative() {
-    std::cout << "computeSecondDerivative1" << std::endl;
+    /*
     Eigen::VectorXd diff = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
@@ -306,8 +305,25 @@ double SlaterDeterminant::computeSecondDerivative() {
             }
         }
     }
-    std::cout << "computeSecondDerivative2" << std::endl;
     return -double(diff.transpose() * diff);
+    */
+    /*
+    double Sum = 0;
+    for(int k=0; k<m_numberOfFreeDimensions; k++) {
+        for(int j=0; j<m_numberOfParticlesHalf; j++) {
+            if(k<m_numberOfFreeDimensions/2) {
+                Sum += m_d2D_up(k, j) * m_D_up_inv(j, int(k/m_numberOfDimensions));
+            }
+
+            else {
+                int l  = k - m_numberOfFreeDimensions/2;
+                Sum += m_d2D_dn(l, j) * m_D_dn_inv(j, int(l/m_numberOfDimensions));
+            }
+        }
+    }
+    return Sum;
+    */
+    return 0;
 }
 
 Eigen::VectorXd SlaterDeterminant::computeFirstEnergyDerivative(int k) {
