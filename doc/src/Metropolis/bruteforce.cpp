@@ -4,15 +4,16 @@
 #include "../system.h"
 #include "../WaveFunctions/wavefunction.h"
 #include "../RNG/rng.h"
+#include "InitialStates/initialstate.h"
 
 BruteForce::BruteForce(System* system) :
         Metropolis(system) {
     m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
     m_stepLength             = m_system->getStepLength();
+    m_positions              = m_system->getInitialState()->getParticles();
 }
 
 bool BruteForce::acceptMove() {
-    m_positions         = m_system->getParticles();
     double psiOld       = m_system->evaluateWaveFunctionSqrd();
     int pRand = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 

@@ -59,14 +59,14 @@ double PartlyRestricted::evaluateSqrd() {
     return exp(-Sum);
 }
 
-double PartlyRestricted::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
+double PartlyRestricted::computeFirstDerivative(const int k) {
     //return - double(m_c.row(k) * positions) / m_sigmaSqrd2;
 
     double Sum = 0;
     for(int j=k+1; j<m_numberOfFreeDimensions; j++) {
-        Sum += positions(j) * m_c(k,j);
+        Sum += m_positions(j) * m_c(k,j);
     }
-    return -0.5 * Sum - positions(k) * m_c(k,k);
+    return -0.5 * Sum - m_positions(k) * m_c(k,k);
 }
 
 double PartlyRestricted::computeSecondDerivative() {

@@ -36,8 +36,8 @@ double Gaussian::evaluateSqrd() {
     return exp(- m_omega * m_alpha * (m_positions.cwiseAbs2()).sum());
 }
 
-double Gaussian::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
-    return - m_omega * m_alpha * positions(k);
+double Gaussian::computeFirstDerivative(const int k) {
+    return - m_omega * m_alpha * m_positions(k);
 }
 
 double Gaussian::computeSecondDerivative() {;

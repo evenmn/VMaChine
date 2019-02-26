@@ -111,14 +111,14 @@ double PadeJastrow::evaluateSqrd() {
     return exp(2 * PadeJastrowFactor);
 }
 
-double PadeJastrow::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
+double PadeJastrow::computeFirstDerivative(const int k) {
     int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
     int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
     double derivative = 0;
     for(int j_p=0; j_p<k_p; j_p++) {
         int j = j_p * m_numberOfDimensions + k_d;
-        derivative += m_beta(k_p,j_p) * m_f(k_p,j_p) * m_f(k_p, j_p) * (positions(k) - positions(j))/m_distanceMatrix(k_p,j_p);
+        derivative += m_beta(k_p,j_p) * m_f(k_p,j_p) * m_f(k_p, j_p) * (m_positions(k) - m_positions(j))/m_distanceMatrix(k_p,j_p);
     }
 
     return derivative;

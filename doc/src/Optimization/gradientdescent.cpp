@@ -17,12 +17,11 @@ GradientDescent::GradientDescent(System* system, const double gamma) :
 }
 
 Eigen::VectorXd GradientDescent::getImmediateGradients(WaveFunction* waveFunction) {
-    m_positions = m_system->getParticles();
     Eigen::VectorXd TotalGradients = waveFunction->computeSecondEnergyDerivative();
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
         double Sum = 0;
         for(auto& i : m_waveFunctionVector) {
-            Sum += i->computeFirstDerivative(m_positions, k);
+            Sum += i->computeFirstDerivative(k);
         }
         TotalGradients += 2 * Sum * waveFunction->computeFirstEnergyDerivative(k);
     }
@@ -41,7 +40,7 @@ Eigen::MatrixXd GradientDescent::getEnergyGradient() {
     double E            = m_system->getSampler()->getEnergy();
     Eigen::MatrixXd dE  = m_system->getSampler()->getdE();
     Eigen::MatrixXd dEE = m_system->getSampler()->getdEE();
-    return 2 * (dEE - E * dE)/ int((1 - m_system->getEquilibrationFraction()) * m_system->getNumberOfMetropolisSteps());
+    return 2 * (dEE - E * dE)/ m_system->getTotalNumberOfSteps();
 }
 
 Eigen::MatrixXd GradientDescent::updateParameters() {

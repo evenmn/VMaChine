@@ -42,8 +42,8 @@ double MLGaussian::evaluateSqrd() {
     return exp(-double(m_Xa.transpose() * m_Xa)/m_sigmaSqrd);
 }
 
-double MLGaussian::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
-    return - m_omega * (positions(k) - m_a(k))/m_sigmaSqrd;
+double MLGaussian::computeFirstDerivative(const int k) {
+    return - m_omega * (m_positions(k) - m_a(k))/m_sigmaSqrd;
 }
 
 double MLGaussian::computeSecondDerivative() {;

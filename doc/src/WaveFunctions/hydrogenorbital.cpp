@@ -59,7 +59,7 @@ double HydrogenOrbital::evaluateSqrd() {
     return exp(- 2 * m_alpha * m_numberOfParticles * m_radialVector.sum());
 }
 
-double HydrogenOrbital::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
+double HydrogenOrbital::computeFirstDerivative(const int k) {
     return - m_alpha * m_numberOfParticles;
 }
 

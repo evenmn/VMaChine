@@ -35,6 +35,7 @@ public:
     class Sampler*                      getSampler()                 { return m_sampler; }
     class Optimization*                 getOptimization()            { return m_optimization; }
     class InitialWeights*               getInitialWeights()          { return m_initialWeights; }
+    class InitialState*                 getInitialState()            { return m_initialState; }
     class RandomNumberGenerator*        getRandomNumberGenerator()   { return m_randomnumbergenerator; }
     int                                 getNumberOfParticles()       { return m_numberOfParticles; }
     int                                 getNumberOfDimensions()      { return m_numberOfDimensions; }

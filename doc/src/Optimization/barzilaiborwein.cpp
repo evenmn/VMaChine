@@ -19,12 +19,11 @@ BarzilaiBorwein::BarzilaiBorwein(System* system) :
 }
 
 Eigen::VectorXd BarzilaiBorwein::getImmediateGradients(WaveFunction* waveFunction) {
-    m_positions = m_system->getParticles();
     Eigen::VectorXd TotalGradients = waveFunction->computeSecondEnergyDerivative();
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
         double Sum = 0;
         for(auto& i : m_waveFunctionVector) {
-            Sum += i->computeFirstDerivative(m_positions, k);
+            Sum += i->computeFirstDerivative(k);
         }
         TotalGradients += 2 * Sum * waveFunction->computeFirstEnergyDerivative(k);
     }

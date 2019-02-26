@@ -209,7 +209,7 @@ double System::getKineticEnergy() {
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
         double NablaLnPsi = 0;
         for(auto& i : m_waveFunctionVector) {
-            NablaLnPsi += i->computeFirstDerivative(m_positions, k);
+            NablaLnPsi += i->computeFirstDerivative(k);
         }
         KineticEnergy += NablaLnPsi * NablaLnPsi;
     }

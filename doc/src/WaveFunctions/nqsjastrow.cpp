@@ -73,16 +73,12 @@ double NQSJastrow::evaluateSqrd() {
     return WF * WF;
 }
 
-double NQSJastrow::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
-    double Sum1 = 0;
+double NQSJastrow::computeFirstDerivative(const int k) {
+    double Sum = 0;
     for(int j=0; j<m_numberOfHiddenNodes; j++) {
-        double Sum2 = 0;
-        for(int i=0; i<m_numberOfFreeDimensions; i++) {
-            Sum2 += m_W(i,j) * positions(i) / m_sigmaSqrd;
-        }
-        Sum1 += m_W(k,j) / (1 + exp(-m_b(j) - Sum2));
+        Sum += m_W(k,j) * m_n(j);
     }
-    return Sum1 / m_sigmaSqrd;
+    return Sum / m_sigmaSqrd;
 }
 
 double NQSJastrow::computeSecondDerivative() {
@@ -92,9 +88,6 @@ double NQSJastrow::computeSecondDerivative() {
             Sum += m_W(k,j) * m_W(k,j) * m_n(j) * m_p(j);
         }
     }
-
-    //std::cout << (m_W.cwiseAbs2()*m_p.cwiseProduct(m_n)).sum() << std::endl;
-    //std::cout << Sum << std::endl;
     return Sum / (m_sigmaSqrd * m_sigmaSqrd);
 }
 

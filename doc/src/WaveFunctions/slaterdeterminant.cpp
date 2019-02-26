@@ -280,41 +280,16 @@ double SlaterDeterminant::evaluateSqrd() {
     return WF * WF;
 }
 
-double SlaterDeterminant::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
-    Eigen::MatrixXd D_up = updateMatrix(positions.head(m_numberOfFreeDimensions/2), H);
-    Eigen::MatrixXd D_dn = updateMatrix(positions.tail(m_numberOfFreeDimensions/2), H);
-    Eigen::MatrixXd dD_up = dA_matrix(positions.head(m_numberOfFreeDimensions/2));
-    Eigen::MatrixXd dD_dn = dA_matrix(positions.tail(m_numberOfFreeDimensions/2));
-    Eigen::MatrixXd d2D_up = d2A_matrix(positions.head(m_numberOfFreeDimensions/2));
-    Eigen::MatrixXd d2D_dn = d2A_matrix(positions.tail(m_numberOfFreeDimensions/2));
-    Eigen::MatrixXd D_up_inv = D_up.inverse();
-    Eigen::MatrixXd D_dn_inv = D_dn.inverse();
-
-    /*
-    std::cout << "Topp" << std::endl;
-    std::cout << D_up << std::endl;
-    std::cout << std::endl;
-    std::cout << D_dn << std::endl;
-    std::cout << std::endl;
-    std::cout << dD_up << std::endl;
-    std::cout << std::endl;
-    std::cout << dD_dn << std::endl;
-    std::cout << std::endl;
-    std::cout << d2D_up << std::endl;
-    std::cout << std::endl;
-    std::cout << d2D_dn << std::endl;
-    std::cout << std::endl;
-    */
-
+double SlaterDeterminant::computeFirstDerivative(const int k) {
     double Sum = 0;
     for(int j=0; j<m_numberOfParticlesHalf; j++) {
         if(k<m_numberOfFreeDimensions/2) {
-            Sum += dD_up(k, j) * D_up_inv(j, int(k/2));
+            Sum += m_dD_up(k, j) * m_D_up_inv(j, int(k/2));
         }
 
         else {
             int l  = k - m_numberOfFreeDimensions/2;
-            Sum += dD_dn(l, j) * D_dn_inv(j, int(l/2));
+            Sum += m_dD_dn(l, j) * m_D_dn_inv(j, int(l/2));
         }
     }
     return Sum;
