@@ -290,6 +290,22 @@ double SlaterDeterminant::computeFirstDerivative(const Eigen::VectorXd positions
     Eigen::MatrixXd D_up_inv = D_up.inverse();
     Eigen::MatrixXd D_dn_inv = D_dn.inverse();
 
+    /*
+    std::cout << "Topp" << std::endl;
+    std::cout << D_up << std::endl;
+    std::cout << std::endl;
+    std::cout << D_dn << std::endl;
+    std::cout << std::endl;
+    std::cout << dD_up << std::endl;
+    std::cout << std::endl;
+    std::cout << dD_dn << std::endl;
+    std::cout << std::endl;
+    std::cout << d2D_up << std::endl;
+    std::cout << std::endl;
+    std::cout << d2D_dn << std::endl;
+    std::cout << std::endl;
+    */
+
     double Sum = 0;
     for(int j=0; j<m_numberOfParticlesHalf; j++) {
         if(k<m_numberOfFreeDimensions/2) {

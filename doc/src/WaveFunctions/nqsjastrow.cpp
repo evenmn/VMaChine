@@ -7,8 +7,6 @@
 NQSJastrow::NQSJastrow(System* system) :
         WaveFunction(system) {
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
-    m_numberOfParticles                 = m_system->getNumberOfParticles();
-    m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     double sigma                        = m_system->getWidth();
@@ -22,8 +20,8 @@ void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) 
     m_oldV = m_v;
     m_oldN = m_n;
     m_oldP = m_p;
-    m_v = m_b + m_W.transpose() * positions;
 
+    m_v = m_b + m_W.transpose() * positions;
     for(int i=0; i<m_numberOfHiddenNodes; i++) {
         m_n(i) = 1/(1 + exp(-m_v(i)));
         m_p(i) = 1/(1 + exp(+m_v(i)));
@@ -71,11 +69,8 @@ double NQSJastrow::evaluate() {
 }
 
 double NQSJastrow::evaluateSqrd() {
-    double Prod = 1;
-    for(int j=0; j<m_numberOfHiddenNodes; j++) {
-        Prod *= 1 + exp(m_v(j));
-    }
-    return Prod * Prod;
+    double WF = evaluate();
+    return WF * WF;
 }
 
 double NQSJastrow::computeFirstDerivative(const Eigen::VectorXd positions, const int k) {
@@ -85,9 +80,9 @@ double NQSJastrow::computeFirstDerivative(const Eigen::VectorXd positions, const
         for(int i=0; i<m_numberOfFreeDimensions; i++) {
             Sum2 += m_W(i,j) * positions(i) / m_sigmaSqrd;
         }
-        Sum1 += m_W(k,j) / (m_sigmaSqrd * (1 + exp(-m_b(j) - Sum2)));
+        Sum1 += m_W(k,j) / (1 + exp(-m_b(j) - Sum2));
     }
-    return Sum1;
+    return Sum1 / m_sigmaSqrd;
 }
 
 double NQSJastrow::computeSecondDerivative() {
@@ -97,6 +92,9 @@ double NQSJastrow::computeSecondDerivative() {
             Sum += m_W(k,j) * m_W(k,j) * m_n(j) * m_p(j);
         }
     }
+
+    //std::cout << (m_W.cwiseAbs2()*m_p.cwiseProduct(m_n)).sum() << std::endl;
+    //std::cout << Sum << std::endl;
     return Sum / (m_sigmaSqrd * m_sigmaSqrd);
 }
 
@@ -104,13 +102,9 @@ Eigen::VectorXd NQSJastrow::computeFirstEnergyDerivative(const int k) {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     // Update b
-    double Sum = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        for(int j=0; j<m_numberOfHiddenNodes; j++) {
-            Sum += m_W(k,j) * m_n(j) * m_p(j) / m_sigmaSqrd;
-        }
+    for(int j=0; j<m_numberOfHiddenNodes; j++) {
+        gradients(j) = m_W(k,j) * m_n(j) * m_p(j) / m_sigmaSqrd;
     }
-    gradients(0) = -0.5 * Sum;
 
 
     // Update W
@@ -118,27 +112,25 @@ Eigen::VectorXd NQSJastrow::computeFirstEnergyDerivative(const int k) {
         for(int m=0; m<m_numberOfHiddenNodes; m++) {
             int n = fromWToParameterIndex(l, m, m_numberOfFreeDimensions);
             if(l == k) {
-                gradients(n + m_numberOfHiddenNodes) = -0.5 * m_n(m) * (m_sigmaSqrd + m_W(k,m) * m_p(m) * m_positions(k));
+                gradients(n + m_numberOfHiddenNodes) = m_n(m) * (m_sigmaSqrd + m_W(k,m) * m_p(m) * m_positions(k));
             }
             else {
-                gradients(n + m_numberOfHiddenNodes) = -0.5 * m_W(k, m) * m_n(m) * m_p(m) * m_positions(l);
+                gradients(n + m_numberOfHiddenNodes) = m_W(k, m) * m_n(m) * m_p(m) * m_positions(l);
             }
         }
     }
-    return gradients / (m_sigmaSqrd * m_sigmaSqrd);
+    return -0.5 * gradients / (m_sigmaSqrd * m_sigmaSqrd);
 }
 
 Eigen::VectorXd NQSJastrow::computeSecondEnergyDerivative() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     // Update b
-    double Sum = 0;
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
-            Sum += m_W(k,j) * m_W(k,j) * m_n(j) * m_p(j) * (m_p(j) - m_n(j));
+            gradients(j) = m_W(k,j) * m_W(k,j) * m_n(j) * m_p(j) * (m_p(j) - m_n(j));
         }
     }
-    gradients(0) = -0.5 * Sum / (m_sigmaSqrd * m_sigmaSqrd);
 
     // Update W
     for(int l=0; l<m_numberOfFreeDimensions; l++) {
@@ -148,5 +140,5 @@ Eigen::VectorXd NQSJastrow::computeSecondEnergyDerivative() {
         }
     }
 
-    return gradients / (m_sigmaSqrd * m_sigmaSqrd);
+    return -0.5 * gradients / (m_sigmaSqrd * m_sigmaSqrd);
 }
