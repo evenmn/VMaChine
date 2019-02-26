@@ -34,14 +34,14 @@
 #include "RNG/mersennetwister.h"
 #include "RNG/parkmiller.h"
 
-using namespace std;
+#include "../plotter/plotter.cpp"
 
-int main() {
+int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = 2;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 200;
+    int     numberOfIterations  = 20;
     double  eta                 = 0.05;          // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
@@ -86,5 +86,8 @@ int main() {
     system->setOptimization             (new GradientDescent(system, 0.1));
     system->setGradients                ();
     system->runMetropolisSteps          (numberOfIterations);
+
+    plotter(argc, argv);
+
     return 0;
 }
