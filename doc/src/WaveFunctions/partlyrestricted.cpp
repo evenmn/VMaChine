@@ -36,37 +36,19 @@ void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters, const int el
 }
 
 double PartlyRestricted::evaluate() {
-    //return exp(-0.5 * m_xCx  / m_sigmaSqrd2);
-
-    double Sum = 0;
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        for(int j=i; j<m_numberOfFreeDimensions; j++) {
-            Sum += m_positions(i) * m_positions(j) * m_c(i,j);
-        }
-    }
-    return exp(-0.5 * Sum);
+    return exp(- m_xCx  / m_sigmaSqrd2);
 }
 
 double PartlyRestricted::evaluateSqrd() {
-    //return exp(- m_xCx  / m_sigmaSqrd2);
-
-    double Sum = 0;
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        for(int j=i; j<m_numberOfFreeDimensions; j++) {
-            Sum += m_positions(i) * m_positions(j) * m_c(i,j);
-        }
-    }
-    return exp(-Sum);
+    return exp(- 2 * m_xCx  / m_sigmaSqrd2);
 }
 
 double PartlyRestricted::computeFirstDerivative(const int k) {
-    //return - double(m_c.row(k) * positions) / m_sigmaSqrd2;
-
     double Sum = 0;
-    for(int j=k+1; j<m_numberOfFreeDimensions; j++) {
+    for(int j=k; j<m_numberOfFreeDimensions; j++) {
         Sum += m_positions(j) * m_c(k,j);
     }
-    return -0.5 * Sum - m_positions(k) * m_c(k,k);
+    return - Sum - m_positions(k) * m_c(k,k);
 }
 
 double PartlyRestricted::computeSecondDerivative() {
@@ -78,10 +60,10 @@ Eigen::VectorXd PartlyRestricted::computeFirstEnergyDerivative(const int k) {
 
     for(int j=0; j<m_numberOfFreeDimensions; j++) {
         if(j==k) {
-            gradients(j * m_numberOfFreeDimensions + k) = 0.5 * m_positions(k);
+            gradients(k * m_numberOfFreeDimensions + j) = m_positions(k);
         }
-        else {
-            gradients(j * m_numberOfFreeDimensions + k) = 0.25 * m_positions(j);
+        else if(j>k) {
+            gradients(k * m_numberOfFreeDimensions + j) = 0.5 * m_positions(j);
         }
     }
     return gradients;
@@ -91,7 +73,7 @@ Eigen::VectorXd PartlyRestricted::computeSecondEnergyDerivative() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     for(int j=0; j<m_numberOfFreeDimensions; j++) {
-        gradients(j * m_numberOfFreeDimensions + j) = 0.5;
+        gradients(j * m_numberOfFreeDimensions + j) = 1;
     }
     return gradients;
 }
