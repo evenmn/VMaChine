@@ -8,10 +8,12 @@ public:
     ImportanceSampling(System* system);
     bool acceptMove();
     double QuantumForce(const int i);
-    double GreenFuncSum(const Eigen::VectorXd newPositions, const Eigen::VectorXd QuantumForceOld);
+    double GreenFuncSum();
 
 private:
     int m_numberOfParticles = 0;
     int m_numberOfDimensions = 0;
+    Eigen::VectorXd m_quantumForceOld;
+    Eigen::VectorXd m_quantumForceNew;
     std::vector<class WaveFunction*>    m_waveFunctionVector;
 };

@@ -34,7 +34,7 @@
 #include "RNG/mersennetwister.h"
 #include "RNG/parkmiller.h"
 
-#include "../plotter/plotter.cpp"
+#include "Plotter/plotter.cpp"
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length
     double  equilibration       = 0.0;          // Amount of the total steps used
-    bool    interaction         = true;
+    bool    interaction         = false;
     int     maxNumberOfParametersPerElement = numberOfParticles*numberOfDimensions*numberOfParticles*numberOfDimensions;
 
     System* system = new System();
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class NQSJastrowReal       (system));
-    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);

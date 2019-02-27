@@ -9,9 +9,10 @@ public:
     virtual ~Metropolis() = 0;
 
 protected:
-    class System* m_system = nullptr;
+    class System*   m_system = nullptr;
     Eigen::VectorXd m_positions;
-    int m_numberOfFreeDimensions = 0;
-    double m_stepLength = 0;
-    double m_diff = 0.5;
+    Eigen::VectorXd m_positionsOld;
+    int             m_numberOfFreeDimensions = 0;
+    double          m_stepLength = 0;
+    double          m_diff = 0.5;
 };

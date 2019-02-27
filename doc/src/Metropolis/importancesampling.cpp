@@ -17,6 +17,11 @@ ImportanceSampling::ImportanceSampling(System* system) :
     m_stepLength             = m_system->getStepLength();
     m_waveFunctionVector     = m_system->getWaveFunctionElements();
     m_positions              = m_system->getInitialState()->getParticles();
+    m_quantumForceOld        = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
+    for(int i=0; i<m_numberOfFreeDimensions; i++) {
+        m_quantumForceOld(i) = QuantumForce(i);
+    }
+    m_quantumForceNew        = m_quantumForceOld;
 }
 
 double ImportanceSampling::QuantumForce(const int i) {
@@ -27,14 +32,15 @@ double ImportanceSampling::QuantumForce(const int i) {
     return 2*QF;
 }
 
-double ImportanceSampling::GreenFuncSum(const Eigen::VectorXd oldPositions, const Eigen::VectorXd QuantumForceOld) {
+double ImportanceSampling::GreenFuncSum() {
     double GreenSum  = 0;
     for(int i=0; i<m_numberOfParticles; i++) {
         double GreenFunc = 0;
         for(int j=0; j<m_numberOfDimensions; j++) {
-            double QForceOld = QuantumForceOld(m_numberOfDimensions*i+j);
-            double QForceNew = QuantumForce(m_numberOfDimensions*i+j);
-            GreenFunc += 0.5 * (QForceOld + QForceNew) * (0.5 * m_diff*m_stepLength*(QForceOld - QForceNew) - m_positions(m_numberOfDimensions*i+j)+oldPositions(m_numberOfDimensions*i+j));
+            int l = m_numberOfDimensions*i+j;
+            double QForceOld = m_quantumForceOld(l);
+            double QForceNew = m_quantumForceNew(l);
+            GreenFunc += 0.5 * (QForceOld + QForceNew) * (0.5 * m_diff*m_stepLength*(QForceOld - QForceNew) - m_positions(l)+m_positionsOld(l));
         }
         GreenSum += exp(GreenFunc);
     }
@@ -45,22 +51,21 @@ bool ImportanceSampling::acceptMove() {
     double psiOld   = m_system->evaluateWaveFunctionSqrd();
     int pRand       = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 
-    Eigen::VectorXd QuantumForceOld = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        QuantumForceOld(i) = QuantumForce(i);
-    }
+    m_quantumForceOld = m_quantumForceNew;
+    m_positionsOld    = m_positions;
 
-    Eigen::VectorXd oldPositions = m_positions;
-    m_positions(pRand) += m_diff * QuantumForceOld(pRand) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
+    m_positions(pRand) += m_diff * m_quantumForceOld(pRand) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
+    m_quantumForceNew(pRand) = QuantumForce(pRand);
 
     m_system->updateAllArrays(m_positions, pRand);
     double psiNew = m_system->evaluateWaveFunctionSqrd();
 
-    double w = GreenFuncSum(oldPositions, QuantumForceOld) * (psiNew/psiOld);
+    double w = GreenFuncSum() * (psiNew/psiOld);
     double r = m_system->getRandomNumberGenerator()->nextDouble();
     if(w < r) {
         m_system->resetAllArrays();
-        m_positions = oldPositions;
+        m_positions       = m_positionsOld;
+        m_quantumForceNew = m_quantumForceOld;
         return false;
     }
     return true;
