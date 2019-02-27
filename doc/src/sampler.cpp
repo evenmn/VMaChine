@@ -22,7 +22,6 @@ Sampler::Sampler(System* system) {
     m_equilibriumFraction               = m_system->getEquilibrationFraction();
     m_totalNumberOfSteps                = m_system->getTotalNumberOfSteps();
     m_numberOfMetropolisSteps           = m_system->getNumberOfMetropolisSteps();
-    //m_numberOfStepsAfterEquilibrium     = int((1 - m_system->getEquilibrationFraction()) * m_numberOfMetropolisSteps);
 }
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber) {

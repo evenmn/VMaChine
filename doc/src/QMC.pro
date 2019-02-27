@@ -60,5 +60,6 @@ HEADERS += \
     RNG/rng.h \
     RNG/mersennetwister.h \
     RNG/parkmiller.h \
-    Optimization/gradientdescent.h
+    Optimization/gradientdescent.h \
+    Plotter/plotter.h
 

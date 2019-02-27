@@ -60,6 +60,10 @@ bool ImportanceSampling::acceptMove() {
     m_system->updateAllArrays(m_positions, pRand);
     double psiNew = m_system->evaluateWaveFunctionSqrd();
 
+    //std::cout << psiOld << std::endl;
+    //std::cout << psiNew << std::endl;
+    //std::cout << std::endl;
+
     double w = GreenFuncSum() * (psiNew/psiOld);
     double r = m_system->getRandomNumberGenerator()->nextDouble();
     if(w < r) {

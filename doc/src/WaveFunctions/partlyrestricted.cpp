@@ -44,11 +44,11 @@ double PartlyRestricted::evaluateSqrd() {
 }
 
 double PartlyRestricted::computeFirstDerivative(const int k) {
-    double Sum = 0;
+    double Sum = m_positions(k) * m_c(k,k);
     for(int j=k; j<m_numberOfFreeDimensions; j++) {
         Sum += m_positions(j) * m_c(k,j);
     }
-    return - Sum - m_positions(k) * m_c(k,k);
+    return - Sum / m_sigmaSqrd2;
 }
 
 double PartlyRestricted::computeSecondDerivative() {
@@ -58,7 +58,7 @@ double PartlyRestricted::computeSecondDerivative() {
 Eigen::VectorXd PartlyRestricted::computeFirstEnergyDerivative(const int k) {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
-    for(int j=0; j<m_numberOfFreeDimensions; j++) {
+    for(int j=k; j<m_numberOfFreeDimensions; j++) {
         if(j==k) {
             gradients(k * m_numberOfFreeDimensions + j) = m_positions(k);
         }

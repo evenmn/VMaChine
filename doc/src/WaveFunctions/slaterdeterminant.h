@@ -31,6 +31,7 @@ private:
     int m_numberOfParticlesHalf = 0;
 
     Eigen::VectorXd m_Xa;
+    Eigen::VectorXd m_XaOld;
     Eigen::VectorXd m_a;
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_oldPositions;
@@ -50,4 +51,6 @@ private:
     Eigen::MatrixXd m_D_dn_inv;
     Eigen::MatrixXd m_D_up_old_inv;
     Eigen::MatrixXd m_D_dn_old_inv;
+    Eigen::VectorXd m_diff;
+    Eigen::VectorXd m_diffOld;
 };
