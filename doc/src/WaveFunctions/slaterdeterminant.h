@@ -10,25 +10,24 @@ public:
     Eigen::MatrixXd updateMatrix(const Eigen::VectorXd positions, double basis(double, int));
     Eigen::VectorXd dA_row(const Eigen::VectorXd positions, const int k);
     Eigen::MatrixXd dA_matrix(const Eigen::VectorXd positions);
-    Eigen::VectorXd d2A_row(const Eigen::VectorXd positions, const int k);
-    Eigen::MatrixXd d2A_matrix(const Eigen::VectorXd positions);
 
-    void updateArrays(const Eigen::VectorXd positions, const int pRand);
-    void resetArrays();
-    void initializeArrays(const Eigen::VectorXd positions);
-    void updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
-    double evaluate();
-    double evaluateSqrd();
-    double computeFirstDerivative(const int k);
-    double computeSecondDerivative();
+    void            updateArrays(const Eigen::VectorXd positions, const int pRand);
+    void            resetArrays();
+    void            initializeArrays(const Eigen::VectorXd positions);
+    void            updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
+    double          evaluate();
+    double          evaluateSqrd();
+    double          computeFirstDerivative(const int k);
+    double          computeSecondDerivative();
     Eigen::VectorXd computeFirstEnergyDerivative(const int k);
     Eigen::VectorXd computeSecondEnergyDerivative();
 private:
-    int     m_elementNumber     = 2;
-    double  m_omega             = 0;
-    double  m_alpha             = 0;
-    int m_numberOfOrbitals      = 0;
-    int m_numberOfParticlesHalf = 0;
+    int     m_elementNumber         = 2;
+    double  m_omega                 = 0;
+    double  m_alpha                 = 0;
+    int     m_numberOfOrbitals      = 0;
+    int     m_numberOfParticlesHalf = 0;
+    int     m_freeDimensionsHalf    = 0;
 
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_oldPositions;
