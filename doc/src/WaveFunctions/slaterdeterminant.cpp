@@ -76,9 +76,9 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
     }
 
     if(particle < m_numberOfParticlesHalf) {
-        m_D_up.row(particle)    = updateRow(m_Xa.head(m_numberOfFreeDimensions/2), H, particle);
+        m_D_up.row(particle)    = updateRow(m_positions.head(m_numberOfFreeDimensions/2), H, particle);
         for(int i=0; i<m_numberOfDimensions; i++) {
-            m_dD_up.row(int(c(i)))   = dA_row(m_Xa.head(m_numberOfFreeDimensions/2), int(c(i)));
+            m_dD_up.row(int(c(i)))   = dA_row(m_positions.head(m_numberOfFreeDimensions/2), int(c(i)));
         }
         //m_d2D_up.row(particle)  = d2A_row(m_Xa.head(m_numberOfFreeDimensions/2), particle);
         //double R = 0;
@@ -90,9 +90,9 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
     }
     else {
         int particle2 = particle - m_numberOfParticlesHalf;
-        m_D_dn.row(particle2)   = updateRow(m_Xa.tail(m_numberOfFreeDimensions/2), H, particle2);
+        m_D_dn.row(particle2)   = updateRow(m_positions.tail(m_numberOfFreeDimensions/2), H, particle2);
         for(int i=0; i<m_numberOfDimensions; i++) {
-            m_dD_dn.row(int(c(i)-m_numberOfFreeDimensions/2))   = dA_row(m_Xa.tail(m_numberOfFreeDimensions/2), int(c(i)-m_numberOfFreeDimensions/2));
+            m_dD_dn.row(int(c(i)-m_numberOfFreeDimensions/2))   = dA_row(m_positions.tail(m_numberOfFreeDimensions/2), int(c(i)-m_numberOfFreeDimensions/2));
         }
         //m_d2D_dn.row(particle2) = d2A_row(m_Xa.tail(m_numberOfFreeDimensions/2), particle2);
         //double R = 0;
@@ -130,14 +130,14 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
     m_Xa        = positions - m_a;
 
-    m_D_up = updateMatrix(m_Xa.head(m_numberOfFreeDimensions/2), H);
-    m_D_dn = updateMatrix(m_Xa.tail(m_numberOfFreeDimensions/2), H);
+    m_D_up = updateMatrix(m_positions.head(m_numberOfFreeDimensions/2), H);
+    m_D_dn = updateMatrix(m_positions.tail(m_numberOfFreeDimensions/2), H);
 
     m_D_up_inv = m_D_up.inverse();
     m_D_dn_inv = m_D_dn.inverse();
 
-    m_dD_up = dA_matrix(m_Xa.head(m_numberOfFreeDimensions/2));
-    m_dD_dn = dA_matrix(m_Xa.tail(m_numberOfFreeDimensions/2));
+    m_dD_up = dA_matrix(m_positions.head(m_numberOfFreeDimensions/2));
+    m_dD_dn = dA_matrix(m_positions.tail(m_numberOfFreeDimensions/2));
 
     //m_d2D_up = d2A_matrix(m_positions.head(m_numberOfFreeDimensions/2));
     //m_d2D_dn = d2A_matrix(m_positions.tail(m_numberOfFreeDimensions/2));

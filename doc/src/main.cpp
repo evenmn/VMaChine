@@ -38,11 +38,11 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 12;
+    int     numberOfParticles   = 6;
     int     numberOfHiddenNodes = 6;
     int     numberOfSteps       = int(pow(2,16));
-    int     numberOfIterations  = 100;
-    double  eta                 = 0.005;          // Learning rate
+    int     numberOfIterations  = 500;
+    double  eta                 = 0.01;          // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length
@@ -68,12 +68,12 @@ int main(int argc, char *argv[]) {
 
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenOrbital      (system));
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class MLGaussian           (system));
-    WaveFunctionElements.push_back      (new class NQSJastrow           (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class MLGaussian           (system));
+    //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
