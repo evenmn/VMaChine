@@ -19,14 +19,14 @@ void MLGaussian::updateParameters(const Eigen::MatrixXd parameters, const int el
 
 void MLGaussian::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
-    m_Xa        = positions + Eigen::VectorXd::Ones(m_numberOfFreeDimensions) - m_a;
+    m_Xa        = positions - m_a;
 }
 
 void MLGaussian::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     m_oldPositions  = m_positions;
     m_positions     = positions;
     m_oldXa         = m_Xa;
-    m_Xa            = positions + Eigen::VectorXd::Ones(m_numberOfFreeDimensions) - m_a;
+    m_Xa            = positions - m_a;
 }
 
 void MLGaussian::resetArrays() {
@@ -43,7 +43,7 @@ double MLGaussian::evaluateSqrd() {
 }
 
 double MLGaussian::computeFirstDerivative(const int k) {
-    return - m_omega * (m_positions(k) - m_a(k))/m_sigmaSqrd;
+    return - m_omega * m_Xa(k)/m_sigmaSqrd;
 }
 
 double MLGaussian::computeSecondDerivative() {;

@@ -19,6 +19,7 @@ void System::runMetropolisSteps(const int numberOfIterations) {
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles("../data/");
+
     for (int iter = 0; iter < numberOfIterations; iter++) {
         clock_t start_time = clock();
         for (int i=0; i < m_totalNumberOfSteps; i++) {
@@ -213,5 +214,6 @@ double System::getKineticEnergy() {
         }
         KineticEnergy += NablaLnPsi * NablaLnPsi;
     }
+
     return -0.5 * KineticEnergy;
 }

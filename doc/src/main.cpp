@@ -38,11 +38,11 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 6;
-    int     numberOfHiddenNodes = 2;
-    int     numberOfSteps       = int(pow(2,18));
+    int     numberOfParticles   = 12;
+    int     numberOfHiddenNodes = 6;
+    int     numberOfSteps       = int(pow(2,16));
     int     numberOfIterations  = 100;
-    double  eta                 = 0.001;          // Learning rate
+    double  eta                 = 0.005;          // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length
@@ -78,11 +78,11 @@ int main(int argc, char *argv[]) {
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister(system));
-    system->setInitialWeights           (new Randomize(system, 1));
+    system->setInitialWeights           (new Constant(system, 0.1));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new GradientDescent(system, 0.1));
+    system->setOptimization             (new GradientDescent(system, 0));
     system->setGradients                ();
     system->runMetropolisSteps          (numberOfIterations);
 

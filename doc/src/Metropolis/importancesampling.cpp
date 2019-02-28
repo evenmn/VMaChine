@@ -28,6 +28,7 @@ double ImportanceSampling::QuantumForce(const int i) {
     double QF = 0;
     for(auto& j : m_waveFunctionVector) {
         QF += j->computeFirstDerivative(i);
+        //std::cout << j->computeFirstDerivative(i) << std::endl;
     }
     return 2*QF;
 }
@@ -54,18 +55,15 @@ bool ImportanceSampling::acceptMove() {
     m_quantumForceOld = m_quantumForceNew;
     m_positionsOld    = m_positions;
 
-    m_positions(pRand) += m_diff * m_quantumForceOld(pRand) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
+    m_positions(pRand) += m_diff * QuantumForce(pRand) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
     m_quantumForceNew(pRand) = QuantumForce(pRand);
 
     m_system->updateAllArrays(m_positions, pRand);
     double psiNew = m_system->evaluateWaveFunctionSqrd();
 
-    //std::cout << psiOld << std::endl;
-    //std::cout << psiNew << std::endl;
-    //std::cout << std::endl;
-
     double w = GreenFuncSum() * (psiNew/psiOld);
     double r = m_system->getRandomNumberGenerator()->nextDouble();
+
     if(w < r) {
         m_system->resetAllArrays();
         m_positions       = m_positionsOld;
