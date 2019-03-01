@@ -4,8 +4,8 @@
 #include <iostream>
 #include "../system.h"
 
-MersenneTwister::MersenneTwister(System* system)  :
-    RandomNumberGenerator(system) {
+MersenneTwister::MersenneTwister()  :
+    RandomNumberGenerator() {
 }
 
 //Mersenne Twister RNG

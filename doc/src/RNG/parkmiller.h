@@ -27,7 +27,7 @@
 
 class ParkMiller : public RandomNumberGenerator {
 public:
-    ParkMiller(class System* system);
+    ParkMiller();
     static long iy;
     static long iv[NTAB];
     static long seed;

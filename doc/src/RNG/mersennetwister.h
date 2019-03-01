@@ -3,7 +3,7 @@
 
 class MersenneTwister : public RandomNumberGenerator {
 public:
-    MersenneTwister(class System* system);
+    MersenneTwister();
     int    nextInt(int upperLimit);
     double nextDouble();
     double nextGaussian(double mean, double standardDeviation);

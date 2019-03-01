@@ -2,8 +2,8 @@
 #include "rng.h"
 #include <cmath>
 
-ParkMiller::ParkMiller(System* system)  :
-    RandomNumberGenerator(system) {
+ParkMiller::ParkMiller()  :
+    RandomNumberGenerator() {
 }
 
 long     ParkMiller::iy = 0;

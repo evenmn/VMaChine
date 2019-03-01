@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setBasis                    (new Hermite());
-    system->setRandomNumberGenerator    (new MersenneTwister(system));
+    system->setRandomNumberGenerator    (new MersenneTwister());
     system->setInitialWeights           (new Randomize(system, 0.8));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
