@@ -23,6 +23,7 @@ public:
     void setInteraction                 (const bool interaction);
     void setGradients                   ();
     void setHamiltonian                 (class Hamiltonian* hamiltonian);
+    void setBasis                       (class Basis* basis);
     void setInitialState                (class InitialState* initialState);
     void setInitialWeights              (class InitialWeights* initialWeights);
     void setMetropolis                  (class Metropolis* metropolis);
@@ -32,6 +33,7 @@ public:
 
     class WaveFunction*                 getWaveFunction()            { return m_waveFunction; }
     class Hamiltonian*                  getHamiltonian()             { return m_hamiltonian; }
+    class Basis*                        getBasis()                   { return m_basis; }
     class Sampler*                      getSampler()                 { return m_sampler; }
     class Optimization*                 getOptimization()            { return m_optimization; }
     class InitialWeights*               getInitialWeights()          { return m_initialWeights; }
@@ -85,6 +87,7 @@ private:
     double                              m_eta                       = 0.1;
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;
+    class Basis*                        m_basis                     = nullptr;
     class InitialState*                 m_initialState              = nullptr;
     class InitialWeights*               m_initialWeights            = nullptr;
     class Sampler*                      m_sampler                   = nullptr;

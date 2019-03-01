@@ -30,7 +30,9 @@ SOURCES += main.cpp \
     RNG/rng.cpp \
     RNG/mersennetwister.cpp \
     RNG/parkmiller.cpp \
-    Optimization/gradientdescent.cpp
+    Optimization/gradientdescent.cpp \
+    Basis/basis.cpp \
+    Basis/hermite.cpp
 
 HEADERS += \
     system.h \
@@ -61,5 +63,7 @@ HEADERS += \
     RNG/mersennetwister.h \
     RNG/parkmiller.h \
     Optimization/gradientdescent.h \
-    Plotter/plotter.h
+    Plotter/plotter.h \
+    Basis/basis.h \
+    Basis/hermite.h
 

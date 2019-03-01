@@ -2,6 +2,7 @@
 #include "sampler.h"
 #include "WaveFunctions/wavefunction.h"
 #include "Hamiltonians/hamiltonian.h"
+#include "Basis/basis.h"
 #include "InitialStates/initialstate.h"
 #include "InitialWeights/initialweights.h"
 #include "Metropolis/metropolis.h"
@@ -138,6 +139,10 @@ void System::setWidth(const double sigma) {
 
 void System::setHamiltonian(Hamiltonian* hamiltonian) {
     m_hamiltonian = hamiltonian;
+}
+
+void System::setBasis(Basis* basis) {
+    m_basis = basis;
 }
 
 void System::setWaveFunction(std::vector<class WaveFunction *> waveFunctionVector) {
