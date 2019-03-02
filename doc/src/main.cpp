@@ -3,7 +3,7 @@
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/gaussian.h"
 #include "WaveFunctions/mlgaussian.h"
-#include "WaveFunctions/hydrogenorbital.h"
+#include "WaveFunctions/hydrogenlike.h"
 #include "WaveFunctions/padejastrow.h"
 #include "WaveFunctions/nqsjastrow.h"
 #include "WaveFunctions/nqsjastrowreal.h"
@@ -41,11 +41,11 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
-    int     numberOfHiddenNodes = 2;
+    int     numberOfParticles   = 6;
+    int     numberOfHiddenNodes = 6;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 200;
-    double  eta                 = 0.05;         // Learning rate
+    int     numberOfIterations  = 20;
+    double  eta                 = 0.005;         // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     system->setNumberOfFreeDimensions   ();
 
     std::vector<class WaveFunction*> WaveFunctionElements;
-    //WaveFunctionElements.push_back      (new class HydrogenOrbital      (system));
+    //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
     WaveFunctionElements.push_back      (new class Gaussian             (system));
     //WaveFunctionElements.push_back      (new class MLGaussian           (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
     system->setWaveFunction             (WaveFunctionElements);
     system->setBasis                    (new Hermite());
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.8));
+    system->setInitialWeights           (new Randomize(system, 0.1));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     system->setGradients                ();
     system->runMetropolisSteps          (numberOfIterations);
 
-    plotEnergy(argc, argv);
+    //plotEnergy(argc, argv);
 
     return 0;
 }

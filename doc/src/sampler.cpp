@@ -36,6 +36,8 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber) {
     m_instantEnergy = m_system->getHamiltonian()->computeLocalEnergy();
     Eigen::MatrixXd gradients = m_system->getOptimization()->getAllImmediateGradients();
 
+    //std::cout << m_cumulativeEnergy << std::endl;
+
     m_cumulativeEnergy  += m_instantEnergy;
     m_dE                += gradients;
     m_dEE               += gradients * m_instantEnergy;

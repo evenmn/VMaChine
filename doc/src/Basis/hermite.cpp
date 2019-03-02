@@ -1,5 +1,6 @@
 #include "hermite.h"
 #include "../system.h"
+#include <iostream>
 
 Hermite::Hermite()  :
     Basis() {
@@ -7,6 +8,7 @@ Hermite::Hermite()  :
 
 double Hermite::evaluate(double x, int n) {
     //Hermite polynomial of n'th degree
+    //std::cout << n << std::endl;
     if(n == 0) {
         return 1;
     }

@@ -11,7 +11,6 @@ SOURCES += main.cpp \
     InitialStates/randomuniform.cpp \
     sampler.cpp \
     InitialStates/randomnormal.cpp \
-    WaveFunctions/hydrogenorbital.cpp \
     Hamiltonians/atomicnucleus.cpp \
     InitialWeights/initialweights.cpp \
     InitialWeights/randomize.cpp \
@@ -32,7 +31,9 @@ SOURCES += main.cpp \
     RNG/parkmiller.cpp \
     Optimization/gradientdescent.cpp \
     Basis/basis.cpp \
-    Basis/hermite.cpp
+    Basis/hermite.cpp \
+    Basis/hydrogenorbital.cpp \
+    WaveFunctions/hydrogenlike.cpp
 
 HEADERS += \
     system.h \
@@ -43,7 +44,6 @@ HEADERS += \
     InitialStates/randomuniform.h \
     sampler.h \
     InitialStates/randomnormal.h \
-    WaveFunctions/hydrogenorbital.h \
     Hamiltonians/atomicnucleus.h \
     InitialWeights/initialweights.h \
     InitialWeights/randomize.h \
@@ -65,5 +65,7 @@ HEADERS += \
     Optimization/gradientdescent.h \
     Plotter/plotter.h \
     Basis/basis.h \
-    Basis/hermite.h
+    Basis/hermite.h \
+    Basis/hydrogenorbital.h \
+    WaveFunctions/hydrogenlike.h
 

@@ -1,9 +1,9 @@
 #pragma once
 #include "wavefunction.h"
 
-class HydrogenOrbital : public WaveFunction {
+class HydrogenLike : public WaveFunction {
 public:
-    HydrogenOrbital(class System* system);
+    HydrogenLike(class System* system);
     void updateArrays(const Eigen::VectorXd positions, const int pRand);
     void resetArrays();
     void initializeArrays(const Eigen::VectorXd positions);

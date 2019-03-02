@@ -100,6 +100,8 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     m_dD_up = dA_matrix(m_positions.head(m_numberOfFreeDimensions/2));
     m_dD_dn = dA_matrix(m_positions.tail(m_numberOfFreeDimensions/2));
 
+    //std::cout << m_dD_up << std::endl;
+
     m_diff  = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     for(int i=0; i<m_numberOfFreeDimensions/2; i++) {
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
@@ -107,6 +109,8 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
             m_diff(i+m_numberOfFreeDimensions/2) += m_dD_dn(i,j) * m_D_dn_inv(j,int(i/2));
         }
     }
+    //std::cout << m_diff.transpose() << std::endl;
+    //std::cout << std::endl;
 }
 
 void SlaterDeterminant::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
@@ -193,6 +197,7 @@ double SlaterDeterminant::updateElement(const Eigen::VectorXd positions, const i
 
     double element = 1;
     for(int k=0; k<m_numberOfDimensions; k++) {
+        //std::cout << int(order(j,k)) << std::endl;
         element *= m_system->getBasis()->evaluate(sqrt(m_omega) * positions(m_numberOfDimensions*i+k), int(order(j,k)));
     }
 
