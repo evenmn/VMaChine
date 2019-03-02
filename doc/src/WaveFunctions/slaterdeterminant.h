@@ -30,6 +30,7 @@ private:
     int     m_freeDimensionsHalf    = 0;
 
     Eigen::VectorXd m_positions;
+    Eigen::MatrixXd m_order;
     Eigen::VectorXd m_oldPositions;
     Eigen::MatrixXd m_D_up;
     Eigen::MatrixXd m_D_dn;
