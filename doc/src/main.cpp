@@ -41,11 +41,11 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 6;
-    int     numberOfHiddenNodes = 6;
+    int     numberOfParticles   = 12;
+    int     numberOfHiddenNodes = 12;
     int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 10;
-    double  eta                 = 0.01;         // Learning rate
+    double  eta                 = 0.001;         // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length

@@ -34,7 +34,6 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
             int k = m_numberOfDimensions * particle + i;
             m_dD_up.row(k)   = dA_row(m_positions.head(m_freeDimensionsHalf), k);
         }
-        /*
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
             R += m_D_up(particle, j) * m_D_up_old_inv(j, particle);
@@ -44,14 +43,11 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
             for(int l=0; l<m_numberOfParticlesHalf; l++) {
                 S += m_D_up(particle, l) * m_D_up_inv(l,j);
             }
-            m_D_up_inv.col(j) -= S * m_D_up_inv.col(particle) / R;
+            if(j != particle) {
+                m_D_up_inv.col(j) -= S * m_D_up_inv.col(particle) / R;
+            }
         }
         m_D_up_inv.col(particle) /= R;
-        */
-        m_D_up_inv = m_D_up.inverse();
-        //std::cout << m_D_up_inv << std::endl;
-        //std::cout << m_D_up.inverse() << std::endl;
-        //std::cout << std::endl;
         for(int i=0; i<m_freeDimensionsHalf; i++) {
             m_diff(i) = 0;
             for(int j=0; j<m_numberOfParticlesHalf; j++) {
@@ -69,14 +65,20 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
             int k = m_numberOfDimensions * particle2 + i;
             m_dD_dn.row(k)   = dA_row(m_positions.tail(m_freeDimensionsHalf), k);
         }
-        //double R = 0;
-        //for(int j=0; j<m_numberOfParticlesHalf; j++) {
-        //    R += m_D_dn(particle2, j) * m_D_dn_old_inv(j, particle2);
-        //}
-        //m_D_dn_inv.col(particle2) /= R;
-        m_D_dn_inv = m_D_dn.inverse();
-        //std::cout << m_D_dn_inv << std::endl;
-        //std::cout << std::endl;
+        double R = 0;
+        for(int j=0; j<m_numberOfParticlesHalf; j++) {
+            R += m_D_dn(particle2, j) * m_D_dn_old_inv(j, particle2);
+        }
+        for(int j=0; j<m_numberOfParticlesHalf; j++) {
+            double S = 0;
+            for(int l=0; l<m_numberOfParticlesHalf; l++) {
+                S += m_D_dn(particle2, l) * m_D_dn_inv(l,j);
+            }
+            if(j != particle2) {
+                m_D_dn_inv.col(j) -= S * m_D_dn_inv.col(particle2) / R;
+            }
+        }
+        m_D_dn_inv.col(particle2) /= R;
         for(int i=m_freeDimensionsHalf; i<m_numberOfFreeDimensions; i++) {
             m_diff(i) = 0;
             int k = i-m_freeDimensionsHalf;
