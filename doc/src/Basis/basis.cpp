@@ -1,6 +1,6 @@
 #include "basis.h"
 
-Basis::Basis() {
+Basis::Basis(System *system) {
 }
 
 Basis::~Basis() {};

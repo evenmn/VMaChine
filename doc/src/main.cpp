@@ -16,6 +16,7 @@
 
 #include "Basis/basis.h"
 #include "Basis/hermite.h"
+#include "Basis/hydrogenorbital.h"
 
 #include "InitialStates/initialstate.h"
 #include "InitialStates/randomuniform.h"
@@ -41,11 +42,11 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 12;
-    int     numberOfHiddenNodes = 12;
-    int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 10;
-    double  eta                 = 0.001;         // Learning rate
+    int     numberOfParticles   = 2;
+    int     numberOfHiddenNodes = 2;
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 100;
+    double  eta                 = 0.05;         // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length
@@ -66,27 +67,26 @@ int main(int argc, char *argv[]) {
     system->setNumberOfMetropolisSteps  (numberOfSteps);
     system->setMaxNumberOfParametersPerElement (maxNumberOfParametersPerElement);
     system->setTotalNumberOfSteps       ();
-    system->setNumberOfOrbitals         ();
     system->setNumberOfFreeDimensions   ();
 
+    system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
     WaveFunctionElements.push_back      (new class Gaussian             (system));
     //WaveFunctionElements.push_back      (new class MLGaussian           (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
-    system->setBasis                    (new Hermite());
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.4));
+    system->setInitialWeights           (new Randomize(system, 0.1));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new GradientDescent(system, 0.1));
+    system->setOptimization             (new GradientDescent(system, 0.0));
     system->setGradients                ();
     system->runMetropolisSteps          (numberOfIterations);
 

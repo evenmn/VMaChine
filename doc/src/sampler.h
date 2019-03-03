@@ -6,6 +6,7 @@ class Sampler {
 public:
     Sampler(class System* system);
     void sample(const bool acceptedStep, const int stepNumber);
+    std::string generateFileName(const std::string name, const std::string extension);
     void printOutputToTerminal(int iter, const int maxIter, const double time);
     void openOutputFiles(const std::string path);
     void printOutputToFile();

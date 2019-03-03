@@ -9,7 +9,7 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
     m_freeDimensionsHalf                = m_numberOfFreeDimensions/2;
     m_numberOfParticles                 = m_system->getNumberOfParticles();
-    m_numberOfOrbitals                  = m_system->getNumberOfOrbitals();
+    m_numberOfOrbitals                  = m_system->getBasis()->getNumberOfOrbitals();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfParticlesHalf             = m_numberOfParticles/2;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();

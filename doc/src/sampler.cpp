@@ -67,8 +67,12 @@ void Sampler::printOutputToTerminal(const int iter, const int maxIter, const dou
     cout << endl;
 }
 
-std::string generateFileName(const std::string name, const std::string extension) {
-    return name + extension;
+std::string Sampler::generateFileName(const std::string name, const std::string extension) {
+    std::string filename = name;
+    filename += "_P" + std::to_string(m_numberOfParticles);
+    filename += "_D" + std::to_string(m_numberOfDimensions);
+    filename += "_MC" + std::to_string(m_numberOfMetropolisSteps);
+    return filename + extension;
 }
 
 void Sampler::openOutputFiles(const std::string path) {
