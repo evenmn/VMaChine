@@ -77,16 +77,16 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    std::string energyFileName = generateFileName("energy_12P", ".dat");
+    std::string energyFileName = generateFileName("energy_PJ", ".dat");
     m_energyFile.open(path + energyFileName);
 
     // Print cumulative energies to file
-    std::string cumulativeFileName = generateFileName("cumulative_12P", ".dat");
+    std::string cumulativeFileName = generateFileName("cumulative_PJ", ".dat");
     m_cumulativeFile.open(path + cumulativeFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName("OB_12P", ".dat");
+        std::string oneBodyFileName = generateFileName("onebody_PJ", ".dat");
         m_oneBodyFile.open (path + oneBodyFileName);
     }
 }

@@ -8,4 +8,12 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 
-int plotEnergy(int argc, char *argv[]);
+class Plotter {
+public:
+    Plotter(class System* system);
+    int plotEnergy(int argc, char *argv[]);
+    int plotOneBodyDensity(int argc, char *argv[]);
+    ~Plotter();
+protected:
+    class System* m_system = nullptr;
+};

@@ -144,17 +144,11 @@ Eigen::VectorXd PadeJastrow::computeFirstEnergyDerivative(const int k) {
     int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
     int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
-    //Update beta matrix
+    double derivative = 0;
     for(int j_p=0; j_p<k_p; j_p++) {
         int j = j_p * m_numberOfDimensions + k_d;
         int l = m_numberOfDimensions * k_p + j_p + 1;
         gradients(l) = - 0.5 * m_f(k_p, j_p) * m_f(k_p, j_p) * m_g(k,j);
-    }
-
-    //Update gamma
-    double derivative = 0;
-    for(int j_p=0; j_p<k_p; j_p++) {
-        int j = j_p * m_numberOfDimensions + k_d;
         derivative += m_beta(k_p,j_p) * m_f(k_p, j_p) * m_f(k_p, j_p) * m_f(k_p, j_p) * (m_positions(k) - m_positions(j));
     }
     gradients(0) = derivative;
@@ -164,7 +158,7 @@ Eigen::VectorXd PadeJastrow::computeFirstEnergyDerivative(const int k) {
 Eigen::VectorXd PadeJastrow::computeSecondEnergyDerivative() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
-    //Update Beta matrix
+    double derivative = 0;
     for(int i=0; i < m_numberOfFreeDimensions; i++) {
         int i_p = int(i/m_numberOfDimensions);  //Particle associated with k
         int i_d = i%m_numberOfDimensions;       //Dimension associated with k
@@ -173,17 +167,6 @@ Eigen::VectorXd PadeJastrow::computeSecondEnergyDerivative() {
             double G = m_g(i,j);
             int l = m_numberOfParticles * i_p + j_p + 1;      // Stack Beta matrix
             gradients(l) = 0.5 * m_f(i_p, j_p) * m_f(i_p, j_p) * (G * G * (1 + 3 * m_gamma * m_distanceMatrix(i_p,j_p)) * m_f(i_p, j_p) - 1) / m_distanceMatrix(i_p,j_p);
-        }
-    }
-
-    //Update gamma
-    double derivative = 0;
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        int i_p = int(i/m_numberOfDimensions);  //Particle associated with k
-        int i_d = i%m_numberOfDimensions;       //Dimension associated with k
-        for(int j_p=0; j_p<i_p; j_p++) {
-            int j = j_p * m_numberOfDimensions + i_d;
-            double G = m_g(i,j);
             derivative -= m_beta(i_p,j_p) * m_f(i_p, j_p) * m_f(i_p, j_p) * m_f(i_p, j_p) * (3 * G * G * m_f(i_p, j_p) * m_gamma * m_distanceMatrix(i_p,j_p) - 1);
         }
     }

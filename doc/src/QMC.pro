@@ -30,6 +30,7 @@ SOURCES += main.cpp \
     RNG/mersennetwister.cpp \
     RNG/parkmiller.cpp \
     Optimization/gradientdescent.cpp \
+    Plotter/plotter.cpp \
     Basis/basis.cpp \
     Basis/hermite.cpp \
     Basis/hydrogenorbital.cpp \
