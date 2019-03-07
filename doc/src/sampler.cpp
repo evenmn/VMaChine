@@ -36,8 +36,6 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber) {
     m_instantEnergy = m_system->getHamiltonian()->computeLocalEnergy();
     Eigen::MatrixXd gradients = m_system->getOptimization()->getAllImmediateGradients();
 
-    //std::cout << m_cumulativeEnergy << std::endl;
-
     m_cumulativeEnergy  += m_instantEnergy;
     m_dE                += gradients;
     m_dEE               += gradients * m_instantEnergy;
@@ -77,16 +75,16 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    std::string energyFileName = generateFileName("energy_PJ", ".dat");
+    std::string energyFileName = generateFileName("energy_NQS", ".dat");
     m_energyFile.open(path + energyFileName);
 
     // Print cumulative energies to file
-    std::string cumulativeFileName = generateFileName("cumulative_PJ", ".dat");
+    std::string cumulativeFileName = generateFileName("cumulative_NQS", ".dat");
     m_cumulativeFile.open(path + cumulativeFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName("onebody_PJ", ".dat");
+        std::string oneBodyFileName = generateFileName("onebody_NQS", ".dat");
         m_oneBodyFile.open (path + oneBodyFileName);
     }
 }

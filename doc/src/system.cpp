@@ -38,6 +38,7 @@ void System::runMetropolisSteps(const int numberOfIterations) {
         m_sampler->printOutputToTerminal(iter, numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
         m_sampler->printOutputToFile();
         m_parameters -= m_optimization->updateParameters();
+        std::cout << m_parameters << std::endl;
         updateAllParameters(m_parameters);
     }
     m_sampler->closeOutputFiles();
