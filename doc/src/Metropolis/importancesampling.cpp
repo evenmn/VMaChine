@@ -28,7 +28,6 @@ double ImportanceSampling::QuantumForce(const int i) {
     double QF = 0;
     for(auto& j : m_waveFunctionVector) {
         QF += j->computeFirstDerivative(i);
-        //std::cout << j->computeFirstDerivative(i) << std::endl;
     }
     return 2*QF;
 }
@@ -55,9 +54,8 @@ bool ImportanceSampling::acceptMove() {
     m_positionsOld    = m_positions;
 
     m_positions(pRand) += m_diff * QuantumForce(pRand) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
-    m_quantumForceNew(pRand) = QuantumForce(pRand);
-
     m_system->updateAllArrays(m_positions, pRand);
+    m_quantumForceNew(pRand) = QuantumForce(pRand);
 
     double ratio = m_system->evaluateWaveFunctionRatio();
     double w = GreenFuncSum() * ratio;

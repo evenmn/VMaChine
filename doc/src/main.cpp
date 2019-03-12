@@ -71,17 +71,25 @@ int main(int argc, char *argv[]) {
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class MLGaussian           (system));
-    WaveFunctionElements.push_back      (new class NQSJastrow           (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class MLGaussian           (system));
+    //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+<<<<<<< HEAD
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+=======
+    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+>>>>>>> 9e3b8bf797f94d616c565dd65b00baa950ee68ca
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
+<<<<<<< HEAD
     system->setInitialWeights           (new Randomize(system, 0.8));
+=======
+    system->setInitialWeights           (new Constant(system, 1));
+>>>>>>> 9e3b8bf797f94d616c565dd65b00baa950ee68ca
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
