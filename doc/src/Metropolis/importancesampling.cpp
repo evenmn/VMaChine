@@ -49,7 +49,6 @@ double ImportanceSampling::GreenFuncSum() {
 }
 
 bool ImportanceSampling::acceptMove() {
-    double psiOld   = m_system->evaluateWaveFunctionSqrd();
     int pRand       = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 
     m_quantumForceOld = m_quantumForceNew;
@@ -59,9 +58,9 @@ bool ImportanceSampling::acceptMove() {
     m_quantumForceNew(pRand) = QuantumForce(pRand);
 
     m_system->updateAllArrays(m_positions, pRand);
-    double psiNew = m_system->evaluateWaveFunctionSqrd();
 
-    double w = GreenFuncSum() * (psiNew/psiOld);
+    double ratio = m_system->evaluateWaveFunctionRatio();
+    double w = GreenFuncSum() * ratio;
     double r = m_system->getRandomNumberGenerator()->nextDouble();
 
     if(w < r) {

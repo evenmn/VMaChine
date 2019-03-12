@@ -75,16 +75,16 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    std::string energyFileName = generateFileName("energy_NQS", ".dat");
+    std::string energyFileName = generateFileName("energy", ".dat");
     m_energyFile.open(path + energyFileName);
 
     // Print cumulative energies to file
-    std::string cumulativeFileName = generateFileName("cumulative_NQS", ".dat");
+    std::string cumulativeFileName = generateFileName("cumulative", ".dat");
     m_cumulativeFile.open(path + cumulativeFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName("onebody_NQS", ".dat");
+        std::string oneBodyFileName = generateFileName("onebody", ".dat");
         m_oneBodyFile.open (path + oneBodyFileName);
     }
 }

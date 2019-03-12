@@ -56,14 +56,17 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
             m_g(i,j) = (m_positions(i) - m_positions(j))/m_distanceMatrix(int(i/m_numberOfDimensions),int(j/m_numberOfDimensions));
         }
     }
+    m_ratio = 1;
 }
 
 void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) {
+    int particle = int(pRand/m_numberOfDimensions);
+
     m_oldPositions = m_positions;
     m_positions = positions;
 
     m_oldDistanceMatrix = m_distanceMatrix;
-    calculateDistanceMatrixCross(int(pRand/m_numberOfDimensions), positions, m_distanceMatrix);
+    calculateDistanceMatrixCross(particle, positions, m_distanceMatrix);
 
     m_oldF  = m_f;
     m_f     = (Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticles) + m_gamma * m_distanceMatrix).cwiseInverse();
@@ -74,11 +77,19 @@ void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand)
             m_g(i,j) = (m_positions(i) - m_positions(j))/m_distanceMatrix(int(i/m_numberOfDimensions),int(j/m_numberOfDimensions));
         }
     }
+
+    m_oldRatio = m_ratio;
+    double ratio = 0;
+    for(int i=particle; i<m_numberOfParticles; i++) {
+        ratio += m_beta(particle, i) * (m_distanceMatrix(particle, i) * m_f(particle, i) - m_oldDistanceMatrix(particle, i) * m_oldF(particle, i));
+    }
+    m_ratio = exp(ratio);
 }
 
 void PadeJastrow::resetArrays() {
-    m_positions = m_oldPositions;
+    m_positions      = m_oldPositions;
     m_distanceMatrix = m_oldDistanceMatrix;
+    m_ratio          = m_oldRatio;
 }
 
 void PadeJastrow::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
@@ -89,26 +100,8 @@ void PadeJastrow::updateParameters(const Eigen::MatrixXd parameters, const int e
     m_gamma = parameters(m_elementNumber, 0);
 }
 
-double PadeJastrow::evaluate() {
-    double PadeJastrowFactor = 0;
-    for(int i=0; i<m_numberOfParticles; i++) {
-        for(int j=0; j<i; j++) {
-            double f = 1/(1 + m_gamma * m_distanceMatrix(i,j));
-            PadeJastrowFactor += m_beta(i,j) * f * m_distanceMatrix(i,j);
-        }
-    }
-    return exp(PadeJastrowFactor);
-}
-
-double PadeJastrow::evaluateSqrd() {
-    double PadeJastrowFactor = 0;
-    for(int i=0; i<m_numberOfParticles; i++) {
-        for(int j=0; j<i; j++) {
-            double f = 1/(1 + m_gamma * m_distanceMatrix(i,j));
-            PadeJastrowFactor += m_beta(i,j) * f * m_distanceMatrix(i,j);
-        }
-    }
-    return exp(2 * PadeJastrowFactor);
+double PadeJastrow::evaluateRatio() {
+    return m_ratio;
 }
 
 double PadeJastrow::computeFirstDerivative(const int k) {

@@ -64,6 +64,7 @@ public:
     void            updateAllParameters      (const Eigen::MatrixXd parameters);
     double          evaluateWaveFunction     ();
     double          evaluateWaveFunctionSqrd ();
+    double          evaluateWaveFunctionRatio();
     double          getKineticEnergy         ();
     std::string     generate_filename        (std::string name, const std::string extension);
 

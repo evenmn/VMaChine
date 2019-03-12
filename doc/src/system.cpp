@@ -38,7 +38,7 @@ void System::runMetropolisSteps(const int numberOfIterations) {
         m_sampler->printOutputToTerminal(iter, numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
         m_sampler->printOutputToFile();
         m_parameters -= m_optimization->updateParameters();
-        std::cout << m_parameters << std::endl;
+        //std::cout << m_parameters << std::endl;
         updateAllParameters(m_parameters);
     }
     m_sampler->closeOutputFiles();
@@ -162,20 +162,12 @@ void System::updateAllParameters(const Eigen::MatrixXd parameters) {
     }
 }
 
-double System::evaluateWaveFunction() {
-    double WF = 1;
+double System::evaluateWaveFunctionRatio() {
+    double ratio = 1;
     for(auto& i : m_waveFunctionVector) {
-        WF *= i->evaluate();
+        ratio *= i->evaluateRatio();
     }
-    return WF;
-}
-
-double System::evaluateWaveFunctionSqrd() {
-    double WF = 1;
-    for(auto& i : m_waveFunctionVector) {
-        WF *= i->evaluateSqrd();
-    }
-    return WF;
+    return ratio;
 }
 
 double System::getKineticEnergy() {

@@ -41,11 +41,11 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 6;
-    int     numberOfHiddenNodes = 6;
+    int     numberOfParticles   = 2;
+    int     numberOfHiddenNodes = 2;
     int     numberOfSteps       = int(pow(2,20));
     int     numberOfIterations  = 100;
-    double  eta                 = 0.01;         // Learning rate
+    double  eta                 = 0.05;         // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length
@@ -75,13 +75,13 @@ int main(int argc, char *argv[]) {
     WaveFunctionElements.push_back      (new class MLGaussian           (system));
     WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.6));
+    system->setInitialWeights           (new Randomize(system, 0.8));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));

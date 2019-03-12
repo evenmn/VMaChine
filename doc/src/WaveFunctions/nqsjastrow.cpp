@@ -26,6 +26,13 @@ void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) 
         m_n(i) = 1/(1 + exp(-m_v(i)));
         m_p(i) = 1/(1 + exp(+m_v(i)));
     }
+
+    m_oldRatio = m_ratio;
+    double Prod = 1;
+    for(int j=0; j<m_numberOfHiddenNodes; j++) {
+        Prod *= (1 + exp(-m_v(j))) / (exp(-m_v(j)) + exp((m_oldPositions(pRand) - m_positions(pRand)) * m_W(pRand,j) / m_sigmaSqrd));
+    }
+    m_ratio = Prod * Prod;
 }
 
 void NQSJastrow::resetArrays() {
@@ -33,6 +40,7 @@ void NQSJastrow::resetArrays() {
     m_v         = m_oldV;
     m_n         = m_oldN;
     m_p         = m_oldP;
+    m_ratio     = m_oldRatio;
 }
 
 void NQSJastrow::initializeArrays(const Eigen::VectorXd positions) {
@@ -45,6 +53,8 @@ void NQSJastrow::initializeArrays(const Eigen::VectorXd positions) {
         m_n(i) = 1/(1 + exp(-m_v(i)));
         m_p(i) = 1/(1 + exp(+m_v(i)));
     }
+
+    m_ratio = 1;
 }
 
 void NQSJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
@@ -60,17 +70,8 @@ int fromWToParameterIndex(int i, int j, int numberOfFreeDimensions) {
     return j*numberOfFreeDimensions + i;
 }
 
-double NQSJastrow::evaluate() {
-    double Prod = 1;
-    for(int j=0; j<m_numberOfHiddenNodes; j++) {
-        Prod *= 1 + exp(m_v(j));
-    }
-    return Prod;
-}
-
-double NQSJastrow::evaluateSqrd() {
-    double WF = evaluate();
-    return WF * WF;
+double NQSJastrow::evaluateRatio() {
+    return m_ratio;
 }
 
 double NQSJastrow::computeFirstDerivative(const int k) {

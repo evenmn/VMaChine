@@ -14,18 +14,16 @@ BruteForce::BruteForce(System* system) :
 }
 
 bool BruteForce::acceptMove() {
-    double psiOld       = m_system->evaluateWaveFunctionSqrd();
     int pRand = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 
     m_positionsOld      = m_positions;
     m_positions(pRand) = m_positionsOld(pRand) + 10 * (m_system->getRandomNumberGenerator()->nextDouble() - 0.5) * m_stepLength;
 
     m_system->updateAllArrays(m_positions, pRand);
-    double psiNew = m_system->evaluateWaveFunctionSqrd();
 
-    double w = psiNew/psiOld;
+    double ratio = m_system->evaluateWaveFunctionRatio();
     double r = m_system->getRandomNumberGenerator()->nextDouble();
-    if(w < r) {
+    if(ratio < r) {
         m_positions(pRand) = m_positionsOld(pRand);
         m_system->resetAllArrays();
         return false;

@@ -5,22 +5,26 @@
 
 Gaussian::Gaussian(System* system) :
         WaveFunction(system) {
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement = m_system->getMaxNumberOfParametersPerElement();
-    m_omega              = m_system->getFrequency();
+    m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_omega                             = m_system->getFrequency();
 }
 
 void Gaussian::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
+    m_ratio     = 1;
 }
 
 void Gaussian::updateArrays(const Eigen::VectorXd positions, const int pRand) {
-    m_oldPositions = m_positions;
-    m_positions = positions;
+    m_oldPositions  = m_positions;
+    m_positions     = positions;
+    m_oldRatio      = m_ratio;
+    m_ratio         = exp(m_omega * m_alpha * (m_oldPositions(pRand)*m_oldPositions(pRand) - m_positions(pRand)*m_positions(pRand)));
 }
 
 void Gaussian::resetArrays() {
     m_positions = m_oldPositions;
+    m_ratio     = m_oldRatio;
 }
 
 void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
@@ -28,12 +32,8 @@ void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elem
     m_alpha = parameters(m_elementNumber,0);
 }
 
-double Gaussian::evaluate() {
-    return exp(-0.5 * m_omega * m_alpha * (m_positions.cwiseAbs2()).sum());
-}
-
-double Gaussian::evaluateSqrd() {
-    return exp(- m_omega * m_alpha * (m_positions.cwiseAbs2()).sum());
+double Gaussian::evaluateRatio() {
+    return m_ratio;
 }
 
 double Gaussian::computeFirstDerivative(const int k) {

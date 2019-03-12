@@ -10,8 +10,7 @@ public:
     virtual void            resetArrays                     ()                                      = 0;
     virtual void            initializeArrays                (Eigen::VectorXd positions)             = 0;
     virtual void            updateParameters                (Eigen::MatrixXd parameters, const int elementNumber)            = 0;
-    virtual double          evaluate                        ()                                      = 0;
-    virtual double          evaluateSqrd                    ()                                      = 0;
+    virtual double          evaluateRatio                   ()                                      = 0;
     virtual double          computeFirstDerivative          (int k)                                 = 0;
     virtual double          computeSecondDerivative         ()                                      = 0;
     virtual Eigen::VectorXd computeFirstEnergyDerivative    (int k)                                 = 0;
