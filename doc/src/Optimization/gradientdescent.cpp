@@ -5,7 +5,7 @@
 #include "../sampler.h"
 #include "../WaveFunctions/wavefunction.h"
 
-GradientDescent::GradientDescent(System* system, const double gamma) :
+GradientDescent::GradientDescent(System* system, const double gamma, const double monotonicExp) :
         Optimization(system) {
     m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
     m_numberOfWaveFunctionElements    = m_system->getNumberOfWaveFunctionElements();
@@ -14,9 +14,10 @@ GradientDescent::GradientDescent(System* system, const double gamma) :
     m_eta                             = m_system->getLearningRate();
     m_v                               = Eigen::MatrixXd::Ones(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
     m_gamma                           = gamma;
+    m_monotonicExp                    = monotonicExp;
 }
 
-Eigen::VectorXd GradientDescent::getImmediateGradients(WaveFunction* waveFunction) {
+Eigen::VectorXd GradientDescent::getInstantGradients(WaveFunction* waveFunction) {
     Eigen::VectorXd TotalGradients = waveFunction->computeSecondEnergyDerivative();
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
         double Sum = 0;
@@ -28,23 +29,24 @@ Eigen::VectorXd GradientDescent::getImmediateGradients(WaveFunction* waveFunctio
     return TotalGradients;
 }
 
-Eigen::MatrixXd GradientDescent::getAllImmediateGradients() {
+Eigen::MatrixXd GradientDescent::getAllInstantGradients() {
     Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
     for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) += getImmediateGradients(m_waveFunctionVector[unsigned(i)]);
+        gradients.row(i) += getInstantGradients(m_waveFunctionVector[unsigned(i)]);
     }
     return gradients;
 }
 
 Eigen::MatrixXd GradientDescent::getEnergyGradient() {
-    double E            = m_system->getSampler()->getEnergy();
-    Eigen::MatrixXd dE  = m_system->getSampler()->getdE();
-    Eigen::MatrixXd dEE = m_system->getSampler()->getdEE();
-    return 2 * (dEE - E * dE)/ m_system->getTotalNumberOfSteps();
+    double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
+    Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();
+    Eigen::MatrixXd averageGradientsE = m_system->getSampler()->getAverageGradientsE();
+    return 2 * (averageGradientsE - averageEnergy * averageGradients);
 }
 
 Eigen::MatrixXd GradientDescent::updateParameters() {
     m_step += 1;
-    m_v = m_gamma * m_v + m_eta * getEnergyGradient()/ sqrt(m_step);
+    double monotonic = 1/pow(m_step, m_monotonicExp);
+    m_v = m_gamma * m_v + m_eta * getEnergyGradient() * monotonic;
     return m_v;
 }

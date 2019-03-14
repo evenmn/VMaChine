@@ -18,7 +18,7 @@ BarzilaiBorwein::BarzilaiBorwein(System* system) :
     m_oldParameters                   = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }
 
-Eigen::VectorXd BarzilaiBorwein::getImmediateGradients(WaveFunction* waveFunction) {
+Eigen::VectorXd BarzilaiBorwein::getInstantGradients(WaveFunction* waveFunction) {
     Eigen::VectorXd TotalGradients = waveFunction->computeSecondEnergyDerivative();
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
         double Sum = 0;
@@ -30,19 +30,19 @@ Eigen::VectorXd BarzilaiBorwein::getImmediateGradients(WaveFunction* waveFunctio
     return TotalGradients;
 }
 
-Eigen::MatrixXd BarzilaiBorwein::getAllImmediateGradients() {
+Eigen::MatrixXd BarzilaiBorwein::getAllInstantGradients() {
     Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
     for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) += getImmediateGradients(m_waveFunctionVector[unsigned(i)]);
+        gradients.row(i) += getInstantGradients(m_waveFunctionVector[unsigned(i)]);
     }
     return gradients;
 }
 
 Eigen::MatrixXd BarzilaiBorwein::getEnergyGradient() {
-    double E            = m_system->getSampler()->getEnergy();
-    Eigen::MatrixXd dE  = m_system->getSampler()->getdE();
-    Eigen::MatrixXd dEE = m_system->getSampler()->getdEE();
-    return 2 * (dEE - E * dE)/ int((1 - m_system->getEquilibrationFraction()) * m_system->getNumberOfMetropolisSteps());
+    double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
+    Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();
+    Eigen::MatrixXd averageGradientsE = m_system->getSampler()->getAverageGradientsE();
+    return 2 * (averageGradientsE - averageEnergy * averageGradients);
 }
 
 Eigen::MatrixXd BarzilaiBorwein::updateParameters() {

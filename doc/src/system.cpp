@@ -29,13 +29,13 @@ void System::runMetropolisSteps(const int numberOfIterations) {
             if(i >= (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
                 m_sampler->sample(acceptedStep, i);
                 if(iter == numberOfIterations-1) {
-                    m_sampler->printImmediatelyToFile(m_positions);
+                    m_sampler->printInstantValuesToFile(m_positions);
                 }
             }
         }
         clock_t end_time = clock();
         m_sampler->computeAverages();
-        m_sampler->printOutputToTerminal(iter, numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
+        m_sampler->printOutputToTerminal(numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
         m_sampler->printOutputToFile();
         m_parameters -= m_optimization->updateParameters();
         //std::cout << m_parameters << std::endl;

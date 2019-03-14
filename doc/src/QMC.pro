@@ -34,7 +34,10 @@ SOURCES += main.cpp \
     Basis/basis.cpp \
     Basis/hermite.cpp \
     Basis/hydrogenorbital.cpp \
-    WaveFunctions/hydrogenlike.cpp
+    WaveFunctions/hydrogenlike.cpp \
+    Optimization/sgd.cpp \
+    Optimization/asgd.cpp \
+    Optimization/adam.cpp
 
 HEADERS += \
     system.h \
@@ -68,5 +71,8 @@ HEADERS += \
     Basis/basis.h \
     Basis/hermite.h \
     Basis/hydrogenorbital.h \
-    WaveFunctions/hydrogenlike.h
+    WaveFunctions/hydrogenlike.h \
+    Optimization/sgd.h \
+    Optimization/asgd.h \
+    Optimization/adam.h
 

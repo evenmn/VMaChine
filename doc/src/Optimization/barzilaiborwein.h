@@ -5,12 +5,15 @@
 class BarzilaiBorwein : public Optimization {
 public:
     BarzilaiBorwein(System* system);
-    Eigen::VectorXd getImmediateGradients(WaveFunction* waveFunction);
-    Eigen::MatrixXd getAllImmediateGradients();
+    int             getNumberOfBatches() { return m_numberOfBatches; }
+    Eigen::VectorXd getInstantGradients(WaveFunction* waveFunction);
+    Eigen::MatrixXd getAllInstantGradients();
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();
 
 private:
+    int    m_step = 0;
+    int    m_numberOfBatches = 1;
     double m_omega = 0;
     double m_omega_sqrd = 0;
     Eigen::MatrixXd m_oldParameters;

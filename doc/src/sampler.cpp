@@ -22,42 +22,50 @@ Sampler::Sampler(System* system) {
     m_equilibriumFraction               = m_system->getEquilibrationFraction();
     m_totalNumberOfSteps                = m_system->getTotalNumberOfSteps();
     m_numberOfMetropolisSteps           = m_system->getNumberOfMetropolisSteps();
+    m_omega                             = m_system->getFrequency();
+    m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
+    m_numberOfStepsPerBatch             = int(m_numberOfMetropolisSteps/m_numberOfBatches);
 }
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber) {
     if (stepNumber == (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
-        m_acceptenceRatio  = 0;
-        m_cumulativeEnergy = 0;
-        m_dE    = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
-        m_dEE   = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
-        m_SqrdE = 0;
+        m_acceptenceRatio           = 0;
+        m_cumulativeEnergy          = 0;
+        m_cumulativeEnergySqrd      = 0;
+        m_cumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
+        m_cumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
     }
-
-    m_instantEnergy = m_system->getHamiltonian()->computeLocalEnergy();
-    Eigen::MatrixXd gradients = m_system->getOptimization()->getAllImmediateGradients();
-
-    m_cumulativeEnergy  += m_instantEnergy;
-    m_dE                += gradients;
-    m_dEE               += gradients * m_instantEnergy;
-    m_SqrdE             += m_instantEnergy * m_instantEnergy;
-
+    m_instantEnergy    = m_system->getHamiltonian()->computeLocalEnergy();
+    m_instantGradients = m_system->getOptimization()->getAllInstantGradients();
+    m_cumulativeEnergy      += m_instantEnergy;
+    m_cumulativeEnergySqrd  += m_instantEnergy * m_instantEnergy;
+    if(stepNumber > (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches)) && stepNumber < (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches + 1))) {
+        m_cumulativeGradients       += m_instantGradients;
+        m_cumulativeGradientsE      += m_instantGradients * m_instantEnergy;
+    }
     if(acceptedStep) { m_acceptenceRatio += 1; }
 }
 
 void Sampler::computeAverages() {
-    m_energy   = m_cumulativeEnergy / m_numberOfMetropolisSteps;
-    m_variance = m_SqrdE / m_numberOfMetropolisSteps - m_energy * m_energy;
+    m_averageEnergy         = m_cumulativeEnergy / m_numberOfMetropolisSteps;
+    m_averageEnergySqrd     = m_cumulativeEnergySqrd / m_numberOfMetropolisSteps;
+    m_averageGradients      = m_cumulativeGradients / m_numberOfStepsPerBatch;
+    m_averageGradientsE     = m_cumulativeGradientsE / m_numberOfStepsPerBatch;
+    m_variance              = m_averageEnergySqrd - m_averageEnergy * m_averageEnergy;
 }
 
-void Sampler::printOutputToTerminal(const int iter, const int maxIter, const double time) {
+void Sampler::printOutputToTerminal(const int maxIter, const double time) {
+    m_iter += 1;
     cout << endl;
-    cout << "  -- System info: " << iter+1 << "/" << maxIter << " -- " << endl;
+    cout << "  -- System info: " << m_iter << "/" << maxIter << " -- " << endl;
     cout << " Number of particles  : " << m_system->getNumberOfParticles()  << endl;
     cout << " Number of dimensions : " << m_system->getNumberOfDimensions() << endl;
-    cout << " Number of Metropolis steps run : " << m_totalNumberOfSteps << " (" << m_numberOfMetropolisSteps << " equilibrium)" << endl;
+    cout << " Oscillator frequency : " << m_omega << endl;
+    cout << " # Metropolis steps   : " << m_totalNumberOfSteps << " (" << m_numberOfMetropolisSteps << " equilibrium)" << endl;
+    cout << " Data files stored as : " << m_filename << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
-    cout << " Energy           : " << m_energy << endl;
+    cout << " Energy           : " << m_averageEnergy << endl;
     cout << " Acceptence Ratio : " << double(m_acceptenceRatio)/m_numberOfMetropolisSteps << endl;
     cout << " Variance         : " << m_variance << endl;
     cout << " STD              : " << sqrt(m_variance) << endl;
@@ -69,51 +77,50 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
     std::string filename = name;
     filename += "_P" + std::to_string(m_numberOfParticles);
     filename += "_D" + std::to_string(m_numberOfDimensions);
+    filename += "_w" + std::to_string(m_omega);
     filename += "_MC" + std::to_string(m_numberOfMetropolisSteps);
-    return filename + extension;
+    m_filename = filename + extension;
+    return m_filename;
 }
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    std::string energyFileName = generateFileName("energy", ".dat");
-    m_energyFile.open(path + energyFileName);
+    std::string energyFileName = generateFileName("energy_VMC", ".dat");
+    m_averageEnergyFile.open(path + energyFileName);
 
     // Print cumulative energies to file
-    std::string cumulativeFileName = generateFileName("cumulative", ".dat");
-    m_cumulativeFile.open(path + cumulativeFileName);
+    std::string instantEnergyFileName = generateFileName("cumulative_VMC", ".dat");
+    m_instantEnergyFile.open(path + instantEnergyFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName("onebody", ".dat");
+        std::string oneBodyFileName = generateFileName("onebody_VMC", ".dat");
         m_oneBodyFile.open (path + oneBodyFileName);
     }
 }
 
 void Sampler::printOutputToFile() {
-    m_energyFile << m_energy << endl;
+    m_averageEnergyFile << m_averageEnergy << endl;
     if(m_calculateOneBody){
         m_oneBodyFile << m_particlesPerBin << endl;
     }
 }
 
 void Sampler::closeOutputFiles() {
-    if(m_energyFile.is_open())      { m_energyFile.close(); }
-    if(m_oneBodyFile.is_open())     { m_oneBodyFile.close(); }
-    if(m_cumulativeFile.is_open())  { m_cumulativeFile.close(); }
+    if(m_averageEnergyFile.is_open())      { m_averageEnergyFile.close(); }
+    if(m_oneBodyFile.is_open())            { m_oneBodyFile.close(); }
+    if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
 }
 
-void Sampler::printImmediatelyToFile(const Eigen::VectorXd positions) {
-    // Write cumulative energies to file for blocking
-    m_cumulativeFile << m_instantEnergy << endl;
-
-    // Calculate onebody densities
-    if(m_calculateOneBody) {
+void Sampler::printInstantValuesToFile(const Eigen::VectorXd positions) {
+    m_instantEnergyFile << m_instantEnergy << endl;  // Write instant energies to file for blocking
+    if(m_calculateOneBody) {                         // Calculate onebody densities
         for(int j=0; j<m_numberOfParticles; j++) {
             double dist = 0;
             for(int d=0; d<m_numberOfDimensions; d++) {
                 dist += positions(m_numberOfDimensions*j+d) * positions(m_numberOfDimensions*j+d);
             }
-            double r = sqrt(dist);      //Distance from particle j to origin
+            double r = sqrt(dist);      // Distance from particle j to origin
             for(int k=0; k<m_numberOfBins; k++) {
                 if(r < m_binLinSpace(k)) {
                     m_particlesPerBin(k) += 1;
