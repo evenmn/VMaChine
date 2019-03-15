@@ -45,7 +45,7 @@ void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const int pRand
     m_ratio = exp( 2 * m_alpha * (m_oldRadialVector(pRand) - m_radialVector(pRand)));
 }
 
-void HydrogenLike::resetArrays() {
+void HydrogenLike::resetArrays(int pRand) {
     m_positions       = m_oldPositions;
     m_radialVector    = m_oldRadialVector;
 }

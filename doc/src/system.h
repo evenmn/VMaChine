@@ -60,7 +60,7 @@ public:
     std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionVector; }
 
     void            updateAllArrays          (const Eigen::VectorXd positions, const int pRand);
-    void            resetAllArrays           ();
+    void            resetAllArrays           (int pRand);
     void            updateAllParameters      (const Eigen::MatrixXd parameters);
     double          evaluateWaveFunction     ();
     double          evaluateWaveFunctionSqrd ();

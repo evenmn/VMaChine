@@ -35,7 +35,7 @@ void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) 
     m_ratio = Prod * Prod;
 }
 
-void NQSJastrow::resetArrays() {
+void NQSJastrow::resetArrays(int pRand) {
     m_positions = m_oldPositions;
     m_v         = m_oldV;
     m_n         = m_oldN;

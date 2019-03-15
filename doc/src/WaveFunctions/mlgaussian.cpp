@@ -32,7 +32,7 @@ void MLGaussian::updateArrays(const Eigen::VectorXd positions, const int pRand) 
     m_ratio         = exp((m_oldXa(pRand)*m_oldXa(pRand) - m_Xa(pRand)*m_Xa(pRand)) / (2 * m_sigmaSqrd));
 }
 
-void MLGaussian::resetArrays() {
+void MLGaussian::resetArrays(int pRand) {
     m_positions = m_oldPositions;
     m_Xa        = m_oldXa;
     m_ratio     = m_oldRatio;

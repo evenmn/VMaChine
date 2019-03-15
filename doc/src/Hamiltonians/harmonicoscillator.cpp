@@ -45,6 +45,14 @@ double HarmonicOscillator::computeLocalEnergy() {
     double externalEnergy = 0.5 * m_omega_sqrd * (m_positions.cwiseAbs2()).sum();
     double kineticEnergy  = m_system->getKineticEnergy();
 
+    /*
+    std::cout << kineticEnergy << std::endl;
+    std::cout << externalEnergy << std::endl;
+    std::cout << externalEnergy + kineticEnergy << std::endl;
+    std::cout << std::endl;
+    */
+
+
     return kineticEnergy + externalEnergy + interactionEnergy;
 }
 

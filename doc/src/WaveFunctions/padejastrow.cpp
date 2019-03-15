@@ -86,7 +86,7 @@ void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand)
     m_ratio = exp(ratio);
 }
 
-void PadeJastrow::resetArrays() {
+void PadeJastrow::resetArrays(int pRand) {
     m_positions      = m_oldPositions;
     m_distanceMatrix = m_oldDistanceMatrix;
     m_ratio          = m_oldRatio;

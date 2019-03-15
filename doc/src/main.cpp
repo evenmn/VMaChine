@@ -42,12 +42,12 @@
 #include "Plotter/plotter.h"
 
 int main(int argc, char *argv[]) {
-    int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 6;
-    int     numberOfHiddenNodes = 6;
-    int     numberOfSteps       = int(pow(2,20));
-    int     numberOfIterations  = 500;
-    double  eta                 = 0.5;         // Learning rate
+    int     numberOfDimensions  = 3;
+    int     numberOfParticles   = 2;
+    int     numberOfHiddenNodes = 2;
+    int     numberOfSteps       = int(pow(2,16));
+    int     numberOfIterations  = 100;
+    double  eta                 = 0.05;         // Learning rate
     double  omega               = 1.0;          // Oscillator frequency
     double  sigma               = 1.0;          // Width of probability distribution
     double  stepLength          = 0.1;          // Metropolis step length
@@ -83,11 +83,11 @@ int main(int argc, char *argv[]) {
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Constant(system, 1.0));
+    system->setInitialWeights           (new Constant(system, 1));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new SGD(system, 0.0, 0.0));
+    system->setOptimization             (new GradientDescent(system, 0.0, 0.0));
     system->setGradients                ();
     system->runMetropolisSteps          (numberOfIterations);
 

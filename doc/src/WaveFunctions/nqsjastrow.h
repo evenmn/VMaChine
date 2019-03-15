@@ -5,7 +5,7 @@ class NQSJastrow : public WaveFunction {
 public:
     NQSJastrow(class System* system);
     void updateArrays(Eigen::VectorXd positions, const int pRand);
-    void resetArrays();
+    void resetArrays(int pRand);
     void initializeArrays(const Eigen::VectorXd positions);
     void updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
     double evaluateRatio();

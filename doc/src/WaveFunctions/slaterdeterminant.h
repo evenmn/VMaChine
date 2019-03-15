@@ -12,7 +12,7 @@ public:
     Eigen::MatrixXd dA_matrix(const Eigen::VectorXd positions);
 
     void            updateArrays(const Eigen::VectorXd positions, const int pRand);
-    void            resetArrays();
+    void            resetArrays(int pRand);
     void            initializeArrays(const Eigen::VectorXd positions);
     void            updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
     double          evaluateRatio();
@@ -50,6 +50,8 @@ private:
     double m_det_dn = 0;
     double m_old_det_up = 0;
     double m_old_det_dn = 0;
+    double m_oldold_det_up = 0;
+    double m_oldold_det_dn = 0;
     double m_ratio = 0;
     double m_oldRatio = 0;
 };

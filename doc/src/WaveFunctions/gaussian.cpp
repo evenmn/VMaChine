@@ -22,7 +22,7 @@ void Gaussian::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     m_ratio         = exp(m_omega * m_alpha * (m_oldPositions(pRand)*m_oldPositions(pRand) - m_positions(pRand)*m_positions(pRand)));
 }
 
-void Gaussian::resetArrays() {
+void Gaussian::resetArrays(int pRand) {
     m_positions = m_oldPositions;
     m_ratio     = m_oldRatio;
 }

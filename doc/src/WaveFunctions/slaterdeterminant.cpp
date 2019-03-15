@@ -31,6 +31,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
         m_D_upOld               = m_D_up;
         m_dD_upOld              = m_dD_up;
         m_D_up_old_inv          = m_D_up_inv;
+        m_oldold_det_up         = m_old_det_up;
         m_old_det_up            = m_det_up;
 
         m_D_up.row(particle)    = updateRow(m_positions.head(m_freeDimensionsHalf), particle);
@@ -40,7 +41,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
         }
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
-            R += m_D_up(particle, j) * m_D_up_old_inv(j, particle);
+            R += m_D_up(particle, j) * m_D_up_inv(j, particle);
         }
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
             double S = 0;
@@ -66,6 +67,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
         m_D_dnOld               = m_D_dn;
         m_dD_dnOld              = m_dD_dn;
         m_D_dn_old_inv          = m_D_dn_inv;
+        m_oldold_det_dn         = m_old_det_dn;
         m_old_det_dn            = m_det_dn;
 
         int particle2 = particle - m_numberOfParticlesHalf;
@@ -76,7 +78,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
         }
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
-            R += m_D_dn(particle2, j) * m_D_dn_old_inv(j, particle2);
+            R += m_D_dn(particle2, j) * m_D_dn_inv(j, particle2);
         }
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
             double S = 0;
@@ -90,7 +92,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
         m_D_dn_inv.col(particle2) /= R;
         for(int i=m_freeDimensionsHalf; i<m_numberOfFreeDimensions; i++) {
             m_diff(i) = 0;
-            int k = i-m_freeDimensionsHalf;
+            int k = i - m_freeDimensionsHalf;
             for(int j=0; j<m_numberOfParticlesHalf; j++) {
                 m_diff(i) += m_dD_dn(k,j) * m_D_dn_inv(j,int(k/2));
             }
@@ -100,18 +102,25 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
     }
 }
 
-void SlaterDeterminant::resetArrays() {
-    m_positions = m_oldPositions;
-    m_D_up      = m_D_upOld;
-    m_D_dn      = m_D_dnOld;
-    m_D_up_inv  = m_D_up_old_inv;
-    m_D_dn_inv  = m_D_dn_old_inv;
-    m_dD_up     = m_dD_upOld;
-    m_dD_dn     = m_dD_dnOld;
-    m_diff      = m_diffOld;
-    m_det_up    = m_old_det_up;
-    m_det_dn    = m_old_det_dn;
-    m_ratio     = m_oldRatio;
+void SlaterDeterminant::resetArrays(int pRand) {
+    m_positions  = m_oldPositions;
+    m_diff       = m_diffOld;
+    m_ratio      = m_oldRatio;
+
+    if(pRand < m_freeDimensionsHalf) {
+        m_D_up       = m_D_upOld;
+        m_det_up     = m_old_det_up;
+        m_D_up_inv   = m_D_up_old_inv;
+        m_dD_up      = m_dD_upOld;
+        m_old_det_up = m_oldold_det_up;
+    }
+    else {
+        m_D_dn       = m_D_dnOld;
+        m_dD_dn      = m_dD_dnOld;
+        m_det_dn     = m_old_det_dn;
+        m_D_dn_inv   = m_D_dn_old_inv;
+        m_old_det_dn = m_oldold_det_dn;
+    }
 }
 
 void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
@@ -137,6 +146,8 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     m_det_dn        = m_D_dn.determinant();
     m_old_det_up    = m_det_up;
     m_old_det_dn    = m_det_dn;
+    m_oldold_det_up = m_det_up;
+    m_oldold_det_dn = m_det_dn;
 
     m_diff  = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     for(int i=0; i<m_numberOfFreeDimensions/2; i++) {
