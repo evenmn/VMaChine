@@ -171,61 +171,16 @@ double System::evaluateWaveFunctionRatio() {
 }
 
 double System::getKineticEnergy() {
-    //std::cout << std::endl;
     double KineticEnergy = 0;
-    //for(auto& i : m_waveFunctionVector) {
-    //    KineticEnergy += i->computeSecondDerivative();
-    //    //std::cout << i->computeSecondDerivative() << std::endl;
-    //}
-
-    /*
-    double sum = 0;
+    for(auto& i : m_waveFunctionVector) {
+        KineticEnergy += i->computeSecondDerivative();
+    }
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
         double NablaLnPsi = 0;
-        //for(auto& i : m_waveFunctionVector) {
-        //    NablaLnPsi += i->computeFirstDerivative(k);
-        //    //std::cout << NablaLnPsi * NablaLnPsi << std::endl;
-        //}
-        for(int i = 0; i<m_waveFunctionVector.size(); i++) {
-            NablaLnPsi += m_waveFunctionVector[unsigned(i)]->computeFirstDerivative(k);
-            if(i == 1) {
-                sum += NablaLnPsi*NablaLnPsi;
-            }
+        for(auto& i : m_waveFunctionVector) {
+            NablaLnPsi += i->computeFirstDerivative(k);
         }
         KineticEnergy += NablaLnPsi * NablaLnPsi;
     }
-    */
-
-    double sum0 = m_waveFunctionVector[0]->computeSecondDerivative();
-    double sum1 = m_waveFunctionVector[1]->computeSecondDerivative();
-
-    double sum2 = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        double h = m_waveFunctionVector[0]->computeFirstDerivative(k);
-        sum2 += h*h;
-    }
-
-    double sum3 = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        double h = m_waveFunctionVector[1]->computeFirstDerivative(k);
-        sum3 += h*h;
-    }
-
-    double sum4 = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        sum4 += 2*m_waveFunctionVector[0]->computeFirstDerivative(k)*m_waveFunctionVector[1]->computeFirstDerivative(k);
-    }
-
-    /*
-    std::cout << -0.5*sum0 << std::endl;
-    std::cout << -0.5*sum1 << std::endl;
-    std::cout << -0.5*sum2 << std::endl;
-    std::cout << -0.5*sum3 << std::endl;
-    std::cout << -0.5*sum4 << std::endl;
-    //std::cout << std::endl;
-    */
-
-    KineticEnergy += sum0 + sum1 + sum2 + sum3 + sum4;
-
     return -0.5 * KineticEnergy;
 }
