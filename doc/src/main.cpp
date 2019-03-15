@@ -43,9 +43,9 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 3;
-    int     numberOfParticles   = 1;
-    int     numberOfHiddenNodes = 1;
-    int     numberOfSteps       = int(pow(2,18));
+    int     numberOfParticles   = 70;
+    int     numberOfHiddenNodes = 2;
+    int     numberOfSteps       = int(pow(2,10));
     int     numberOfIterations  = 1000;
     double  eta                 = 0.05;         // Learning rate
     double  omega               = 0.5;          // Oscillator frequency
@@ -70,15 +70,14 @@ int main(int argc, char *argv[]) {
     system->setTotalNumberOfSteps       ();
     system->setNumberOfFreeDimensions   ();
 
-    system->setBasis                    (new HydrogenOrbital(system, 1));
-    std::cout << "ffkk" << std::endl;
+    system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
-    WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
     //WaveFunctionElements.push_back      (new class MLGaussian           (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));

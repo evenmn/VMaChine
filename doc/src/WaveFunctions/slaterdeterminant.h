@@ -4,54 +4,54 @@
 class SlaterDeterminant : public WaveFunction {
 public:
     SlaterDeterminant(class System* system);
-    Eigen::MatrixXd list();
-    double          updateElement(const Eigen::VectorXd positions, const int i, const int j);
-    Eigen::VectorXd updateRow(const Eigen::VectorXd positions, const int i);
-    Eigen::MatrixXd updateMatrix(const Eigen::VectorXd positions);
-    Eigen::VectorXd dA_row(const Eigen::VectorXd positions, const int k);
-    Eigen::MatrixXd dA_matrix(const Eigen::VectorXd positions);
+    Eigen::MatrixXd generateListOfStates();
+    double          updateSlaterMatrixElement    (const Eigen::VectorXd positions, const int i, const int j);
+    Eigen::VectorXd updateSlaterMatrixRow        (const Eigen::VectorXd positions, const int i);
+    Eigen::MatrixXd updateSlaterMatrix           (const Eigen::VectorXd positions);
+    Eigen::VectorXd updateSlaterMatrixDerRow     (const Eigen::VectorXd positions, const int k);
+    Eigen::MatrixXd updateSlaterMatrixDer        (const Eigen::VectorXd positions);
 
-    void            updateArrays(const Eigen::VectorXd positions, const int pRand);
-    void            resetArrays(int pRand);
-    void            initializeArrays(const Eigen::VectorXd positions);
-    void            updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
-    double          evaluateRatio();
-    double          computeFirstDerivative(const int k);
-    double          computeSecondDerivative();
-    Eigen::VectorXd computeFirstEnergyDerivative(const int k);
+    void            resetArrays                  (int pRand);
+    void            updateArrays                 (const Eigen::VectorXd positions, const int pRand);
+    void            initializeArrays             (const Eigen::VectorXd positions);
+    void            updateParameters             (const Eigen::MatrixXd parameters, const int elementNumber);
+    double          evaluateRatio                ();
+    double          computeFirstDerivative       (const int k);
+    double          computeSecondDerivative      ();
+    Eigen::VectorXd computeFirstEnergyDerivative (const int k);
     Eigen::VectorXd computeSecondEnergyDerivative();
 private:
-    int     m_elementNumber         = 2;
-    double  m_omega                 = 0;
-    double  m_alpha                 = 0;
+    int     m_elementNumber         = 0;
     int     m_numberOfOrbitals      = 0;
     int     m_numberOfParticlesHalf = 0;
     int     m_freeDimensionsHalf    = 0;
 
-    Eigen::VectorXd m_positions;
-    Eigen::MatrixXd m_order;
-    Eigen::VectorXd m_oldPositions;
-    Eigen::MatrixXd m_D_up;
-    Eigen::MatrixXd m_D_dn;
-    Eigen::MatrixXd m_D_upOld;
-    Eigen::MatrixXd m_D_dnOld;
-    Eigen::MatrixXd m_dD_up;
-    Eigen::MatrixXd m_dD_dn;
-    Eigen::MatrixXd m_dD_upOld;
-    Eigen::MatrixXd m_dD_dnOld;
-    Eigen::MatrixXd m_D_up_inv;
-    Eigen::MatrixXd m_D_dn_inv;
-    Eigen::MatrixXd m_D_up_old_inv;
-    Eigen::MatrixXd m_D_dn_old_inv;
-    Eigen::VectorXd m_diff;
-    Eigen::VectorXd m_diffOld;
+    Eigen::MatrixXd m_listOfStates;
 
-    double m_det_up = 0;
-    double m_det_dn = 0;
-    double m_old_det_up = 0;
-    double m_old_det_dn = 0;
-    double m_oldold_det_up = 0;
-    double m_oldold_det_dn = 0;
-    double m_ratio = 0;
-    double m_oldRatio = 0;
+    Eigen::VectorXd m_positions;
+    Eigen::MatrixXd m_slaterMatrixUp;
+    Eigen::MatrixXd m_slaterMatrixDn;
+    Eigen::MatrixXd m_slaterMatrixUpDer;
+    Eigen::MatrixXd m_slaterMatrixDnDer;
+    Eigen::MatrixXd m_slaterMatrixUpInverse;
+    Eigen::MatrixXd m_slaterMatrixDnInverse;
+    Eigen::VectorXd m_determinantDerivative;
+    double m_slaterDeterminantUp = 0;
+    double m_slaterDeterminantDn = 0;
+    double m_probabilityRatio = 0;
+
+    Eigen::VectorXd m_positionsOld;
+    Eigen::MatrixXd m_slaterMatrixUpOld;
+    Eigen::MatrixXd m_slaterMatrixDnOld;
+    Eigen::MatrixXd m_slaterMatrixUpDerOld;
+    Eigen::MatrixXd m_slaterMatrixDnDerOld;
+    Eigen::MatrixXd m_slaterMatrixUpInverseOld;
+    Eigen::MatrixXd m_slaterMatrixDnInverseOld;
+    Eigen::VectorXd m_determinantDerivativeOld;
+    double m_slaterDeterminantUpOld = 0;
+    double m_slaterDeterminantDnOld = 0;
+    double m_probabilityRatioOld = 0;
+
+    double m_slaterDeterminantUpOldOld = 0;
+    double m_slaterDeterminantDnOldOld = 0;
 };
