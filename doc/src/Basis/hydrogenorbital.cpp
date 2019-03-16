@@ -2,12 +2,13 @@
 #include "../system.h"
 #include <iostream>
 
-HydrogenOrbital::HydrogenOrbital(System *system, int Z)  :
+HydrogenOrbital::HydrogenOrbital(System *system)  :
     Basis(system) {
     m_system                = system;
-    m_Z                     = Z;
+    m_Z                     = m_system->getAtomicNumber();
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
+    assert(m_numberOfDimensions == 3);
     numberOfOrbitals();
 }
 
@@ -39,13 +40,34 @@ double associatedLaguerre(double x, int p, int q) {
     }
 }
 
-void HydrogenOrbital::numberOfOrbitals() {
-    if(m_numberOfParticles < 5 && m_numberOfParticles%2 == 0) {
-        m_numberOfOrbitals = int(m_numberOfParticles/2);
+int maxElectrons(int i) {
+    if(i==0) {
+        return 2;
     }
-    else if(m_numberOfParticles > 4) {
-        std::cout << "This program is yet set to operate in the S-waves, which means that we can only investigate the Helium and Beryllium ground states" << std::endl;
-        exit(0);
+    else {
+        return 4 + maxElectrons(i-1);
+    }
+}
+
+void HydrogenOrbital::numberOfOrbitals() {
+    //Number of closed-shell orbitals
+    int i = 0;
+    int orbital = 0;
+    int numberOfElectrons = 0;
+    while(true) {
+        for(int j=0; j<i; j++) {
+            numberOfElectrons += maxElectrons(j);
+            if(numberOfElectrons == m_numberOfParticles) {
+                m_numberOfOrbitals = orbital+1;
+                break;
+            }
+            else if(numberOfElectrons > m_numberOfParticles){
+                std::cout << "This program supports closed-shells only. Please choose a P such that the orbital is full" << std::endl;
+                exit(0);
+            }
+            orbital++;
+        }
+        i++;
     }
 }
 
@@ -59,4 +81,22 @@ double HydrogenOrbital::evaluateDerivative(double x, int n) {
     //First derivative of Hydrogen-like orbitals of a given n and l=0 (S-wave)
     double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(fact(n-1)/(2 * n * fact(n)));
     return - prefactor * (associatedLaguerre(2*m_Z*x/n, 2, n-2)*exp(-m_Z*x/n) + associatedLaguerre(2*m_Z*x/n, 1, n-1)*exp(-m_Z*x/n) * m_Z/n);
+}
+
+Eigen::MatrixXd HydrogenOrbital::generateListOfStates() {
+    Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
+    int counter = 0;
+    // Three dimensions
+    for(int i=0; i<m_numberOfOrbitals; i++) {
+        for(int j=0; j<m_numberOfOrbitals; j++) {
+            for(int s=i+j; s<m_numberOfOrbitals; s++) {
+                int k = s - i - j;
+                listOfStates(counter,0) = i;
+                listOfStates(counter,1) = j;
+                listOfStates(counter,2) = k;
+                counter += 1;
+            }
+        }
+    }
+    return listOfStates;
 }

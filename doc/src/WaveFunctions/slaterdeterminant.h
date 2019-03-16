@@ -4,7 +4,6 @@
 class SlaterDeterminant : public WaveFunction {
 public:
     SlaterDeterminant(class System* system);
-    Eigen::MatrixXd generateListOfStates();
     double          updateSlaterMatrixElement    (const Eigen::VectorXd positions, const int i, const int j);
     Eigen::VectorXd updateSlaterMatrixRow        (const Eigen::VectorXd positions, const int i);
     Eigen::MatrixXd updateSlaterMatrix           (const Eigen::VectorXd positions);

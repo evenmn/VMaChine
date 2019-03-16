@@ -19,7 +19,7 @@ void System::runMetropolisSteps(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
-    m_sampler->openOutputFiles("../data/");
+    //m_sampler->openOutputFiles("../data/");
 
     for (int iter = 0; iter < numberOfIterations; iter++) {
         clock_t start_time = clock();
@@ -28,20 +28,20 @@ void System::runMetropolisSteps(const int numberOfIterations) {
             m_positions       = m_metropolis->updatePositions();
             if(i >= (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
                 m_sampler->sample(acceptedStep, i);
-                if(iter == numberOfIterations-1) {
-                    m_sampler->printInstantValuesToFile(m_positions);
-                }
+                //if(iter == numberOfIterations-1) {
+                //    m_sampler->printInstantValuesToFile(m_positions);
+                //}
             }
         }
         clock_t end_time = clock();
         m_sampler->computeAverages();
         m_sampler->printOutputToTerminal(numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
-        m_sampler->printOutputToFile();
+        //m_sampler->printOutputToFile();
         m_parameters -= m_optimization->updateParameters();
         //std::cout << m_parameters << std::endl;
         updateAllParameters(m_parameters);
     }
-    m_sampler->closeOutputFiles();
+   // m_sampler->closeOutputFiles();
 }
 
 void System::setNumberOfParticles(const int numberOfParticles) {
@@ -96,6 +96,11 @@ void System::setInteraction(const bool interaction) {
 void System::setFrequency(const double omega) {
     assert(omega > 0);
     m_omega = omega;
+}
+
+void System::setAtomicNumber(const int Z) {
+    assert(Z > 0);
+    m_Z = Z;
 }
 
 void System::setLearningRate(const double eta) {
@@ -182,5 +187,6 @@ double System::getKineticEnergy() {
         }
         KineticEnergy += NablaLnPsi * NablaLnPsi;
     }
+
     return -0.5 * KineticEnergy;
 }

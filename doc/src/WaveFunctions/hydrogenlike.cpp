@@ -8,6 +8,7 @@ HydrogenLike::HydrogenLike(System* system) :
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_maxNumberOfParametersPerElement = m_system->getMaxNumberOfParametersPerElement();
+    m_Z = m_system->getAtomicNumber();
 }
 
 double HydrogenLike::calculateRadialVectorElement(const Eigen::VectorXd positions, const int par) {
@@ -39,10 +40,11 @@ void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const int pRand
 
     m_oldRadialVector      = m_radialVector;
     int particle = int(pRand/m_numberOfDimensions);
+
     m_radialVector(particle)  = calculateRadialVectorElement(positions, particle);
 
     m_oldRatio = m_ratio;
-    m_ratio = exp( 2 * m_alpha * (m_oldRadialVector(pRand) - m_radialVector(pRand)));
+    m_ratio = exp( 2 * m_Z * m_alpha * (m_oldRadialVector(particle) - m_radialVector(particle)));
 }
 
 void HydrogenLike::resetArrays(int pRand) {
@@ -60,20 +62,26 @@ double HydrogenLike::evaluateRatio() {
 }
 
 double HydrogenLike::computeFirstDerivative(const int k) {
-    return - m_alpha * m_numberOfParticles;
+    if(k < m_numberOfParticles) {
+        return - m_alpha * m_Z;
+    }
+    else {
+        return 0;
+    }
 }
 
 double HydrogenLike::computeSecondDerivative() {;
-    return 0;
+    return -2 * m_alpha * m_Z * m_radialVector.cwiseInverse().sum();
 }
 
 Eigen::VectorXd HydrogenLike::computeFirstEnergyDerivative(const int k) {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-    gradients(0) = 0.5 * m_numberOfParticles;
+    gradients(0) = 0.5 * m_Z;
     return gradients;
 }
 
 Eigen::VectorXd HydrogenLike::computeSecondEnergyDerivative() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    gradients(0) = m_Z * m_radialVector.cwiseInverse().sum();
     return gradients;
 }

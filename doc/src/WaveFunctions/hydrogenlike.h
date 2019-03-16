@@ -20,6 +20,7 @@ public:
 private:
     double m_alpha = 0;
     int m_elementNumber = 0;
+    int m_Z = 1;
 
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_oldPositions;

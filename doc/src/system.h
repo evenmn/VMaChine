@@ -17,6 +17,7 @@ public:
     void setStepLength                  (const double stepLength);
     void setEquilibrationFraction       (const double equilibrationFraction);
     void setFrequency                   (const double omega);
+    void setAtomicNumber                (const int Z);
     void setWidth                       (const double sigma);
     void setLearningRate                (const double eta);
     void setInteraction                 (const bool interaction);
@@ -46,6 +47,7 @@ public:
     int                                 getTotalNumberOfSteps()      { return m_totalNumberOfSteps; }
     int                                 getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
     int                                 getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
+    int                                 getAtomicNumber()            { return m_Z; }
     double                              getEquilibrationFraction()   { return m_equilibrationFraction; }
     double                              getFrequency()               { return m_omega; }
     double                              getWidth()                   { return m_sigma; }
@@ -77,6 +79,7 @@ private:
     int                                 m_numberOfWaveFunctionElements = 0;
     int                                 m_maxNumberOfParametersPerElement = 0;
     int                                 m_totalNumberOfSteps        = 0;
+    int                                 m_Z                         = 1;
     bool                                m_interaction               = false;
     double                              m_equilibrationFraction     = 0.0;
     double                              m_stepLength                = 0.1;

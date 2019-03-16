@@ -14,8 +14,8 @@ public:
 private:
     int    m_numberOfBatches = 10;
     double m_beta1 = 0.9;
-    double m_beta2 = 0.9999;
-    double m_epsilon = 1e-4;
+    double m_beta2 = 0.999;
+    double m_epsilon = 1e-8;
     int    m_step  = 0;
     Eigen::MatrixXd m_g;
     Eigen::MatrixXd m_m;

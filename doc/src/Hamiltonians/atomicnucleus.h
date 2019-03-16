@@ -4,7 +4,7 @@
 
 class AtomicNucleus : public Hamiltonian {
 public:
-    AtomicNucleus(System* system, int Z);
+    AtomicNucleus(System* system);
     double computeLocalEnergy();
 
 private:

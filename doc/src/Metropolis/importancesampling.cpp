@@ -56,6 +56,7 @@ bool ImportanceSampling::acceptMove() {
     m_positions(pRand) += m_diff * QuantumForce(pRand) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
 
     m_system->updateAllArrays(m_positions, pRand);
+
     m_quantumForceNew(pRand) = QuantumForce(pRand);
 
     double ratio = m_system->evaluateWaveFunctionRatio();

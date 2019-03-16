@@ -14,6 +14,7 @@
 #include "Hamiltonians/atomicnucleus.h"
 
 #include "Basis/basis.h"
+#include "Basis/none.h"
 #include "Basis/hermite.h"
 #include "Basis/hydrogenorbital.h"
 
@@ -42,17 +43,18 @@
 #include "Plotter/plotter.h"
 
 int main(int argc, char *argv[]) {
-    int     numberOfDimensions  = 3;
-    int     numberOfParticles   = 70;
-    int     numberOfHiddenNodes = 2;
-    int     numberOfSteps       = int(pow(2,10));
-    int     numberOfIterations  = 1000;
-    double  eta                 = 0.05;         // Learning rate
-    double  omega               = 0.5;          // Oscillator frequency
-    double  sigma               = 1.0;          // Width of probability distribution
-    double  stepLength          = 0.1;          // Metropolis step length
-    double  equilibration       = 0.2;          // Amount of the total steps used
-    bool    interaction         = false;
+    int     numberOfDimensions  = 2;
+    int     numberOfParticles   = 2;
+    int     numberOfHiddenNodes = numberOfParticles;
+    int     numberOfSteps       = int(pow(2,22));
+    int     numberOfIterations  = 200;
+    double  eta                 = 0.05;                      // Learning rate
+    double  omega               = 1.0;                      // Oscillator frequency
+    int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
+    double  sigma               = 1.0;                      // Width of probability distribution
+    double  stepLength          = 0.1;                      // Metropolis step length
+    double  equilibration       = 0.2;                      // Amount of the total steps used
+    bool    interaction         = true;
     int     maxNumberOfParametersPerElement = numberOfParticles*numberOfDimensions*numberOfParticles*numberOfDimensions;
 
     System* system = new System();
@@ -60,6 +62,7 @@ int main(int argc, char *argv[]) {
     system->setInteraction              (interaction);
     system->setStepLength               (stepLength);
     system->setFrequency                (omega);
+    system->setAtomicNumber             (Z);
     system->setWidth                    (sigma);
     system->setLearningRate             (eta);
     system->setNumberOfParticles        (numberOfParticles);
@@ -77,8 +80,8 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class MLGaussian           (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
@@ -86,9 +89,11 @@ int main(int argc, char *argv[]) {
     system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
+    //system->setHamiltonian              (new AtomicNucleus(system));
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new SGD(system, 0.0, 0.0));
+    system->setOptimization             (new ADAM(system));
     system->setGradients                ();
+    std::cout << "main" << std::endl;
     system->runMetropolisSteps          (numberOfIterations);
 
     //class Plotter* plots = new Plotter(system);

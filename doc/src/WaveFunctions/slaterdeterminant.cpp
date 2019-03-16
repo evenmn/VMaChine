@@ -9,7 +9,7 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
     m_freeDimensionsHalf                = m_numberOfFreeDimensions/2;
     m_numberOfParticles                 = m_system->getNumberOfParticles();
-    m_numberOfOrbitals                  = m_system->getBasis()->getNumberOfOrbitals();
+    //m_numberOfOrbitals                  = m_system->getBasis()->getNumberOfOrbitals();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfParticlesHalf             = m_numberOfParticles/2;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
@@ -123,10 +123,13 @@ void SlaterDeterminant::resetArrays(int pRand) {
 
 void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     m_positions     = positions;
-    m_listOfStates  = generateListOfStates();
+    std::cout << "initializeArrays" << std::endl;
+    m_listOfStates  = m_system->getBasis()->generateListOfStates();
+    std::cout << "initializeArrays" << std::endl;
 
     m_slaterMatrixUp = updateSlaterMatrix(m_positions.head(m_numberOfFreeDimensions/2));
     m_slaterMatrixDn = updateSlaterMatrix(m_positions.tail(m_numberOfFreeDimensions/2));
+
     m_slaterMatrixUpOld = m_slaterMatrixUp;
     m_slaterMatrixDnOld = m_slaterMatrixDn;
 
@@ -162,68 +165,6 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
 
 void SlaterDeterminant::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
     m_elementNumber = elementNumber;
-}
-
-Eigen::MatrixXd SlaterDeterminant::generateListOfStates() {
-    // Returns the index list used in Slater
-    // For instance (0,0), (1,0), (0,1) for 6P in 2D
-    //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
-    Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticlesHalf, m_numberOfDimensions);
-    int counter = 0;
-    // One dimension
-    if (m_numberOfDimensions == 1) {
-        for(int i=0; i<m_numberOfOrbitals; i++) {
-            listOfStates(i) = i;
-        }
-    }
-    // Two dimensions
-    if (m_numberOfDimensions == 2) {
-        for(int i=0; i<m_numberOfOrbitals; i++) {
-            for(int s=i; s<m_numberOfOrbitals; s++) {
-                int j = s - i;
-                listOfStates(counter,1) = i;
-                listOfStates(counter,0) = j;
-                counter += 1;
-            }
-        }
-    }
-    // Three dimensions
-    else if (m_numberOfDimensions == 3) {
-        for(int i=0; i<m_numberOfOrbitals; i++) {
-            for(int j=0; j<m_numberOfOrbitals; j++) {
-                for(int s=i+j; s<m_numberOfOrbitals; s++) {
-                    int k = s - i - j;
-                    listOfStates(counter,0) = i;
-                    listOfStates(counter,1) = j;
-                    listOfStates(counter,2) = k;
-                    counter += 1;
-                }
-            }
-        }
-    }
-    // Four dimensions
-    else if (m_numberOfDimensions == 4) {
-        for(int i=0; i<m_numberOfOrbitals; i++) {
-            for(int j=0; j<m_numberOfOrbitals; j++) {
-                for(int k=0; k<m_numberOfOrbitals; k++) {
-                    for(int s=i+j; s<m_numberOfOrbitals; s++) {
-                        int l = s - i - j - k;
-                        listOfStates(counter,0) = i;
-                        listOfStates(counter,1) = j;
-                        listOfStates(counter,2) = k;
-                        listOfStates(counter,3) = l;
-                        counter += 1;
-                    }
-                }
-            }
-        }
-    }
-
-    else {
-        std::cout << "Number of dimensions should be in the range [1, 4]" << std::endl;
-        exit(0);
-    }
-    return listOfStates;
 }
 
 Eigen::VectorXd SlaterDeterminant::updateSlaterMatrixDerRow(const Eigen::VectorXd positions, const int k) {

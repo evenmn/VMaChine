@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     WaveFunctions/hydrogenlike.cpp \
     Optimization/sgd.cpp \
     Optimization/asgd.cpp \
-    Optimization/adam.cpp
+    Optimization/adam.cpp \
+    Basis/none.cpp
 
 HEADERS += \
     system.h \
@@ -74,5 +75,6 @@ HEADERS += \
     WaveFunctions/hydrogenlike.h \
     Optimization/sgd.h \
     Optimization/asgd.h \
-    Optimization/adam.h
+    Optimization/adam.h \
+    Basis/none.h
 

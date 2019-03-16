@@ -59,3 +59,66 @@ double Hermite::evaluateDerivative(double x, int n) {
         return 2 * sqrt(m_omega) * n * evaluate(x,n-1);
     }
 }
+
+Eigen::MatrixXd Hermite::generateListOfStates() {
+    // Returns the index list used in Slater
+    // For instance (0,0), (1,0), (0,1) for 6P in 2D
+    //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
+    numberOfOrbitals();
+    Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
+    int counter = 0;
+    // One dimension
+    if (m_numberOfDimensions == 1) {
+        for(int i=0; i<m_numberOfOrbitals; i++) {
+            listOfStates(i) = i;
+        }
+    }
+    // Two dimensions
+    if (m_numberOfDimensions == 2) {
+        for(int i=0; i<m_numberOfOrbitals; i++) {
+            for(int s=i; s<m_numberOfOrbitals; s++) {
+                int j = s - i;
+                listOfStates(counter,1) = i;
+                listOfStates(counter,0) = j;
+                counter += 1;
+            }
+        }
+    }
+    // Three dimensions
+    else if (m_numberOfDimensions == 3) {
+        for(int i=0; i<m_numberOfOrbitals; i++) {
+            for(int j=0; j<m_numberOfOrbitals; j++) {
+                for(int s=i+j; s<m_numberOfOrbitals; s++) {
+                    int k = s - i - j;
+                    listOfStates(counter,0) = i;
+                    listOfStates(counter,1) = j;
+                    listOfStates(counter,2) = k;
+                    counter += 1;
+                }
+            }
+        }
+    }
+    // Four dimensions
+    else if (m_numberOfDimensions == 4) {
+        for(int i=0; i<m_numberOfOrbitals; i++) {
+            for(int j=0; j<m_numberOfOrbitals; j++) {
+                for(int k=0; k<m_numberOfOrbitals; k++) {
+                    for(int s=i+j; s<m_numberOfOrbitals; s++) {
+                        int l = s - i - j - k;
+                        listOfStates(counter,0) = i;
+                        listOfStates(counter,1) = j;
+                        listOfStates(counter,2) = k;
+                        listOfStates(counter,3) = l;
+                        counter += 1;
+                    }
+                }
+            }
+        }
+    }
+
+    else {
+        std::cout << "Number of dimensions should be in the range [1, 4]" << std::endl;
+        exit(0);
+    }
+    return listOfStates;
+}
