@@ -123,9 +123,7 @@ void SlaterDeterminant::resetArrays(int pRand) {
 
 void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     m_positions     = positions;
-    std::cout << "initializeArrays" << std::endl;
     m_listOfStates  = m_system->getBasis()->generateListOfStates();
-    std::cout << "initializeArrays" << std::endl;
 
     m_slaterMatrixUp = updateSlaterMatrix(m_positions.head(m_numberOfFreeDimensions/2));
     m_slaterMatrixDn = updateSlaterMatrix(m_positions.tail(m_numberOfFreeDimensions/2));

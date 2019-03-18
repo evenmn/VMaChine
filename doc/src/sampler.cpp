@@ -25,6 +25,7 @@ Sampler::Sampler(System* system) {
     m_omega                             = m_system->getFrequency();
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch             = int(m_numberOfMetropolisSteps/m_numberOfBatches);
+    m_interaction                       = m_system->getInteraction();
 }
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber) {
@@ -77,6 +78,7 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
     std::string filename = name;
     filename += "_P" + std::to_string(m_numberOfParticles);
     filename += "_D" + std::to_string(m_numberOfDimensions);
+    filename += "_INT" + std::to_string(m_interaction);
     filename += "_w" + std::to_string(m_omega);
     filename += "_MC" + std::to_string(m_numberOfMetropolisSteps);
     m_filename = filename + extension;

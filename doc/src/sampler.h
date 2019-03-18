@@ -28,6 +28,7 @@ private:
     int     m_numberOfStepsPerBatch = 0;
     int     m_acceptenceRatio = 0;
     int     m_iter = 0;
+    bool    m_interaction = 0;
     double  m_variance = 0;
     double  m_equilibriumFraction = 0;
     double  m_omega = 0;

@@ -5,6 +5,7 @@
 #include "WaveFunctions/mlgaussian.h"
 #include "WaveFunctions/hydrogenlike.h"
 #include "WaveFunctions/padejastrow.h"
+#include "WaveFunctions/padejastrownew.h"
 #include "WaveFunctions/nqsjastrow.h"
 #include "WaveFunctions/partlyrestricted.h"
 #include "WaveFunctions/slaterdeterminant.h"
@@ -44,11 +45,11 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 20;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,22));
-    int     numberOfIterations  = 200;
-    double  eta                 = 0.05;                      // Learning rate
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 100;
+    double  eta                 = 0.005;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1.0;                      // Width of probability distribution
@@ -80,20 +81,19 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class MLGaussian           (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class PadeJastrowNew          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Constant(system, 1.0));
+    system->setInitialWeights           (new Constant(system, 0.8));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     //system->setHamiltonian              (new AtomicNucleus(system));
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new ADAM(system));
+    system->setOptimization             (new SGD(system, 0.0, 0.3));
     system->setGradients                ();
-    std::cout << "main" << std::endl;
     system->runMetropolisSteps          (numberOfIterations);
 
     //class Plotter* plots = new Plotter(system);
