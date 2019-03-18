@@ -7,6 +7,7 @@
 #include "WaveFunctions/padejastrow.h"
 #include "WaveFunctions/padejastrownew.h"
 #include "WaveFunctions/nqsjastrow.h"
+#include "WaveFunctions/nqsjastrowold.h"
 #include "WaveFunctions/partlyrestricted.h"
 #include "WaveFunctions/slaterdeterminant.h"
 
@@ -45,14 +46,14 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 20;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
-    int     numberOfIterations  = 100;
-    double  eta                 = 0.005;                      // Learning rate
+    int     numberOfSteps       = int(pow(2,16));
+    int     numberOfIterations  = 2000;
+    double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
-    double  sigma               = 1.0;                      // Width of probability distribution
+    double  sigma               = 1/sqrt(omega);                      // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
     double  equilibration       = 0.2;                      // Amount of the total steps used
     bool    interaction         = true;
@@ -77,22 +78,22 @@ int main(int argc, char *argv[]) {
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    WaveFunctionElements.push_back      (new class Gaussian             (system));
-    //WaveFunctionElements.push_back      (new class MLGaussian           (system));
-    //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
+    //WaveFunctionElements.push_back      (new class Gaussian             (system));
+    WaveFunctionElements.push_back      (new class MLGaussian           (system));
+    WaveFunctionElements.push_back      (new class NQSJastrowOld           (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    WaveFunctionElements.push_back      (new class PadeJastrowNew          (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class PadeJastrowNew          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Constant(system, 0.8));
+    system->setInitialWeights           (new Constant(system, 0.5));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     //system->setHamiltonian              (new AtomicNucleus(system));
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new SGD(system, 0.0, 0.3));
+    system->setOptimization             (new SGD(system, 0.2, 0.0));
     system->setGradients                ();
     system->runMetropolisSteps          (numberOfIterations);
 

@@ -1,10 +1,10 @@
-#include "nqsjastrow.h"
+#include "nqsjastrowold.h"
 #include <cassert>
 #include "wavefunction.h"
 #include "../system.h"
 #include <iostream>
 
-NQSJastrow::NQSJastrow(System* system) :
+NQSJastrowOld::NQSJastrowOld(System* system) :
         WaveFunction(system) {
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
@@ -13,7 +13,7 @@ NQSJastrow::NQSJastrow(System* system) :
     m_sigmaSqrd                         = sigma*sigma;
 }
 
-void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) {
+void NQSJastrowOld::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     m_oldPositions = m_positions;
     m_positions = positions;
 
@@ -30,13 +30,12 @@ void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) 
     m_oldRatio = m_ratio;
     double Prod = 1;
     for(int j=0; j<m_numberOfHiddenNodes; j++) {
-        //Prod *= (1 + exp(-m_v(j))) / (exp(-m_v(j)) + exp((m_oldPositions(pRand) - m_positions(pRand)) * m_W(pRand,j) / m_sigmaSqrd));
-        Prod *= (1 + exp(m_v(j)))/(1 + exp(m_oldV(j)));
+        Prod *= (1 + exp(-m_v(j))) / (exp(-m_v(j)) + exp((m_oldPositions(pRand) - m_positions(pRand)) * m_W(pRand,j) / m_sigmaSqrd));
     }
     m_ratio = Prod * Prod;
 }
 
-void NQSJastrow::resetArrays(int pRand) {
+void NQSJastrowOld::resetArrays(int pRand) {
     m_positions = m_oldPositions;
     m_v         = m_oldV;
     m_n         = m_oldN;
@@ -44,7 +43,7 @@ void NQSJastrow::resetArrays(int pRand) {
     m_ratio     = m_oldRatio;
 }
 
-void NQSJastrow::initializeArrays(const Eigen::VectorXd positions) {
+void NQSJastrowOld::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
     m_v = m_b + m_W.transpose() * positions;
 
@@ -58,7 +57,7 @@ void NQSJastrow::initializeArrays(const Eigen::VectorXd positions) {
     m_ratio = 1;
 }
 
-void NQSJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
+void NQSJastrowOld::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
     m_elementNumber = elementNumber;
     Eigen::VectorXd XXX = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(XXX.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
@@ -67,15 +66,15 @@ void NQSJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementN
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }
 
-int fromWToParameterIndex(int i, int j, int numberOfFreeDimensions) {
+int fromWToParameterIndex2(int i, int j, int numberOfFreeDimensions) {
     return j*numberOfFreeDimensions + i;
 }
 
-double NQSJastrow::evaluateRatio() {
+double NQSJastrowOld::evaluateRatio() {
     return m_ratio;
 }
 
-double NQSJastrow::computeFirstDerivative(const int k) {
+double NQSJastrowOld::computeFirstDerivative(const int k) {
     double Sum = 0;
     for(int j=0; j<m_numberOfHiddenNodes; j++) {
         Sum += m_W(k,j) * m_n(j);
@@ -83,38 +82,41 @@ double NQSJastrow::computeFirstDerivative(const int k) {
     return Sum / m_sigmaSqrd;
 }
 
-double NQSJastrow::computeSecondDerivative() {
+double NQSJastrowOld::computeSecondDerivative() {
     double Sum = 0;
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
-            Sum += m_W(k,j) * m_W(k,j) * m_p(j) * m_n(j);
+            Sum += m_W(k,j) * m_W(k,j) * m_n(j) * m_p(j);
         }
     }
     return Sum / (m_sigmaSqrd * m_sigmaSqrd);
 }
 
-Eigen::VectorXd NQSJastrow::computeFirstEnergyDerivative(const int k) {
+Eigen::VectorXd NQSJastrowOld::computeFirstEnergyDerivative(const int k) {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     // Update b
     for(int j=0; j<m_numberOfHiddenNodes; j++) {
-        gradients(j) = m_W(k,j) * m_p(j) * m_n(j) / m_sigmaSqrd;
+        gradients(j) = m_W(k,j) * m_n(j) * m_p(j) / m_sigmaSqrd;
     }
+
 
     // Update W
     for(int l=0; l<m_numberOfFreeDimensions; l++) {
         for(int m=0; m<m_numberOfHiddenNodes; m++) {
-            int n = fromWToParameterIndex(l, m, m_numberOfFreeDimensions);
-            gradients(n + m_numberOfHiddenNodes) = m_W(k,m) * m_p(m) * m_n(m) * m_positions(l);
+            int n = fromWToParameterIndex2(l, m, m_numberOfFreeDimensions);
             if(l == k) {
-                gradients(n + m_numberOfHiddenNodes) += m_n(m) * m_sigmaSqrd;
+                gradients(n + m_numberOfHiddenNodes) = m_n(m) * (m_sigmaSqrd + m_W(k,m) * m_p(m) * m_positions(k));
+            }
+            else {
+                gradients(n + m_numberOfHiddenNodes) = m_W(k, m) * m_n(m) * m_p(m) * m_positions(l);
             }
         }
     }
     return -0.5 * gradients / (m_sigmaSqrd * m_sigmaSqrd);
 }
 
-Eigen::VectorXd NQSJastrow::computeSecondEnergyDerivative() {
+Eigen::VectorXd NQSJastrowOld::computeSecondEnergyDerivative() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     // Update b
@@ -125,15 +127,10 @@ Eigen::VectorXd NQSJastrow::computeSecondEnergyDerivative() {
     }
 
     // Update W
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        for(int l=0; l<m_numberOfFreeDimensions; l++) {
-            for(int m=0; m<m_numberOfHiddenNodes; m++) {
-                int n = fromWToParameterIndex(l, m, m_numberOfFreeDimensions);
-                gradients(n + m_numberOfHiddenNodes) = m_W(k,m) * m_W(k,m) * m_positions(l) * m_p(m) * m_n(m) * (m_p(m) - m_n(m)) / m_sigmaSqrd;
-                if(l == k) {
-                    gradients(n + m_numberOfHiddenNodes) += 2 * m_W(k,m) * m_p(m) * m_n(m);
-                }
-            }
+    for(int l=0; l<m_numberOfFreeDimensions; l++) {
+        for(int m=0; m<m_numberOfHiddenNodes; m++) {
+            int k = fromWToParameterIndex2(l, m, m_numberOfFreeDimensions);
+            gradients(k + m_numberOfHiddenNodes) = m_n(m) * m_p(m) * (2 * m_W(l,m) + m_W.cwiseAbs2().colwise().sum()(m) * m_positions(l) * (m_p(m) - m_n(m)));
         }
     }
 

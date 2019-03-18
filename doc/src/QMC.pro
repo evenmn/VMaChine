@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     Optimization/asgd.cpp \
     Optimization/adam.cpp \
     Basis/none.cpp \
-    WaveFunctions/padejastrownew.cpp
+    WaveFunctions/padejastrownew.cpp \
+    WaveFunctions/nqsjastrowold.cpp
 
 HEADERS += \
     system.h \
@@ -78,5 +79,6 @@ HEADERS += \
     Optimization/asgd.h \
     Optimization/adam.h \
     Basis/none.h \
-    WaveFunctions/padejastrownew.h
+    WaveFunctions/padejastrownew.h \
+    WaveFunctions/nqsjastrowold.h
 
