@@ -20,28 +20,42 @@ void System::runMetropolisSteps(const int numberOfIterations) {
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles("../data/");
+    lastIteration = numberOfIterations - 1;
 
-    for (int iter = 0; iter < numberOfIterations; iter++) {
+    for(int iter = 0; iter < numberOfIterations; iter++) {
         clock_t start_time = clock();
-        for (int i=0; i < m_totalNumberOfSteps; i++) {
+        for(int i=0; i < m_totalNumberOfSteps; i++) {
             bool acceptedStep = m_metropolis->acceptMove();
             m_positions       = m_metropolis->updatePositions();
             if(i >= (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
                 m_sampler->sample(acceptedStep, i);
-                if(iter == numberOfIterations-1) {
+                if(iter == lastIteration) {
                     m_sampler->printInstantValuesToFile(m_positions);
                 }
             }
         }
         clock_t end_time = clock();
         m_sampler->computeAverages();
-        m_sampler->printOutputToTerminal(numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
+        if(iter != lastIteration) {
+            m_sampler->printOutputToTerminal(numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
+        }
         m_sampler->printOutputToFile();
         m_parameters -= m_optimization->updateParameters();
-        //std::cout << m_parameters << std::endl;
         updateAllParameters(m_parameters);
+
+        //Stop criterion
+        energies.head(numberOfEnergies-1) = energies.tail(numberOfEnergies-1);
+        energies(numberOfEnergies-1) = m_sampler->getAverageEnergy();
+        if(fabs(energies(0) - energies(numberOfEnergies-1)) < tolerance) {
+            std::cout << "The system has converged! Let's run one more cycle to collect data" << std::endl;
+            lastIteration = iter + 1;
+        }
+        if(iter == lastIteration) {
+            m_sampler->closeOutputFiles();
+            m_sampler->printFinalOutputToTerminal();
+            exit(0);
+        }
     }
-   m_sampler->closeOutputFiles();
 }
 
 void System::setNumberOfParticles(const int numberOfParticles) {

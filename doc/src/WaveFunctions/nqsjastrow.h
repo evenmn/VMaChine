@@ -20,16 +20,16 @@ private:
     double m_sigmaSqrd = 1;
 
     Eigen::VectorXd m_positions;
-    Eigen::VectorXd m_oldPositions;
+    Eigen::VectorXd m_positionsOld;
     Eigen::MatrixXd m_W;
     Eigen::VectorXd m_b;
-    Eigen::VectorXd m_oldV;
+    Eigen::VectorXd m_vOld;
     Eigen::VectorXd m_v;
-    Eigen::VectorXd m_oldN;
+    Eigen::VectorXd m_nOld;
     Eigen::VectorXd m_n;
-    Eigen::VectorXd m_oldP;
+    Eigen::VectorXd m_pOld;
     Eigen::VectorXd m_p;
 
-    double m_ratio = 0;
-    double m_oldRatio = 0;
+    double m_probabilityRatio = 0;
+    double m_probabilityRatioOld = 0;
 };

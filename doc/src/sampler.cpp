@@ -7,6 +7,7 @@
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
 #include "Optimization/optimization.h"
+#include "Resampling/AutoBlocking/blocker.h"
 
 using std::cout;
 using std::endl;
@@ -19,7 +20,7 @@ Sampler::Sampler(System* system) {
     m_numberOfElements                  = m_system->getNumberOfWaveFunctionElements();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_numberOfMetropolisSteps           = m_system->getNumberOfMetropolisSteps();
-    m_equilibriumFraction               = m_system->getEquilibrationFraction();
+    m_equilibrationFraction             = m_system->getEquilibrationFraction();
     m_totalNumberOfSteps                = m_system->getTotalNumberOfSteps();
     m_numberOfMetropolisSteps           = m_system->getNumberOfMetropolisSteps();
     m_omega                             = m_system->getFrequency();
@@ -52,7 +53,7 @@ void Sampler::computeAverages() {
     m_averageEnergySqrd     = m_cumulativeEnergySqrd / m_numberOfMetropolisSteps;
     m_averageGradients      = m_cumulativeGradients / m_numberOfStepsPerBatch;
     m_averageGradientsE     = m_cumulativeGradientsE / m_numberOfStepsPerBatch;
-    m_variance              = m_averageEnergySqrd - m_averageEnergy * m_averageEnergy;
+    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_numberOfBatches;
 }
 
 void Sampler::printOutputToTerminal(const int maxIter, const double time) {
@@ -62,7 +63,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " Number of particles  : " << m_system->getNumberOfParticles()  << endl;
     cout << " Number of dimensions : " << m_system->getNumberOfDimensions() << endl;
     cout << " Oscillator frequency : " << m_omega << endl;
-    cout << " # Metropolis steps   : " << m_totalNumberOfSteps << " (" << m_numberOfMetropolisSteps << " equilibrium)" << endl;
+    cout << " # Metropolis steps   : " << m_totalNumberOfSteps << " (" << m_numberOfMetropolisSteps << " equilibration)" << endl;
     cout << " Data files stored as : " << m_filename << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
@@ -72,6 +73,28 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " STD              : " << sqrt(m_variance) << endl;
     cout << " Time             : " << time << endl;
     cout << endl;
+}
+
+void Sampler::printFinalOutputToTerminal() {
+    std::ifstream infile(generateFileName("../data/instant_NQS_SGD", ".dat"));
+    std::vector<double> x;
+    std::string line;
+    while(std::getline(infile,line)) {
+        x.push_back(strtod(line.c_str(), nullptr));
+    }
+    Blocker block(x);
+
+    cout << endl;
+    cout << "  ===  Final results:   === " << endl;
+    cout << " Energy           : " << m_averageEnergy << endl;
+    cout << " Acceptence Ratio : " << double(m_acceptenceRatio)/m_numberOfMetropolisSteps << endl;
+    cout << " Variance         : " << m_variance << endl;
+    cout << " STD              : " << sqrt(m_variance) << endl;
+    cout << " Time             : " << time << endl;
+    cout << endl;
+    cout << " --- Blocking results: ---" << endl;
+    printf( " Energy           : %g (with mean sq. err. = %g) \n", block.mean, block.mse_mean);
+    printf( " STD              : %g (with mean sq. err. = %g) \n", block.stdErr, block.mse_stdErr);
 }
 
 std::string Sampler::generateFileName(const std::string name, const std::string extension) {
@@ -87,16 +110,16 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    std::string energyFileName = generateFileName("energy_NQS", ".dat");
+    std::string energyFileName = generateFileName("energy_NQS_SGD", ".dat");
     m_averageEnergyFile.open(path + energyFileName);
 
     // Print cumulative energies to file
-    std::string instantEnergyFileName = generateFileName("instant_NQS", ".dat");
+    std::string instantEnergyFileName = generateFileName("instant_NQS_SGD", ".dat");
     m_instantEnergyFile.open(path + instantEnergyFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName("onebody_NQS", ".dat");
+        std::string oneBodyFileName = generateFileName("onebody_NQS_SGD", ".dat");
         m_oneBodyFile.open (path + oneBodyFileName);
     }
 }

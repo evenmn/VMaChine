@@ -29,27 +29,27 @@ Eigen::VectorXd HydrogenLike::calculateRadialVector(const Eigen::VectorXd positi
 }
 
 void HydrogenLike::initializeArrays(const Eigen::VectorXd positions) {
-    m_positions       = positions;
-    m_radialVector    = calculateRadialVector(positions);
-    m_ratio = 1;
+    m_positions         = positions;
+    m_radialVector      = calculateRadialVector(positions);
+    m_probabilityRatio  = 1;
 }
 
 void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const int pRand) {
-    m_oldPositions         = m_positions;
+    m_positionsOld         = m_positions;
     m_positions            = positions;
 
-    m_oldRadialVector      = m_radialVector;
+    m_radialVectorOld      = m_radialVector;
     int particle = int(pRand/m_numberOfDimensions);
 
     m_radialVector(particle)  = calculateRadialVectorElement(positions, particle);
 
-    m_oldRatio = m_ratio;
-    m_ratio = exp( 2 * m_Z * m_alpha * (m_oldRadialVector(particle) - m_radialVector(particle)));
+    m_probabilityRatioOld   = m_probabilityRatio;
+    m_probabilityRatio      = exp( 2 * m_Z * m_alpha * (m_radialVectorOld(particle) - m_radialVector(particle)));
 }
 
 void HydrogenLike::resetArrays(int pRand) {
-    m_positions       = m_oldPositions;
-    m_radialVector    = m_oldRadialVector;
+    m_positions       = m_positionsOld;
+    m_radialVector    = m_radialVectorOld;
 }
 
 void HydrogenLike::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
@@ -58,7 +58,7 @@ void HydrogenLike::updateParameters(const Eigen::MatrixXd parameters, const int 
 }
 
 double HydrogenLike::evaluateRatio() {
-    return m_ratio;
+    return m_probabilityRatio;
 }
 
 double HydrogenLike::computeFirstDerivative(const int k) {

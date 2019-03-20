@@ -101,5 +101,11 @@ private:
     Eigen::MatrixXd                     m_distanceMatrix;
     Eigen::VectorXd                     m_radialVector;
     Eigen::MatrixXd                     m_gradients;
+
+    // Convergence tools
+    int numberOfEnergies = 5;
+    int lastIteration;
+    double tolerance = 1e-5;
+    Eigen::VectorXd energies = Eigen::VectorXd::Zero(numberOfEnergies);
 };
 

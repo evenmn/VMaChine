@@ -7,6 +7,7 @@ public:
     Sampler(class System* system);
     void            sample(const bool acceptedStep, const int stepNumber);
     void            printOutputToTerminal(const int maxIter, const double time);
+    void            printFinalOutputToTerminal();
     void            openOutputFiles(const std::string path);
     void            printOutputToFile();
     void            closeOutputFiles();
@@ -30,7 +31,7 @@ private:
     int     m_iter = 0;
     bool    m_interaction = 0;
     double  m_variance = 0;
-    double  m_equilibriumFraction = 0;
+    double  m_equilibrationFraction = 0;
     double  m_omega = 0;
 
     double  m_averageEnergy = 0;

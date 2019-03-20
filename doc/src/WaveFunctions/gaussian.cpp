@@ -11,29 +11,29 @@ Gaussian::Gaussian(System* system) :
 }
 
 void Gaussian::initializeArrays(const Eigen::VectorXd positions) {
-    m_positions = positions;
-    m_ratio     = 1;
+    m_positions             = positions;
+    m_probabilityRatio      = 1;
 }
 
 void Gaussian::updateArrays(const Eigen::VectorXd positions, const int pRand) {
-    m_oldPositions  = m_positions;
-    m_positions     = positions;
-    m_oldRatio      = m_ratio;
-    m_ratio         = exp(m_omega * m_alpha * (m_oldPositions(pRand)*m_oldPositions(pRand) - m_positions(pRand)*m_positions(pRand)));
+    m_positionsOld          = m_positions;
+    m_positions             = positions;
+    m_probabilityRatioOld   = m_probabilityRatio;
+    m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(pRand)*m_positionsOld(pRand) - m_positions(pRand)*m_positions(pRand)));
 }
 
 void Gaussian::resetArrays(int pRand) {
-    m_positions = m_oldPositions;
-    m_ratio     = m_oldRatio;
+    m_positions             = m_positionsOld;
+    m_probabilityRatio      = m_probabilityRatioOld;
 }
 
 void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
-    m_alpha = parameters(m_elementNumber,0);
+    m_elementNumber         = elementNumber;
+    m_alpha                 = parameters(m_elementNumber,0);
 }
 
 double Gaussian::evaluateRatio() {
-    return m_ratio;
+    return m_probabilityRatio;
 }
 
 double Gaussian::computeFirstDerivative(const int k) {

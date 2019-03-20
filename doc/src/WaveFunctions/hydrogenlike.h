@@ -23,10 +23,10 @@ private:
     int m_Z = 1;
 
     Eigen::VectorXd m_positions;
-    Eigen::VectorXd m_oldPositions;
+    Eigen::VectorXd m_positionsOld;
     Eigen::VectorXd m_radialVector;
-    Eigen::VectorXd m_oldRadialVector;
+    Eigen::VectorXd m_radialVectorOld;
 
-    double m_ratio;
-    double m_oldRatio;
+    double m_probabilityRatio;
+    double m_probabilityRatioOld;
 };

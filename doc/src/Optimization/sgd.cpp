@@ -49,4 +49,5 @@ Eigen::MatrixXd SGD::updateParameters() {
     double monotonic = 1/pow(m_step, m_monotonicExp);
     m_v = m_gamma * m_v + m_eta * getEnergyGradient() * monotonic;
     return m_v;
+    //return Eigen::MatrixXd(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }

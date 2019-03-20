@@ -14,7 +14,6 @@ SOURCES += main.cpp \
     Hamiltonians/atomicnucleus.cpp \
     InitialWeights/initialweights.cpp \
     InitialWeights/randomize.cpp \
-    WaveFunctions/mlgaussian.cpp \
     Metropolis/metropolis.cpp \
     Metropolis/bruteforce.cpp \
     Metropolis/importancesampling.cpp \
@@ -22,7 +21,6 @@ SOURCES += main.cpp \
     InitialWeights/constant.cpp \
     Optimization/optimization.cpp \
     WaveFunctions/gaussian.cpp \
-    WaveFunctions/padejastrow.cpp \
     WaveFunctions/partlyrestricted.cpp \
     WaveFunctions/slaterdeterminant.cpp \
     Optimization/barzilaiborwein.cpp \
@@ -39,8 +37,9 @@ SOURCES += main.cpp \
     Optimization/asgd.cpp \
     Optimization/adam.cpp \
     Basis/none.cpp \
-    WaveFunctions/padejastrownew.cpp \
-    WaveFunctions/nqsjastrowold.cpp
+    WaveFunctions/padejastrow.cpp \
+    WaveFunctions/nqsgaussian.cpp \
+    Resampling/AutoBlocking/blocker.cpp
 
 HEADERS += \
     system.h \
@@ -54,7 +53,6 @@ HEADERS += \
     Hamiltonians/atomicnucleus.h \
     InitialWeights/initialweights.h \
     InitialWeights/randomize.h \
-    WaveFunctions/mlgaussian.h \
     Metropolis/metropolis.h \
     Metropolis/bruteforce.h \
     Metropolis/importancesampling.h \
@@ -62,7 +60,6 @@ HEADERS += \
     InitialWeights/constant.h \
     Optimization/optimization.h \
     WaveFunctions/gaussian.h \
-    WaveFunctions/padejastrow.h \
     WaveFunctions/partlyrestricted.h \
     WaveFunctions/slaterdeterminant.h \
     Optimization/barzilaiborwein.h \
@@ -79,6 +76,7 @@ HEADERS += \
     Optimization/asgd.h \
     Optimization/adam.h \
     Basis/none.h \
-    WaveFunctions/padejastrownew.h \
-    WaveFunctions/nqsjastrowold.h
+    WaveFunctions/padejastrow.h \
+    WaveFunctions/nqsgaussian.h \
+    Resampling/AutoBlocking/blocker.h
 
