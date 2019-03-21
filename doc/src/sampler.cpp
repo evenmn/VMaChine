@@ -53,7 +53,7 @@ void Sampler::computeAverages() {
     m_averageEnergySqrd     = m_cumulativeEnergySqrd / m_numberOfMetropolisSteps;
     m_averageGradients      = m_cumulativeGradients / m_numberOfStepsPerBatch;
     m_averageGradientsE     = m_cumulativeGradientsE / m_numberOfStepsPerBatch;
-    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_numberOfBatches;
+    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_numberOfMetropolisSteps;
 }
 
 void Sampler::printOutputToTerminal(const int maxIter, const double time) {
@@ -76,7 +76,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
 }
 
 void Sampler::printFinalOutputToTerminal() {
-    std::ifstream infile(generateFileName("../data/instant_NQS_SGD", ".dat"));
+    std::ifstream infile(generateFileName("../data/instant_VMC_SGD", ".dat"));
     std::vector<double> x;
     std::string line;
     while(std::getline(infile,line)) {
@@ -90,7 +90,6 @@ void Sampler::printFinalOutputToTerminal() {
     cout << " Acceptence Ratio : " << double(m_acceptenceRatio)/m_numberOfMetropolisSteps << endl;
     cout << " Variance         : " << m_variance << endl;
     cout << " STD              : " << sqrt(m_variance) << endl;
-    cout << " Time             : " << time << endl;
     cout << endl;
     cout << " --- Blocking results: ---" << endl;
     printf( " Energy           : %g (with mean sq. err. = %g) \n", block.mean, block.mse_mean);
@@ -110,16 +109,16 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    std::string energyFileName = generateFileName("energy_NQS_SGD", ".dat");
+    std::string energyFileName = generateFileName("energy_VMC_SGD", ".dat");
     m_averageEnergyFile.open(path + energyFileName);
 
     // Print cumulative energies to file
-    std::string instantEnergyFileName = generateFileName("instant_NQS_SGD", ".dat");
+    std::string instantEnergyFileName = generateFileName("instant_VMC_SGD", ".dat");
     m_instantEnergyFile.open(path + instantEnergyFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName("onebody_NQS_SGD", ".dat");
+        std::string oneBodyFileName = generateFileName("onebody_VMC_SGD", ".dat");
         m_oneBodyFile.open (path + oneBodyFileName);
     }
 }

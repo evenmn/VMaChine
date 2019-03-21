@@ -64,6 +64,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
         m_slaterDeterminantUp = m_slaterMatrixUp.determinant();
         //std::cout << m_slaterDeterminantUp << std::endl;
         m_probabilityRatio  = m_slaterDeterminantUp * m_slaterDeterminantUp / (m_slaterDeterminantUpOld * m_slaterDeterminantUpOld);
+        //m_probabilityRatio = R*R;
     }
     else {
         m_slaterMatrixDnOld                 = m_slaterMatrixDn;
@@ -104,6 +105,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
             }
         }
         m_probabilityRatio  = m_slaterDeterminantDn * m_slaterDeterminantDn / (m_slaterDeterminantDnOld * m_slaterDeterminantDnOld);
+        //m_probabilityRatio = R*R;
     }
 }
 

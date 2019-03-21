@@ -46,12 +46,12 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,22));
-    int     numberOfIterations  = 20;
-    double  eta                 = 0.5;                      // Learning rate
+    int     numberOfSteps       = int(pow(2,27));
+    int     numberOfIterations  = 200;
+    double  eta                 = 0.1;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
-    double  sigma               = 1/sqrt(omega);                      // Width of probability distribution
+    double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
     double  equilibration       = 0.2;                      // Amount of the total steps used
     bool    interaction         = true;
@@ -75,16 +75,16 @@ int main(int argc, char *argv[]) {
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class NQSGaussian           (system));
-    WaveFunctionElements.push_back      (new class NQSJastrow           (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class NQSGaussian           (system));
+    //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.5));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
