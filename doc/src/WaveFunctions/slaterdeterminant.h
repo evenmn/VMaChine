@@ -9,6 +9,8 @@ public:
     Eigen::MatrixXd updateSlaterMatrix           (const Eigen::VectorXd positions);
     Eigen::VectorXd updateSlaterMatrixDerRow     (const Eigen::VectorXd positions, const int k);
     Eigen::MatrixXd updateSlaterMatrixDer        (const Eigen::VectorXd positions);
+    Eigen::VectorXd updateSlaterMatrixSecDerRow  (const Eigen::VectorXd positions, const int k);
+    Eigen::MatrixXd updateSlaterMatrixSecDer     (const Eigen::VectorXd positions);
 
     void            resetArrays                  (int pRand);
     void            updateArrays                 (const Eigen::VectorXd positions, const int pRand);
@@ -32,11 +34,12 @@ private:
     Eigen::MatrixXd m_slaterMatrixDn;
     Eigen::MatrixXd m_slaterMatrixUpDer;
     Eigen::MatrixXd m_slaterMatrixDnDer;
+    Eigen::MatrixXd m_slaterMatrixUpSecDer;
+    Eigen::MatrixXd m_slaterMatrixDnSecDer;
     Eigen::MatrixXd m_slaterMatrixUpInverse;
     Eigen::MatrixXd m_slaterMatrixDnInverse;
     Eigen::VectorXd m_determinantDerivative;
-    double m_slaterDeterminantUp = 0;
-    double m_slaterDeterminantDn = 0;
+    Eigen::VectorXd m_determinantSecondDerivative;
     double m_probabilityRatio = 0;
 
     Eigen::VectorXd m_positionsOld;
@@ -44,13 +47,11 @@ private:
     Eigen::MatrixXd m_slaterMatrixDnOld;
     Eigen::MatrixXd m_slaterMatrixUpDerOld;
     Eigen::MatrixXd m_slaterMatrixDnDerOld;
+    Eigen::MatrixXd m_slaterMatrixUpSecDerOld;
+    Eigen::MatrixXd m_slaterMatrixDnSecDerOld;
     Eigen::MatrixXd m_slaterMatrixUpInverseOld;
     Eigen::MatrixXd m_slaterMatrixDnInverseOld;
     Eigen::VectorXd m_determinantDerivativeOld;
-    double m_slaterDeterminantUpOld = 0;
-    double m_slaterDeterminantDnOld = 0;
+    Eigen::VectorXd m_determinantSecondDerivativeOld;
     double m_probabilityRatioOld = 0;
-
-    double m_slaterDeterminantUpOldOld = 0;
-    double m_slaterDeterminantDnOldOld = 0;
 };

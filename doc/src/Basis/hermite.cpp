@@ -60,6 +60,16 @@ double Hermite::evaluateDerivative(double x, int n) {
     }
 }
 
+double Hermite::evaluateSecondDerivative(double x, int n) {
+    //Second derivative of Hermite polynomial of n'th degree
+    if(n < 2) {
+        return 0;
+    }
+    else {
+        return 4 * sqrt(m_omega) * n * (n-1) * evaluate(x,n-2);
+    }
+}
+
 Eigen::MatrixXd Hermite::generateListOfStates() {
     // Returns the index list used in Slater
     // For instance (0,0), (1,0), (0,1) for 6P in 2D

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 
-asymptote = 1.02164
+asymptote = 20.19
 '''
 data = np.loadtxt("../data/energy.txt")
 x = np.linspace(0, len(data) - 1, len(data))
@@ -18,20 +18,20 @@ plt.legend()
 plt.show()
 
 '''
-data1 = np.loadtxt("../data/energy_NQS_SGD_P2_D2_INT1_w0.280000_MC4194304.dat")
+#data1 = np.loadtxt("../data/energy_NQS_SGD_P2_D2_INT1_w0.280000_MC4194304.dat")
 #data2 = np.loadtxt("../data/energy_NQS_SGD_P2_D2_INT1_w1.000000_MC33554432.dat")
 #data3 = np.loadtxt("../data/energy_VMC_SGD_P2_D2_INT1_w0.500000_MC262144.dat")
-#data4 = np.loadtxt("../data/energy_NQS_SGD_P2_D2_INT1_w0.500000_MC262144.dat")
+data4 = np.loadtxt("../data/energy_VMC_SGD_P6_D2_INT1_w1.000000_MC262144.dat")
 
-x = np.linspace(0, len(data1) - 1, len(data1))
+x = np.linspace(0, len(data4) - 1, len(data4))
 
 label_size = {"size":"14"}
 
 plt.axhline(asymptote, linestyle='--', color='r', label="Exact")
-plt.plot(x, data1, label="VMC")
+#plt.plot(x, data1, label="VMC")
 #plt.plot(x, data2, label="NQS")
 #plt.plot(x, data3, label="VMC")
-#plt.plot(x, data4, label="NQS")
+plt.plot(x, data4, label="NQS")
 
 plt.xlabel("Iteration",**label_size)
 plt.ylabel("Energy [a.u.]",**label_size)

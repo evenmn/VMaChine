@@ -7,6 +7,7 @@ public:
     virtual void numberOfOrbitals() = 0;
     virtual double evaluate(double x, int n) = 0;
     virtual double evaluateDerivative(double x, int n) = 0;
+    virtual double evaluateSecondDerivative(double x, int n) = 0;
     virtual Eigen::MatrixXd generateListOfStates() = 0;
     virtual ~Basis() = 0;
 
