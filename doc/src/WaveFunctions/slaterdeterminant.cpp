@@ -254,7 +254,7 @@ double SlaterDeterminant::computeFirstDerivative(const int k) {
 }
 
 double SlaterDeterminant::computeSecondDerivative() {
-    return m_determinantSecondDerivative.sum() - double(m_determinantDerivative.transpose() * m_determinantDerivative);
+    return m_determinantSecondDerivative.cwiseAbs2().sum() - double(m_determinantDerivative.transpose() * m_determinantDerivative);
 }
 
 Eigen::VectorXd SlaterDeterminant::computeFirstEnergyDerivative(const int k) {
