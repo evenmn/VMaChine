@@ -45,7 +45,7 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 6;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,20));
     int     numberOfIterations  = 1000;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class NQSGaussian          (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
