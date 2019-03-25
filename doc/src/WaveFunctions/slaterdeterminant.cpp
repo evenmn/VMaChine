@@ -54,9 +54,10 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
         for(int i=0; i<m_freeDimensionsHalf; i++) {
             m_determinantDerivative(i) = 0;
             m_determinantSecondDerivative(i) = 0;
+            int l = int(i/m_numberOfDimensions);
             for(int j=0; j<m_numberOfParticlesHalf; j++) {
-                m_determinantDerivative(i) += m_slaterMatrixUpDer(i,j) * m_slaterMatrixUpInverse(j,int(i/m_numberOfDimensions));
-                m_determinantSecondDerivative(i) += m_slaterMatrixUpSecDer(i,j) * m_slaterMatrixUpInverse(j,int(i/m_numberOfDimensions));
+                m_determinantDerivative(i)       += m_slaterMatrixUpDer(i,j)    * m_slaterMatrixUpInverse(j,l);
+                m_determinantSecondDerivative(i) += m_slaterMatrixUpSecDer(i,j) * m_slaterMatrixUpInverse(j,l);
             }
         }
         m_probabilityRatio = R*R;
@@ -91,9 +92,10 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
             m_determinantDerivative(i) = 0;
             m_determinantSecondDerivative(i) = 0;
             int k = i - m_freeDimensionsHalf;
+            int l = int(k/m_numberOfDimensions);
             for(int j=0; j<m_numberOfParticlesHalf; j++) {
-                m_determinantDerivative(i) += m_slaterMatrixDnDer(k,j) * m_slaterMatrixDnInverse(j,int(k/m_numberOfDimensions));
-                m_determinantSecondDerivative(i) += m_slaterMatrixDnSecDer(k,j) * m_slaterMatrixDnInverse(j,int(k/m_numberOfDimensions));
+                m_determinantDerivative(i)       += m_slaterMatrixDnDer(k,j)    * m_slaterMatrixDnInverse(j,l);
+                m_determinantSecondDerivative(i) += m_slaterMatrixDnSecDer(k,j) * m_slaterMatrixDnInverse(j,l);
             }
         }
         m_probabilityRatio = R*R;

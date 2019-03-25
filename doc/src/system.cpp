@@ -43,17 +43,18 @@ void System::runMetropolisSteps(const int numberOfIterations) {
         m_parameters -= m_optimization->updateParameters();
         updateAllParameters(m_parameters);
 
+        if(iter == lastIteration) {
+            m_sampler->closeOutputFiles();
+            m_sampler->printFinalOutputToTerminal();
+            exit(0);
+        }
+
         //Stop criterion
         energies.head(numberOfEnergies-1) = energies.tail(numberOfEnergies-1);
         energies(numberOfEnergies-1) = m_sampler->getAverageEnergy();
         if(fabs(energies(0) - energies(numberOfEnergies-1)) < tolerance) {
             std::cout << "The system has converged! Let's run one more cycle to collect data" << std::endl;
             lastIteration = iter + 1;
-        }
-        if(iter == lastIteration) {
-            m_sampler->closeOutputFiles();
-            m_sampler->printFinalOutputToTerminal();
-            exit(0);
         }
     }
 }
