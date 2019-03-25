@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     Basis/none.cpp \
     WaveFunctions/padejastrow.cpp \
     WaveFunctions/nqsgaussian.cpp \
-    Resampling/AutoBlocking/blocker.cpp
+    Resampling/AutoBlocking/blocker.cpp \
+    WaveFunctions/simplejastrow.cpp
 
 HEADERS += \
     system.h \
@@ -78,5 +79,6 @@ HEADERS += \
     Basis/none.h \
     WaveFunctions/padejastrow.h \
     WaveFunctions/nqsgaussian.h \
-    Resampling/AutoBlocking/blocker.h
+    Resampling/AutoBlocking/blocker.h \
+    WaveFunctions/simplejastrow.h
 

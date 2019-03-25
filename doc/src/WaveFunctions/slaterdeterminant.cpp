@@ -213,7 +213,7 @@ Eigen::MatrixXd SlaterDeterminant::updateSlaterMatrixSecDer(const Eigen::VectorX
     //Initialize the entire dA matrix
     Eigen::MatrixXd d2A = Eigen::MatrixXd::Zero(m_freeDimensionsHalf, m_numberOfParticlesHalf);
     for(int k=0; k<m_freeDimensionsHalf; k++) {
-        d2A.row(k) = updateSlaterMatrixDerRow(positions, k);
+        d2A.row(k) = updateSlaterMatrixSecDerRow(positions, k);
     }
     return d2A;
 }

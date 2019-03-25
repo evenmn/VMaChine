@@ -76,7 +76,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
 }
 
 void Sampler::printFinalOutputToTerminal() {
-    std::ifstream infile(generateFileName("../data/instant_VMC_SGD", ".dat"));
+    std::ifstream infile(generateFileName("../data/instant_NQSNEW_SGD", ".dat"));
     std::vector<double> x;
     std::string line;
     while(std::getline(infile,line)) {
@@ -109,16 +109,16 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    std::string energyFileName = generateFileName("energy_NQS_SGD", ".dat");
+    std::string energyFileName = generateFileName("energy_NQSNEW_SGD", ".dat");
     m_averageEnergyFile.open(path + energyFileName);
 
     // Print cumulative energies to file
-    std::string instantEnergyFileName = generateFileName("instant_NQS_SGD", ".dat");
+    std::string instantEnergyFileName = generateFileName("instant_NQSNEW_SGD", ".dat");
     m_instantEnergyFile.open(path + instantEnergyFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName("onebody_NQS_SGD", ".dat");
+        std::string oneBodyFileName = generateFileName("onebody_NQSNEW_SGD", ".dat");
         m_oneBodyFile.open (path + oneBodyFileName);
     }
 }

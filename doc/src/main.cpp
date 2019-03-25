@@ -6,6 +6,7 @@
 #include "WaveFunctions/slaterdeterminant.h"
 #include "WaveFunctions/nqsgaussian.h"
 #include "WaveFunctions/nqsjastrow.h"
+#include "WaveFunctions/simplejastrow.h"
 #include "WaveFunctions/partlyrestricted.h"
 #include "WaveFunctions/hydrogenlike.h"
 
@@ -44,10 +45,10 @@
 
 int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 12;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 200;
+    int     numberOfIterations  = 1000;
     double  eta                 = 0.1;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
@@ -76,10 +77,11 @@ int main(int argc, char *argv[]) {
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class NQSGaussian           (system));
+    WaveFunctionElements.push_back      (new class NQSGaussian          (system));
     WaveFunctionElements.push_back      (new class NQSJastrow           (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
