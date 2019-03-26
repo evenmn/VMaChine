@@ -82,7 +82,7 @@ void PadeJastrow::calculateF(int particle) {
     }
 }
 
-void PadeJastrow::calculateG(int particle, int pRand) {
+void PadeJastrow::calculateG(int pRand) {
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         m_g(pRand,i) = m_positions(pRand) - m_positions(i);
         m_g(i,pRand) = -m_g(pRand,i);
@@ -109,7 +109,8 @@ void PadeJastrow::calculateProbabilityRatio(int particle) {
 }
 
 void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
-    m_positions = positions;
+    m_positions         = positions;
+    m_probabilityRatio  = 1;
     calculateDistanceMatrix();
     m_f     = (Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticles) + m_gamma * m_distanceMatrix).cwiseInverse();
     m_g     = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
@@ -120,19 +121,24 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
         }
     }
     m_h = m_distanceMatrix.cwiseProduct(m_f);
-    m_fOld = m_f;
-    m_gOld = m_g;
-    m_hOld = m_h;
-    m_hOldOld = m_h;
 
-    m_probabilityRatio = 1;
-
+    setArrays();
     initializeBeta();
 }
 
 void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     int particle = int(pRand/m_numberOfDimensions);
+    setArrays();
 
+    m_positions             = positions;
+    calculateDistanceMatrixCross(particle);
+    calculateF                  (particle);
+    calculateH                  (particle);
+    calculateG                  (pRand);
+    calculateProbabilityRatio   (particle);
+}
+
+void PadeJastrow::setArrays() {
     m_positionsOld          = m_positions;
     m_distanceMatrixOld     = m_distanceMatrix;
     m_hOldOld               = m_hOld;
@@ -140,16 +146,9 @@ void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand)
     m_fOld                  = m_f;
     m_gOld                  = m_g;
     m_probabilityRatioOld   = m_probabilityRatio;
-
-    m_positions             = positions;
-    calculateDistanceMatrixCross(particle);
-    calculateF                  (particle);
-    calculateH                  (particle);
-    calculateG                  (particle, pRand);
-    calculateProbabilityRatio   (particle);
 }
 
-void PadeJastrow::resetArrays(int pRand) {
+void PadeJastrow::resetArrays() {
     m_positions         = m_positionsOld;
     m_distanceMatrix    = m_distanceMatrixOld;
     m_probabilityRatio  = m_probabilityRatioOld;

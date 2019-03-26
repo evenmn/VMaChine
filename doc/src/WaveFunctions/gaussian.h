@@ -5,7 +5,7 @@ class Gaussian : public WaveFunction {
 public:
     Gaussian(class System* system);
     void updateArrays(const Eigen::VectorXd positions, const int pRand);
-    void resetArrays(int pRand);
+    void resetArrays();
     void initializeArrays(const Eigen::VectorXd positions);
     void updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
     double evaluateRatio();

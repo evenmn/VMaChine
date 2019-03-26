@@ -170,9 +170,9 @@ void System::updateAllArrays(const Eigen::VectorXd positions, const int pRand) {
     }
 }
 
-void System::resetAllArrays(int pRand) {
+void System::resetAllArrays() {
     for(auto& i : m_waveFunctionVector) {
-        i->resetArrays(pRand);
+        i->resetArrays();
     }
 }
 

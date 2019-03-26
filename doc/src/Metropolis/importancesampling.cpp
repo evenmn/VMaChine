@@ -64,7 +64,7 @@ bool ImportanceSampling::acceptMove() {
     double r = m_system->getRandomNumberGenerator()->nextDouble();
 
     if(w < r) {
-        m_system->resetAllArrays(pRand);
+        m_system->resetAllArrays();
         m_positions       = m_positionsOld;
         m_quantumForceNew = m_quantumForceOld;
         return false;

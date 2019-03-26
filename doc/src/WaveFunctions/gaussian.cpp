@@ -22,7 +22,7 @@ void Gaussian::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(pRand)*m_positionsOld(pRand) - m_positions(pRand)*m_positions(pRand)));
 }
 
-void Gaussian::resetArrays(int pRand) {
+void Gaussian::resetArrays() {
     m_positions             = m_positionsOld;
     m_probabilityRatio      = m_probabilityRatioOld;
 }

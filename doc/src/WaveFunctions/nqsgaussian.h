@@ -5,7 +5,7 @@ class NQSGaussian : public WaveFunction {
 public:
     NQSGaussian(class System* system);
     void updateArrays(const Eigen::VectorXd positions, const int pRand);
-    void resetArrays(int pRand);
+    void resetArrays();
     void initializeArrays(const Eigen::VectorXd positions);
     void updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
     double evaluateRatio();
@@ -13,6 +13,8 @@ public:
     double computeSecondDerivative();
     Eigen::VectorXd computeFirstEnergyDerivative(const int k);
     Eigen::VectorXd computeSecondEnergyDerivative();
+
+    void setArrays();
 private:
     int     m_elementNumber = 0;
     double  m_omega         = 1;

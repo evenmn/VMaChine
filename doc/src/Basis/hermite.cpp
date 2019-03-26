@@ -1,3 +1,4 @@
+//#define __STDCPP_WANT_MATH_SPEC_FUNCS__ 1
 #include "hermite.h"
 #include "../system.h"
 #include <iostream>
@@ -8,6 +9,7 @@ Hermite::Hermite(System *system)  :
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     m_omega                 = m_system->getFrequency();
+    m_omegaSqrt             = sqrt(m_omega);
     numberOfOrbitals();
 }
 
@@ -30,7 +32,7 @@ void Hermite::numberOfOrbitals() {
             break;
         }
         else if(orb > m_numberOfParticles) {
-            std::cout << "This program supports closed-shells only. Please choose a P such that the orbital is full" << std::endl;
+            std::cout << "This program supports closed-shells only. Please choose a number of particles such that the orbital is full" << std::endl;
             exit(0);
         }
         counter += 1;
@@ -43,11 +45,12 @@ double Hermite::evaluate(double x, int n) {
         return 1;
     }
     else if(n == 1) {
-        return 2 * sqrt(m_omega) * x;
+        return 2 * m_omegaSqrt * x;
     }
     else {
-        return 2 * sqrt(m_omega) * x * evaluate(x,n-1) - 2 * (n-1) * evaluate(x,n-2);
+        return 2 * (m_omegaSqrt * x * evaluate(x,n-1) - (n-1) * evaluate(x,n-2));
     }
+    //return std::hermite(unsigned(n),x);
 }
 
 double Hermite::evaluateDerivative(double x, int n) {
@@ -56,7 +59,7 @@ double Hermite::evaluateDerivative(double x, int n) {
         return 0;
     }
     else {
-        return 2 * sqrt(m_omega) * n * evaluate(x,n-1);
+        return 2 * m_omegaSqrt * n * evaluate(x,n-1);
     }
 }
 
@@ -66,7 +69,7 @@ double Hermite::evaluateSecondDerivative(double x, int n) {
         return 0;
     }
     else {
-        return 4 * sqrt(m_omega) * n * (n-1) * evaluate(x,n-2);
+        return 4 * m_omegaSqrt * n * (n-1) * evaluate(x,n-2);
     }
 }
 

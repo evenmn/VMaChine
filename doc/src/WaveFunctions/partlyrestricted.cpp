@@ -19,7 +19,7 @@ void PartlyRestricted::updateArrays(const Eigen::VectorXd positions, const int p
     m_xCx = positions.transpose() * m_c * positions;
 }
 
-void PartlyRestricted::resetArrays(int pRand) {
+void PartlyRestricted::resetArrays() {
     m_positions = m_oldPositions;
     m_xCx       = m_oldXCx;
 }

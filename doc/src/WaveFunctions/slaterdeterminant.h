@@ -13,9 +13,10 @@ public:
     void            updateSlaterMatrixRow           (const int i);
     void            updateSlaterMatrixDerRow        (const int k);
     void            updateSlaterMatrixSecDerRow     (const int k);
-    double          updateRatio                     (const int particle);
+    double          updateRatio                     ();
+    void            setArrays                       ();
 
-    void            resetArrays                     (int pRand);
+    void            resetArrays                     ();
     void            updateArrays                    (const Eigen::VectorXd positions, const int pRand);
     void            initializeArrays                (const Eigen::VectorXd positions);
     void            updateParameters                (const Eigen::MatrixXd parameters, const int elementNumber);
@@ -26,9 +27,10 @@ public:
     Eigen::VectorXd computeSecondEnergyDerivative   ();
 private:
     int             m_elementNumber         = 0;
-    //int             m_numberOfOrbitals      = 0;
     int             m_numberOfParticlesHalf = 0;
     int             m_freeDimensionsHalf    = 0;
+    int             m_particle              = 0;
+    int             m_dimension             = 0;
 
     Eigen::MatrixXd m_listOfStates;
 

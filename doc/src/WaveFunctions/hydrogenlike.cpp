@@ -47,7 +47,7 @@ void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const int pRand
     m_probabilityRatio      = exp( 2 * m_Z * m_alpha * (m_radialVectorOld(particle) - m_radialVector(particle)));
 }
 
-void HydrogenLike::resetArrays(int pRand) {
+void HydrogenLike::resetArrays() {
     m_positions       = m_positionsOld;
     m_radialVector    = m_radialVectorOld;
 }

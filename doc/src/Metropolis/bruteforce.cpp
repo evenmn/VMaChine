@@ -25,7 +25,7 @@ bool BruteForce::acceptMove() {
     double r = m_system->getRandomNumberGenerator()->nextDouble();
     if(ratio < r) {
         m_positions(pRand) = m_positionsOld(pRand);
-        m_system->resetAllArrays(pRand);
+        m_system->resetAllArrays();
         return false;
     }
     return true;

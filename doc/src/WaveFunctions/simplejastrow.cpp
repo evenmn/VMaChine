@@ -109,7 +109,7 @@ void SimpleJastrow::updateArrays(const Eigen::VectorXd positions, const int pRan
     m_probabilityRatio = exp(2*ratio);
 }
 
-void SimpleJastrow::resetArrays(int pRand) {
+void SimpleJastrow::resetArrays() {
     m_positions         = m_positionsOld;
     m_distanceMatrix    = m_distanceMatrixOld;
     m_probabilityRatio  = m_probabilityRatioOld;

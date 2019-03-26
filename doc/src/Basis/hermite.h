@@ -12,4 +12,5 @@ public:
 
 private:
     double m_omega = 1;
+    double m_omegaSqrt = 1;
 };
