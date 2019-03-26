@@ -47,9 +47,9 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 6;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 1000;
-    double  eta                 = 0.1;                      // Learning rate
+    double  eta                 = 0.01;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution

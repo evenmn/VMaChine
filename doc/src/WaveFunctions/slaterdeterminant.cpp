@@ -15,6 +15,8 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
 }
 
+
+
 void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int pRand) {
     //Update old arrays
     m_positionsOld              = m_positions;
@@ -25,81 +27,86 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int 
     int particle = int(pRand/m_numberOfDimensions);
 
     m_probabilityRatioOld = m_probabilityRatio;
+    m_slaterMatrixOld     = m_slaterMatrix;
+    m_slaterMatrixInverseOld = m_slaterMatrixInverse;
 
     if(particle < m_numberOfParticlesHalf) {
-        m_slaterMatrixUpOld                 = m_slaterMatrixUp;
+        //m_slaterMatrixUpOld                 = m_slaterMatrixUp;
         m_slaterMatrixUpDerOld              = m_slaterMatrixUpDer;
-        m_slaterMatrixUpSecDerOld              = m_slaterMatrixUpSecDer;
-        m_slaterMatrixUpInverseOld          = m_slaterMatrixUpInverse;
+        m_slaterMatrixUpSecDerOld           = m_slaterMatrixUpSecDer;
+        //m_slaterMatrixUpInverseOld          = m_slaterMatrixUpInverse;
 
-        m_slaterMatrixUp.row(particle)    = updateSlaterMatrixRow(m_positions.head(m_freeDimensionsHalf), particle);
+        m_slaterMatrix.row(particle)    = updateSlaterMatrixRow(m_positions.head(m_freeDimensionsHalf), particle);
+
         for(int i=0; i<m_numberOfDimensions; i++) {
             int k = m_numberOfDimensions * particle + i;
             m_slaterMatrixUpDer.row(k)   = updateSlaterMatrixDerRow(m_positions.head(m_freeDimensionsHalf), k);
         }
+
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
-            R += m_slaterMatrixUp(particle, j) * m_slaterMatrixUpInverse(j, particle);
+            R += m_slaterMatrix(particle, j) * m_slaterMatrixInverse(j, particle);
         }
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
             double S = 0;
             for(int l=0; l<m_numberOfParticlesHalf; l++) {
-                S += m_slaterMatrixUp(particle, l) * m_slaterMatrixUpInverse(l,j);
+                S += m_slaterMatrix(particle, l) * m_slaterMatrixInverse(l,j);
             }
             if(j != particle) {
-                m_slaterMatrixUpInverse.col(j) -= S * m_slaterMatrixUpInverse.col(particle) / R;
+                m_slaterMatrixInverse.col(j) -= S * m_slaterMatrixInverse.col(particle) / R;
             }
         }
-        m_slaterMatrixUpInverse.col(particle) /= R;
+        m_slaterMatrixInverse.col(particle) /= R;
         for(int i=0; i<m_freeDimensionsHalf; i++) {
             m_determinantDerivative(i) = 0;
             m_determinantSecondDerivative(i) = 0;
             int l = int(i/m_numberOfDimensions);
             for(int j=0; j<m_numberOfParticlesHalf; j++) {
-                m_determinantDerivative(i)       += m_slaterMatrixUpDer(i,j)    * m_slaterMatrixUpInverse(j,l);
-                m_determinantSecondDerivative(i) += m_slaterMatrixUpSecDer(i,j) * m_slaterMatrixUpInverse(j,l);
+                m_determinantDerivative(i)       += m_slaterMatrixUpDer(i,j)    * m_slaterMatrixInverse(j,l);
+                m_determinantSecondDerivative(i) += m_slaterMatrixUpSecDer(i,j) * m_slaterMatrixInverse(j,l);
             }
         }
         m_probabilityRatio = R*R;
     }
     else {
-        m_slaterMatrixDnOld                 = m_slaterMatrixDn;
+        //m_slaterMatrixDnOld                 = m_slaterMatrixDn;
         m_slaterMatrixDnDerOld              = m_slaterMatrixDnDer;
         m_slaterMatrixDnSecDerOld           = m_slaterMatrixDnSecDer;
-        m_slaterMatrixDnInverseOld          = m_slaterMatrixDnInverse;
+        //m_slaterMatrixDnInverseOld          = m_slaterMatrixDnInverse;
 
         int particle2 = particle - m_numberOfParticlesHalf;
-        m_slaterMatrixDn.row(particle2)    = updateSlaterMatrixRow(m_positions.tail(m_freeDimensionsHalf), particle2);
+        m_slaterMatrix.row(particle)    = updateSlaterMatrixRow(m_positions.tail(m_freeDimensionsHalf), particle2);
         for(int i=0; i<m_numberOfDimensions; i++) {
             int k = m_numberOfDimensions * particle2 + i;
             m_slaterMatrixDnDer.row(k)   = updateSlaterMatrixDerRow(m_positions.tail(m_freeDimensionsHalf), k);
         }
         double R = 0;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
-            R += m_slaterMatrixDn(particle2, j) * m_slaterMatrixDnInverse(j, particle2);
+            R += m_slaterMatrix(particle, j) * m_slaterMatrixInverse(j, particle);
         }
-        for(int j=0; j<m_numberOfParticlesHalf; j++) {
+        for(int j=m_numberOfParticlesHalf; j<m_numberOfParticles; j++) {
             double S = 0;
             for(int l=0; l<m_numberOfParticlesHalf; l++) {
-                S += m_slaterMatrixDn(particle2, l) * m_slaterMatrixDnInverse(l,j);
+                S += m_slaterMatrix(particle, l) * m_slaterMatrixInverse(l,j);
             }
-            if(j != particle2) {
-                m_slaterMatrixDnInverse.col(j) -= S * m_slaterMatrixDnInverse.col(particle2) / R;
+            if(j != particle) {
+                m_slaterMatrixInverse.col(j) -= S * m_slaterMatrixInverse.col(particle) / R;
             }
         }
-        m_slaterMatrixDnInverse.col(particle2) /= R;
+        m_slaterMatrixInverse.col(particle) /= R;
         for(int i=m_freeDimensionsHalf; i<m_numberOfFreeDimensions; i++) {
             m_determinantDerivative(i) = 0;
             m_determinantSecondDerivative(i) = 0;
             int k = i - m_freeDimensionsHalf;
-            int l = int(k/m_numberOfDimensions);
+            int l = int(k/m_numberOfDimensions) + m_numberOfParticlesHalf;
             for(int j=0; j<m_numberOfParticlesHalf; j++) {
-                m_determinantDerivative(i)       += m_slaterMatrixDnDer(k,j)    * m_slaterMatrixDnInverse(j,l);
-                m_determinantSecondDerivative(i) += m_slaterMatrixDnSecDer(k,j) * m_slaterMatrixDnInverse(j,l);
+                m_determinantDerivative(i)       += m_slaterMatrixDnDer(k,j)    * m_slaterMatrixInverse(j,l);
+                m_determinantSecondDerivative(i) += m_slaterMatrixDnSecDer(k,j) * m_slaterMatrixInverse(j,l);
             }
         }
         m_probabilityRatio = R*R;
     }
+    //std::cout << "gjgj" << std::endl;
 }
 
 void SlaterDeterminant::resetArrays(int pRand) {
@@ -107,59 +114,69 @@ void SlaterDeterminant::resetArrays(int pRand) {
     m_determinantDerivative = m_determinantDerivativeOld;
     m_determinantSecondDerivative = m_determinantSecondDerivativeOld;
     m_probabilityRatio      = m_probabilityRatioOld;
+    m_slaterMatrix          = m_slaterMatrixOld;
+    m_slaterMatrixInverse   = m_slaterMatrixInverseOld;
 
     if(pRand < m_freeDimensionsHalf) {
-        m_slaterMatrixUp            = m_slaterMatrixUpOld;
+        //m_slaterMatrixUp            = m_slaterMatrixUpOld;
         m_slaterMatrixUpDer         = m_slaterMatrixUpDerOld;
-        m_slaterMatrixUpInverse     = m_slaterMatrixUpInverseOld;
+        //m_slaterMatrixUpInverse     = m_slaterMatrixUpInverseOld;
     }
     else {
-        m_slaterMatrixDn            = m_slaterMatrixDnOld;
+        //m_slaterMatrixDn            = m_slaterMatrixDnOld;
         m_slaterMatrixDnDer         = m_slaterMatrixDnDerOld;
-        m_slaterMatrixDnInverse     = m_slaterMatrixDnInverseOld;
+        //m_slaterMatrixDnInverse     = m_slaterMatrixDnInverseOld;
     }
 }
 
 void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
+
     m_positions                 = positions;
     m_listOfStates              = m_system->getBasis()->generateListOfStates();
 
-    m_slaterMatrixUp            = updateSlaterMatrix(m_positions.head(m_numberOfFreeDimensions/2));
-    m_slaterMatrixDn            = updateSlaterMatrix(m_positions.tail(m_numberOfFreeDimensions/2));
+    //m_slaterMatrixUp            = initializeSlaterMatrix(m_positions.head(m_numberOfFreeDimensions/2));
+    //m_slaterMatrixDn            = initializeSlaterMatrix(m_positions.tail(m_numberOfFreeDimensions/2));
+    initializeSlaterMatrix();
 
-    m_slaterMatrixUpOld         = m_slaterMatrixUp;
-    m_slaterMatrixDnOld         = m_slaterMatrixDn;
+    //m_slaterMatrixUpOld         = m_slaterMatrixUp;
+    //m_slaterMatrixDnOld         = m_slaterMatrixDn;
+    m_slaterMatrixOld           = m_slaterMatrix;
 
-    m_slaterMatrixUpInverse     = m_slaterMatrixUp.inverse();
-    m_slaterMatrixDnInverse     = m_slaterMatrixDn.inverse();
-    m_slaterMatrixUpInverseOld  = m_slaterMatrixUpInverse;
-    m_slaterMatrixDnInverseOld  = m_slaterMatrixDnInverse;
+    //m_slaterMatrixUpInverse     = m_slaterMatrix.topRows(m_numberOfParticlesHalf).inverse();
+    //m_slaterMatrixDnInverse     = m_slaterMatrix.bottomRows(m_numberOfParticlesHalf).inverse();
+    m_slaterMatrixInverse = Eigen::MatrixXd::Zero(m_numberOfParticlesHalf, m_numberOfParticles);
+    m_slaterMatrixInverse.leftCols (m_numberOfParticlesHalf) = m_slaterMatrix.topRows   (m_numberOfParticlesHalf).inverse();
+    m_slaterMatrixInverse.rightCols(m_numberOfParticlesHalf) = m_slaterMatrix.bottomRows(m_numberOfParticlesHalf).inverse();
 
-    m_slaterMatrixUpDer         = updateSlaterMatrixDer(m_positions.head(m_numberOfFreeDimensions/2));
-    m_slaterMatrixDnDer         = updateSlaterMatrixDer(m_positions.tail(m_numberOfFreeDimensions/2));
+    //m_slaterMatrixUpInverseOld  = m_slaterMatrixUpInverse;
+    //m_slaterMatrixDnInverseOld  = m_slaterMatrixDnInverse;
+    m_slaterMatrixInverseOld = m_slaterMatrixInverse;
+
+    m_slaterMatrixUpDer         = initializeSlaterMatrixDer(m_positions.head(m_numberOfFreeDimensions/2));
+    m_slaterMatrixDnDer         = initializeSlaterMatrixDer(m_positions.tail(m_numberOfFreeDimensions/2));
     m_slaterMatrixUpDerOld      = m_slaterMatrixUpDer;
     m_slaterMatrixDnDerOld      = m_slaterMatrixDnDer;
 
-    m_slaterMatrixUpSecDer         = updateSlaterMatrixSecDer(m_positions.head(m_numberOfFreeDimensions/2));
-    m_slaterMatrixDnSecDer         = updateSlaterMatrixSecDer(m_positions.tail(m_numberOfFreeDimensions/2));
-    m_slaterMatrixUpSecDerOld      = m_slaterMatrixUpSecDer;
-    m_slaterMatrixDnSecDerOld      = m_slaterMatrixDnSecDer;
+    m_slaterMatrixUpSecDer      = initializeSlaterMatrixSecDer(m_positions.head(m_numberOfFreeDimensions/2));
+    m_slaterMatrixDnSecDer      = initializeSlaterMatrixSecDer(m_positions.tail(m_numberOfFreeDimensions/2));
+    m_slaterMatrixUpSecDerOld   = m_slaterMatrixUpSecDer;
+    m_slaterMatrixDnSecDerOld   = m_slaterMatrixDnSecDer;
 
-    m_determinantDerivative  = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
+    m_determinantDerivative     = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     m_determinantSecondDerivative  = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     for(int i=0; i<m_freeDimensionsHalf; i++) {
         int k = i + m_freeDimensionsHalf;
         for(int j=0; j<m_numberOfParticlesHalf; j++) {
-            m_determinantDerivative(i) += m_slaterMatrixUpDer(i,j) * m_slaterMatrixUpInverse(j,int(i/m_numberOfDimensions));
-            m_determinantDerivative(k) += m_slaterMatrixDnDer(i,j) * m_slaterMatrixDnInverse(j,int(i/m_numberOfDimensions));
-            m_determinantSecondDerivative(i) += m_slaterMatrixUpSecDer(i,j) * m_slaterMatrixUpInverse(j,int(i/m_numberOfDimensions));
-            m_determinantSecondDerivative(k) += m_slaterMatrixDnSecDer(i,j) * m_slaterMatrixDnInverse(j,int(i/m_numberOfDimensions));
+            m_determinantDerivative(i) += m_slaterMatrixUpDer(i,j) * m_slaterMatrixInverse(j,int(i/m_numberOfDimensions));
+            m_determinantDerivative(k) += m_slaterMatrixDnDer(i,j) * m_slaterMatrixInverse(j,int(i/m_numberOfDimensions)+m_numberOfParticlesHalf);
+            m_determinantSecondDerivative(i) += m_slaterMatrixUpSecDer(i,j) * m_slaterMatrixInverse(j,int(i/m_numberOfDimensions));
+            m_determinantSecondDerivative(k) += m_slaterMatrixDnSecDer(i,j) * m_slaterMatrixInverse(j,int(i/m_numberOfDimensions)+m_numberOfParticlesHalf);
         }
     }
-    m_determinantDerivativeOld  = m_determinantDerivative;
+    m_determinantDerivativeOld       = m_determinantDerivative;
     m_determinantSecondDerivativeOld = m_determinantSecondDerivative;
-    m_probabilityRatio          = 1;
-    m_probabilityRatioOld       = m_probabilityRatio;
+    m_probabilityRatio               = 1;
+    m_probabilityRatioOld            = m_probabilityRatio;
 }
 
 void SlaterDeterminant::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
@@ -184,7 +201,7 @@ Eigen::VectorXd SlaterDeterminant::updateSlaterMatrixDerRow(const Eigen::VectorX
     return dA.transpose();
 }
 
-Eigen::MatrixXd SlaterDeterminant::updateSlaterMatrixDer(const Eigen::VectorXd positions) {
+Eigen::MatrixXd SlaterDeterminant::initializeSlaterMatrixDer(const Eigen::VectorXd positions) {
     //Initialize the entire dA matrix
     Eigen::MatrixXd dA = Eigen::MatrixXd::Zero(m_freeDimensionsHalf, m_numberOfParticlesHalf);
     for(int k=0; k<m_freeDimensionsHalf; k++) {
@@ -211,7 +228,7 @@ Eigen::VectorXd SlaterDeterminant::updateSlaterMatrixSecDerRow(const Eigen::Vect
     return d2A;
 }
 
-Eigen::MatrixXd SlaterDeterminant::updateSlaterMatrixSecDer(const Eigen::VectorXd positions) {
+Eigen::MatrixXd SlaterDeterminant::initializeSlaterMatrixSecDer(const Eigen::VectorXd positions) {
     //Initialize the entire dA matrix
     Eigen::MatrixXd d2A = Eigen::MatrixXd::Zero(m_freeDimensionsHalf, m_numberOfParticlesHalf);
     for(int k=0; k<m_freeDimensionsHalf; k++) {
@@ -238,13 +255,12 @@ Eigen::VectorXd SlaterDeterminant::updateSlaterMatrixRow(const Eigen::VectorXd p
     return A;
 }
 
-Eigen::MatrixXd SlaterDeterminant::updateSlaterMatrix(const Eigen::VectorXd positions) {
+void SlaterDeterminant::initializeSlaterMatrix() {
     // Update the entire matrix
-    Eigen::MatrixXd A = Eigen::MatrixXd::Ones(m_numberOfParticlesHalf, m_numberOfParticlesHalf);
-    for(int j=0; j<m_numberOfParticlesHalf; j++) {
-        A.row(j) = updateSlaterMatrixRow(positions, j);
+    m_slaterMatrix = Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticlesHalf);
+    for(int j=0; j<m_numberOfParticles; j++) {
+        m_slaterMatrix.row(j) = updateSlaterMatrixRow(m_positions, j);
     }
-    return A;
 }
 
 double SlaterDeterminant::evaluateRatio() {

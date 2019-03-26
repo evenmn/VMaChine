@@ -6,11 +6,11 @@ public:
     SlaterDeterminant(class System* system);
     double          updateSlaterMatrixElement    (const Eigen::VectorXd positions, const int i, const int j);
     Eigen::VectorXd updateSlaterMatrixRow        (const Eigen::VectorXd positions, const int i);
-    Eigen::MatrixXd updateSlaterMatrix           (const Eigen::VectorXd positions);
+    void initializeSlaterMatrix();
     Eigen::VectorXd updateSlaterMatrixDerRow     (const Eigen::VectorXd positions, const int k);
-    Eigen::MatrixXd updateSlaterMatrixDer        (const Eigen::VectorXd positions);
+    Eigen::MatrixXd initializeSlaterMatrixDer    (const Eigen::VectorXd positions);
     Eigen::VectorXd updateSlaterMatrixSecDerRow  (const Eigen::VectorXd positions, const int k);
-    Eigen::MatrixXd updateSlaterMatrixSecDer     (const Eigen::VectorXd positions);
+    Eigen::MatrixXd initializeSlaterMatrixSecDer (const Eigen::VectorXd positions);
 
     void            resetArrays                  (int pRand);
     void            updateArrays                 (const Eigen::VectorXd positions, const int pRand);
@@ -54,4 +54,9 @@ private:
     Eigen::VectorXd m_determinantDerivativeOld;
     Eigen::VectorXd m_determinantSecondDerivativeOld;
     double m_probabilityRatioOld = 0;
+
+    Eigen::MatrixXd m_slaterMatrix;
+    Eigen::MatrixXd m_slaterMatrixOld;
+    Eigen::MatrixXd m_slaterMatrixInverse;
+    Eigen::MatrixXd m_slaterMatrixInverseOld;
 };
