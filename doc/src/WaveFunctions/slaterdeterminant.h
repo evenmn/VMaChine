@@ -8,7 +8,7 @@ public:
     Eigen::VectorXd updateSlaterMatrixRow        (const Eigen::VectorXd positions, const int i);
     void initializeSlaterMatrix();
     Eigen::VectorXd updateSlaterMatrixDerRow     (const Eigen::VectorXd positions, const int k);
-    Eigen::MatrixXd initializeSlaterMatrixDer    (const Eigen::VectorXd positions);
+    void initializeSlaterMatrixDer();
     Eigen::VectorXd updateSlaterMatrixSecDerRow  (const Eigen::VectorXd positions, const int k);
     Eigen::MatrixXd initializeSlaterMatrixSecDer (const Eigen::VectorXd positions);
 
@@ -59,4 +59,6 @@ private:
     Eigen::MatrixXd m_slaterMatrixOld;
     Eigen::MatrixXd m_slaterMatrixInverse;
     Eigen::MatrixXd m_slaterMatrixInverseOld;
+    Eigen::MatrixXd m_slaterMatrixDer;
+    Eigen::MatrixXd m_slaterMatrixDerOld;
 };
