@@ -13,6 +13,8 @@ public:
     void            updateSlaterMatrixRow           (const int i);
     void            updateSlaterMatrixDerRow        (const int k);
     void            updateSlaterMatrixSecDerRow     (const int k);
+    void            updateSlaterMatrixInverse       (int start, int end);
+    void            updateSlaterDeterminantDerivatives(int start, int end);
     double          updateRatio                     ();
     void            setArrays                       ();
 
