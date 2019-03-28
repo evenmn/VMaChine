@@ -11,10 +11,9 @@ public:
     virtual void            initializeArrays                (Eigen::VectorXd positions)             = 0;
     virtual void            updateParameters                (Eigen::MatrixXd parameters, const int elementNumber)            = 0;
     virtual double          evaluateRatio                   ()                                      = 0;
-    virtual double          computeFirstDerivative          (int k)                                 = 0;
-    virtual double          computeSecondDerivative         ()                                      = 0;
-    virtual Eigen::VectorXd computeFirstEnergyDerivative    (int k)                                 = 0;
-    virtual Eigen::VectorXd computeSecondEnergyDerivative   ()                                      = 0;
+    virtual double          computeGradient                 (int k)                                 = 0;
+    virtual double          computeLaplacian                ()                                      = 0;
+    virtual Eigen::VectorXd computeParameterGradient        ()                                      = 0;
 
     virtual ~WaveFunction() = 0;
 

@@ -16,7 +16,7 @@ AtomicNucleus::AtomicNucleus(System* system) :
 }
 
 double AtomicNucleus::computeLocalEnergy() {
-    m_positions             = m_system->getParticles();
+    m_positions             = m_system->getPositions();
 
     double interactionEnergy = 0;
     if(m_interaction) {

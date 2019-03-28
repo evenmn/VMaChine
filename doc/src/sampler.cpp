@@ -1,6 +1,7 @@
 #include <iostream>
-#include <cmath>
 #include <fstream>
+#include <cmath>
+#include <cstdio>
 #include <string>
 #include "sampler.h"
 #include "system.h"
@@ -64,7 +65,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " Number of dimensions : " << m_system->getNumberOfDimensions() << endl;
     cout << " Oscillator frequency : " << m_omega << endl;
     cout << " # Metropolis steps   : " << m_totalNumberOfSteps << " (" << m_numberOfMetropolisSteps << " equilibration)" << endl;
-    cout << " Data files stored as : " << m_filename << endl;
+    cout << " Data files stored as : " << m_instantEnergyFileName << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy           : " << m_averageEnergy << endl;
@@ -76,7 +77,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
 }
 
 void Sampler::printFinalOutputToTerminal() {
-    std::ifstream infile(generateFileName("../data/instant_VMC_SGD", ".dat"));
+    std::ifstream infile(m_instantEnergyFileName.c_str());
     std::vector<double> x;
     std::string line;
     while(std::getline(infile,line)) {
@@ -85,7 +86,7 @@ void Sampler::printFinalOutputToTerminal() {
     Blocker block(x);
 
     cout << endl;
-    cout << "  ===  Final results:   === " << endl;
+    cout << "  ===  Final results:  === " << endl;
     cout << " Energy           : " << m_averageEnergy << endl;
     cout << " Acceptence Ratio : " << double(m_acceptenceRatio)/m_numberOfMetropolisSteps << endl;
     cout << " Variance         : " << m_variance << endl;
@@ -94,6 +95,11 @@ void Sampler::printFinalOutputToTerminal() {
     cout << " --- Blocking results: ---" << endl;
     printf( " Energy           : %g (with mean sq. err. = %g) \n", block.mean, block.mse_mean);
     printf( " STD              : %g (with mean sq. err. = %g) \n", block.stdErr, block.mse_stdErr);
+
+    if(remove(m_instantEnergyFileName.c_str()) != 0 )
+      perror( " Could not remove blocking file" );
+    else
+      puts( " Removed blocking file" );
 }
 
 std::string Sampler::generateFileName(const std::string name, const std::string extension) {
@@ -103,8 +109,8 @@ std::string Sampler::generateFileName(const std::string name, const std::string 
     filename += "_INT" + std::to_string(m_interaction);
     filename += "_w" + std::to_string(m_omega);
     filename += "_MC" + std::to_string(m_numberOfMetropolisSteps);
-    m_filename = filename + extension;
-    return m_filename;
+    filename += extension;
+    return filename;
 }
 
 void Sampler::openOutputFiles(const std::string path) {
@@ -112,9 +118,9 @@ void Sampler::openOutputFiles(const std::string path) {
     std::string energyFileName = generateFileName("energy_VMC_SGD", ".dat");
     m_averageEnergyFile.open(path + energyFileName);
 
-    // Print cumulative energies to file
-    std::string instantEnergyFileName = generateFileName("instant_VMC_SGD", ".dat");
-    m_instantEnergyFile.open(path + instantEnergyFileName);
+    // Print instant energies to file
+    m_instantEnergyFileName = generateFileName(path + "instant_VMC_SGD", ".dat");
+    m_instantEnergyFile.open(m_instantEnergyFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {

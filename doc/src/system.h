@@ -5,14 +5,17 @@
 
 class System {
 public:
-    void runMetropolisSteps             (const int numberOfIterations);
+    void runIterations                  (const int numberOfIterations);
+    void runMetropolisCycles            (int iter);
+    void printToTerminal                (int numberOfIterations, int iter, double time);
+    void checkConvergence               (int iter);
     void setNumberOfParticles           (const int numberOfParticles);
     void setNumberOfDimensions          (const int numberOfDimensions);
     void setNumberOfHiddenNodes         (const int numberOfHiddenNodes);
     void setNumberOfFreeDimensions      ();
     void setTotalNumberOfSteps          ();
     void setNumberOfMetropolisSteps     (const int steps);
-    void setMaxNumberOfParametersPerElement (const int maxNumberOfParametersPerElement);
+    void setMaxNumberOfParametersPerElement ();
     void setNumberOfWaveFunctionElements (const int numberOfWaveFunctionElements);
     void setStepLength                  (const double stepLength);
     void setEquilibrationFraction       (const double equilibrationFraction);
@@ -54,21 +57,16 @@ public:
     double                              getLearningRate()            { return m_eta; }
     double                              getStepLength()              { return m_stepLength; }
     bool                                getInteraction()             { return m_interaction; }
-    Eigen::VectorXd                     getParticles()               { return m_positions; }
     Eigen::VectorXd                     getPositions()               { return m_positions; }
     Eigen::MatrixXd                     getWeights()                 { return m_parameters; }
-    Eigen::MatrixXd                     getDistanceMatrix()          { return m_distanceMatrix; }
-    Eigen::VectorXd                     getRadialVector()            { return m_radialVector; }
     std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionVector; }
 
-    void            updateAllArrays          (const Eigen::VectorXd positions, const int pRand);
-    void            resetAllArrays           ();
-    void            updateAllParameters      (const Eigen::MatrixXd parameters);
-    double          evaluateWaveFunction     ();
-    double          evaluateWaveFunctionSqrd ();
-    double          evaluateWaveFunctionRatio();
-    double          getKineticEnergy         ();
-    std::string     generate_filename        (std::string name, const std::string extension);
+    void                                updateAllArrays          (const Eigen::VectorXd positions, const int pRand);
+    void                                resetAllArrays           ();
+    void                                updateAllParameters      (const Eigen::MatrixXd parameters);
+    double                              evaluateWaveFunctionRatio();
+    double                              getKineticEnergy         ();
+
 
 private:
     int                                 m_numberOfHiddenNodes       = 0;
@@ -104,8 +102,8 @@ private:
 
     // Convergence tools
     int numberOfEnergies = 5;
-    int lastIteration;
-    double tolerance = 1e-5;
+    int m_lastIteration;
+    double tolerance = 1e-6;
     Eigen::VectorXd energies = Eigen::VectorXd::Zero(numberOfEnergies);
 };
 

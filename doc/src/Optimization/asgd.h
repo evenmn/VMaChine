@@ -6,7 +6,6 @@ class ASGD : public Optimization {
 public:
     ASGD(System* system, const double gamma);
     int             getNumberOfBatches() { return m_numberOfBatches; }
-    Eigen::VectorXd getInstantGradients(WaveFunction* waveFunction);
     Eigen::MatrixXd getAllInstantGradients();
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();

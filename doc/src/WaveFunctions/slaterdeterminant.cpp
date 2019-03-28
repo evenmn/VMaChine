@@ -185,18 +185,14 @@ double SlaterDeterminant::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double SlaterDeterminant::computeFirstDerivative(const int k) {
+double SlaterDeterminant::computeGradient(const int k) {
     return m_determinantDerivative(k);
 }
 
-double SlaterDeterminant::computeSecondDerivative() {
+double SlaterDeterminant::computeLaplacian() {
     return m_determinantSecondDerivative.sum() - double(m_determinantDerivative.transpose() * m_determinantDerivative);
 }
 
-Eigen::VectorXd SlaterDeterminant::computeFirstEnergyDerivative(__attribute__((unused)) int k) {
-    return Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-}
-
-Eigen::VectorXd SlaterDeterminant::computeSecondEnergyDerivative() {
+Eigen::VectorXd SlaterDeterminant::computeParameterGradient() {
     return Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 }

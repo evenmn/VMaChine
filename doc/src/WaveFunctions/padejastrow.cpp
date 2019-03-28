@@ -39,7 +39,6 @@ void PadeJastrow::calculateDistanceMatrixCross(const int par) {
         m_distanceMatrix(par, i) = calculateDistanceMatrixElement(par, i);
         m_distanceMatrix(i, par) = m_distanceMatrix(par, i);
     }
-    m_distanceMatrixSqrd = m_distanceMatrix.cwiseAbs2();
 }
 
 void PadeJastrow::initializeBeta() {
@@ -85,7 +84,6 @@ void PadeJastrow::calculateF(int particle) {
         m_f(particle, i) = m_f(i, particle);
     }
     m_fSqrd = m_f.cwiseAbs2();
-    m_fCube = m_f.cwiseProduct(m_fSqrd);
 }
 
 void PadeJastrow::calculateG(int pRand) {
@@ -93,7 +91,6 @@ void PadeJastrow::calculateG(int pRand) {
         m_g(pRand,i) = m_positions(pRand) - m_positions(i);
         m_g(i,pRand) = -m_g(pRand,i);
     }
-    m_gSqrd = m_g.cwiseAbs2();
 }
 
 void PadeJastrow::calculateH(int particle) {
@@ -129,9 +126,6 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
     }
     m_h = m_distanceMatrix.cwiseProduct(m_f);
     m_fSqrd = m_f.cwiseAbs2();
-    m_fCube = m_f.cwiseProduct(m_fSqrd);
-    m_gSqrd = m_g.cwiseAbs2();
-    m_distanceMatrixSqrd = m_distanceMatrix.cwiseAbs2();
 
     setArrays();
     initializeBeta();
@@ -152,13 +146,10 @@ void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand)
 void PadeJastrow::setArrays() {
     m_positionsOld          = m_positions;
     m_distanceMatrixOld     = m_distanceMatrix;
-    m_distanceMatrixSqrdOld = m_distanceMatrixSqrd;
     m_hOldOld               = m_hOld;
     m_hOld                  = m_h;
     m_fOld                  = m_f;
     m_fSqrdOld              = m_fSqrd;
-    m_fCubeOld              = m_fCube;
-    m_gSqrdOld              = m_gSqrd;
     m_gOld                  = m_g;
     m_probabilityRatioOld   = m_probabilityRatio;
 }
@@ -166,12 +157,9 @@ void PadeJastrow::setArrays() {
 void PadeJastrow::resetArrays() {
     m_positions             = m_positionsOld;
     m_distanceMatrix        = m_distanceMatrixOld;
-    m_distanceMatrixSqrd    = m_distanceMatrixSqrdOld;
     m_fSqrd                 = m_fSqrdOld;
-    m_fCube                 = m_fCubeOld;
     m_f                     = m_fOld;
     m_g                     = m_gOld;
-    m_gSqrd                 = m_gSqrdOld;
     m_h                     = m_hOld;
     m_hOld                  = m_hOldOld;
     m_probabilityRatio      = m_probabilityRatioOld;
@@ -186,7 +174,7 @@ double PadeJastrow::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double PadeJastrow::computeFirstDerivative(const int k) {
+double PadeJastrow::computeGradient(const int k) {
     int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
     int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
@@ -200,46 +188,29 @@ double PadeJastrow::computeFirstDerivative(const int k) {
     return derivative;
 }
 
-double PadeJastrow::computeSecondDerivative() {
+double PadeJastrow::computeLaplacian() {
     double derivative = 0;
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         int i_p = int(i/m_numberOfDimensions);  //Particle associated with k
         int i_d = i%m_numberOfDimensions;       //Dimension associated with k
         for(int j_p=i_p+1; j_p<m_numberOfParticles; j_p++) {
             int j = j_p * m_numberOfDimensions + i_d;
-            derivative += m_beta(i_p,j_p) * m_fSqrd(i_p,j_p) * (1-(1+2*m_gamma*m_h(i_p,j_p))*m_gSqrd(i,j) / m_distanceMatrixSqrd(i_p,j_p)) / m_distanceMatrix(i_p,j_p);
+            derivative += m_beta(i_p,j_p) * m_fSqrd(i_p,j_p) * (1-(1+2*m_gamma*m_h(i_p,j_p))*m_g(i,j)*m_g(i,j) / (m_distanceMatrix(i_p,j_p)*m_distanceMatrix(i_p,j_p))) / m_distanceMatrix(i_p,j_p);
         }
     }
     return 2 * derivative;
 }
 
-Eigen::VectorXd PadeJastrow::computeFirstEnergyDerivative(const int k) {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-
-    int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
-    int k_d = k%m_numberOfDimensions;       //Dimension associated with k
-
-    double derivative = 0;
-    for(int j_p=0; j_p<m_numberOfParticles; j_p++) {
-        int j = j_p * m_numberOfDimensions + k_d;
-        derivative += m_beta(k_p,j_p) * m_fCube(k_p, j_p) * m_g(k,j);
-    }
-    gradients(0) = derivative;
-    return gradients;
-}
-
-Eigen::VectorXd PadeJastrow::computeSecondEnergyDerivative() {
+Eigen::VectorXd PadeJastrow::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     double derivative = 0;
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        int i_p = int(i/m_numberOfDimensions);  //Particle associated with i
-        int i_d = i%m_numberOfDimensions;       //Dimension associated with i
-        for(int j_p=i_p+1; j_p<m_numberOfParticles; j_p++) {
-            int j = j_p * m_numberOfDimensions + i_d;
-            derivative += m_beta(i_p,j_p) * m_fCube(i_p,j_p) * (1 - 4 * m_gamma * m_h(i_p,j_p) * m_gSqrd(i,j)/m_distanceMatrixSqrd(i_p,j_p));
+    for(int k=0; k<m_numberOfFreeDimensions; k++) {
+        int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
+        for(int j_p=k_p+1; j_p<m_numberOfParticles; j_p++) {
+            derivative -= m_beta(k_p,j_p) * m_h(k_p, j_p) * m_h(k_p, j_p);
         }
     }
-    gradients(0) = 2 * derivative;
+    gradients(0) = derivative;
     return gradients;
 }

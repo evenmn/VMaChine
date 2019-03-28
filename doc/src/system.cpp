@@ -15,48 +15,102 @@
 #include <ctime>
 #include <string>
 
-void System::runMetropolisSteps(const int numberOfIterations) {
+void System::runIterations(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles("../data/");
-    lastIteration = numberOfIterations - 1;
+    m_lastIteration = numberOfIterations - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
         clock_t start_time = clock();
-        for(int i=0; i < m_totalNumberOfSteps; i++) {
-            bool acceptedStep = m_metropolis->acceptMove();
-            m_positions       = m_metropolis->updatePositions();
-            if(i >= (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
-                m_sampler->sample(acceptedStep, i);
-                if(iter == lastIteration) {
-                    m_sampler->printInstantValuesToFile(m_positions);
-                }
-            }
-        }
+        runMetropolisCycles(iter);
         clock_t end_time = clock();
+        double time = double(end_time - start_time)/CLOCKS_PER_SEC;
+
         m_sampler->computeAverages();
-        if(iter != lastIteration) {
-            m_sampler->printOutputToTerminal(numberOfIterations, double(end_time - start_time)/CLOCKS_PER_SEC);
-        }
         m_sampler->printOutputToFile();
+
         m_parameters -= m_optimization->updateParameters();
         updateAllParameters(m_parameters);
 
-        if(iter == lastIteration) {
-            m_sampler->closeOutputFiles();
-            m_sampler->printFinalOutputToTerminal();
-            exit(0);
-        }
+        printToTerminal(numberOfIterations, iter, time);
+        checkConvergence(iter);
+    }
+}
 
-        //Stop criterion
-        energies.head(numberOfEnergies-1) = energies.tail(numberOfEnergies-1);
-        energies(numberOfEnergies-1) = m_sampler->getAverageEnergy();
-        if(fabs(energies(0) - energies(numberOfEnergies-1)) < tolerance) {
-            std::cout << "The system has converged! Let's run one more cycle to collect data" << std::endl;
-            lastIteration = iter + 1;
+void System::runMetropolisCycles(int iter) {
+    for(int i=0; i < m_totalNumberOfSteps; i++) {
+        bool acceptedStep = m_metropolis->acceptMove();
+        m_positions       = m_metropolis->updatePositions();
+        if(i >= (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
+            m_sampler->sample(acceptedStep, i);
+            if(iter == m_lastIteration) {
+                m_sampler->printInstantValuesToFile(m_positions);
+            }
         }
     }
+}
+
+void System::printToTerminal(int numberOfIterations, int iter, double time) {
+    if(iter == m_lastIteration) {
+        m_sampler->closeOutputFiles();
+        m_sampler->printFinalOutputToTerminal();
+        exit(0);
+    }
+    else {
+        m_sampler->printOutputToTerminal(numberOfIterations, time);
+    }
+}
+
+void System::checkConvergence(int iter) {
+    energies.head(numberOfEnergies-1) = energies.tail(numberOfEnergies-1);
+    energies(numberOfEnergies-1) = m_sampler->getAverageEnergy();
+    if(fabs(energies(0) - energies(numberOfEnergies-1)) < tolerance) {
+        std::cout << "The system has converged! Let's run one more cycle to collect data" << std::endl;
+        m_lastIteration = iter + 1;
+    }
+}
+
+void System::updateAllArrays(const Eigen::VectorXd positions, const int pRand) {
+    for(auto& i : m_waveFunctionVector) {
+        i->updateArrays(positions, pRand);
+    }
+}
+
+void System::resetAllArrays() {
+    for(auto& i : m_waveFunctionVector) {
+        i->resetArrays();
+    }
+}
+
+void System::updateAllParameters(const Eigen::MatrixXd parameters) {
+    for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
+        m_waveFunctionVector[unsigned(i)]->updateParameters(parameters, i);
+    }
+}
+
+double System::evaluateWaveFunctionRatio() {
+    double ratio = 1;
+    for(auto& i : m_waveFunctionVector) {
+        ratio *= i->evaluateRatio();
+    }
+    return ratio;
+}
+
+double System::getKineticEnergy() {
+    double KineticEnergy = 0;
+    for(auto& i : m_waveFunctionVector) {
+        KineticEnergy += i->computeLaplacian();
+    }
+    for(int k = 0; k < m_numberOfFreeDimensions; k++) {
+        double NablaLnPsi = 0;
+        for(auto& i : m_waveFunctionVector) {
+            NablaLnPsi += i->computeGradient(k);
+        }
+        KineticEnergy += NablaLnPsi * NablaLnPsi;
+    }
+    return - 0.5 * KineticEnergy;
 }
 
 void System::setNumberOfParticles(const int numberOfParticles) {
@@ -86,8 +140,8 @@ void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionEleme
     m_numberOfWaveFunctionElements = numberOfWaveFunctionElements;
 }
 
-void System::setMaxNumberOfParametersPerElement(const int maxNumberOfParametersPerElement) {
-    m_maxNumberOfParametersPerElement = maxNumberOfParametersPerElement;
+void System::setMaxNumberOfParametersPerElement() {
+    m_maxNumberOfParametersPerElement = (m_numberOfParticles*m_numberOfDimensions+1)*m_numberOfHiddenNodes;
 }
 
 void System::setStepLength(const double stepLength) {
@@ -162,46 +216,4 @@ void System::setRandomNumberGenerator(RandomNumberGenerator* randomnumbergenerat
 
 void System::setGradients() {
     m_gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-}
-
-void System::updateAllArrays(const Eigen::VectorXd positions, const int pRand) {
-    for(auto& i : m_waveFunctionVector) {
-        i->updateArrays(positions, pRand);
-    }
-}
-
-void System::resetAllArrays() {
-    for(auto& i : m_waveFunctionVector) {
-        i->resetArrays();
-    }
-}
-
-void System::updateAllParameters(const Eigen::MatrixXd parameters) {
-    for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        m_waveFunctionVector[unsigned(i)]->updateParameters(parameters, i);
-    }
-}
-
-double System::evaluateWaveFunctionRatio() {
-    double ratio = 1;
-    for(auto& i : m_waveFunctionVector) {
-        ratio *= i->evaluateRatio();
-    }
-    return ratio;
-}
-
-double System::getKineticEnergy() {
-    double KineticEnergy = 0;
-    for(auto& i : m_waveFunctionVector) {
-        KineticEnergy += i->computeSecondDerivative();
-    }
-    for(int k = 0; k < m_numberOfFreeDimensions; k++) {
-        double NablaLnPsi = 0;
-        for(auto& i : m_waveFunctionVector) {
-            NablaLnPsi += i->computeFirstDerivative(k);
-        }
-        KineticEnergy += NablaLnPsi * NablaLnPsi;
-    }
-
-    return -0.5 * KineticEnergy;
 }

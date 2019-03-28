@@ -18,7 +18,7 @@ HarmonicOscillator::HarmonicOscillator(System* system) :
 }
 
 double HarmonicOscillator::computeLocalEnergy() {
-    m_positions             = m_system->getParticles();
+    m_positions             = m_system->getPositions();
 
     double interactionEnergy = 0;
     if(m_interaction) {

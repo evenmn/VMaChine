@@ -48,7 +48,7 @@ private:
 
     std::ofstream m_averageEnergyFile;
     std::ofstream m_instantEnergyFile;
-    std::string   m_filename = "Filename not generated yet";
+    std::string   m_instantEnergyFileName = "Filename not generated yet";
     class System* m_system = nullptr;
 
     // One-body density related stuff

@@ -27,7 +27,7 @@ ImportanceSampling::ImportanceSampling(System* system) :
 double ImportanceSampling::QuantumForce(const int i) {
     double QF = 0;
     for(auto& j : m_waveFunctionVector) {
-        QF += j->computeFirstDerivative(i);
+        QF += j->computeGradient(i);
     }
     return 2*QF;
 }

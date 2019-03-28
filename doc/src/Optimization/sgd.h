@@ -6,7 +6,6 @@ class SGD : public Optimization {
 public:
     SGD(System* system, const double gamma, const double monotonicExp);
     int             getNumberOfBatches() { return m_numberOfBatches; }
-    Eigen::VectorXd getInstantGradients(WaveFunction* waveFunction);
     Eigen::MatrixXd getAllInstantGradients();
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();

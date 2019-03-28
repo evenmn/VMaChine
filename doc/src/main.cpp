@@ -47,16 +47,15 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 12;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,18));
+    int     numberOfSteps       = int(pow(2,20));
     int     numberOfIterations  = 1000;
-    double  eta                 = 0.01;                      // Learning rate
+    double  eta                 = 0.01;                     // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
     double  equilibration       = 0.2;                      // Amount of the total steps used
     bool    interaction         = true;
-    int     maxNumberOfParametersPerElement = numberOfParticles*numberOfDimensions*numberOfParticles*numberOfDimensions;
 
     System* system = new System();
     system->setEquilibrationFraction    (equilibration);
@@ -70,7 +69,7 @@ int main(int argc, char *argv[]) {
     system->setNumberOfDimensions       (numberOfDimensions);
     system->setNumberOfHiddenNodes      (numberOfHiddenNodes);
     system->setNumberOfMetropolisSteps  (numberOfSteps);
-    system->setMaxNumberOfParametersPerElement (maxNumberOfParametersPerElement);
+    system->setMaxNumberOfParametersPerElement ();
     system->setTotalNumberOfSteps       ();
     system->setNumberOfFreeDimensions   ();
 
@@ -92,7 +91,7 @@ int main(int argc, char *argv[]) {
     system->setMetropolis               (new ImportanceSampling(system));
     system->setOptimization             (new SGD(system,0.0,0.0));
     system->setGradients                ();
-    system->runMetropolisSteps          (numberOfIterations);
+    system->runIterations               (numberOfIterations);
 
     //class Plotter* plots = new Plotter(system);
 

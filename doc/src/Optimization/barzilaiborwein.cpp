@@ -18,22 +18,10 @@ BarzilaiBorwein::BarzilaiBorwein(System* system) :
     m_oldParameters                   = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }
 
-Eigen::VectorXd BarzilaiBorwein::getInstantGradients(WaveFunction* waveFunction) {
-    Eigen::VectorXd TotalGradients = waveFunction->computeSecondEnergyDerivative();
-    for(int k = 0; k < m_numberOfFreeDimensions; k++) {
-        double Sum = 0;
-        for(auto& i : m_waveFunctionVector) {
-            Sum += i->computeFirstDerivative(k);
-        }
-        TotalGradients += 2 * Sum * waveFunction->computeFirstEnergyDerivative(k);
-    }
-    return TotalGradients;
-}
-
 Eigen::MatrixXd BarzilaiBorwein::getAllInstantGradients() {
     Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
     for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) += getInstantGradients(m_waveFunctionVector[unsigned(i)]);
+        gradients.row(i) = m_waveFunctionVector[unsigned(i)]->computeParameterGradient();
     }
     return gradients;
 }

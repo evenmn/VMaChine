@@ -83,7 +83,7 @@ double NQSJastrow::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double NQSJastrow::computeFirstDerivative(const int k) {
+double NQSJastrow::computeGradient(const int k) {
     //return double(m_W.row(k) * m_n)/sigma_sqrd;
 
     double Sum = 0;
@@ -93,7 +93,7 @@ double NQSJastrow::computeFirstDerivative(const int k) {
     return Sum / m_sigmaSqrd;
 }
 
-double NQSJastrow::computeSecondDerivative() {
+double NQSJastrow::computeLaplacian() {
     //return (m_W.cwiseAbs2()*m_p.cwiseProduct(m_n)).sum();
 
     double Sum = 0;
@@ -105,49 +105,14 @@ double NQSJastrow::computeSecondDerivative() {
     return Sum / m_sigmaQuad;
 }
 
-Eigen::VectorXd NQSJastrow::computeFirstEnergyDerivative(const int k) {
+Eigen::VectorXd NQSJastrow::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-
-    // Update b
-    for(int j=0; j<m_numberOfHiddenNodes; j++) {
-        gradients(j) = m_W(k,j) * m_pDotN(j) * m_sigmaSqrd;
-    }
-
-    // Update W
-    for(int l=0; l<m_numberOfFreeDimensions; l++) {
-        for(int m=0; m<m_numberOfHiddenNodes; m++) {
-            int n = m * m_numberOfFreeDimensions + l + m_numberOfHiddenNodes;
-            gradients(n) = m_W(k,m) * m_pDotN(m) * m_positions(l);
-            if(l == k) {
-                gradients(n) += m_n(m) * m_sigmaSqrd;
-            }
+    for(int l=0; l<m_numberOfHiddenNodes; l++) {
+        gradients(l) = m_n(l);
+        for(int m=0; m<m_numberOfFreeDimensions; m++) {
+            int n = l * m_numberOfFreeDimensions + m + m_numberOfHiddenNodes;
+            gradients(n) = m_positions(m) * m_n(l) / m_sigmaSqrd;
         }
     }
-    return -0.5 * gradients / m_sigmaQuad;
-}
-
-Eigen::VectorXd NQSJastrow::computeSecondEnergyDerivative() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-
-    // Update b
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        for(int j=0; j<m_numberOfHiddenNodes; j++) {
-            gradients(j) = m_WSqrd(k,j) * m_pDotN(j) * m_pMinusN(j);
-        }
-    }
-
-    // Update W
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        for(int l=0; l<m_numberOfFreeDimensions; l++) {
-            for(int m=0; m<m_numberOfHiddenNodes; m++) {
-                int n = m * m_numberOfFreeDimensions + l + m_numberOfHiddenNodes;
-                gradients(n) = m_WSqrd(k,m) * m_positions(l) * m_pDotN(m) * m_pMinusN(m) / m_sigmaSqrd;
-                if(l == k) {
-                    gradients(n) += 2 * m_W(k,m) * m_pDotN(m);
-                }
-            }
-        }
-    }
-
-    return -0.5 * gradients / m_sigmaQuad;
+    return gradients;
 }

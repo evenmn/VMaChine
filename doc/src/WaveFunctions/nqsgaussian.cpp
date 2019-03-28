@@ -49,20 +49,16 @@ double NQSGaussian::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double NQSGaussian::computeFirstDerivative(const int k) {
+double NQSGaussian::computeGradient(const int k) {
     return - m_Xa(k)/m_sigmaSqrd;
 }
 
-double NQSGaussian::computeSecondDerivative() {;
+double NQSGaussian::computeLaplacian() {;
     return - m_numberOfFreeDimensions/m_sigmaSqrd;
 }
 
-Eigen::VectorXd NQSGaussian::computeFirstEnergyDerivative(const int k) {
+Eigen::VectorXd NQSGaussian::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-    gradients(k) = - 0.5 / m_sigmaSqrd;
+    gradients.head(m_numberOfFreeDimensions) = m_Xa/m_sigmaSqrd;
     return gradients;
-}
-
-Eigen::VectorXd NQSGaussian::computeSecondEnergyDerivative() {
-    return Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 }
