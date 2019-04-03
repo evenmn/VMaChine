@@ -40,7 +40,12 @@ SOURCES += main.cpp \
     WaveFunctions/padejastrow.cpp \
     WaveFunctions/nqsgaussian.cpp \
     Resampling/AutoBlocking/blocker.cpp \
-    WaveFunctions/simplejastrow.cpp
+    WaveFunctions/simplejastrow.cpp \
+    WaveFunctions/nqsjastrow2.cpp \
+    WaveFunctions/samsethjastrow.cpp \
+    WaveFunctions/nqsjastrow3.cpp \
+    WaveFunctions/padejastrow2.cpp \
+    WaveFunctions/nqsgaussian2.cpp
 
 HEADERS += \
     system.h \
@@ -80,5 +85,10 @@ HEADERS += \
     WaveFunctions/padejastrow.h \
     WaveFunctions/nqsgaussian.h \
     Resampling/AutoBlocking/blocker.h \
-    WaveFunctions/simplejastrow.h
+    WaveFunctions/simplejastrow.h \
+    WaveFunctions/nqsjastrow2.h \
+    WaveFunctions/samsethjastrow.h \
+    WaveFunctions/nqsjastrow3.h \
+    WaveFunctions/padejastrow2.h \
+    WaveFunctions/nqsgaussian2.h
 

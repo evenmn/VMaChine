@@ -4,18 +4,18 @@
 class NQSJastrow : public WaveFunction {
 public:
     NQSJastrow(class System* system);
-    void            updateArrays                    (Eigen::VectorXd positions, const int pRand);
-    void            resetArrays                     ();
-    void            initializeArrays                (const Eigen::VectorXd positions);
-    void            updateParameters                (const Eigen::MatrixXd parameters, const int elementNumber);
-    double          evaluateRatio                   ();
-    double          computeGradient                 (const int k);
-    double          computeLaplacian                ();
-    Eigen::VectorXd computeParameterGradient        ();
+    void            updateArrays                (Eigen::VectorXd positions, const int changedCoord);
+    void            setArrays                   ();
+    void            resetArrays                 ();
+    void            initializeArrays            (const Eigen::VectorXd positions);
+    void            updateParameters            (const Eigen::MatrixXd parameters, const int elementNumber);
+    double          evaluateRatio               ();
+    double          computeGradient             (const int k);
+    double          computeLaplacian            ();
+    Eigen::VectorXd computeParameterGradient    ();
 
-    void            setArrays                       ();
-    void            updateVectors                   ();
-    void            updateRatio                     ();
+    void            updateVectors               ();
+    void            updateRatio                 ();
 
 private:
     int    m_elementNumber          = 1;

@@ -20,6 +20,10 @@ double None::evaluateDerivative(double x, int n) {
     return 0;
 }
 
+double None::evaluateSecondDerivative(double x, int n) {
+    return 0;
+}
+
 Eigen::MatrixXd None::generateListOfStates() {
     return Eigen::MatrixXd::Ones(1,1);
 }

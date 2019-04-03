@@ -25,12 +25,12 @@ void NQSGaussian::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
-void NQSGaussian::updateArrays(const Eigen::VectorXd positions, const int pRand) {
+void NQSGaussian::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
     setArrays();
 
     m_positions             = positions;
     m_Xa                    = positions - m_a;
-    m_probabilityRatio      = exp((m_XaOld(pRand)*m_XaOld(pRand) - m_Xa(pRand)*m_Xa(pRand)) / (2 * m_sigmaSqrd));
+    m_probabilityRatio      = exp((m_XaOld(changedCoord)*m_XaOld(changedCoord) - m_Xa(changedCoord)*m_Xa(changedCoord)) / (2 * m_sigmaSqrd));
 }
 
 void NQSGaussian::setArrays() {

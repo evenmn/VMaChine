@@ -32,6 +32,7 @@ void System::runIterations(const int numberOfIterations) {
         m_sampler->printOutputToFile();
 
         m_parameters -= m_optimization->updateParameters();
+        //std::cout << m_parameters << std::endl;
         updateAllParameters(m_parameters);
 
         printToTerminal(numberOfIterations, iter, time);
@@ -141,7 +142,9 @@ void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionEleme
 }
 
 void System::setMaxNumberOfParametersPerElement() {
-    m_maxNumberOfParametersPerElement = (m_numberOfParticles*m_numberOfDimensions+1)*m_numberOfHiddenNodes;
+    m_maxNumberOfParametersPerElement = 2*m_numberOfHiddenNodes*(m_numberOfFreeDimensions+1);
+    //m_maxNumberOfParametersPerElement = m_numberOfFreeDimensions * m_numberOfFreeDimensions;
+    //m_maxNumberOfParametersPerElement = 10000;
 }
 
 void System::setStepLength(const double stepLength) {

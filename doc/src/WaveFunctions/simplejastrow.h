@@ -4,20 +4,21 @@
 class SimpleJastrow : public WaveFunction {
 public:
     SimpleJastrow(class System* system);
-    void            updateArrays(const Eigen::VectorXd positions, const int pRand);
-    void            resetArrays();
-    void            initializeArrays(const Eigen::VectorXd positions);
-    void            updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
-    double          evaluateRatio();
-    double          computeFirstDerivative(const int k);
-    double          computeSecondDerivative();
-    Eigen::VectorXd computeFirstEnergyDerivative(const int k);
-    Eigen::VectorXd computeSecondEnergyDerivative();
+    void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
+    void            setArrays                   ();
+    void            resetArrays                 ();
+    void            initializeArrays            (const Eigen::VectorXd positions);
+    void            updateParameters            (const Eigen::MatrixXd parameters, const int elementNumber);
+    double          evaluateRatio               ();
+    double          computeGradient             (const int k);
+    double          computeLaplacian            ();
+    Eigen::VectorXd computeParameterGradient    ();
 
-    Eigen::MatrixXd calculateDistanceMatrix(const Eigen::VectorXd particles);
-    double          calculateDistanceMatrixElement(const int i, const int j, const Eigen::VectorXd particles);
-    void            calculateDistanceMatrixCross(const int par, const Eigen::VectorXd particles, Eigen::MatrixXd &distanceMatrix);
-
+    void            calculateDistanceMatrix();
+    double          calculateDistanceMatrixElement(const int i, const int j);
+    void            calculateDistanceMatrixCross(const int par);
+    void            calculateG(int pRand);
+    void            calculateProbabilityRatio(int particle);
 
 private:
     int m_elementNumber = 1;

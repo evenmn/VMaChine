@@ -11,12 +11,16 @@ PartlyRestricted::PartlyRestricted(System* system) :
     m_sigmaSqrd2 = sigma*sigma*sigma*sigma;
 }
 
-void PartlyRestricted::updateArrays(const Eigen::VectorXd positions, const int pRand) {
-    m_oldPositions = m_positions;
-    m_positions = positions;
+void PartlyRestricted::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+    setArrays();
 
-    m_oldXCx = m_xCx;
+    m_positions = positions;
     m_xCx = positions.transpose() * m_c * positions;
+}
+
+void PartlyRestricted::setArrays() {
+    m_oldPositions = m_positions;
+    m_oldXCx       = m_xCx;
 }
 
 void PartlyRestricted::resetArrays() {
@@ -27,6 +31,8 @@ void PartlyRestricted::resetArrays() {
 void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
     m_xCx = positions.transpose() * m_c * positions;
+
+    setArrays();
 }
 
 void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {

@@ -4,23 +4,23 @@
 class HydrogenLike : public WaveFunction {
 public:
     HydrogenLike(class System* system);
-    void updateArrays(const Eigen::VectorXd positions, const int pRand);
-    void resetArrays();
-    void initializeArrays(const Eigen::VectorXd positions);
-    void updateParameters(const Eigen::MatrixXd parameters, const int elementNumber);
-    double evaluateRatio();
-    double computeFirstDerivative(const int k);
-    double computeSecondDerivative();
-    Eigen::VectorXd computeFirstEnergyDerivative(const int k);
-    Eigen::VectorXd computeSecondEnergyDerivative();
+    void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
+    void            setArrays                   ();
+    void            resetArrays                 ();
+    void            initializeArrays            (const Eigen::VectorXd positions);
+    void            updateParameters            (const Eigen::MatrixXd parameters, const int elementNumber);
+    double          evaluateRatio               ();
+    double          computeGradient             (const int k);
+    double          computeLaplacian            ();
+    Eigen::VectorXd computeParameterGradient    ();
 
-    double calculateRadialVectorElement(const Eigen::VectorXd particles, const int par);
-    Eigen::VectorXd calculateRadialVector(const Eigen::VectorXd particles);
+    double          calculateRadialVectorElement(const int particle);
+    void            calculateRadialVector       ();
 
 private:
-    double m_alpha = 0;
-    int m_elementNumber = 0;
-    int m_Z = 1;
+    double  m_alpha = 0;
+    int     m_elementNumber = 0;
+    int     m_Z = 1;
 
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;

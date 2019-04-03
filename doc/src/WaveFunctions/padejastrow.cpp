@@ -131,15 +131,15 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
     initializeBeta();
 }
 
-void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) {
-    int particle = int(pRand/m_numberOfDimensions);
+void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+    int particle = int(changedCoord/m_numberOfDimensions);
     setArrays();
 
-    m_positions             = positions;
+    m_positions                = positions;
     calculateDistanceMatrixCross(particle);
     calculateF                  (particle);
     calculateH                  (particle);
-    calculateG                  (pRand);
+    calculateG                  (changedCoord);
     calculateProbabilityRatio   (particle);
 }
 
@@ -205,10 +205,9 @@ Eigen::VectorXd PadeJastrow::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     double derivative = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
-        for(int j_p=k_p+1; j_p<m_numberOfParticles; j_p++) {
-            derivative -= m_beta(k_p,j_p) * m_h(k_p, j_p) * m_h(k_p, j_p);
+    for(int i_p=0; i_p<m_numberOfParticles; i_p++) {
+        for(int j_p=i_p+1; j_p<m_numberOfParticles; j_p++) {
+            derivative -= m_beta(i_p,j_p) * m_h(i_p, j_p) * m_h(i_p, j_p);
         }
     }
     gradients(0) = derivative;

@@ -7,6 +7,7 @@ class WaveFunction {
 public:
     WaveFunction(class System *system);
     virtual void            updateArrays                    (Eigen::VectorXd positions, int pRand)  = 0;
+    virtual void            setArrays                       ()                                      = 0;
     virtual void            resetArrays                     ()                                      = 0;
     virtual void            initializeArrays                (Eigen::VectorXd positions)             = 0;
     virtual void            updateParameters                (Eigen::MatrixXd parameters, const int elementNumber)            = 0;

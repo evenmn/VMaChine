@@ -4,6 +4,16 @@
 class SlaterDeterminant : public WaveFunction {
 public:
     SlaterDeterminant(class System* system);
+    void            updateArrays                    (const Eigen::VectorXd positions, const int changedCoord);
+    void            setArrays                       ();
+    void            resetArrays                     ();
+    void            initializeArrays                (const Eigen::VectorXd positions);
+    void            updateParameters                (const Eigen::MatrixXd parameters, const int elementNumber);
+    double          evaluateRatio                   ();
+    double          computeGradient                 (const int k);
+    double          computeLaplacian                ();
+    Eigen::VectorXd computeParameterGradient        ();
+
     void            initializeSlaterMatrix          ();
     void            initializeSlaterMatrixDer       ();
     void            initializeSlaterMatrixSecDer    ();
@@ -16,16 +26,6 @@ public:
     void            updateSlaterMatrixInverse       (int start, int end);
     void            updateSlaterDeterminantDerivatives(int start, int end);
     double          updateRatio                     ();
-    void            setArrays                       ();
-
-    void            resetArrays                     ();
-    void            updateArrays                    (const Eigen::VectorXd positions, const int pRand);
-    void            initializeArrays                (const Eigen::VectorXd positions);
-    void            updateParameters                (const Eigen::MatrixXd parameters, const int elementNumber);
-    double          evaluateRatio                   ();
-    double          computeGradient                 (const int k);
-    double          computeLaplacian                ();
-    Eigen::VectorXd computeParameterGradient        ();
 
 private:
     int             m_elementNumber         = 0;

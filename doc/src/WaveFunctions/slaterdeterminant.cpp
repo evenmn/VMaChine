@@ -13,15 +13,15 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
 }
 
-void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int pRand) {
+void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
     setArrays();
 
     m_positions = positions;
-    m_particle  = int(pRand/m_numberOfDimensions);
-    m_dimension = pRand%m_numberOfDimensions;
+    m_particle  = int(changedCoord/m_numberOfDimensions);
+    m_dimension = changedCoord%m_numberOfDimensions;
 
     updateSlaterMatrixRow(m_particle);
-    for(int d=(pRand-m_dimension); d<(pRand+m_numberOfDimensions-m_dimension); d++) {
+    for(int d=(changedCoord-m_dimension); d<(changedCoord+m_numberOfDimensions-m_dimension); d++) {
         updateSlaterMatrixDerRow(d);
         updateSlaterMatrixSecDerRow(d);
     }

@@ -32,7 +32,7 @@ void NQSJastrow::updateRatio() {
     m_probabilityRatio  = Prod * Prod;
 }
 
-void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int pRand) {
+void NQSJastrow::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
     setArrays();
     m_positions = positions;
     updateVectors();
