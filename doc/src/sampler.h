@@ -5,7 +5,7 @@
 class Sampler {
 public:
     Sampler(class System* system);
-    void            sample(const bool acceptedStep, const int stepNumber);
+    void            sample(int numberOfSteps, int equilibriationSteps, const bool acceptedStep, const int stepNumber);
     void            printOutputToTerminal(const int maxIter, const double time);
     void            printFinalOutputToTerminal();
     void            openOutputFiles(const std::string path);
@@ -16,7 +16,7 @@ public:
     double          getAverageEnergy()        { return m_averageEnergy; }
     Eigen::MatrixXd getAverageGradients()     { return m_averageGradients; }
     Eigen::MatrixXd getAverageGradientsE()    { return m_averageGradientsE; }
-    std::string     generateFileName(const std::string name, const std::string extension);
+    std::string     generateFileName(std::string path, const std::string name, std::string element, std::string optimization, const std::string extension);
 
 private:
     int     m_totalNumberOfSteps = 0;
@@ -27,6 +27,8 @@ private:
     int     m_numberOfElements = 0;
     int     m_numberOfBatches = 0;
     int     m_numberOfStepsPerBatch = 0;
+    int     m_numberOfSteps = 0;
+    int     m_equilibriationSteps = 0;
     int     m_acceptenceRatio = 0;
     int     m_iter = 0;
     bool    m_interaction = 0;
@@ -48,6 +50,7 @@ private:
 
     std::ofstream m_averageEnergyFile;
     std::ofstream m_instantEnergyFile;
+    std::string   m_averageEnergyFileName = "Filename not generated yet";
     std::string   m_instantEnergyFileName = "Filename not generated yet";
     class System* m_system = nullptr;
 

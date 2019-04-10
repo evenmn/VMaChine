@@ -19,7 +19,7 @@ int Plotter::plotEnergy(int argc, char *argv[]) {
     //![1]
 
     //![2]
-    std::string filename = m_system->getSampler()->generateFileName("energy", ".dat");
+    std::string filename = m_system->getSampler()->generateFileName("../../data/", "energy", "VMC" , "SQD", ".dat");
     QFile energies(QString::fromStdString(filename));
     if (!energies.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return 1;
@@ -87,7 +87,7 @@ int Plotter::plotOneBodyDensity(int argc, char *argv[]) {
     //![1]
 
     //![2]
-    std::string filename = m_system->getSampler()->generateFileName("onebody", ".dat");
+    std::string filename = m_system->getSampler()->generateFileName("../../data/", "onebody", "VMC" , "SQD", ".dat");
     QFile densities(QString::fromStdString(filename));
     if (!densities.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return 1;

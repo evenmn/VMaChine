@@ -20,11 +20,19 @@ void System::runIterations(const int numberOfIterations) {
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles("../data/");
-    m_lastIteration = numberOfIterations - 1;
+    m_lastIteration = numberOfIterations - 11;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
+        int numberOfSteps       = m_numberOfMetropolisSteps;
+        int equilibriationSteps = int(m_numberOfMetropolisSteps * m_equilibrationFraction);
+        if(iter == m_lastIteration+10) {
+            numberOfSteps *= int(pow(2,8));
+        }
+        else if(iter >= m_lastIteration) {
+            numberOfSteps *= int(pow(2,4));
+        }
         clock_t start_time = clock();
-        runMetropolisCycles(iter);
+        runMetropolisCycles(numberOfSteps, equilibriationSteps, iter);
         clock_t end_time = clock();
         double time = double(end_time - start_time)/CLOCKS_PER_SEC;
 
@@ -40,13 +48,13 @@ void System::runIterations(const int numberOfIterations) {
     }
 }
 
-void System::runMetropolisCycles(int iter) {
-    for(int i=0; i < m_totalNumberOfSteps; i++) {
+void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  int iter) {
+    for(int i=0; i < numberOfSteps + equilibriationSteps; i++) {
         bool acceptedStep = m_metropolis->acceptMove();
         m_positions       = m_metropolis->updatePositions();
-        if(i >= (m_totalNumberOfSteps - m_numberOfMetropolisSteps)) {
-            m_sampler->sample(acceptedStep, i);
-            if(iter == m_lastIteration) {
+        if(i >= equilibriationSteps) {
+            m_sampler->sample(numberOfSteps, equilibriationSteps, acceptedStep, i);
+            if(iter == m_lastIteration+10) {
                 m_sampler->printInstantValuesToFile(m_positions);
             }
         }
@@ -54,7 +62,7 @@ void System::runMetropolisCycles(int iter) {
 }
 
 void System::printToTerminal(int numberOfIterations, int iter, double time) {
-    if(iter == m_lastIteration) {
+    if(iter == m_lastIteration+10) {
         m_sampler->closeOutputFiles();
         m_sampler->printFinalOutputToTerminal();
         exit(0);

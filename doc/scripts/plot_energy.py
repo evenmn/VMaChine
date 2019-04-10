@@ -2,13 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 
-asymptote = 3.00
+asymptote = 2./3
 
-files = ["../data/energy_VMC_P6_D2_w1.000000_MC1048576.dat", 
-         "../data/energy_VMC_P6_D2_w0.500000_MC1048576.dat",
-         "../data/energy_VMC_P6_D2_w0.280000_MC1048576.dat",
-         "../data/energy_VMC_P6_D2_w0.100000_MC1048576.dat"]
-label = ["VMC, $\omega=1.0$", "VMC, $\omega=0.5$", "VMC, $\omega=0.28$", "VMC, $\omega=0.1$"]
+files = ["../data/int1/energy/VMC/2D/2P/0.166667w/SGD_MC1048576.dat", 
+         #"../data/energy_VMC_P6_D2_w0.500000_MC1048576.dat",
+         #"../data/energy_VMC_P6_D2_w0.280000_MC1048576.dat",
+         #"../data/energy_VMC_P6_D2_w0.100000_MC1048576.dat"
+         ]
+label = ["VMC, $\omega=1/6$", 
+         #"VMC, $\omega=0.5$", 
+         #"VMC, $\omega=0.28$", 
+         #"VMC, $\omega=0.1$"
+         ]
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])
@@ -20,7 +25,7 @@ label_size = {"size":"14"}
 plt.axhline(asymptote, linestyle='--', color='r', label="Exact")
 
 plt.xlabel("Iteration",**label_size)
-plt.ylabel("Energy [a.u.]",**label_size)
+plt.ylabel("Dimensionless energy",**label_size)
 plt.legend()
 plt.grid()
 plt.show()
