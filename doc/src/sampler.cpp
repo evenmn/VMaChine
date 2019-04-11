@@ -64,11 +64,12 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     m_iter += 1;
     cout << endl;
     cout << "  -- System info: " << m_iter << "/" << maxIter << " -- " << endl;
-    cout << " Number of particles   : " << m_system->getNumberOfParticles()  << endl;
-    cout << " Number of dimensions  : " << m_system->getNumberOfDimensions() << endl;
-    cout << " Oscillator frequency  : " << m_omega << endl;
-    cout << " # Metropolis steps    : " << m_numberOfSteps + m_equilibriationSteps << " (" << m_numberOfSteps << " equilibration)" << endl;
-    cout << " Energy file stored as : " << m_averageEnergyFileName << endl;
+    cout << " Number of particles    : " << m_system->getNumberOfParticles()  << endl;
+    cout << " Number of dimensions   : " << m_system->getNumberOfDimensions() << endl;
+    cout << " Oscillator frequency   : " << m_omega << endl;
+    cout << " # Metropolis steps     : " << m_numberOfSteps + m_equilibriationSteps << " (" << m_numberOfSteps << " equilibration)" << endl;
+    cout << " Energy file stored as  : " << m_averageEnergyFileName << endl;
+    cout << " Instant file stored as : " << m_instantEnergyFileName << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy            : " << m_averageEnergy << endl;
@@ -121,16 +122,16 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    m_averageEnergyFileName = generateFileName(path, "energy", "VMC", "SGD", ".dat");
+    m_averageEnergyFileName = generateFileName(path, "energy", "RBM", "SGD", ".dat");
     m_averageEnergyFile.open(m_averageEnergyFileName);
 
     // Print instant energies to file
-    m_instantEnergyFileName = path + "instant_" + std::to_string(m_system->getRandomNumberGenerator()->nextInt(1000)) + ".dat";
+    m_instantEnergyFileName = path + "instant_" + std::to_string(m_system->getRandomNumberGenerator()->nextInt(1e6)) + ".dat";
     m_instantEnergyFile.open(m_instantEnergyFileName);
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName(path, "onebody", "VMC", "SGD", ".dat");
+        std::string oneBodyFileName = generateFileName(path, "onebody", "RBM", "SGD", ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
 }
