@@ -64,21 +64,12 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     m_iter += 1;
     cout << endl;
     cout << "  -- System info: " << m_iter << "/" << maxIter << " -- " << endl;
-<<<<<<< HEAD
-    cout << " Number of particles      : " << m_system->getNumberOfParticles()  << endl;
-    cout << " Number of dimensions     : " << m_system->getNumberOfDimensions() << endl;
-    cout << " Oscillator frequency     : " << m_omega << endl;
-    cout << " # Metropolis steps       : " << m_numberOfSteps + m_equilibriationSteps << " (" << m_numberOfSteps << " equilibration)" << endl;
-    cout << " Energy file stored as    : " << m_averageEnergyFileName << endl;
-    cout << " Temporary file stored as : " << m_instantEnergyFileName << endl;
-=======
     cout << " Number of particles    : " << m_system->getNumberOfParticles()  << endl;
     cout << " Number of dimensions   : " << m_system->getNumberOfDimensions() << endl;
     cout << " Oscillator frequency   : " << m_omega << endl;
     cout << " # Metropolis steps     : " << m_numberOfSteps + m_equilibriationSteps << " (" << m_numberOfSteps << " equilibration)" << endl;
     cout << " Energy file stored as  : " << m_averageEnergyFileName << endl;
     cout << " Instant file stored as : " << m_instantEnergyFileName << endl;
->>>>>>> 66be0ec597973bed31c0d646258f7cfe718f38c3
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy            : " << m_averageEnergy << endl;

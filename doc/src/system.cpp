@@ -20,17 +20,16 @@ void System::runIterations(const int numberOfIterations) {
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles("../data/");
-    m_lastIteration = numberOfIterations - 11;
+    m_lastIteration = numberOfIterations - rangeOfDynamicSteps - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
         int numberOfSteps       = m_numberOfMetropolisSteps;
         int equilibriationSteps = int(m_numberOfMetropolisSteps * m_equilibrationFraction);
-        if(iter == m_lastIteration+10) {
-            numberOfSteps *= int(pow(2,8));
+
+        if(m_applyDynamicSteps) {
+            numberOfSteps *= dynamicSteps(iter);
         }
-        else if(iter >= m_lastIteration) {
-            numberOfSteps *= int(pow(2,4));
-        }
+
         clock_t start_time = clock();
         runMetropolisCycles(numberOfSteps, equilibriationSteps, iter);
         clock_t end_time = clock();
@@ -44,7 +43,9 @@ void System::runIterations(const int numberOfIterations) {
         updateAllParameters(m_parameters);
 
         printToTerminal(numberOfIterations, iter, time);
-        checkConvergence(iter);
+        if(m_checkConvergence) {
+            checkingConvergence(iter);
+        }
     }
 }
 
@@ -54,7 +55,7 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
         m_positions       = m_metropolis->updatePositions();
         if(i >= equilibriationSteps) {
             m_sampler->sample(numberOfSteps, equilibriationSteps, acceptedStep, i);
-            if(iter == m_lastIteration+10) {
+            if(iter == m_lastIteration + rangeOfDynamicSteps) {
                 m_sampler->printInstantValuesToFile(m_positions);
             }
         }
@@ -62,7 +63,7 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
 }
 
 void System::printToTerminal(int numberOfIterations, int iter, double time) {
-    if(iter == m_lastIteration+10) {
+    if(iter == m_lastIteration + rangeOfDynamicSteps) {
         m_sampler->closeOutputFiles();
         m_sampler->printFinalOutputToTerminal();
         exit(0);
@@ -72,13 +73,24 @@ void System::printToTerminal(int numberOfIterations, int iter, double time) {
     }
 }
 
-void System::checkConvergence(int iter) {
+void System::checkingConvergence(int iter) {
     energies.head(numberOfEnergies-1) = energies.tail(numberOfEnergies-1);
     energies(numberOfEnergies-1) = m_sampler->getAverageEnergy();
     if(fabs(energies(0) - energies(numberOfEnergies-1)) < tolerance) {
         std::cout << "The system has converged! Let's run one more cycle to collect data" << std::endl;
         m_lastIteration = iter + 1;
     }
+}
+
+int System::dynamicSteps(int iter) {
+    int stepRatio = 1;
+    if(iter == m_lastIteration+rangeOfDynamicSteps) {
+        stepRatio = int(pow(2,additionalStepsLastIteration));
+    }
+    else if(iter >= m_lastIteration) {
+        stepRatio = int(pow(2,additionalSteps));
+    }
+    return stepRatio;
 }
 
 void System::updateAllArrays(const Eigen::VectorXd positions, const int pRand) {
@@ -169,10 +181,6 @@ void System::setEquilibrationFraction(const double equilibrationFraction) {
     m_equilibrationFraction = equilibrationFraction;
 }
 
-void System::setInteraction(const bool interaction) {
-    m_interaction = interaction;
-}
-
 void System::setFrequency(const double omega) {
     assert(omega > 0);
     m_omega = omega;
@@ -191,6 +199,18 @@ void System::setLearningRate(const double eta) {
 void System::setWidth(const double sigma) {
     assert(sigma > 0);
     m_sigma = sigma;
+}
+
+void System::setInteraction(const bool interaction) {
+    m_interaction = interaction;
+}
+
+void System::setConvergence(const bool checkConvergence) {
+    m_checkConvergence = checkConvergence;
+}
+
+void System::setDynamicSteps(const bool applyDynamicSteps) {
+    m_applyDynamicSteps = applyDynamicSteps;
 }
 
 void System::setHamiltonian(Hamiltonian* hamiltonian) {

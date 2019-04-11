@@ -49,22 +49,43 @@
 #include "Plotter/plotter.h"
 
 int main(int argc, char *argv[]) {
+
+    // System settings
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 12;
+    int     numberOfParticles   = 6;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
-    int     numberOfIterations  = 1000;
-    double  eta                 = 0.0001;                     // Learning rate
-    double  omega               = 0.1;                      // Oscillator frequency
+    int     numberOfSteps       = int(pow(2,15));
+    int     numberOfIterations  = 2000;
+    double  eta                 = 0.01;                     // Learning rate
+    double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
     double  equilibration       = 0.2;                      // Amount of the total steps used
+
+    // Switches
     bool    interaction         = true;
+    bool    checkConvergence    = false;
+    bool    applyDynamicSteps   = true;
+    bool    computeDensities    = true;
+
+    // Advanced settings
+    // Convergence tools
+    int     numberOfEnergies = 5;
+    double  tolerance = 1e-7;
+
+    // Dynamic step tools
+    int     rangeOfDynamicSteps = 10;
+    int     additionalSteps = 4;
+    int     additionalStepsLastIteration = 8;
+
+    // Density tools
+    int     m_numberOfBins = 1000;
+    double  m_maxRadius = 10;
+
 
     System* system = new System();
     system->setEquilibrationFraction    (equilibration);
-    system->setInteraction              (interaction);
     system->setStepLength               (stepLength);
     system->setFrequency                (omega);
     system->setAtomicNumber             (Z);
@@ -77,6 +98,10 @@ int main(int argc, char *argv[]) {
     system->setTotalNumberOfSteps       ();
     system->setNumberOfFreeDimensions   ();
     system->setMaxNumberOfParametersPerElement ();
+
+    system->setInteraction              (interaction);
+    system->setConvergence              (checkConvergence);
+    system->setDynamicSteps             (applyDynamicSteps);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
