@@ -20,7 +20,7 @@ void System::runIterations(const int numberOfIterations) {
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles("../data/");
-    m_lastIteration = numberOfIterations - rangeOfDynamicSteps - 1;
+    m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
         int numberOfSteps       = m_numberOfMetropolisSteps;
@@ -55,7 +55,7 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
         m_positions       = m_metropolis->updatePositions();
         if(i >= equilibriationSteps) {
             m_sampler->sample(numberOfSteps, equilibriationSteps, acceptedStep, i);
-            if(iter == m_lastIteration + rangeOfDynamicSteps) {
+            if(iter == m_lastIteration + m_rangeOfDynamicSteps) {
                 m_sampler->printInstantValuesToFile(m_positions);
             }
         }
@@ -63,7 +63,7 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
 }
 
 void System::printToTerminal(int numberOfIterations, int iter, double time) {
-    if(iter == m_lastIteration + rangeOfDynamicSteps) {
+    if(iter == m_lastIteration + m_rangeOfDynamicSteps) {
         m_sampler->closeOutputFiles();
         m_sampler->printFinalOutputToTerminal();
         exit(0);
@@ -74,9 +74,9 @@ void System::printToTerminal(int numberOfIterations, int iter, double time) {
 }
 
 void System::checkingConvergence(int iter) {
-    energies.head(numberOfEnergies-1) = energies.tail(numberOfEnergies-1);
-    energies(numberOfEnergies-1) = m_sampler->getAverageEnergy();
-    if(fabs(energies(0) - energies(numberOfEnergies-1)) < tolerance) {
+    m_energies.head(m_numberOfEnergies-1) = m_energies.tail(m_numberOfEnergies-1);
+    m_energies(m_numberOfEnergies-1) = m_sampler->getAverageEnergy();
+    if(fabs(m_energies(0) - m_energies(m_numberOfEnergies-1)) < m_tolerance) {
         std::cout << "The system has converged! Let's run one more cycle to collect data" << std::endl;
         m_lastIteration = iter + 1;
     }
@@ -84,11 +84,11 @@ void System::checkingConvergence(int iter) {
 
 int System::dynamicSteps(int iter) {
     int stepRatio = 1;
-    if(iter == m_lastIteration+rangeOfDynamicSteps) {
-        stepRatio = int(pow(2,additionalStepsLastIteration));
+    if(iter == m_lastIteration+m_rangeOfDynamicSteps) {
+        stepRatio = int(pow(2,m_additionalStepsLastIteration));
     }
     else if(iter >= m_lastIteration) {
-        stepRatio = int(pow(2,additionalSteps));
+        stepRatio = int(pow(2,m_additionalSteps));
     }
     return stepRatio;
 }
@@ -205,12 +205,24 @@ void System::setInteraction(const bool interaction) {
     m_interaction = interaction;
 }
 
-void System::setConvergence(const bool checkConvergence) {
+void System::setConvergenceTools(bool checkConvergence, int numberOfEnergies, double tolerance) {
     m_checkConvergence = checkConvergence;
+    m_tolerance        = tolerance;
+    m_numberOfEnergies = numberOfEnergies;
+    m_energies         = Eigen::VectorXd::Zero(numberOfEnergies);
 }
 
-void System::setDynamicSteps(const bool applyDynamicSteps) {
+void System::setDynamicStepTools(bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration) {
     m_applyDynamicSteps = applyDynamicSteps;
+    m_rangeOfDynamicSteps = rangeOfDynamicSteps;
+    m_additionalSteps = additionalSteps;
+    m_additionalStepsLastIteration = additionalStepsLastIteration;
+}
+
+void System::setDensityTools(bool computeDensity, int numberOfBins, double maxRadius) {
+    m_computeDensity    = computeDensity;
+    m_numberOfBins      = numberOfBins;
+    m_maxRadius         = maxRadius;
 }
 
 void System::setHamiltonian(Hamiltonian* hamiltonian) {

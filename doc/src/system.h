@@ -27,8 +27,9 @@ public:
     void setGradients                   ();
 
     void setInteraction                 (const bool interaction);
-    void setConvergence                 (const bool checkConvergence);
-    void setDynamicSteps                (const bool applyDynamicSteps);
+    void setConvergenceTools            (bool checkConvergence, int numberOfEnergies, double tolerance);
+    void setDynamicStepTools            (bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration);
+    void setDensityTools                (bool computeDensity, int numberOfBins, double maxRadius);
 
     void setHamiltonian                 (class Hamiltonian* hamiltonian);
     void setBasis                       (class Basis* basis);
@@ -56,12 +57,15 @@ public:
     int                                 getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
     int                                 getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
     int                                 getAtomicNumber()            { return m_Z; }
+    int                                 getNumberOfBins()            { return m_numberOfBins; }
+    double                              getMaxRadius()               { return m_maxRadius; }
     double                              getEquilibrationFraction()   { return m_equilibrationFraction; }
     double                              getFrequency()               { return m_omega; }
     double                              getWidth()                   { return m_sigma; }
     double                              getLearningRate()            { return m_eta; }
     double                              getStepLength()              { return m_stepLength; }
     bool                                getInteraction()             { return m_interaction; }
+    bool                                getDensity()                 { return m_computeDensity; }
     Eigen::VectorXd                     getPositions()               { return m_positions; }
     Eigen::MatrixXd                     getWeights()                 { return m_parameters; }
     std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionVector; }
@@ -83,16 +87,25 @@ private:
     int                                 m_maxNumberOfParametersPerElement = 0;
     int                                 m_totalNumberOfSteps        = 0;
     int                                 m_Z                         = 1;
+    int                                 m_rangeOfDynamicSteps       = 10;
+    int                                 m_additionalSteps           = 4;
+    int                                 m_additionalStepsLastIteration = 8;
+    int                                 m_lastIteration             = 1;
+    int                                 m_numberOfEnergies          = 0;
+    int                                 m_numberOfBins              = 1;
 
     double                              m_equilibrationFraction     = 0.0;
     double                              m_stepLength                = 0.1;
     double                              m_omega                     = 1.0;
     double                              m_sigma                     = 1.0;
     double                              m_eta                       = 0.1;
+    double                              m_tolerance                 = 1e-7;
+    double                              m_maxRadius                 = 10;
 
     bool                                m_interaction               = false;
     bool                                m_checkConvergence          = false;
     bool                                m_applyDynamicSteps         = false;
+    bool                                m_computeDensity            = false;
 
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;
@@ -110,16 +123,6 @@ private:
     Eigen::MatrixXd                     m_distanceMatrix;
     Eigen::VectorXd                     m_radialVector;
     Eigen::MatrixXd                     m_gradients;
-
-    // Convergence tools
-    int numberOfEnergies = 5;
-    int m_lastIteration;
-    double tolerance = 1e-7;
-    Eigen::VectorXd energies = Eigen::VectorXd::Zero(numberOfEnergies);
-
-    // Dynamic step tools
-    int rangeOfDynamicSteps = 10;
-    int additionalSteps = 4;
-    int additionalStepsLastIteration = 8;
+    Eigen::VectorXd                     m_energies;
 };
 

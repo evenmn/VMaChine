@@ -50,14 +50,15 @@
 
 int main(int argc, char *argv[]) {
 
-    // System settings
+    // --- SYSTEM SETTINGS ---
+    // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 6;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,15));
-    int     numberOfIterations  = 2000;
+    int     numberOfIterations  = 1000;
     double  eta                 = 0.01;                     // Learning rate
-    double  omega               = 1.0;                      // Oscillator frequency
+    double  omega               = 0.1;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -67,9 +68,11 @@ int main(int argc, char *argv[]) {
     bool    interaction         = true;
     bool    checkConvergence    = false;
     bool    applyDynamicSteps   = true;
-    bool    computeDensities    = true;
+    bool    computeDensity      = true;
 
-    // Advanced settings
+
+
+    // --- ADVANCED SETTINGS ---
     // Convergence tools
     int     numberOfEnergies = 5;
     double  tolerance = 1e-7;
@@ -80,10 +83,12 @@ int main(int argc, char *argv[]) {
     int     additionalStepsLastIteration = 8;
 
     // Density tools
-    int     m_numberOfBins = 1000;
-    double  m_maxRadius = 10;
+    int     numberOfBins = 1000;
+    double  maxRadius = 10;
 
 
+
+    // --- SET PARAMETERS ---
     System* system = new System();
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
@@ -100,28 +105,29 @@ int main(int argc, char *argv[]) {
     system->setMaxNumberOfParametersPerElement ();
 
     system->setInteraction              (interaction);
-    system->setConvergence              (checkConvergence);
-    system->setDynamicSteps             (applyDynamicSteps);
+    system->setConvergenceTools         (checkConvergence, numberOfEnergies, tolerance);
+    system->setDynamicStepTools         (applyDynamicSteps, rangeOfDynamicSteps, additionalSteps, additionalStepsLastIteration);
+    system->setDensityTools             (computeDensity, numberOfBins, maxRadius);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class NQSGaussian          (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class NQSGaussian          (system));
     //WaveFunctionElements.push_back      (new class NQSGaussian2         (system));
-    WaveFunctionElements.push_back      (new class NQSJastrow           (system));
+    //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow2          (system));
     //WaveFunctionElements.push_back      (new class NQSJastrow3          (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.5));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     //system->setHamiltonian              (new AtomicNucleus(system));
     system->setHamiltonian              (new HarmonicOscillator(system));

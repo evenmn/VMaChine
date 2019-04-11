@@ -27,6 +27,12 @@ Sampler::Sampler(System* system) {
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch             = int(m_numberOfMetropolisSteps/m_numberOfBatches);
     m_interaction                       = m_system->getInteraction();
+    m_calculateOneBody                  = m_system->getDensity();
+    m_numberOfBins                      = m_system->getNumberOfBins();
+    m_maxRadius                         = m_system->getMaxRadius();
+    m_radialStep                        = m_maxRadius/m_numberOfBins;
+    m_binLinSpace                       = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
+    m_particlesPerBin                   = Eigen::VectorXd::Zero(m_numberOfBins);
 }
 
 void Sampler::sample(int numberOfSteps, int equilibriationSteps, const bool acceptedStep, const int stepNumber) {
@@ -122,7 +128,7 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    m_averageEnergyFileName = generateFileName(path, "energy", "RBM", "SGD", ".dat");
+    m_averageEnergyFileName = generateFileName(path, "energy", "VMC", "SGD", ".dat");
     m_averageEnergyFile.open(m_averageEnergyFileName);
 
     // Print instant energies to file
@@ -131,7 +137,7 @@ void Sampler::openOutputFiles(const std::string path) {
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName(path, "onebody", "RBM", "SGD", ".dat");
+        std::string oneBodyFileName = generateFileName(path, "onebody", "VMC", "SGD", ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
 }

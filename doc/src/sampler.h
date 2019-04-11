@@ -55,11 +55,11 @@ private:
     class System* m_system = nullptr;
 
     // One-body density related stuff
-    bool            m_calculateOneBody = true;
-    int             m_numberOfBins = 1000;
-    double          m_maxRadius = 10;
-    double          m_radialStep = m_maxRadius/m_numberOfBins;
-    Eigen::VectorXd m_binLinSpace = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
-    Eigen::VectorXd m_particlesPerBin = Eigen::VectorXd::Zero(m_numberOfBins);
+    bool            m_calculateOneBody  = true;
+    int             m_numberOfBins      = 100;
+    double          m_maxRadius         = 10;
+    double          m_radialStep        = 0.1;
+    Eigen::VectorXd m_binLinSpace;
+    Eigen::VectorXd m_particlesPerBin;
     std::ofstream   m_oneBodyFile;
 };
