@@ -103,7 +103,7 @@ private:
     // Convergence tools
     int numberOfEnergies = 5;
     int m_lastIteration;
-    double tolerance = 1e-6;
+    double tolerance = 1e-7;
     Eigen::VectorXd energies = Eigen::VectorXd::Zero(numberOfEnergies);
 };
 

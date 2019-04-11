@@ -56,8 +56,8 @@ private:
 
     // One-body density related stuff
     bool            m_calculateOneBody = true;
-    int             m_numberOfBins = 500;
-    double          m_maxRadius = 5;
+    int             m_numberOfBins = 1000;
+    double          m_maxRadius = 10;
     double          m_radialStep = m_maxRadius/m_numberOfBins;
     Eigen::VectorXd m_binLinSpace = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
     Eigen::VectorXd m_particlesPerBin = Eigen::VectorXd::Zero(m_numberOfBins);
