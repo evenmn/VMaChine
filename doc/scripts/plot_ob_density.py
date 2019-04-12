@@ -5,27 +5,27 @@ import seaborn as sns
 numberOfDimensions = 3
 
 def exact(r1, w):
-    '''Exact solution without interaction for arbitrary w'''
+    '''Exact solution without interaction for given w'''
     return (2*r1+1)*np.exp(- w * r1**2)
 
-files = [#"../data/int1/onebody/RBM/3D/2P/0.100000w/SGD_MC1048576.dat",
-         #"../data/int1/onebody/RBM/3D/2P/0.280000w/SGD_MC1048576.dat",
-         #"../data/int1/onebody/RBM/3D/2P/0.500000w/SGD_MC1048576.dat",
-         #"../data/int1/onebody/RBM/3D/2P/1.000000w/SGD_MC1048576.dat",
-         #"../data/int1/onebody/VMC/3D/2P/0.100000w/SGD_MC1048576.dat",
-         #"../data/int1/onebody/VMC/3D/2P/0.280000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/3D/2P/0.500000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/3D/2P/1.000000w/SGD_MC1048576.dat",
+files = [#"../data/int1/onebody/RBM/2D/2P/0.100000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/0.280000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/0.500000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/1.000000w/SGD_MC1048576.dat",
+         #"../data/int1/onebody/VMC/2D/20P/0.100000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/VMC/2D/12P/0.280000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/VMC/2D/12P/0.500000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/VMC/2D/12P/1.000000w/SGD_MC1048576.dat",
          ]
          
-label = [#"RBM, $\omega=0.1$", 
+label = [#"RBM, $\omega=0.1$", , 
          "RBM, $\omega=0.28$", 
          "RBM, $\omega=0.5$", 
          "RBM, $\omega=1.0$", 
          #"VMC, $\omega=0.1$", 
-         #"VMC, $\omega=0.28$", 
-         #"VMC, $\omega=0.5$", 
-         #"VMC, $\omega=1.0$",
+         "VMC, $\omega=0.28$", 
+         "VMC, $\omega=0.5$", 
+         "VMC, $\omega=1.0$",
          ]
 
 for i in range(len(files)):
