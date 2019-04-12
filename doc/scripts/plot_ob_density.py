@@ -5,28 +5,24 @@ import seaborn as sns
 numberOfDimensions = 2
 
 def exact(r1, w):
-    '''Exact solution without interaction for arbitrary w'''
+    '''Exact solution without interaction for given w'''
     return (2*r1+1)*np.exp(- w * r1**2)
 
-files = ["../data/int1/onebody/RBM/2D/2P/0.100000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/RBM/2D/2P/0.166667w/SGD_MC1048576.dat",
-         "../data/int1/onebody/RBM/2D/2P/0.280000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/RBM/2D/2P/0.500000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/RBM/2D/2P/1.000000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/2P/0.100000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/2P/0.166667w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/2P/0.280000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/2P/0.500000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/2P/1.000000w/SGD_MC1048576.dat",
+files = [#"../data/int1/onebody/RBM/2D/2P/0.100000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/0.280000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/0.500000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/1.000000w/SGD_MC1048576.dat",
+         #"../data/int1/onebody/VMC/2D/20P/0.100000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/VMC/2D/12P/0.280000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/VMC/2D/12P/0.500000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/VMC/2D/12P/1.000000w/SGD_MC1048576.dat",
          ]
          
-label = ["RBM, $\omega=0.1$", 
-         "RBM, $\omega=1/6$", 
+label = [#"RBM, $\omega=0.1$", , 
          "RBM, $\omega=0.28$", 
          "RBM, $\omega=0.5$", 
          "RBM, $\omega=1.0$", 
-         "VMC, $\omega=0.1$", 
-         "VMC, $\omega=1/6$", 
+         #"VMC, $\omega=0.1$", 
          "VMC, $\omega=0.28$", 
          "VMC, $\omega=0.5$", 
          "VMC, $\omega=1.0$",
@@ -34,8 +30,8 @@ label = ["RBM, $\omega=0.1$",
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])
-    data = data[-500:]
-    r = np.linspace(0,5,len(data))
+    data = data[-1000:]
+    r = np.linspace(0,10,len(data))
     data /= (r**(numberOfDimensions-1))
     data /= np.sum(np.nan_to_num(data))
     plt.plot(r, data, '.', markersize=2, alpha=1.0, label=label[i])
