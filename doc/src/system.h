@@ -105,7 +105,7 @@ private:
     bool                                m_interaction               = false;
     bool                                m_checkConvergence          = false;
     bool                                m_applyDynamicSteps         = false;
-    bool                                m_computeDensity            = false;
+    bool                                m_computeDensity            = true;
 
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;

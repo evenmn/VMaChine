@@ -9,7 +9,7 @@
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
 #include "Optimization/optimization.h"
-#include "Resampling/AutoBlocking/blocker.h"
+#include "Resampling/blocker.h"
 
 using std::cout;
 using std::endl;

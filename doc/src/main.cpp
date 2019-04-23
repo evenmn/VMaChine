@@ -1,15 +1,19 @@
 #include "system.h"
+#include <mpi.h>
+#include <iostream>
 
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/gaussian.h"
 #include "WaveFunctions/padejastrow.h"
 #include "WaveFunctions/padejastrow2.h"
 #include "WaveFunctions/slaterdeterminant.h"
-#include "WaveFunctions/nqsgaussian.h"
-#include "WaveFunctions/nqsgaussian2.h"
-#include "WaveFunctions/nqsjastrow.h"
-#include "WaveFunctions/nqsjastrow2.h"
-#include "WaveFunctions/nqsjastrow3.h"
+#include "WaveFunctions/rbmgaussian.h"
+#include "WaveFunctions/rbmgaussian2.h"
+#include "WaveFunctions/rbmjastrow.h"
+#include "WaveFunctions/rbmjastrow2.h"
+#include "WaveFunctions/rbmjastrow3.h"
+//#include "WaveFunctions/rbmjastrow4.h"
+#include "WaveFunctions/rbmjastrow5.h"
 #include "WaveFunctions/simplejastrow.h"
 #include "WaveFunctions/samsethjastrow.h"
 #include "WaveFunctions/partlyrestricted.h"
@@ -46,18 +50,18 @@
 #include "RNG/mersennetwister.h"
 #include "RNG/parkmiller.h"
 
-#include "Plotter/plotter.h"
+//#include "Plotter/plotter.h"
 
 int main(int argc, char *argv[]) {
 
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 20;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,15));
-    int     numberOfIterations  = 1000;
-    double  eta                 = 0.01;                     // Learning rate
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 3000;
+    double  eta                 = 0.00001;                     // Learning rate
     double  omega               = 0.1;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
@@ -74,19 +78,27 @@ int main(int argc, char *argv[]) {
 
     // --- ADVANCED SETTINGS ---
     // Convergence tools
-    int     numberOfEnergies = 5;
-    double  tolerance = 1e-7;
+    int     numberOfEnergies                = 5;
+    double  tolerance                       = 1e-7;
 
     // Dynamic step tools
-    int     rangeOfDynamicSteps = 10;
-    int     additionalSteps = 4;
-    int     additionalStepsLastIteration = 8;
+    int     rangeOfDynamicSteps             = 10;
+    int     additionalSteps                 = 4;
+    int     additionalStepsLastIteration    = 8;
 
     // Density tools
-    int     numberOfBins = 1000;
-    double  maxRadius = 10;
+    double  maxRadius                       = 25;
+    int     numberOfBins                    = 100 * maxRadius;
 
 
+    // MPI initializations
+    int NumberProcesses, MyRank;
+    MPI_Init (&argc, &argv);
+    MPI_Comm_size (MPI_COMM_WORLD, &NumberProcesses);
+    MPI_Comm_rank (MPI_COMM_WORLD, &MyRank);
+    if (MyRank == 0 && argc <= 1) {
+        std::cout << "Bad Usage: " << argv[0] << " Read also output file on same line and number of Monte Carlo cycles" << std::endl;
+    }
 
     // --- SET PARAMETERS ---
     System* system = new System();
@@ -113,13 +125,14 @@ int main(int argc, char *argv[]) {
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
     WaveFunctionElements.push_back      (new class Gaussian             (system));
-    //WaveFunctionElements.push_back      (new class NQSGaussian          (system));
-    //WaveFunctionElements.push_back      (new class NQSGaussian2         (system));
-    //WaveFunctionElements.push_back      (new class NQSJastrow           (system));
+    //WaveFunctionElements.push_back      (new class RBMGaussian          (system));
+    //WaveFunctionElements.push_back      (new class RBMGaussian2         (system));
+    //WaveFunctionElements.push_back      (new class RBMJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
-    //WaveFunctionElements.push_back      (new class NQSJastrow2          (system));
-    //WaveFunctionElements.push_back      (new class NQSJastrow3          (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
+    //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
