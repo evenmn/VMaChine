@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     int     numberOfSteps       = int(pow(2,20));
     int     numberOfIterations  = 100;
     double  eta                 = 0.1;                      // Learning rate
-    double  omega               = 1.0;                      // Oscillator frequency
+    double  omega               = 0.1;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     int     additionalStepsLastIteration    = 8;
 
     // Density tools
-    double  maxRadius                       = 25;
+    double  maxRadius                       = 10;
     int     numberOfBins                    = 100 * maxRadius;
 
     /*
@@ -125,10 +125,10 @@ int main(int argc, char *argv[]) {
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    WaveFunctionElements.push_back      (new class Gaussian             (system));
-    //WaveFunctionElements.push_back      (new class RBMGaussian          (system));
+    //WaveFunctionElements.push_back      (new class Gaussian             (system));
+    WaveFunctionElements.push_back      (new class RBMGaussian          (system));
     //WaveFunctionElements.push_back      (new class RBMGaussian2         (system));
-    //WaveFunctionElements.push_back      (new class RBMJastrow           (system));
+    WaveFunctionElements.push_back      (new class RBMJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Constant(system, 1.0));
+    system->setInitialWeights           (new Randomize(system, 0.1));
     system->setInitialState             (new RandomNormal(system));
     //system->setHamiltonian              (new AtomicNucleus(system));
     system->setHamiltonian              (new HarmonicOscillator(system));

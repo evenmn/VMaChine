@@ -19,7 +19,8 @@ void System::runIterations(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
-    m_sampler->openOutputFiles("../data/");
+    //m_sampler->openOutputFiles("../data/");
+    m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
@@ -163,8 +164,6 @@ void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionEleme
 
 void System::setMaxNumberOfParametersPerElement() {
     m_maxNumberOfParametersPerElement = 2*m_numberOfHiddenNodes*(m_numberOfFreeDimensions+1);
-    //m_maxNumberOfParametersPerElement = m_numberOfFreeDimensions * m_numberOfFreeDimensions;
-    //m_maxNumberOfParametersPerElement = 10000;
 }
 
 void System::setStepLength(const double stepLength) {
