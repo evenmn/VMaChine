@@ -8,9 +8,9 @@ def exact(r1, w):
     '''Exact solution without interaction for given w'''
     return (2*r1+1)*np.exp(- w * r1**2)
 
-files = ["../data/int1/onebody/RBM/2D/20P/0.100000w/SGD_MC1048576.dat",
+files = [#"../data/int1/onebody/RBM/2D/30P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/20P/1.000000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/20P/0.100000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/VMC/2D/30P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/6P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBM/2D/2P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/12P/0.500000w/SGD_MC1048576.dat",
@@ -24,7 +24,7 @@ files = ["../data/int1/onebody/RBM/2D/20P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/VMC/2D/20P/1.000000w/SGD_MC1048576.dat",
          ]
          
-label = ["RBM",
+label = [#"RBM",
          #"RBMPJ",
          "VMC",
          #"RBMPJ, $\omega=0.1$",
@@ -38,7 +38,7 @@ label = ["RBM",
          #"VMC, $\omega=1.0$",
          ]
          
-maxRadius = [25,25,25]
+maxRadius = [10,10,10]
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])

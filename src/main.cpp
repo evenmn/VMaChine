@@ -1,5 +1,5 @@
-#include "system.h"
 #include <mpi.h>
+#include "system.h"
 #include <iostream>
 
 #include "WaveFunctions/wavefunction.h"
@@ -56,13 +56,13 @@ int main(int argc, char *argv[]) {
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 30;
+    int     numberOfDimensions  = 3;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,20));
-    int     numberOfIterations  = 10000;
-    double  eta                 = 0.00001;                     // Learning rate
-    double  omega               = 0.1;                      // Oscillator frequency
+    int     numberOfIterations  = 100;
+    double  eta                 = 0.1;                      // Learning rate
+    double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     double  maxRadius                       = 25;
     int     numberOfBins                    = 100 * maxRadius;
 
-
+    /*
     // MPI initializations
     int NumberProcesses, MyRank;
     MPI_Init (&argc, &argv);
@@ -99,6 +99,7 @@ int main(int argc, char *argv[]) {
     if (MyRank == 0 && argc <= 1) {
         std::cout << "Bad Usage: " << argv[0] << " Read also output file on same line and number of Monte Carlo cycles" << std::endl;
     }
+    */
 
     // --- SET PARAMETERS ---
     System* system = new System();
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
@@ -140,7 +141,7 @@ int main(int argc, char *argv[]) {
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunction             (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.5));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     //system->setHamiltonian              (new AtomicNucleus(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
