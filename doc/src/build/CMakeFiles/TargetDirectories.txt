@@ -1,3 +1,0 @@
-/home/evenmn/VMC/doc/src/build/CMakeFiles/rebuild_cache.dir
-/home/evenmn/VMC/doc/src/build/CMakeFiles/vmc.dir
-/home/evenmn/VMC/doc/src/build/CMakeFiles/edit_cache.dir
