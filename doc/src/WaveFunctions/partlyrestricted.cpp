@@ -7,31 +7,50 @@ PartlyRestricted::PartlyRestricted(System* system) :
         WaveFunction(system) {
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-    double sigma                        = m_system->getWidth();
-    m_sigmaSqrd2 = sigma*sigma*sigma*sigma;
+}
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
+void PartlyRestricted::calculateProbabilityRatio(int changedCoord) {
+    //double ratio = (m_beta.row(particle).transpose() * (m_h.row(particle) - m_hOld.row(particle))).sum();
+
+    double ratio = 0;
+    for(int i=0; i<changedCoord+1; i++) {
+        ratio -= abs(m_positions(i) * m_c(i,changedCoord) * m_positions(changedCoord));
+    }
+    for(int j=changedCoord; j<m_numberOfFreeDimensions; j++) {
+        ratio -= abs(m_positions(changedCoord) * m_c(changedCoord,j) * m_positions(j));
+    }
+    m_probabilityRatio = exp(ratio);
 }
 
 void PartlyRestricted::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
     setArrays();
 
     m_positions = positions;
-    m_xCx = positions.transpose() * m_c * positions;
+    //m_xCx = positions.transpose() * m_c * positions;
+    calculateProbabilityRatio(changedCoord);
 }
 
 void PartlyRestricted::setArrays() {
-    m_oldPositions = m_positions;
-    m_oldXCx       = m_xCx;
+    m_positionsOld          = m_positions;
+    //m_xCxOld                = m_xCx;
+    m_probabilityRatioOld   = m_probabilityRatio;
 }
 
 void PartlyRestricted::resetArrays() {
-    m_positions = m_oldPositions;
-    m_xCx       = m_oldXCx;
+    m_positions             = m_positionsOld;
+    //m_xCx                   = m_xCxOld;
+    m_probabilityRatio      = m_probabilityRatioOld;
 }
 
 void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions) {
     m_positions = positions;
-    m_xCx = positions.transpose() * m_c * positions;
+    //m_xCx = positions.transpose() * m_c * positions;
 
+    m_probabilityRatio = 1;
     setArrays();
 }
 
@@ -41,45 +60,36 @@ void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters, const int el
     m_c = c;
 }
 
-double PartlyRestricted::evaluate() {
-    return exp(- m_xCx  / m_sigmaSqrd2);
+double PartlyRestricted::evaluateRatio() {
+    return m_probabilityRatio;
 }
 
-double PartlyRestricted::evaluateSqrd() {
-    return exp(- 2 * m_xCx  / m_sigmaSqrd2);
-}
-
-double PartlyRestricted::computeFirstDerivative(const int k) {
-    double Sum = m_positions(k) * m_c(k,k);
-    for(int j=k; j<m_numberOfFreeDimensions; j++) {
-        Sum += m_positions(j) * m_c(k,j);
+double PartlyRestricted::computeGradient(const int k) {
+    double Sum = 0;
+    for(int i=0; i<k+1; i++) {
+        Sum -= m_positions(i) * m_c(i,k) * sgn(m_positions(i) * m_c(i,k) * m_positions(k));
     }
-    return - Sum / m_sigmaSqrd2;
+    for(int j=k; j<m_numberOfFreeDimensions; j++) {
+        Sum -= m_c(k,j) * m_positions(j) * sgn(m_positions(k) * m_c(k,j) * m_positions(j));
+    }
+    return Sum;
 }
 
-double PartlyRestricted::computeSecondDerivative() {
-    return -m_c.diagonal().sum();
+double PartlyRestricted::computeLaplacian() {
+    double Sum = 0;
+    for(int i=0; i<m_numberOfFreeDimensions; i++) {
+        Sum -= m_c(i,i) * sgn(m_positions(i) * m_c(i,i) * m_positions(i));
+    }
+    return 2 * Sum;
 }
 
-Eigen::VectorXd PartlyRestricted::computeFirstEnergyDerivative(const int k) {
+Eigen::VectorXd PartlyRestricted::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
-    for(int j=k; j<m_numberOfFreeDimensions; j++) {
-        if(j==k) {
-            gradients(k * m_numberOfFreeDimensions + j) = m_positions(k);
+    for(int m=0; m<m_numberOfFreeDimensions; m++) {
+        for(int l=m; l<m_numberOfFreeDimensions; l++) {
+            gradients(l * m_numberOfFreeDimensions + m) = m_positions(m) * m_positions(l) * sgn(m_positions(m) * m_c(m,l) * m_positions(l));
         }
-        else if(j>k) {
-            gradients(k * m_numberOfFreeDimensions + j) = 0.5 * m_positions(j);
-        }
-    }
-    return gradients;
-}
-
-Eigen::VectorXd PartlyRestricted::computeSecondEnergyDerivative() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-
-    for(int j=0; j<m_numberOfFreeDimensions; j++) {
-        gradients(j * m_numberOfFreeDimensions + j) = 1;
     }
     return gradients;
 }
