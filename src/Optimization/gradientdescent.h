@@ -6,7 +6,6 @@ class GradientDescent : public Optimization {
 public:
     GradientDescent(System* system, const double gamma, const double monotonicExp);
     int             getNumberOfBatches() { return m_numberOfBatches; }
-    Eigen::MatrixXd getAllInstantGradients();
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();
 

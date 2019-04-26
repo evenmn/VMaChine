@@ -38,7 +38,7 @@ public:
     void setMetropolis                  (class Metropolis* metropolis);
     void setOptimization                (class Optimization* optimization);
     void setRandomNumberGenerator       (class RandomNumberGenerator* randomnumbergenerator);
-    void setWaveFunction                (std::vector<class WaveFunction*> waveFunctionVector);
+    void setWaveFunctionElements        (std::vector<class WaveFunction*> waveFunctionElements);
 
     class WaveFunction*                 getWaveFunction()            { return m_waveFunction; }
     class Hamiltonian*                  getHamiltonian()             { return m_hamiltonian; }
@@ -68,13 +68,14 @@ public:
     bool                                getDensity()                 { return m_computeDensity; }
     Eigen::VectorXd                     getPositions()               { return m_positions; }
     Eigen::MatrixXd                     getWeights()                 { return m_parameters; }
-    std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionVector; }
+    std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionElements; }
 
-    void                                updateAllArrays          (const Eigen::VectorXd positions, const int pRand);
-    void                                resetAllArrays           ();
-    void                                updateAllParameters      (const Eigen::MatrixXd parameters);
-    double                              evaluateWaveFunctionRatio();
-    double                              getKineticEnergy         ();
+    void                                updateAllArrays              (const Eigen::VectorXd positions, const int changedCoord);
+    void                                resetAllArrays               ();
+    void                                updateAllParameters          (const Eigen::MatrixXd parameters);
+    double                              evaluateWaveFunctionRatio    ();
+    double                              getKineticEnergy             ();
+    Eigen::MatrixXd                     getAllInstantGradients       ();
 
 
 private:
@@ -116,7 +117,7 @@ private:
     class Metropolis*                   m_metropolis                = nullptr;
     class Optimization*                 m_optimization              = nullptr;
     class RandomNumberGenerator*        m_randomnumbergenerator     = nullptr;
-    std::vector<class WaveFunction*>    m_waveFunctionVector;
+    std::vector<class WaveFunction*>    m_waveFunctionElements;
 
     Eigen::VectorXd                     m_positions;
     Eigen::MatrixXd                     m_parameters;

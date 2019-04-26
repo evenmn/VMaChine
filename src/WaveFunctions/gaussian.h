@@ -14,6 +14,8 @@ public:
     double          computeLaplacian            ();
     Eigen::VectorXd computeParameterGradient    ();
 
+    void            updateProbabilityRatio      (int changedCoord);
+
 private:
     int     m_elementNumber = 0;
     double  m_omega         = 0;

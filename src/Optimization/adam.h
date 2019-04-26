@@ -6,7 +6,6 @@ class ADAM : public Optimization {
 public:
     ADAM(System* system);
     int             getNumberOfBatches() { return m_numberOfBatches; }
-    Eigen::MatrixXd getAllInstantGradients();
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();
 

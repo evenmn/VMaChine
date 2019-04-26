@@ -48,7 +48,7 @@ void Sampler::sample(int numberOfSteps, int equilibriationSteps, const bool acce
         m_numberOfStepsPerBatch     = int(m_numberOfSteps/m_numberOfBatches);
     }
     m_instantEnergy    = m_system->getHamiltonian()->computeLocalEnergy();
-    m_instantGradients = m_system->getOptimization()->getAllInstantGradients();
+    m_instantGradients = m_system->getAllInstantGradients();
     m_cumulativeEnergy      += m_instantEnergy;
     m_cumulativeEnergySqrd  += m_instantEnergy * m_instantEnergy;
     if(stepNumber > (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches)) && stepNumber < (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches + 1))) {
@@ -128,7 +128,7 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    m_averageEnergyFileName = generateFileName(path, "energy", "RBMPJ", "SGD", ".dat");
+    m_averageEnergyFileName = generateFileName(path, "energy", "RBMPJ2", "SGD", ".dat");
     m_averageEnergyFile.open(m_averageEnergyFileName);
 
     // Print instant energies to file
@@ -137,7 +137,7 @@ void Sampler::openOutputFiles(const std::string path) {
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName(path, "onebody", "RBMPJ", "SGD", ".dat");
+        std::string oneBodyFileName = generateFileName(path, "onebody", "RBMPJ2", "SGD", ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
 }

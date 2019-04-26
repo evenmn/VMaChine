@@ -17,14 +17,6 @@ GradientDescent::GradientDescent(System* system, const double gamma, const doubl
     m_monotonicExp                    = monotonicExp;
 }
 
-Eigen::MatrixXd GradientDescent::getAllInstantGradients() {
-    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-    for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) = m_waveFunctionVector[unsigned(i)]->computeParameterGradient();
-    }
-    return gradients;
-}
-
 Eigen::MatrixXd GradientDescent::getEnergyGradient() {
     double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
     Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();

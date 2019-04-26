@@ -94,45 +94,53 @@ int System::dynamicSteps(int iter) {
     return stepRatio;
 }
 
-void System::updateAllArrays(const Eigen::VectorXd positions, const int pRand) {
-    for(auto& i : m_waveFunctionVector) {
-        i->updateArrays(positions, pRand);
+void System::updateAllArrays(const Eigen::VectorXd positions, const int changedCoord) {
+    for(auto& i : m_waveFunctionElements) {
+        i->updateArrays(positions, changedCoord);
     }
 }
 
 void System::resetAllArrays() {
-    for(auto& i : m_waveFunctionVector) {
+    for(auto& i : m_waveFunctionElements) {
         i->resetArrays();
     }
 }
 
 void System::updateAllParameters(const Eigen::MatrixXd parameters) {
     for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        m_waveFunctionVector[unsigned(i)]->updateParameters(parameters, i);
+        m_waveFunctionElements[unsigned(i)]->updateParameters(parameters, i);
     }
 }
 
 double System::evaluateWaveFunctionRatio() {
     double ratio = 1;
-    for(auto& i : m_waveFunctionVector) {
+    for(auto& i : m_waveFunctionElements) {
         ratio *= i->evaluateRatio();
     }
     return ratio;
 }
 
 double System::getKineticEnergy() {
-    double KineticEnergy = 0;
-    for(auto& i : m_waveFunctionVector) {
-        KineticEnergy += i->computeLaplacian();
+    double kineticEnergy = 0;
+    for(auto& i : m_waveFunctionElements) {
+        kineticEnergy += i->computeLaplacian();
     }
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
-        double NablaLnPsi = 0;
-        for(auto& i : m_waveFunctionVector) {
-            NablaLnPsi += i->computeGradient(k);
+        double nablaLnPsi = 0;
+        for(auto& i : m_waveFunctionElements) {
+            nablaLnPsi += i->computeGradient(k);
         }
-        KineticEnergy += NablaLnPsi * NablaLnPsi;
+        kineticEnergy += nablaLnPsi * nablaLnPsi;
     }
-    return - 0.5 * KineticEnergy;
+    return - 0.5 * kineticEnergy;
+}
+
+Eigen::MatrixXd System::getAllInstantGradients() {
+    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
+    for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
+        gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
+    }
+    return gradients;
 }
 
 void System::setNumberOfParticles(const int numberOfParticles) {
@@ -232,8 +240,8 @@ void System::setBasis(Basis* basis) {
     m_basis = basis;
 }
 
-void System::setWaveFunction(std::vector<class WaveFunction *> waveFunctionVector) {
-    m_waveFunctionVector = waveFunctionVector;
+void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements) {
+    m_waveFunctionElements = waveFunctionElements;
 }
 
 void System::setInitialState(InitialState* initialState) {

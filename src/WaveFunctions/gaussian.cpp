@@ -16,10 +16,16 @@ void Gaussian::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
+void Gaussian::updateProbabilityRatio(int changedCoord) {
+    m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(changedCoord)*m_positionsOld(changedCoord) \
+                                                     - m_positions   (changedCoord)*m_positions   (changedCoord)));
+}
+
+
 void Gaussian::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
     setArrays();
     m_positions             = positions;
-    m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(changedCoord)*m_positionsOld(changedCoord) - m_positions(changedCoord)*m_positions(changedCoord)));
+    updateProbabilityRatio(changedCoord);
 }
 
 void Gaussian::setArrays() {

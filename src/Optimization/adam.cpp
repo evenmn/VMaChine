@@ -17,14 +17,6 @@ ADAM::ADAM(System* system) :
     m_theta                           = Eigen::MatrixXd::Ones(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }
 
-Eigen::MatrixXd ADAM::getAllInstantGradients() {
-    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-    for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) = m_waveFunctionVector[unsigned(i)]->computeParameterGradient();
-    }
-    return gradients;
-}
-
 Eigen::MatrixXd ADAM::getEnergyGradient() {
     double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
     Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();

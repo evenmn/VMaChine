@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
-    system->setWaveFunction             (WaveFunctionElements);
+    system->setWaveFunctionElements     (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setInitialWeights           (new Randomize(system, 0.1));
     system->setInitialState             (new RandomNormal(system));
