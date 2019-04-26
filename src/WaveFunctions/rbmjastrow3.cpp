@@ -10,7 +10,7 @@ RBMJastrow3::RBMJastrow3(System* system) :
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles * m_numberOfHiddenNodes + m_numberOfHiddenNodes;
     double sigma                        = 1; //m_system->getWidth();
     m_sigmaSqrd                         = sigma*sigma;
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
@@ -131,7 +131,8 @@ void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions) {
 }
 
 void RBMJastrow3::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfParticles*m_numberOfParticles*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfParticles*m_numberOfHiddenNodes, m_numberOfParticles);
     m_W     = W;
@@ -193,7 +194,7 @@ Eigen::VectorXd RBMJastrow3::computeParameterGradient() {
     }
     for(int m=0; m<m_numberOfParticles; m++) {
         for(int n=m+1; n<m_numberOfParticles; n++) {
-            for(int o=0; o<m_numberOfParticles; o++) {
+            for(int o=0; o<m_numberOfHiddenNodes; o++) {
                 int p = o * m_numberOfParticles*m_numberOfHiddenNodes + m*m_numberOfParticles + n + m_numberOfHiddenNodes;
                 gradients(p) = m_n(o) * m_distanceMatrix(m,n) / m_sigmaSqrd;
             }

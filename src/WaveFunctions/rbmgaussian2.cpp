@@ -8,7 +8,7 @@ RBMGaussian2::RBMGaussian2(System* system) :
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles;
     m_omega                             = m_system->getFrequency();
     double sigma                        = m_system->getWidth();
     m_sigmaSqrd = sigma*sigma;
@@ -54,7 +54,8 @@ void RBMGaussian2::calculateG(int changedCoord) {
 }
 
 void RBMGaussian2::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber         = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::VectorXd aFlatten = parameters.row(m_elementNumber).head(m_numberOfParticles*m_numberOfParticles);
     Eigen::Map<Eigen::MatrixXd> a(aFlatten.data(), m_numberOfParticles, m_numberOfParticles);
     m_a     = a;

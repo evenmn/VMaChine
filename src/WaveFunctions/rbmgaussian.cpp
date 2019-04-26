@@ -6,15 +6,16 @@
 RBMGaussian::RBMGaussian(System* system) :
         WaveFunction(system) {
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfFreeDimensions;
     m_omega                             = m_system->getFrequency();
     double sigma                        = m_system->getWidth();
     m_sigmaSqrd = sigma*sigma;
 }
 
 void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber         = elementNumber;
-    m_a                     = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_a                                 = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
 }
 
 void RBMGaussian::initializeArrays(const Eigen::VectorXd positions) {

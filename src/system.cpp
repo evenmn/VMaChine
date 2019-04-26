@@ -143,52 +143,6 @@ Eigen::MatrixXd System::getAllInstantGradients() {
     return gradients;
 }
 
-std::string System::getAllLabels() {
-    std::string total_string = "";
-    for(auto& i : m_waveFunctionElements) {
-        total_string += "_";
-        total_string += i->getLabel();
-    }
-
-    std::cout << total_string << std::endl;
-
-    if((total_string == "_gaussian_padejastrow") || \
-       (total_string == "_padejastrow_gaussian") || \
-       (total_string == "_gaussian_padejastrow_slaterdeterminant") || \
-       (total_string == "_gaussian_slaterdeterminant_padejastrow") || \
-       (total_string == "_padejastrow_gaussian_slaterdeterminant") || \
-       (total_string == "_padejastrow_slaterdeterminant_gaussian") || \
-       (total_string == "_slaterdeterminant_gaussian_padejastrow") || \
-       (total_string == "_slaterdeterminant_padejastrow_gaussian")) {
-        total_string = "VMC";
-    }
-    else if((total_string == "_rbmgaussian_rbmjastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian") || \
-            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant") || \
-            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant") || \
-            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian") || \
-            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow") || \
-            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian")) {
-        total_string = "RBM";
-    }
-    else if((total_string == "_rbmgaussian_rbmjastrow_padejastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian_padejastrow") || \
-            (total_string == "_padejastrow_rbmjastrow_rbmgaussian") || \
-            (total_string == "_padejastrow_rbmgaussian_rbmjastrow") || \
-            (total_string == "_rbmjastrow_padejastrow_rbmgaussian") || \
-            (total_string == "_rbmgaussian_padejastrow_rbmjastrow") || \
-            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant_padejastrow") || \
-            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow_padejastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant_padejastrow") || \
-            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian_padejastrow") || \
-            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow_padejastrow") || \
-            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian_padejastrow")) {
-        total_string = "RBMPJ";
-    }
-    return total_string;
-}
-
 void System::setNumberOfParticles(const int numberOfParticles) {
     assert(numberOfParticles > 0);
     m_numberOfParticles = numberOfParticles;
@@ -217,7 +171,14 @@ void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionEleme
 }
 
 void System::setMaxNumberOfParametersPerElement() {
-    m_maxNumberOfParametersPerElement = 2*m_numberOfHiddenNodes*(m_numberOfFreeDimensions+1);
+    int maxNumberOfWaveFunctionElements = 0;
+    for(auto& i : m_waveFunctionElements) {
+        int numberOfParameters = i->getNumberOfParameters();
+        if(numberOfParameters > maxNumberOfWaveFunctionElements) {
+            maxNumberOfWaveFunctionElements = numberOfParameters;
+        }
+    }
+    m_maxNumberOfParametersPerElement = maxNumberOfWaveFunctionElements;
 }
 
 void System::setStepLength(const double stepLength) {
@@ -317,4 +278,48 @@ void System::setRandomNumberGenerator(RandomNumberGenerator* randomnumbergenerat
 
 void System::setGradients() {
     m_gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
+}
+
+std::string System::getAllLabels() {
+    std::string total_string = "";
+    for(auto& i : m_waveFunctionElements) {
+        total_string += "_";
+        total_string += i->getLabel();
+    }
+
+    if((total_string == "_gaussian_padejastrow") || \
+       (total_string == "_padejastrow_gaussian") || \
+       (total_string == "_gaussian_padejastrow_slaterdeterminant") || \
+       (total_string == "_gaussian_slaterdeterminant_padejastrow") || \
+       (total_string == "_padejastrow_gaussian_slaterdeterminant") || \
+       (total_string == "_padejastrow_slaterdeterminant_gaussian") || \
+       (total_string == "_slaterdeterminant_gaussian_padejastrow") || \
+       (total_string == "_slaterdeterminant_padejastrow_gaussian")) {
+        total_string = "VMC";
+    }
+    else if((total_string == "_rbmgaussian_rbmjastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian") || \
+            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant") || \
+            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant") || \
+            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian") || \
+            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow") || \
+            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian")) {
+        total_string = "RBM";
+    }
+    else if((total_string == "_rbmgaussian_rbmjastrow_padejastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_padejastrow") || \
+            (total_string == "_padejastrow_rbmjastrow_rbmgaussian") || \
+            (total_string == "_padejastrow_rbmgaussian_rbmjastrow") || \
+            (total_string == "_rbmjastrow_padejastrow_rbmgaussian") || \
+            (total_string == "_rbmgaussian_padejastrow_rbmjastrow") || \
+            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant_padejastrow") || \
+            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow_padejastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant_padejastrow") || \
+            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian_padejastrow") || \
+            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow_padejastrow") || \
+            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian_padejastrow")) {
+        total_string = "RBMPJ";
+    }
+    return total_string;
 }

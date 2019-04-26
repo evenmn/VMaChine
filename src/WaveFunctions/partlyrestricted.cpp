@@ -6,7 +6,7 @@
 PartlyRestricted::PartlyRestricted(System* system) :
         WaveFunction(system) {
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfFreeDimensions * m_numberOfFreeDimensions;
 }
 
 template <typename T> int sgn(T val) {
@@ -55,7 +55,8 @@ void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions) {
 }
 
 void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::Map<Eigen::MatrixXd> c(parameters.row(m_elementNumber).data(), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     m_c = c;
 }

@@ -9,7 +9,7 @@ SimpleJastrow::SimpleJastrow(System* system) :
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles;
 }
 
 double SimpleJastrow::calculateDistanceMatrixElement(const int i, const int j) {
@@ -93,7 +93,8 @@ void SimpleJastrow::resetArrays() {
 }
 
 void SimpleJastrow::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::VectorXd betaFlatten = parameters.row(m_elementNumber).head(m_numberOfFreeDimensions*m_numberOfFreeDimensions);
     Eigen::Map<Eigen::MatrixXd> beta(betaFlatten.data(), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     m_beta     = beta;

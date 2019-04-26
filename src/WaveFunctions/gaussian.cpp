@@ -6,7 +6,6 @@
 Gaussian::Gaussian(System* system) :
         WaveFunction(system) {
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_omega                             = m_system->getFrequency();
 }
 
@@ -39,8 +38,9 @@ void Gaussian::resetArrays() {
 }
 
 void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber         = elementNumber;
-    m_alpha                 = parameters(m_elementNumber,0);
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_alpha                             = parameters(m_elementNumber,0);
 }
 
 double Gaussian::evaluateRatio() {

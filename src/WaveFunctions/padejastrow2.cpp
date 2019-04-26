@@ -9,7 +9,6 @@ PadeJastrow2::PadeJastrow2(System* system) :
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
 }
 
 
@@ -173,8 +172,9 @@ void PadeJastrow2::resetArrays() {
 }
 
 void PadeJastrow2::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
-    m_gamma         = parameters(m_elementNumber, 0);
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_gamma                             = parameters(m_elementNumber, 0);
 }
 
 double PadeJastrow2::evaluateRatio() {

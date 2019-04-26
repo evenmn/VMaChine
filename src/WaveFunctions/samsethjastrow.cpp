@@ -9,7 +9,6 @@ SamsethJastrow::SamsethJastrow(System* system) :
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
 }
 
 
@@ -105,11 +104,12 @@ void SamsethJastrow::resetArrays() {
 }
 
 void SamsethJastrow::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
-    m_beta          = parameters(m_elementNumber, 0);
-    m_gamma         = parameters(m_elementNumber, 1);
-    m_betagamma     = fabs(m_beta * m_gamma);
-    m_betaSqrd      = m_beta * m_beta;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_beta                              = parameters(m_elementNumber, 0);
+    m_gamma                             = parameters(m_elementNumber, 1);
+    m_betagamma                         = fabs(m_beta * m_gamma);
+    m_betaSqrd                          = m_beta * m_beta;
 }
 
 double SamsethJastrow::evaluateRatio() {

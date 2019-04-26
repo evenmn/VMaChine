@@ -8,14 +8,15 @@ RBMJastrow::RBMJastrow(System* system) :
         WaveFunction(system) {
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfHiddenNodes * m_numberOfFreeDimensions + m_numberOfHiddenNodes;
     double sigma                        = 1; //m_system->getWidth();
     m_sigmaSqrd                         = sigma*sigma;
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
 void RBMJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     m_W     = W;

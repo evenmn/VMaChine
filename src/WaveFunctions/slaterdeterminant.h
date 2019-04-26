@@ -30,7 +30,7 @@ public:
     double          updateRatio                     ();
 
 private:
-    int             m_numberOfParameters    = 1;
+    int             m_numberOfParameters    = 0;
     int             m_elementNumber         = 0;
     int             m_numberOfParticlesHalf = 0;
     int             m_freeDimensionsHalf    = 0;

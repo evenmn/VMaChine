@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     bool    checkConvergence    = false;
     bool    applyDynamicSteps   = false;
     bool    computeDensity      = true;
-    bool    printEnergyFile     = false;
+    bool    printEnergyFile     = true;
     bool    doBlocking          = true;
 
 
@@ -116,7 +116,6 @@ int main(int argc, char *argv[]) {
     system->setNumberOfMetropolisSteps  (numberOfSteps);
     system->setTotalNumberOfSteps       ();
     system->setNumberOfFreeDimensions   ();
-    system->setMaxNumberOfParametersPerElement ();
 
     system->setInteraction              (interaction);
     system->setConvergenceTools         (checkConvergence, numberOfEnergies, tolerance);
@@ -127,26 +126,25 @@ int main(int argc, char *argv[]) {
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class RBMGaussian          (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class RBMGaussian          (system));
     //WaveFunctionElements.push_back      (new class RBMGaussian2         (system));
-    WaveFunctionElements.push_back      (new class RBMJastrow           (system));
+    //WaveFunctionElements.push_back      (new class RBMJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
     //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunctionElements     (WaveFunctionElements);
-
+    system->setMaxNumberOfParametersPerElement ();
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.1));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
-    //system->setHamiltonian              (new AtomicNucleus(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
     system->setOptimization             (new SGD(system,0.0,0.0));

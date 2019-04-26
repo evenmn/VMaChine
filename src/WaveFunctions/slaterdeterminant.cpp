@@ -10,7 +10,6 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfParticlesHalf             = m_numberOfParticles/2;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
 }
 
 void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
@@ -74,8 +73,9 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
-void SlaterDeterminant::updateParameters(__attribute__((unused)) Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
+void SlaterDeterminant::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
 }
 
 void SlaterDeterminant::initializeSlaterMatrix() {

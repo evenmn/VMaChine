@@ -23,7 +23,7 @@ public:
     void            calculateDistanceMatrixCross(const int par);
 
 private:
-    int     m_numberOfParameters       = 1;
+    int     m_numberOfParameters       = 2;
     int     m_elementNumber = 1;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
