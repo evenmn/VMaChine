@@ -4,6 +4,8 @@
 class SimpleJastrow : public WaveFunction {
 public:
     SimpleJastrow(class System* system);
+    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
+    std::string     getLabel                    ()      { return m_label; }
     void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
@@ -21,7 +23,8 @@ public:
     void            calculateProbabilityRatio(int particle);
 
 private:
-    int m_elementNumber = 1;
+    int     m_numberOfParameters       = 1;
+    int     m_elementNumber = 1;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
     Eigen::VectorXd m_positions;
@@ -31,4 +34,6 @@ private:
     double m_gamma;
     double m_probabilityRatioOld;
     double m_probabilityRatio;
+
+    std::string m_label = "simplejastrow";
 };

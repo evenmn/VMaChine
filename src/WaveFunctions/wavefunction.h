@@ -1,11 +1,14 @@
 #pragma once
 #include <Eigen/Dense>
 #include <iostream>
+#include <string>
 
 class WaveFunction {
 
 public:
     WaveFunction(class System *system);
+    virtual int             getNumberOfParameters           ()                                      = 0;
+    virtual std::string     getLabel                        ()                                      = 0;
     virtual void            updateArrays                    (Eigen::VectorXd positions, int pRand)  = 0;
     virtual void            setArrays                       ()                                      = 0;
     virtual void            resetArrays                     ()                                      = 0;

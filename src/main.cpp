@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 3;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 100;
     double  eta                 = 0.1;                      // Learning rate
     double  omega               = 0.1;                      // Oscillator frequency
@@ -71,9 +71,10 @@ int main(int argc, char *argv[]) {
     // Switches
     bool    interaction         = true;
     bool    checkConvergence    = false;
-    bool    applyDynamicSteps   = true;
+    bool    applyDynamicSteps   = false;
     bool    computeDensity      = true;
-
+    bool    printEnergyFile     = false;
+    bool    doBlocking          = true;
 
 
     // --- ADVANCED SETTINGS ---
@@ -121,6 +122,7 @@ int main(int argc, char *argv[]) {
     system->setConvergenceTools         (checkConvergence, numberOfEnergies, tolerance);
     system->setDynamicStepTools         (applyDynamicSteps, rangeOfDynamicSteps, additionalSteps, additionalStepsLastIteration);
     system->setDensityTools             (computeDensity, numberOfBins, maxRadius);
+    system->setEnergyPrintingTools      (printEnergyFile, doBlocking);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
@@ -134,12 +136,13 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
     //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunctionElements     (WaveFunctionElements);
+
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setInitialWeights           (new Randomize(system, 0.1));
     system->setInitialState             (new RandomNormal(system));

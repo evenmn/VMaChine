@@ -4,6 +4,8 @@
 class PartlyRestricted : public WaveFunction {
 public:
     PartlyRestricted(class System* system);
+    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
+    std::string     getLabel                    ()      { return m_label; }
     void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
@@ -17,6 +19,7 @@ public:
     void            calculateProbabilityRatio(int changedCoord);
 
 private:
+    int     m_numberOfParameters       = 1;
     int     m_elementNumber = 0;
     double  m_xCxOld;
     double  m_xCx;
@@ -26,4 +29,6 @@ private:
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
     Eigen::MatrixXd m_c;
+
+    std::string m_label = "partlyrestricted";
 };

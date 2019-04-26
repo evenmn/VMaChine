@@ -5,6 +5,8 @@
 class RBMJastrow3 : public WaveFunction {
 public:
     RBMJastrow3(class System* system);
+    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
+    std::string     getLabel                    ()      { return m_label; }
     void            updateArrays                (Eigen::VectorXd positions, const int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
@@ -24,6 +26,7 @@ public:
     void            calculateDistanceMatrixCross(const int par);
 
 private:
+    int    m_numberOfParameters       = 1;
     int    m_elementNumber          = 1;
     int    m_numberOfHiddenNodes    = 1;
     double m_sigmaSqrd              = 1;
@@ -48,4 +51,6 @@ private:
     Eigen::VectorXd m_p;
     Eigen::MatrixXd m_g;
     Eigen::MatrixXd m_gOld;
+
+    std::string m_label = "rbmjastrow3";
 };

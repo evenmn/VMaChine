@@ -4,6 +4,8 @@
 class PadeJastrow2 : public WaveFunction {
 public:
     PadeJastrow2(class System* system);
+    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
+    std::string     getLabel                    ()      { return m_label; }
     void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
@@ -26,6 +28,7 @@ public:
     void            calculateDistanceMatrixCross(const int par);
 
 private:
+    int m_numberOfParameters       = 1;
     int m_elementNumber = 1;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
@@ -50,4 +53,6 @@ private:
     double m_gamma;
     double m_probabilityRatioOld;
     double m_probabilityRatio;
+
+    std::string m_label = "padejastrow2";
 };

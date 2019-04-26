@@ -19,8 +19,8 @@ void System::runIterations(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
-    //m_sampler->openOutputFiles("../data/");
-    m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
+    m_sampler->openOutputFiles("../data/");
+    //m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
@@ -143,6 +143,52 @@ Eigen::MatrixXd System::getAllInstantGradients() {
     return gradients;
 }
 
+std::string System::getAllLabels() {
+    std::string total_string = "";
+    for(auto& i : m_waveFunctionElements) {
+        total_string += "_";
+        total_string += i->getLabel();
+    }
+
+    std::cout << total_string << std::endl;
+
+    if((total_string == "_gaussian_padejastrow") || \
+       (total_string == "_padejastrow_gaussian") || \
+       (total_string == "_gaussian_padejastrow_slaterdeterminant") || \
+       (total_string == "_gaussian_slaterdeterminant_padejastrow") || \
+       (total_string == "_padejastrow_gaussian_slaterdeterminant") || \
+       (total_string == "_padejastrow_slaterdeterminant_gaussian") || \
+       (total_string == "_slaterdeterminant_gaussian_padejastrow") || \
+       (total_string == "_slaterdeterminant_padejastrow_gaussian")) {
+        total_string = "VMC";
+    }
+    else if((total_string == "_rbmgaussian_rbmjastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian") || \
+            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant") || \
+            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant") || \
+            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian") || \
+            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow") || \
+            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian")) {
+        total_string = "RBM";
+    }
+    else if((total_string == "_rbmgaussian_rbmjastrow_padejastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_padejastrow") || \
+            (total_string == "_padejastrow_rbmjastrow_rbmgaussian") || \
+            (total_string == "_padejastrow_rbmgaussian_rbmjastrow") || \
+            (total_string == "_rbmjastrow_padejastrow_rbmgaussian") || \
+            (total_string == "_rbmgaussian_padejastrow_rbmjastrow") || \
+            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant_padejastrow") || \
+            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow_padejastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant_padejastrow") || \
+            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian_padejastrow") || \
+            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow_padejastrow") || \
+            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian_padejastrow")) {
+        total_string = "RBMPJ";
+    }
+    return total_string;
+}
+
 void System::setNumberOfParticles(const int numberOfParticles) {
     assert(numberOfParticles > 0);
     m_numberOfParticles = numberOfParticles;
@@ -230,6 +276,11 @@ void System::setDensityTools(bool computeDensity, int numberOfBins, double maxRa
     m_computeDensity    = computeDensity;
     m_numberOfBins      = numberOfBins;
     m_maxRadius         = maxRadius;
+}
+
+void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnergyFile) {
+    m_printEnergyFile        = printEnergyFile;
+    m_printInstantEnergyFile = printInstantEnergyFile;
 }
 
 void System::setHamiltonian(Hamiltonian* hamiltonian) {

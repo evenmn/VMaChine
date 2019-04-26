@@ -30,6 +30,7 @@ public:
     void setConvergenceTools            (bool checkConvergence, int numberOfEnergies, double tolerance);
     void setDynamicStepTools            (bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration);
     void setDensityTools                (bool computeDensity, int numberOfBins, double maxRadius);
+    void setEnergyPrintingTools         (bool printEnergyFile, bool printInstantEnergyFile);
 
     void setHamiltonian                 (class Hamiltonian* hamiltonian);
     void setBasis                       (class Basis* basis);
@@ -66,6 +67,8 @@ public:
     double                              getStepLength()              { return m_stepLength; }
     bool                                getInteraction()             { return m_interaction; }
     bool                                getDensity()                 { return m_computeDensity; }
+    bool                                getPrintEnergy()             { return m_printEnergyFile; }
+    bool                                getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
     Eigen::VectorXd                     getPositions()               { return m_positions; }
     Eigen::MatrixXd                     getWeights()                 { return m_parameters; }
     std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionElements; }
@@ -76,6 +79,7 @@ public:
     double                              evaluateWaveFunctionRatio    ();
     double                              getKineticEnergy             ();
     Eigen::MatrixXd                     getAllInstantGradients       ();
+    std::string                         getAllLabels                 ();
 
 
 private:
@@ -107,6 +111,8 @@ private:
     bool                                m_checkConvergence          = false;
     bool                                m_applyDynamicSteps         = false;
     bool                                m_computeDensity            = true;
+    bool                                m_printEnergyFile           = true;
+    bool                                m_printInstantEnergyFile    = true;
 
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;

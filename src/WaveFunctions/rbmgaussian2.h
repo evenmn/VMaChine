@@ -4,6 +4,8 @@
 class RBMGaussian2 : public WaveFunction {
 public:
     RBMGaussian2(class System* system);
+    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
+    std::string     getLabel                    ()      { return m_label; }
     void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
@@ -20,6 +22,7 @@ public:
     void            calculateG(int changedCoord);
 
 private:
+    int     m_numberOfParameters       = 1;
     int     m_elementNumber = 0;
     double  m_omega         = 1;
     double  m_sigmaSqrd     = 1;
@@ -38,4 +41,6 @@ private:
     Eigen::MatrixXd m_gOld;
     Eigen::MatrixXd m_gSqrd;
     Eigen::MatrixXd m_gSqrdOld;
+
+    std::string m_label = "rbmgaussian2";
 };

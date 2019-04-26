@@ -4,6 +4,8 @@
 class SlaterDeterminant : public WaveFunction {
 public:
     SlaterDeterminant(class System* system);
+    int             getNumberOfParameters           ()  { return m_numberOfParameters; }
+    std::string     getLabel                        ()  { return m_label; }
     void            updateArrays                    (const Eigen::VectorXd positions, const int changedCoord);
     void            setArrays                       ();
     void            resetArrays                     ();
@@ -28,6 +30,7 @@ public:
     double          updateRatio                     ();
 
 private:
+    int             m_numberOfParameters    = 1;
     int             m_elementNumber         = 0;
     int             m_numberOfParticlesHalf = 0;
     int             m_freeDimensionsHalf    = 0;
@@ -53,4 +56,6 @@ private:
     Eigen::VectorXd m_determinantDerivativeOld;
     Eigen::VectorXd m_determinantSecondDerivativeOld;
     double          m_probabilityRatioOld = 0;
+
+    std::string m_label = "slaterdeterminant";
 };
