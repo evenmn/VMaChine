@@ -30,7 +30,7 @@ void RBMJastrow2::updateRatio() {
     m_probabilityRatio  = Prod * Prod;
 }
 
-void RBMJastrow2::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void RBMJastrow2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
     m_positions = positions;
     updateVectors();
@@ -55,7 +55,7 @@ void RBMJastrow2::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions) {
+void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_probabilityRatio  = 1;
 

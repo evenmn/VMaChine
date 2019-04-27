@@ -11,35 +11,6 @@ PadeJastrow::PadeJastrow(System* system) :
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
 }
 
-
-double PadeJastrow::calculateDistanceMatrixElement(const int i, const int j) {
-    double dist = 0;
-    int parti   = m_numberOfDimensions*i;
-    int partj   = m_numberOfDimensions*j;
-    for(int d=0; d<m_numberOfDimensions; d++) {
-        double diff = m_positions(parti+d)-m_positions(partj+d);
-        dist += diff*diff;
-    }
-    return sqrt(dist);
-}
-
-void PadeJastrow::calculateDistanceMatrix() {
-    m_distanceMatrix = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
-    for(int i=0; i<m_numberOfParticles; i++) {
-        for(int j=i+1; j<m_numberOfParticles; j++) {
-            m_distanceMatrix(i,j) = calculateDistanceMatrixElement(i,j);
-            m_distanceMatrix(j,i) = m_distanceMatrix(i,j);
-        }
-    }
-}
-
-void PadeJastrow::calculateDistanceMatrixCross(const int par) {
-    for(int i=0; i<m_numberOfParticles; i++) {
-        m_distanceMatrix(par, i) = calculateDistanceMatrixElement(par, i);
-        m_distanceMatrix(i, par) = m_distanceMatrix(par, i);
-    }
-}
-
 void PadeJastrow::initializeBeta() {
     double symmetric, antisymmetric;
     if (m_numberOfDimensions == 2) {
@@ -111,10 +82,10 @@ void PadeJastrow::calculateProbabilityRatio(int particle) {
     m_probabilityRatio = exp(2*ratio);
 }
 
-void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
+void PadeJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
+    m_distanceMatrix    = distanceMatrix;
     m_probabilityRatio  = 1;
-    calculateDistanceMatrix();
     m_f     = (Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticles) + m_gamma * m_distanceMatrix).cwiseInverse();
     m_g     = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
@@ -130,12 +101,12 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions) {
     initializeBeta();
 }
 
-void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
     setArrays();
 
     m_positions                = positions;
-    calculateDistanceMatrixCross(particle);
+    m_distanceMatrix           = distanceMatrix;
     calculateF                  (particle);
     calculateH                  (particle);
     calculateG                  (changedCoord);

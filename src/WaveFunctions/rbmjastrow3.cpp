@@ -16,37 +16,6 @@ RBMJastrow3::RBMJastrow3(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
-double RBMJastrow3::calculateDistanceMatrixElement(const int i, const int j) {
-    double dist = 0;
-    int parti   = m_numberOfDimensions*i;
-    int partj   = m_numberOfDimensions*j;
-    for(int d=0; d<m_numberOfDimensions; d++) {
-        double diff = m_positions(parti+d)-m_positions(partj+d);
-        dist += diff*diff;
-    }
-    //std::cout << sqrt(dist) << std::endl;
-    return sqrt(dist);
-}
-
-void RBMJastrow3::calculateDistanceMatrix() {
-    m_distanceMatrix = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
-    for(int i=0; i<m_numberOfParticles; i++) {
-        for(int j=i+1; j<m_numberOfParticles; j++) {
-            m_distanceMatrix(i,j) = calculateDistanceMatrixElement(i,j);
-            //m_distanceMatrix(j,i) = m_distanceMatrix(i,j);
-        }
-    }
-}
-
-void RBMJastrow3::calculateDistanceMatrixCross(const int par) {
-    for(int i=par+1; i<m_numberOfParticles; i++) {
-        m_distanceMatrix(par, i) = calculateDistanceMatrixElement(par, i);
-    }
-    for(int i=0; i<par; i++) {
-        m_distanceMatrix(i, par) = calculateDistanceMatrixElement(i, par);
-    }
-}
-
 void RBMJastrow3::calculateG(int changedCoord) {
     for(int i=changedCoord+1; i<m_numberOfFreeDimensions; i++) {
         m_g(changedCoord,i) = m_positions(changedCoord) - m_positions(i);
@@ -79,12 +48,12 @@ void RBMJastrow3::updateRatio() {
     m_probabilityRatio  = Prod * Prod;
 }
 
-void RBMJastrow3::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void RBMJastrow3::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
     setArrays();
 
     m_positions = positions;
-    calculateDistanceMatrixCross(particle);
+    m_distanceMatrix = distanceMatrix;
     calculateG(changedCoord);
     updateVectors();
     updateRatio();
@@ -110,11 +79,10 @@ void RBMJastrow3::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions) {
+void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
+    m_distanceMatrix    = distanceMatrix;
     m_probabilityRatio  = 1;
-
-    calculateDistanceMatrix();
 
     m_v  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     m_n  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);

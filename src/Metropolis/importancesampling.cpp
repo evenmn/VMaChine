@@ -17,11 +17,15 @@ ImportanceSampling::ImportanceSampling(System* system) :
     m_stepLength             = m_system->getStepLength();
     m_waveFunctionVector     = m_system->getWaveFunctionElements();
     m_positions              = m_system->getInitialState()->getParticles();
+    m_radialVector           = m_system->getInitialState()->getRadialVector();
+    m_distanceMatrix         = m_system->getInitialState()->getDistanceMatrix();
     m_quantumForceOld        = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         m_quantumForceOld(i) = QuantumForce(i);
     }
     m_quantumForceNew        = m_quantumForceOld;
+    m_calculateDistanceMatrix = m_system->getCalculateDistanceMatrix();
+    m_calculateRadialVector  = m_system->getCalculateRadialVector();
 }
 
 double ImportanceSampling::QuantumForce(const int i) {
@@ -52,9 +56,17 @@ bool ImportanceSampling::acceptMove() {
 
     m_quantumForceOld = m_quantumForceNew;
     m_positionsOld    = m_positions;
+    m_radialVectorOld = m_radialVector;
+    m_distanceMatrixOld = m_distanceMatrix;
 
     m_positions(changedCoord) += m_diff * QuantumForce(changedCoord) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
-    m_system->updateAllArrays(m_positions, changedCoord);
+    if(m_calculateDistanceMatrix) {
+        calculateDistanceMatrixCross(int(changedCoord/m_numberOfDimensions));
+    }
+    if(m_calculateRadialVector) {
+        calculateRadialVectorElement(int(changedCoord/m_numberOfDimensions));
+    }
+    m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, changedCoord);
     m_quantumForceNew(changedCoord) = QuantumForce(changedCoord);
 
     double ratio = m_system->evaluateWaveFunctionRatio();
@@ -65,7 +77,36 @@ bool ImportanceSampling::acceptMove() {
         m_system->resetAllArrays();
         m_positions       = m_positionsOld;
         m_quantumForceNew = m_quantumForceOld;
+        m_distanceMatrix  = m_distanceMatrixOld;
+        m_radialVector    = m_radialVectorOld;
         return false;
     }
     return true;
+}
+
+double ImportanceSampling::calculateDistanceMatrixElement(int i, int j) {
+    double dist = 0;
+    int parti   = m_numberOfDimensions*i;
+    int partj   = m_numberOfDimensions*j;
+    for(int d=0; d<m_numberOfDimensions; d++) {
+        double diff = m_positions(parti+d)-m_positions(partj+d);
+        dist += diff*diff;
+    }
+    return sqrt(dist);
+}
+
+void ImportanceSampling::calculateDistanceMatrixCross(int particle) {
+    for(int i=0; i<m_numberOfParticles; i++) {
+        m_distanceMatrix(particle, i) = calculateDistanceMatrixElement(particle, i);
+        m_distanceMatrix(i, particle) = m_distanceMatrix(particle, i);
+    }
+}
+
+double ImportanceSampling::calculateRadialVectorElement(int particle) {
+    double sqrtElementWise = 0;
+    int part = particle*m_numberOfDimensions;
+    for(int d=0; d<m_numberOfDimensions; d++) {
+        sqrtElementWise += m_positions(part + d) * m_positions(part + d);
+    }
+    return sqrt(sqrtElementWise);
 }

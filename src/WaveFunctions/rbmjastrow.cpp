@@ -24,7 +24,7 @@ void RBMJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementN
     m_b     = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }
 
-void RBMJastrow::initializeArrays(const Eigen::VectorXd positions) {
+void RBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_probabilityRatio  = 1;
     m_n  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
@@ -33,7 +33,7 @@ void RBMJastrow::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
-void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
     m_positions = positions;
     updateVectors();

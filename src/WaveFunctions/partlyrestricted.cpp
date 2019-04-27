@@ -26,7 +26,7 @@ void PartlyRestricted::calculateProbabilityRatio(int changedCoord) {
     m_probabilityRatio = exp(ratio);
 }
 
-void PartlyRestricted::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void PartlyRestricted::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
 
     m_positions = positions;
@@ -46,7 +46,7 @@ void PartlyRestricted::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions) {
+void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions = positions;
     //m_xCx = positions.transpose() * m_c * positions;
 

@@ -56,13 +56,13 @@ int main(int argc, char *argv[]) {
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int     numberOfDimensions  = 3;
+    int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 100;
+    int     numberOfIterations  = 1000;
     double  eta                 = 0.1;                      // Learning rate
-    double  omega               = 0.1;                      // Oscillator frequency
+    double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -146,6 +146,7 @@ int main(int argc, char *argv[]) {
     system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
+    system->setGlobalArraysToCalculate  ();
     system->setMetropolis               (new ImportanceSampling(system));
     system->setOptimization             (new SGD(system,0.0,0.0));
     system->setGradients                ();

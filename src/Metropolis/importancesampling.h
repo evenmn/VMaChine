@@ -10,9 +10,11 @@ public:
     double QuantumForce(const int i);
     double GreenFuncSum();
 
+    double calculateDistanceMatrixElement(int i, int j);
+    void   calculateDistanceMatrixCross(int particle);
+    double calculateRadialVectorElement(int particle);
+
 private:
-    int m_numberOfParticles = 0;
-    int m_numberOfDimensions = 0;
     Eigen::VectorXd m_quantumForceOld;
     Eigen::VectorXd m_quantumForceNew;
     std::vector<class WaveFunction*>    m_waveFunctionVector;

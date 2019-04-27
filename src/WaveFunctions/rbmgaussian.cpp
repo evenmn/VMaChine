@@ -18,7 +18,7 @@ void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters, const int e
     m_a                                 = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
 }
 
-void RBMGaussian::initializeArrays(const Eigen::VectorXd positions) {
+void RBMGaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions             = positions;
     m_Xa                    = positions - m_a;
     m_probabilityRatio      = 1;
@@ -26,7 +26,7 @@ void RBMGaussian::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
-void RBMGaussian::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void RBMGaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
 
     m_positions             = positions;

@@ -11,38 +11,6 @@ SamsethJastrow::SamsethJastrow(System* system) :
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
 }
 
-
-double SamsethJastrow::calculateDistanceMatrixElement(const int i, const int j) {
-    double dist = 0;
-    int parti   = m_numberOfDimensions*i;
-    int partj   = m_numberOfDimensions*j;
-    for(int d=0; d<m_numberOfDimensions; d++) {
-        double diff = m_positions(parti+d)-m_positions(partj+d);
-        dist += diff*diff;
-    }
-    return sqrt(dist);
-}
-
-void SamsethJastrow::calculateDistanceMatrix() {
-    m_distanceMatrix = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
-    for(int i=0; i<m_numberOfParticles; i++) {
-        for(int j=i+1; j<m_numberOfParticles; j++) {
-            m_distanceMatrix(i,j) = calculateDistanceMatrixElement(i,j);
-            m_distanceMatrix(j,i) = m_distanceMatrix(i,j);
-        }
-    }
-    m_distanceMatrixSqrd = m_distanceMatrix.cwiseAbs2();
-}
-
-void SamsethJastrow::calculateDistanceMatrixCross(const int par) {
-    for(int i=0; i<m_numberOfParticles; i++) {
-        m_distanceMatrix(par, i) = calculateDistanceMatrixElement(par, i);
-        m_distanceMatrix(i, par) = m_distanceMatrix(par, i);
-    }
-    m_distanceMatrixSqrd.row(par) = m_distanceMatrix.row(par).cwiseAbs2();
-    m_distanceMatrixSqrd.col(par) = m_distanceMatrix.col(par).cwiseAbs2();
-}
-
 void SamsethJastrow::calculateG(int pRand) {
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         m_g(pRand,i) = m_positions(pRand) - m_positions(i);
@@ -62,10 +30,10 @@ void SamsethJastrow::calculateProbabilityRatio(int particle) {
     m_probabilityRatio = exp(ratio);
 }
 
-void SamsethJastrow::initializeArrays(const Eigen::VectorXd positions) {
+void SamsethJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
+    m_distanceMatrix    = distanceMatrix;
     m_probabilityRatio  = 1;
-    calculateDistanceMatrix();
     m_g     = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         for(int j=i; j<m_numberOfFreeDimensions; j++) {
@@ -76,11 +44,11 @@ void SamsethJastrow::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
-void SamsethJastrow::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void SamsethJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
     setArrays();
     m_positions             = positions;
-    calculateDistanceMatrixCross(particle);
+    m_distanceMatrix        = distanceMatrix;
     calculateG                  (changedCoord);
     calculateProbabilityRatio   (particle);
 }

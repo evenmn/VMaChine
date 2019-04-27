@@ -17,6 +17,8 @@
 
 void System::runIterations(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
+    m_distanceMatrix            = m_initialState->getDistanceMatrix();
+    m_radialVector              = m_initialState->getRadialVector();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles("../data/");
@@ -54,6 +56,8 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
     for(int i=0; i < numberOfSteps + equilibriationSteps; i++) {
         bool acceptedStep = m_metropolis->acceptMove();
         m_positions       = m_metropolis->updatePositions();
+        m_distanceMatrix  = m_metropolis->updateDistanceMatrix();
+        m_radialVector    = m_metropolis->updateRadialVector();
         if(i >= equilibriationSteps) {
             m_sampler->sample(numberOfSteps, equilibriationSteps, acceptedStep, i);
             if(iter == m_lastIteration + m_rangeOfDynamicSteps) {
@@ -94,9 +98,9 @@ int System::dynamicSteps(int iter) {
     return stepRatio;
 }
 
-void System::updateAllArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void System::updateAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     for(auto& i : m_waveFunctionElements) {
-        i->updateArrays(positions, changedCoord);
+        i->updateArrays(positions, radialVector, distanceMatrix, changedCoord);
     }
 }
 
@@ -143,8 +147,39 @@ Eigen::MatrixXd System::getAllInstantGradients() {
     return gradients;
 }
 
+void System::setGlobalArraysToCalculate() {
+    // Check if the elements need distance matrix or radial distance vector
+    for(auto& i : m_waveFunctionElements) {
+        int need = i->getGlobalArrayNeed();
+        if(need == 1) {
+            m_calculateDistanceMatrix = true;
+        }
+        if(need == 2) {
+            m_calculateRadialVector = true;
+        }
+        if(need == 3) {
+            m_calculateDistanceMatrix = true;
+            m_calculateRadialVector = true;
+        }
+    }
+    // Check if the Hemiltonian needs distance matrix or radial distance vector
+    int need = m_hamiltonian->getGlobalArrayNeed();
+    if(need == 1) {
+        m_calculateDistanceMatrix = true;
+    }
+    if(need == 2) {
+        m_calculateRadialVector = true;
+    }
+    if(need == 3) {
+        m_calculateDistanceMatrix = true;
+        m_calculateRadialVector = true;
+    }
+    std::cout << "m_calculateDistanceMatrix" << m_calculateDistanceMatrix << std::endl;
+    std::cout << "m_calculateRadialVector" << m_calculateRadialVector << std::endl;
+}
+
 void System::setNumberOfParticles(const int numberOfParticles) {
-    assert(numberOfParticles > 0);
+    assert(numberOfParticles > 0);// Check if the elements need distance matrix or radial distance vector
     m_numberOfParticles = numberOfParticles;
 }
 
@@ -172,13 +207,16 @@ void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionEleme
 
 void System::setMaxNumberOfParametersPerElement() {
     int maxNumberOfWaveFunctionElements = 0;
+    int counter = 0;
     for(auto& i : m_waveFunctionElements) {
         int numberOfParameters = i->getNumberOfParameters();
         if(numberOfParameters > maxNumberOfWaveFunctionElements) {
             maxNumberOfWaveFunctionElements = numberOfParameters;
         }
+        counter += numberOfParameters;
     }
     m_maxNumberOfParametersPerElement = maxNumberOfWaveFunctionElements;
+    m_totalNumberOfParameters = counter;
 }
 
 void System::setStepLength(const double stepLength) {

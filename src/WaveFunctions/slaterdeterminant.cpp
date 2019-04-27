@@ -12,7 +12,7 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
     m_numberOfParticlesHalf             = m_numberOfParticles/2;
 }
 
-void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
 
     m_positions = positions;
@@ -56,7 +56,7 @@ void SlaterDeterminant::setArrays() {
     m_slaterMatrixSecDerOld             = m_slaterMatrixSecDer;
 }
 
-void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions) {
+void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     // Set matrices
     m_positions                 = positions;
     m_probabilityRatio          = 1;

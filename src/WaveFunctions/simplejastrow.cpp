@@ -12,34 +12,6 @@ SimpleJastrow::SimpleJastrow(System* system) :
     m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles;
 }
 
-double SimpleJastrow::calculateDistanceMatrixElement(const int i, const int j) {
-    double dist = 0;
-    int parti   = m_numberOfDimensions*i;
-    int partj   = m_numberOfDimensions*j;
-    for(int d=0; d<m_numberOfDimensions; d++) {
-        double diff = m_positions(parti+d)-m_positions(partj+d);
-        dist += diff*diff;
-    }
-    return sqrt(dist);
-}
-
-void SimpleJastrow::calculateDistanceMatrix() {
-    m_distanceMatrix = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
-    for(int i=0; i<m_numberOfParticles; i++) {
-        for(int j=i+1; j<m_numberOfParticles; j++) {
-            m_distanceMatrix(i,j) = calculateDistanceMatrixElement(i,j);
-            m_distanceMatrix(j,i) = m_distanceMatrix(i,j);
-        }
-    }
-}
-
-void SimpleJastrow::calculateDistanceMatrixCross(const int par) {
-    for(int i=0; i<m_numberOfParticles; i++) {
-        m_distanceMatrix(par, i) = calculateDistanceMatrixElement(par, i);
-        m_distanceMatrix(i, par) = m_distanceMatrix(par, i);
-    }
-}
-
 void SimpleJastrow::calculateG(int pRand) {
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         m_g(pRand,i) = m_positions(pRand) - m_positions(i);
@@ -47,10 +19,10 @@ void SimpleJastrow::calculateG(int pRand) {
     }
 }
 
-void SimpleJastrow::initializeArrays(Eigen::VectorXd positions) {
-    m_positions = positions;
+void SimpleJastrow::initializeArrays(Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
+    m_positions         = positions;
+    m_distanceMatrix    = distanceMatrix;
     m_probabilityRatio  = 1;
-    calculateDistanceMatrix();
     m_g     = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         for(int j=i; j<m_numberOfFreeDimensions; j++) {
@@ -61,13 +33,13 @@ void SimpleJastrow::initializeArrays(Eigen::VectorXd positions) {
     setArrays();
 }
 
-void SimpleJastrow::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void SimpleJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
     setArrays();
 
-    m_positions     = positions;
+    m_positions         = positions;
+    m_distanceMatrix    = distanceMatrix;
 
-    calculateDistanceMatrixCross(particle);
     calculateProbabilityRatio(particle);
     calculateG(changedCoord);
 }

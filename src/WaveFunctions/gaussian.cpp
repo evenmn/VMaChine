@@ -9,7 +9,7 @@ Gaussian::Gaussian(System* system) :
     m_omega                             = m_system->getFrequency();
 }
 
-void Gaussian::initializeArrays(const Eigen::VectorXd positions) {
+void Gaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions             = positions;
     m_probabilityRatio      = 1;
     setArrays();
@@ -21,7 +21,7 @@ void Gaussian::updateProbabilityRatio(int changedCoord) {
 }
 
 
-void Gaussian::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void Gaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
     m_positions             = positions;
     updateProbabilityRatio(changedCoord);
