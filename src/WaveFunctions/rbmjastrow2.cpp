@@ -8,7 +8,7 @@ RBMJastrow2::RBMJastrow2(System* system) :
         WaveFunction(system) {
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles * m_numberOfHiddenNodes + m_numberOfHiddenNodes;
     double sigma                        = 1; //m_system->getWidth();
     m_sigmaSqrd                         = sigma*sigma;
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
@@ -30,7 +30,7 @@ void RBMJastrow2::updateRatio() {
     m_probabilityRatio  = Prod * Prod;
 }
 
-void RBMJastrow2::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void RBMJastrow2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
     m_positions = positions;
     updateVectors();
@@ -55,7 +55,7 @@ void RBMJastrow2::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions) {
+void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_probabilityRatio  = 1;
 
@@ -67,7 +67,8 @@ void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions) {
 }
 
 void RBMJastrow2::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_b1     = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
     m_b2     = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes,m_numberOfHiddenNodes);
     Eigen::VectorXd w1Flatten = parameters.row(m_elementNumber).segment(2*m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);

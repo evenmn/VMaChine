@@ -8,41 +8,24 @@ HydrogenLike::HydrogenLike(System* system) :
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_Z                                 = m_system->getAtomicNumber();
 }
 
-double HydrogenLike::calculateRadialVectorElement(const int particle) {
-    double sqrtElementWise = 0;
-    int part = particle*m_numberOfDimensions;
-    for(int d=0; d<m_numberOfDimensions; d++) {
-        sqrtElementWise += m_positions(part + d) * m_positions(part + d);
-    }
-    return sqrt(sqrtElementWise);
-}
-
-void HydrogenLike::calculateRadialVector() {
-    m_radialVector = Eigen::VectorXd::Zero(m_numberOfParticles);
-    for(int i=0; i<m_numberOfParticles; i++) {
-        m_radialVector(i) = calculateRadialVectorElement(i);
-    }
-}
-
-void HydrogenLike::initializeArrays(const Eigen::VectorXd positions) {
+void HydrogenLike::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
-    calculateRadialVector();
+    m_radialVector      = radialVector;
     m_probabilityRatio  = 1;
 
     setArrays();
 }
 
-void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
 
     setArrays();
 
     m_positions                 = positions;
-    m_radialVector(particle)    = calculateRadialVectorElement(particle);
+    m_radialVector              = radialVector;
     m_probabilityRatio          = exp( 2 * m_Z * m_alpha * (m_radialVectorOld(particle) - m_radialVector(particle)));
 }
 
@@ -59,8 +42,9 @@ void HydrogenLike::resetArrays() {
 }
 
 void HydrogenLike::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
-    m_alpha = parameters(m_elementNumber, 0);
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_alpha                             = parameters(m_elementNumber, 0);
 }
 
 double HydrogenLike::evaluateRatio() {

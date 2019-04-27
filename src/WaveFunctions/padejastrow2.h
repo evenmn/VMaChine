@@ -4,10 +4,19 @@
 class PadeJastrow2 : public WaveFunction {
 public:
     PadeJastrow2(class System* system);
-    void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
+    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
+    int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
+    std::string     getLabel                    ()      { return m_label; }
+
+    void            updateArrays                    (const Eigen::VectorXd positions, \
+                                                     const Eigen::VectorXd radialVector, \
+                                                     const Eigen::MatrixXd distanceMatrix, \
+                                                     const int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
-    void            initializeArrays            (const Eigen::VectorXd positions);
+    void            initializeArrays            (const Eigen::VectorXd positions, \
+                                                 const Eigen::VectorXd radialVector, \
+                                                 const Eigen::MatrixXd distanceMatrix);
     void            updateParameters            (const Eigen::MatrixXd parameters, const int elementNumber);
     double          evaluateRatio               ();
     double          computeGradient             (const int k);
@@ -21,11 +30,9 @@ public:
     void            calculateProbabilityRatio(int particle);
     void            initializeBeta();
 
-    void            calculateDistanceMatrix();
-    double          calculateDistanceMatrixElement(const int i, const int j);
-    void            calculateDistanceMatrixCross(const int par);
-
 private:
+    int m_numberOfParameters       = 1;
+    int m_globalArrayNeed          = 0;
     int m_elementNumber = 1;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
@@ -50,4 +57,6 @@ private:
     double m_gamma;
     double m_probabilityRatioOld;
     double m_probabilityRatio;
+
+    std::string m_label = "padejastrow2";
 };

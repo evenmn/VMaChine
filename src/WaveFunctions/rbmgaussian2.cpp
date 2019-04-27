@@ -8,39 +8,10 @@ RBMGaussian2::RBMGaussian2(System* system) :
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles;
     m_omega                             = m_system->getFrequency();
     double sigma                        = m_system->getWidth();
     m_sigmaSqrd = sigma*sigma;
-}
-
-double RBMGaussian2::calculateDistanceMatrixElement(const int i, const int j) {
-    double dist = 0;
-    int parti   = m_numberOfDimensions*i;
-    int partj   = m_numberOfDimensions*j;
-    for(int d=0; d<m_numberOfDimensions; d++) {
-        double diff = m_positions(parti+d)-m_positions(partj+d);
-        dist += diff*diff;
-    }
-    return sqrt(dist);
-}
-
-void RBMGaussian2::calculateDistanceMatrix() {
-    m_distanceMatrix = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
-    for(int i=0; i<m_numberOfParticles; i++) {
-        for(int j=i+1; j<m_numberOfParticles; j++) {
-            m_distanceMatrix(i,j) = calculateDistanceMatrixElement(i,j);
-        }
-    }
-}
-
-void RBMGaussian2::calculateDistanceMatrixCross(const int par) {
-    for(int i=0; i<par; i++) {
-        m_distanceMatrix(i, par) = calculateDistanceMatrixElement(i, par);
-    }
-    for(int j=par+1; j<m_numberOfParticles; j++) {
-        m_distanceMatrix(par, j) = calculateDistanceMatrixElement(par, j);
-    }
 }
 
 void RBMGaussian2::calculateG(int changedCoord) {
@@ -54,16 +25,16 @@ void RBMGaussian2::calculateG(int changedCoord) {
 }
 
 void RBMGaussian2::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber         = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::VectorXd aFlatten = parameters.row(m_elementNumber).head(m_numberOfParticles*m_numberOfParticles);
     Eigen::Map<Eigen::MatrixXd> a(aFlatten.data(), m_numberOfParticles, m_numberOfParticles);
     m_a     = a;
 }
 
-void RBMGaussian2::initializeArrays(const Eigen::VectorXd positions) {
+void RBMGaussian2::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions             = positions;
-
-    calculateDistanceMatrix();
+    m_distanceMatrix        = distanceMatrix;
 
     m_Xa                    = m_distanceMatrix - m_a;
     m_probabilityRatio      = 1;
@@ -79,12 +50,12 @@ void RBMGaussian2::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
-void RBMGaussian2::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void RBMGaussian2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
     setArrays();
 
     m_positions             = positions;
-    calculateDistanceMatrixCross(particle);
+    m_distanceMatrix        = distanceMatrix;
     m_Xa                    = m_distanceMatrix - m_a;
 
     calculateG(changedCoord);

@@ -28,6 +28,8 @@ Sampler::Sampler(System* system) {
     m_numberOfStepsPerBatch             = int(m_numberOfMetropolisSteps/m_numberOfBatches);
     m_interaction                       = m_system->getInteraction();
     m_calculateOneBody                  = m_system->getDensity();
+    m_printEnergyToFile                 = m_system->getPrintEnergy();
+    m_printInstantEnergyToFile          = m_system->getPrintInstantEnergy();
     m_numberOfBins                      = m_system->getNumberOfBins();
     m_maxRadius                         = m_system->getMaxRadius();
     m_radialStep                        = m_maxRadius/m_numberOfBins;
@@ -48,7 +50,7 @@ void Sampler::sample(int numberOfSteps, int equilibriationSteps, const bool acce
         m_numberOfStepsPerBatch     = int(m_numberOfSteps/m_numberOfBatches);
     }
     m_instantEnergy    = m_system->getHamiltonian()->computeLocalEnergy();
-    m_instantGradients = m_system->getOptimization()->getAllInstantGradients();
+    m_instantGradients = m_system->getAllInstantGradients();
     m_cumulativeEnergy      += m_instantEnergy;
     m_cumulativeEnergySqrd  += m_instantEnergy * m_instantEnergy;
     if(stepNumber > (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches)) && stepNumber < (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches + 1))) {
@@ -73,6 +75,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " Number of particles    : " << m_system->getNumberOfParticles()  << endl;
     cout << " Number of dimensions   : " << m_system->getNumberOfDimensions() << endl;
     cout << " Oscillator frequency   : " << m_omega << endl;
+    cout << " Number of parameters   : " << m_system->getTotalNumberOfParameters() << endl;
     cout << " # Metropolis steps     : " << m_numberOfSteps + m_equilibriationSteps << " (" << m_numberOfSteps << " equilibration)" << endl;
     cout << " Energy file stored as  : " << m_averageEnergyFileName << endl;
     cout << " Instant file stored as : " << m_instantEnergyFileName << endl;
@@ -87,14 +90,6 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
 }
 
 void Sampler::printFinalOutputToTerminal() {
-    std::ifstream infile(m_instantEnergyFileName.c_str());
-    std::vector<double> x;
-    std::string line;
-    while(std::getline(infile,line)) {
-        x.push_back(strtod(line.c_str(), nullptr));
-    }
-    Blocker block(x);
-
     cout << endl;
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy           : " << m_averageEnergy << endl;
@@ -102,21 +97,32 @@ void Sampler::printFinalOutputToTerminal() {
     cout << " Variance         : " << m_variance << endl;
     cout << " STD              : " << sqrt(m_variance) << endl;
     cout << endl;
-    cout << " --- Blocking results: ---" << endl;
-    printf( " Energy           : %g (with mean sq. err. = %g) \n", block.mean, block.mse_mean);
-    printf( " STD              : %g (with mean sq. err. = %g) \n", block.stdErr, block.mse_stdErr);
 
-    if(remove(m_instantEnergyFileName.c_str()) != 0 )
-      perror( " Could not remove blocking file" );
-    else
-      puts( " Removed blocking file" );
+    if(m_printInstantEnergyToFile) {
+        std::ifstream infile(m_instantEnergyFileName.c_str());
+        std::vector<double> x;
+        std::string line;
+        while(std::getline(infile,line)) {
+            x.push_back(strtod(line.c_str(), nullptr));
+        }
+        Blocker block(x);
+
+        cout << " --- Blocking results: ---" << endl;
+        printf( " Energy           : %g (with mean sq. err. = %g) \n", block.mean, block.mse_mean);
+        printf( " STD              : %g (with mean sq. err. = %g) \n", block.stdErr, block.mse_stdErr);
+
+        if(remove(m_instantEnergyFileName.c_str()) != 0 )
+          perror( " Could not remove blocking file" );
+        else
+          puts( " Removed blocking file" );
+    }
 }
 
-std::string Sampler::generateFileName(std::string path, std::string name, std::string element, std::string optimization, std::string extension) {
+std::string Sampler::generateFileName(std::string path, std::string name, std::string optimization, std::string extension) {
     std::string filename = path;
     filename += "int" + std::to_string(m_interaction) + "/";
     filename += name + "/";
-    filename += element + "/";
+    filename += m_system->getAllLabels() + "/";
     filename += std::to_string(m_numberOfDimensions) + "D/";
     filename += std::to_string(m_numberOfParticles) + "P/";
     filename += std::to_string(m_omega) + "w/";
@@ -128,22 +134,28 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
 
 void Sampler::openOutputFiles(const std::string path) {
     // Print average energies to file
-    m_averageEnergyFileName = generateFileName(path, "energy", "RBM", "SGD", ".dat");
-    m_averageEnergyFile.open(m_averageEnergyFileName);
+    if(m_printEnergyToFile) {
+        m_averageEnergyFileName = generateFileName(path, "energy", "SGD", ".dat");
+        m_averageEnergyFile.open(m_averageEnergyFileName);
+    }
 
     // Print instant energies to file
-    m_instantEnergyFileName = path + "instant_" + std::to_string(m_system->getRandomNumberGenerator()->nextInt(1e6)) + ".dat";
-    m_instantEnergyFile.open(m_instantEnergyFileName);
+    if(m_printInstantEnergyToFile) {
+        m_instantEnergyFileName = path + "instant_" + std::to_string(m_system->getRandomNumberGenerator()->nextInt(1e6)) + ".dat";
+        m_instantEnergyFile.open(m_instantEnergyFileName);
+    }
 
     // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName(path, "onebody", "RBM", "SGD", ".dat");
+        std::string oneBodyFileName = generateFileName(path, "onebody", "SGD", ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
 }
 
 void Sampler::printOutputToFile() {
-    m_averageEnergyFile << m_averageEnergy << endl;
+    if(m_printEnergyToFile) {
+        m_averageEnergyFile << m_averageEnergy << endl;
+    }
     if(m_calculateOneBody){
         m_oneBodyFile << m_particlesPerBin << endl;
     }
@@ -156,7 +168,9 @@ void Sampler::closeOutputFiles() {
 }
 
 void Sampler::printInstantValuesToFile(const Eigen::VectorXd positions) {
-    m_instantEnergyFile << m_instantEnergy << endl;  // Write instant energies to file for blocking
+    if(m_printInstantEnergyToFile) {
+        m_instantEnergyFile << m_instantEnergy << endl;  // Write instant energies to file for blocking
+    }
     if(m_calculateOneBody) {                         // Calculate onebody densities
         for(int j=0; j<m_numberOfParticles; j++) {
             double dist = 0;

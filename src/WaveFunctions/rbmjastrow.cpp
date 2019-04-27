@@ -8,14 +8,15 @@ RBMJastrow::RBMJastrow(System* system) :
         WaveFunction(system) {
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfParameters                = m_numberOfHiddenNodes * m_numberOfFreeDimensions + m_numberOfHiddenNodes;
     double sigma                        = 1; //m_system->getWidth();
     m_sigmaSqrd                         = sigma*sigma;
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
 void RBMJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     m_W     = W;
@@ -23,7 +24,7 @@ void RBMJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementN
     m_b     = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }
 
-void RBMJastrow::initializeArrays(const Eigen::VectorXd positions) {
+void RBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_probabilityRatio  = 1;
     m_n  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
@@ -32,7 +33,7 @@ void RBMJastrow::initializeArrays(const Eigen::VectorXd positions) {
     setArrays();
 }
 
-void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
     m_positions = positions;
     updateVectors();

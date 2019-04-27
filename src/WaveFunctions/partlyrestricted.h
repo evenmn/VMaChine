@@ -4,10 +4,19 @@
 class PartlyRestricted : public WaveFunction {
 public:
     PartlyRestricted(class System* system);
-    void            updateArrays                (const Eigen::VectorXd positions, const int changedCoord);
+    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
+    int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
+    std::string     getLabel                    ()      { return m_label; }
+
+    void            updateArrays                    (const Eigen::VectorXd positions, \
+                                                     const Eigen::VectorXd radialVector, \
+                                                     const Eigen::MatrixXd distanceMatrix, \
+                                                     const int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
-    void            initializeArrays            (const Eigen::VectorXd positions);
+    void            initializeArrays            (const Eigen::VectorXd positions, \
+                                                 const Eigen::VectorXd radialVector, \
+                                                 const Eigen::MatrixXd distanceMatrix);
     void            updateParameters            (Eigen::MatrixXd parameters, const int elementNumber);
     double          evaluateRatio();
     double          computeGradient(const int k);
@@ -17,6 +26,8 @@ public:
     void            calculateProbabilityRatio(int changedCoord);
 
 private:
+    int     m_numberOfParameters       = 1;
+    int     m_globalArrayNeed          = 0;
     int     m_elementNumber = 0;
     double  m_xCxOld;
     double  m_xCx;
@@ -26,4 +37,6 @@ private:
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
     Eigen::MatrixXd m_c;
+
+    std::string m_label = "partlyrestricted";
 };

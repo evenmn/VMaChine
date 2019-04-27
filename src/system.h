@@ -25,11 +25,13 @@ public:
     void setWidth                       (const double sigma);
     void setLearningRate                (const double eta);
     void setGradients                   ();
+    void setGlobalArraysToCalculate     ();
 
     void setInteraction                 (const bool interaction);
     void setConvergenceTools            (bool checkConvergence, int numberOfEnergies, double tolerance);
     void setDynamicStepTools            (bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration);
     void setDensityTools                (bool computeDensity, int numberOfBins, double maxRadius);
+    void setEnergyPrintingTools         (bool printEnergyFile, bool printInstantEnergyFile);
 
     void setHamiltonian                 (class Hamiltonian* hamiltonian);
     void setBasis                       (class Basis* basis);
@@ -38,7 +40,7 @@ public:
     void setMetropolis                  (class Metropolis* metropolis);
     void setOptimization                (class Optimization* optimization);
     void setRandomNumberGenerator       (class RandomNumberGenerator* randomnumbergenerator);
-    void setWaveFunction                (std::vector<class WaveFunction*> waveFunctionVector);
+    void setWaveFunctionElements        (std::vector<class WaveFunction*> waveFunctionElements);
 
     class WaveFunction*                 getWaveFunction()            { return m_waveFunction; }
     class Hamiltonian*                  getHamiltonian()             { return m_hamiltonian; }
@@ -54,6 +56,7 @@ public:
     int                                 getNumberOfFreeDimensions()  { return m_numberOfFreeDimensions; }
     int                                 getNumberOfMetropolisSteps() { return m_numberOfMetropolisSteps; }
     int                                 getTotalNumberOfSteps()      { return m_totalNumberOfSteps; }
+    int                                 getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
     int                                 getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
     int                                 getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
     int                                 getAtomicNumber()            { return m_Z; }
@@ -66,15 +69,23 @@ public:
     double                              getStepLength()              { return m_stepLength; }
     bool                                getInteraction()             { return m_interaction; }
     bool                                getDensity()                 { return m_computeDensity; }
+    bool                                getPrintEnergy()             { return m_printEnergyFile; }
+    bool                                getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
+    bool                                getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
+    bool                                getCalculateRadialVector()   { return m_calculateRadialVector; }
     Eigen::VectorXd                     getPositions()               { return m_positions; }
+    Eigen::VectorXd                     getRadialVector()            { return m_radialVector; }
+    Eigen::MatrixXd                     getDistanceMatrix()          { return m_distanceMatrix; }
     Eigen::MatrixXd                     getWeights()                 { return m_parameters; }
-    std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionVector; }
+    std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionElements; }
 
-    void                                updateAllArrays          (const Eigen::VectorXd positions, const int pRand);
-    void                                resetAllArrays           ();
-    void                                updateAllParameters      (const Eigen::MatrixXd parameters);
-    double                              evaluateWaveFunctionRatio();
-    double                              getKineticEnergy         ();
+    void                                updateAllArrays              (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord);
+    void                                resetAllArrays               ();
+    void                                updateAllParameters          (const Eigen::MatrixXd parameters);
+    double                              evaluateWaveFunctionRatio    ();
+    double                              getKineticEnergy             ();
+    Eigen::MatrixXd                     getAllInstantGradients       ();
+    std::string                         getAllLabels                 ();
 
 
 private:
@@ -86,6 +97,7 @@ private:
     int                                 m_numberOfWaveFunctionElements = 0;
     int                                 m_maxNumberOfParametersPerElement = 0;
     int                                 m_totalNumberOfSteps        = 0;
+    int                                 m_totalNumberOfParameters   = 0;
     int                                 m_Z                         = 1;
     int                                 m_rangeOfDynamicSteps       = 10;
     int                                 m_additionalSteps           = 4;
@@ -106,6 +118,10 @@ private:
     bool                                m_checkConvergence          = false;
     bool                                m_applyDynamicSteps         = false;
     bool                                m_computeDensity            = true;
+    bool                                m_printEnergyFile           = true;
+    bool                                m_printInstantEnergyFile    = true;
+    bool                                m_calculateDistanceMatrix   = false;
+    bool                                m_calculateRadialVector     = false;
 
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;
@@ -116,7 +132,7 @@ private:
     class Metropolis*                   m_metropolis                = nullptr;
     class Optimization*                 m_optimization              = nullptr;
     class RandomNumberGenerator*        m_randomnumbergenerator     = nullptr;
-    std::vector<class WaveFunction*>    m_waveFunctionVector;
+    std::vector<class WaveFunction*>    m_waveFunctionElements;
 
     Eigen::VectorXd                     m_positions;
     Eigen::MatrixXd                     m_parameters;

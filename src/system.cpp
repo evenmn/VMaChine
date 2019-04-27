@@ -17,10 +17,12 @@
 
 void System::runIterations(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
+    m_distanceMatrix            = m_initialState->getDistanceMatrix();
+    m_radialVector              = m_initialState->getRadialVector();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
-    //m_sampler->openOutputFiles("../data/");
-    m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
+    m_sampler->openOutputFiles("../data/");
+    //m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
@@ -54,6 +56,8 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
     for(int i=0; i < numberOfSteps + equilibriationSteps; i++) {
         bool acceptedStep = m_metropolis->acceptMove();
         m_positions       = m_metropolis->updatePositions();
+        m_distanceMatrix  = m_metropolis->updateDistanceMatrix();
+        m_radialVector    = m_metropolis->updateRadialVector();
         if(i >= equilibriationSteps) {
             m_sampler->sample(numberOfSteps, equilibriationSteps, acceptedStep, i);
             if(iter == m_lastIteration + m_rangeOfDynamicSteps) {
@@ -94,49 +98,88 @@ int System::dynamicSteps(int iter) {
     return stepRatio;
 }
 
-void System::updateAllArrays(const Eigen::VectorXd positions, const int pRand) {
-    for(auto& i : m_waveFunctionVector) {
-        i->updateArrays(positions, pRand);
+void System::updateAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+    for(auto& i : m_waveFunctionElements) {
+        i->updateArrays(positions, radialVector, distanceMatrix, changedCoord);
     }
 }
 
 void System::resetAllArrays() {
-    for(auto& i : m_waveFunctionVector) {
+    for(auto& i : m_waveFunctionElements) {
         i->resetArrays();
     }
 }
 
 void System::updateAllParameters(const Eigen::MatrixXd parameters) {
     for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        m_waveFunctionVector[unsigned(i)]->updateParameters(parameters, i);
+        m_waveFunctionElements[unsigned(i)]->updateParameters(parameters, i);
     }
 }
 
 double System::evaluateWaveFunctionRatio() {
     double ratio = 1;
-    for(auto& i : m_waveFunctionVector) {
+    for(auto& i : m_waveFunctionElements) {
         ratio *= i->evaluateRatio();
     }
     return ratio;
 }
 
 double System::getKineticEnergy() {
-    double KineticEnergy = 0;
-    for(auto& i : m_waveFunctionVector) {
-        KineticEnergy += i->computeLaplacian();
+    double kineticEnergy = 0;
+    for(auto& i : m_waveFunctionElements) {
+        kineticEnergy += i->computeLaplacian();
     }
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
-        double NablaLnPsi = 0;
-        for(auto& i : m_waveFunctionVector) {
-            NablaLnPsi += i->computeGradient(k);
+        double nablaLnPsi = 0;
+        for(auto& i : m_waveFunctionElements) {
+            nablaLnPsi += i->computeGradient(k);
         }
-        KineticEnergy += NablaLnPsi * NablaLnPsi;
+        kineticEnergy += nablaLnPsi * nablaLnPsi;
     }
-    return - 0.5 * KineticEnergy;
+    return - 0.5 * kineticEnergy;
+}
+
+Eigen::MatrixXd System::getAllInstantGradients() {
+    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
+    for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
+        gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
+    }
+    return gradients;
+}
+
+void System::setGlobalArraysToCalculate() {
+    // Check if the elements need distance matrix or radial distance vector
+    for(auto& i : m_waveFunctionElements) {
+        int need = i->getGlobalArrayNeed();
+        if(need == 1) {
+            m_calculateDistanceMatrix = true;
+        }
+        if(need == 2) {
+            m_calculateRadialVector = true;
+        }
+        if(need == 3) {
+            m_calculateDistanceMatrix = true;
+            m_calculateRadialVector = true;
+        }
+    }
+    // Check if the Hemiltonian needs distance matrix or radial distance vector
+    int need = m_hamiltonian->getGlobalArrayNeed();
+    if(need == 1) {
+        m_calculateDistanceMatrix = true;
+    }
+    if(need == 2) {
+        m_calculateRadialVector = true;
+    }
+    if(need == 3) {
+        m_calculateDistanceMatrix = true;
+        m_calculateRadialVector = true;
+    }
+    std::cout << "m_calculateDistanceMatrix" << m_calculateDistanceMatrix << std::endl;
+    std::cout << "m_calculateRadialVector" << m_calculateRadialVector << std::endl;
 }
 
 void System::setNumberOfParticles(const int numberOfParticles) {
-    assert(numberOfParticles > 0);
+    assert(numberOfParticles > 0);// Check if the elements need distance matrix or radial distance vector
     m_numberOfParticles = numberOfParticles;
 }
 
@@ -163,7 +206,17 @@ void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionEleme
 }
 
 void System::setMaxNumberOfParametersPerElement() {
-    m_maxNumberOfParametersPerElement = 2*m_numberOfHiddenNodes*(m_numberOfFreeDimensions+1);
+    int maxNumberOfWaveFunctionElements = 0;
+    int counter = 0;
+    for(auto& i : m_waveFunctionElements) {
+        int numberOfParameters = i->getNumberOfParameters();
+        if(numberOfParameters > maxNumberOfWaveFunctionElements) {
+            maxNumberOfWaveFunctionElements = numberOfParameters;
+        }
+        counter += numberOfParameters;
+    }
+    m_maxNumberOfParametersPerElement = maxNumberOfWaveFunctionElements;
+    m_totalNumberOfParameters = counter;
 }
 
 void System::setStepLength(const double stepLength) {
@@ -224,6 +277,11 @@ void System::setDensityTools(bool computeDensity, int numberOfBins, double maxRa
     m_maxRadius         = maxRadius;
 }
 
+void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnergyFile) {
+    m_printEnergyFile        = printEnergyFile;
+    m_printInstantEnergyFile = printInstantEnergyFile;
+}
+
 void System::setHamiltonian(Hamiltonian* hamiltonian) {
     m_hamiltonian = hamiltonian;
 }
@@ -232,8 +290,8 @@ void System::setBasis(Basis* basis) {
     m_basis = basis;
 }
 
-void System::setWaveFunction(std::vector<class WaveFunction *> waveFunctionVector) {
-    m_waveFunctionVector = waveFunctionVector;
+void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements) {
+    m_waveFunctionElements = waveFunctionElements;
 }
 
 void System::setInitialState(InitialState* initialState) {
@@ -258,4 +316,48 @@ void System::setRandomNumberGenerator(RandomNumberGenerator* randomnumbergenerat
 
 void System::setGradients() {
     m_gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
+}
+
+std::string System::getAllLabels() {
+    std::string total_string = "";
+    for(auto& i : m_waveFunctionElements) {
+        total_string += "_";
+        total_string += i->getLabel();
+    }
+
+    if((total_string == "_gaussian_padejastrow") || \
+       (total_string == "_padejastrow_gaussian") || \
+       (total_string == "_gaussian_padejastrow_slaterdeterminant") || \
+       (total_string == "_gaussian_slaterdeterminant_padejastrow") || \
+       (total_string == "_padejastrow_gaussian_slaterdeterminant") || \
+       (total_string == "_padejastrow_slaterdeterminant_gaussian") || \
+       (total_string == "_slaterdeterminant_gaussian_padejastrow") || \
+       (total_string == "_slaterdeterminant_padejastrow_gaussian")) {
+        total_string = "VMC";
+    }
+    else if((total_string == "_rbmgaussian_rbmjastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian") || \
+            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant") || \
+            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant") || \
+            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian") || \
+            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow") || \
+            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian")) {
+        total_string = "RBM";
+    }
+    else if((total_string == "_rbmgaussian_rbmjastrow_padejastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_padejastrow") || \
+            (total_string == "_padejastrow_rbmjastrow_rbmgaussian") || \
+            (total_string == "_padejastrow_rbmgaussian_rbmjastrow") || \
+            (total_string == "_rbmjastrow_padejastrow_rbmgaussian") || \
+            (total_string == "_rbmgaussian_padejastrow_rbmjastrow") || \
+            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant_padejastrow") || \
+            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow_padejastrow") || \
+            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant_padejastrow") || \
+            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian_padejastrow") || \
+            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow_padejastrow") || \
+            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian_padejastrow")) {
+        total_string = "RBMPJ";
+    }
+    return total_string;
 }

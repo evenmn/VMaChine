@@ -4,6 +4,10 @@
 class RandomUniform : public InitialState {
 public:
     RandomUniform(System* system);
-    void setupInitialState();
+    double  calculateDistanceMatrixElement  (int i, int j);
+    void    calculateDistanceMatrix         ();
+    double  calculateRadialVectorElement    (int particle);
+    void    calculateRadialVector           ();
+    void    setupInitialState               ();
 };
 

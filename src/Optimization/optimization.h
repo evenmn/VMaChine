@@ -7,7 +7,6 @@ public:
     Optimization(class System* system);
     virtual int  getNumberOfBatches() = 0;
     virtual Eigen::MatrixXd updateParameters() = 0;
-    virtual Eigen::MatrixXd getAllInstantGradients() = 0;
     virtual ~Optimization() = 0;
 
 protected:

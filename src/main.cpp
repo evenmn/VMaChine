@@ -56,13 +56,13 @@ int main(int argc, char *argv[]) {
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int     numberOfDimensions  = 3;
-    int     numberOfParticles   = 8;
+    int     numberOfDimensions  = 2;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
-    int     numberOfIterations  = 500;
-    double  eta                 = 0.001;                      // Learning rate
-    double  omega               = 0.1;                      // Oscillator frequency
+    int     numberOfSteps       = int(pow(2,18));
+    int     numberOfIterations  = 1000;
+    double  eta                 = 0.1;                      // Learning rate
+    double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -71,9 +71,10 @@ int main(int argc, char *argv[]) {
     // Switches
     bool    interaction         = true;
     bool    checkConvergence    = false;
-    bool    applyDynamicSteps   = true;
+    bool    applyDynamicSteps   = false;
     bool    computeDensity      = true;
-
+    bool    printEnergyFile     = true;
+    bool    doBlocking          = true;
 
 
     // --- ADVANCED SETTINGS ---
@@ -115,20 +116,20 @@ int main(int argc, char *argv[]) {
     system->setNumberOfMetropolisSteps  (numberOfSteps);
     system->setTotalNumberOfSteps       ();
     system->setNumberOfFreeDimensions   ();
-    system->setMaxNumberOfParametersPerElement ();
 
     system->setInteraction              (interaction);
     system->setConvergenceTools         (checkConvergence, numberOfEnergies, tolerance);
     system->setDynamicStepTools         (applyDynamicSteps, rangeOfDynamicSteps, additionalSteps, additionalStepsLastIteration);
     system->setDensityTools             (computeDensity, numberOfBins, maxRadius);
+    system->setEnergyPrintingTools      (printEnergyFile, doBlocking);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class RBMGaussian          (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class RBMGaussian          (system));
     //WaveFunctionElements.push_back      (new class RBMGaussian2         (system));
-    WaveFunctionElements.push_back      (new class RBMJastrow           (system));
+    //WaveFunctionElements.push_back      (new class RBMJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
@@ -139,12 +140,13 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
-    system->setWaveFunction             (WaveFunctionElements);
+    system->setWaveFunctionElements     (WaveFunctionElements);
+    system->setMaxNumberOfParametersPerElement ();
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.5));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
-    //system->setHamiltonian              (new AtomicNucleus(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
+    system->setGlobalArraysToCalculate  ();
     system->setMetropolis               (new ImportanceSampling(system));
     system->setOptimization             (new SGD(system,0.0,0.0));
     system->setGradients                ();

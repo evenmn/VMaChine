@@ -6,20 +6,25 @@
 Gaussian::Gaussian(System* system) :
         WaveFunction(system) {
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_omega                             = m_system->getFrequency();
 }
 
-void Gaussian::initializeArrays(const Eigen::VectorXd positions) {
+void Gaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions             = positions;
     m_probabilityRatio      = 1;
     setArrays();
 }
 
-void Gaussian::updateArrays(const Eigen::VectorXd positions, const int changedCoord) {
+void Gaussian::updateProbabilityRatio(int changedCoord) {
+    m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(changedCoord)*m_positionsOld(changedCoord) \
+                                                     - m_positions   (changedCoord)*m_positions   (changedCoord)));
+}
+
+
+void Gaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     setArrays();
     m_positions             = positions;
-    m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(changedCoord)*m_positionsOld(changedCoord) - m_positions(changedCoord)*m_positions(changedCoord)));
+    updateProbabilityRatio(changedCoord);
 }
 
 void Gaussian::setArrays() {
@@ -33,8 +38,9 @@ void Gaussian::resetArrays() {
 }
 
 void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber         = elementNumber;
-    m_alpha                 = parameters(m_elementNumber,0);
+    m_elementNumber                     = elementNumber;
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_alpha                             = parameters(m_elementNumber,0);
 }
 
 double Gaussian::evaluateRatio() {
