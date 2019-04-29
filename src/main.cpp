@@ -53,6 +53,16 @@
 //#include "Plotter/plotter.h"
 
 int main(int argc, char *argv[]) {
+    // MPI initializations
+    int numberOfProcesses, myRank;
+    MPI_Init (&argc, &argv);
+    MPI_Comm_size (MPI_COMM_WORLD, &numberOfProcesses);
+    MPI_Comm_rank (MPI_COMM_WORLD, &myRank);
+    //if(myRank == 0 && argc <= 1) {
+    //    std::cout << "Bad Usage: " << argv[0] << " Read also output file on same line and number of Monte Carlo cycles" << std::endl;
+    //}
+
+    //std::cout << myRank << std::endl;
 
     // --- SYSTEM SETTINGS ---
     // Parameters
@@ -60,7 +70,7 @@ int main(int argc, char *argv[]) {
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 1000;
+    int     numberOfIterations  = 5;
     double  eta                 = 0.1;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
@@ -69,38 +79,28 @@ int main(int argc, char *argv[]) {
     double  equilibration       = 0.2;                      // Amount of the total steps used
 
     // Switches
-    bool    interaction         = true;
-    bool    checkConvergence    = false;
-    bool    applyDynamicSteps   = false;
-    bool    computeDensity      = true;
-    bool    printEnergyFile     = true;
-    bool    doBlocking          = true;
+    bool    interaction         = true;                     // Repulsive interaction on or off
+    bool    checkConvergence    = false;                    // Stops the program after it has converged
+    bool    applyDynamicSteps   = false;                    // Increase the number of MC-cycles for the last iterations
+    bool    computeDensity      = true;                     // Compute one-body density and print to file
+    bool    printEnergyFile     = true;                     // Print energy for every iteration to file
+    bool    doBlocking          = true;                     // Print blocking file for the last iteration and do blocking
 
 
     // --- ADVANCED SETTINGS ---
     // Convergence tools
-    int     numberOfEnergies                = 5;
-    double  tolerance                       = 1e-7;
+    int     numberOfEnergies                = 5;            // Check this number of energies for convergence
+    double  tolerance                       = 1e-7;         // Convergence tolerance
 
     // Dynamic step tools
-    int     rangeOfDynamicSteps             = 10;
-    int     additionalSteps                 = 4;
-    int     additionalStepsLastIteration    = 8;
+    int     rangeOfDynamicSteps             = 10;           // For how many iterations should we increase # MC-cycles?
+    int     additionalSteps                 = 4;            // How much should we increase it? (as a power of 2)
+    int     additionalStepsLastIteration    = 8;            // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius                       = 15;
-    int     numberOfBins                    = int(100 * maxRadius);
+    double  maxRadius                       = 15;                       // Max radius of one-body density plots
+    int     numberOfBins                    = int(100 * maxRadius);     // Number of bins
 
-    /*
-    // MPI initializations
-    int NumberProcesses, MyRank;
-    MPI_Init (&argc, &argv);
-    MPI_Comm_size (MPI_COMM_WORLD, &NumberProcesses);
-    MPI_Comm_rank (MPI_COMM_WORLD, &MyRank);
-    if (MyRank == 0 && argc <= 1) {
-        std::cout << "Bad Usage: " << argv[0] << " Read also output file on same line and number of Monte Carlo cycles" << std::endl;
-    }
-    */
 
     // --- SET PARAMETERS ---
     System* system = new System();
@@ -133,9 +133,9 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
@@ -157,5 +157,6 @@ int main(int argc, char *argv[]) {
     //plots->plotEnergy(argc, argv);
     //plots->plotOneBodyDensity(argc, argv);
 
+    MPI_Finalize();
     return 0;
 }

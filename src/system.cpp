@@ -9,6 +9,7 @@
 #include "Optimization/optimization.h"
 #include "RNG/rng.h"
 
+//#include <mpi.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -34,10 +35,12 @@ void System::runIterations(const int numberOfIterations) {
         }
 
         clock_t start_time = clock();
+        // THIS FUNCTION IS THE ONLY ONE TO PARALLELIZE
         runMetropolisCycles(numberOfSteps, equilibriationSteps, iter);
         clock_t end_time = clock();
         double time = double(end_time - start_time)/CLOCKS_PER_SEC;
 
+        // INSIDE HERE, WE NEED TO DO SOMETHING SMART TO COLLECT EVERYTHING FROM ALL PROCESSES
         m_sampler->computeAverages();
         m_sampler->printOutputToFile();
 
@@ -174,8 +177,6 @@ void System::setGlobalArraysToCalculate() {
         m_calculateDistanceMatrix = true;
         m_calculateRadialVector = true;
     }
-    std::cout << "m_calculateDistanceMatrix" << m_calculateDistanceMatrix << std::endl;
-    std::cout << "m_calculateRadialVector" << m_calculateRadialVector << std::endl;
 }
 
 void System::setNumberOfParticles(const int numberOfParticles) {
