@@ -32,6 +32,7 @@ public:
     void setDynamicStepTools            (bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration);
     void setDensityTools                (bool computeDensity, int numberOfBins, double maxRadius);
     void setEnergyPrintingTools         (bool printEnergyFile, bool printInstantEnergyFile);
+    void setMPITools                    (int myRank, int numberOfProcesses);
 
     void setHamiltonian                 (class Hamiltonian* hamiltonian);
     void setBasis                       (class Basis* basis);
@@ -50,6 +51,7 @@ public:
     class InitialWeights*               getInitialWeights()          { return m_initialWeights; }
     class InitialState*                 getInitialState()            { return m_initialState; }
     class RandomNumberGenerator*        getRandomNumberGenerator()   { return m_randomnumbergenerator; }
+    int                                 getNumberOfProcesses()       { return m_numberOfProcesses; }
     int                                 getNumberOfParticles()       { return m_numberOfParticles; }
     int                                 getNumberOfDimensions()      { return m_numberOfDimensions; }
     int                                 getNumberOfHiddenNodes()     { return m_numberOfHiddenNodes; }
@@ -105,6 +107,8 @@ private:
     int                                 m_lastIteration             = 1;
     int                                 m_numberOfEnergies          = 0;
     int                                 m_numberOfBins              = 1;
+    int                                 m_numberOfProcesses         = 1;
+    int                                 m_myRank                    = 0;
 
     double                              m_equilibrationFraction     = 0.0;
     double                              m_stepLength                = 0.1;

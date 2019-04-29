@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# Create build-directory
+# Create a build-directory
 mkdir build
 
-# Move into the build-directory
+# Go to the build-directory
 cd build
 
 # Run CMake to create a Makefile
 cmake ../
 
-# Make the Makefile using two threads
-make -j2
+# Make the Makefile using four threads (the number of cores in a standard pc)
+make -j4
 
-# Move the executable to the top-directory
+# Move the executable to the working directory
 mv vmc ..

@@ -9,7 +9,7 @@
 #include "Optimization/optimization.h"
 #include "RNG/rng.h"
 
-//#include <mpi.h>
+#include <mpi.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -22,8 +22,8 @@ void System::runIterations(const int numberOfIterations) {
     m_radialVector              = m_initialState->getRadialVector();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
-    m_sampler->openOutputFiles("../data/");
-    //m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
+    //m_sampler->openOutputFiles("../data/");
+    m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
@@ -34,24 +34,34 @@ void System::runIterations(const int numberOfIterations) {
             numberOfSteps *= dynamicSteps(iter);
         }
 
-        clock_t start_time = clock();
-        // THIS FUNCTION IS THE ONLY ONE TO PARALLELIZE
+        double startTime = MPI_Wtime();
         runMetropolisCycles(numberOfSteps, equilibriationSteps, iter);
-        clock_t end_time = clock();
-        double time = double(end_time - start_time)/CLOCKS_PER_SEC;
+        double endTime = MPI_Wtime();
+        double time = endTime - startTime;
+        double totalTime;
 
-        // INSIDE HERE, WE NEED TO DO SOMETHING SMART TO COLLECT EVERYTHING FROM ALL PROCESSES
-        m_sampler->computeAverages();
-        m_sampler->printOutputToFile();
+        MPI_Reduce(&time, &totalTime, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        MPI_Barrier(MPI_COMM_WORLD);
+        m_sampler->computeTotals();
 
-        m_parameters -= m_optimization->updateParameters();
-        //std::cout << m_parameters << std::endl;
-        updateAllParameters(m_parameters);
+        if(m_myRank == 0) {
+            m_sampler->computeAverages();
+            m_sampler->printOutputToFile();
+            m_parameters -= m_optimization->updateParameters();
 
-        printToTerminal(numberOfIterations, iter, time);
-        if(m_checkConvergence) {
-            checkingConvergence(iter);
+            printToTerminal(numberOfIterations, iter, totalTime);
+            if(m_checkConvergence) {
+                checkingConvergence(iter);
+            }
         }
+
+        for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
+            for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
+                MPI_Bcast(&m_parameters(i,j), 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            }
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+        updateAllParameters(m_parameters);
     }
 }
 
@@ -281,6 +291,11 @@ void System::setDensityTools(bool computeDensity, int numberOfBins, double maxRa
 void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnergyFile) {
     m_printEnergyFile        = printEnergyFile;
     m_printInstantEnergyFile = printInstantEnergyFile;
+}
+
+void System::setMPITools(int myRank, int numberOfProcesses) {
+    m_myRank = myRank;
+    m_numberOfProcesses = numberOfProcesses;
 }
 
 void System::setHamiltonian(Hamiltonian* hamiltonian) {

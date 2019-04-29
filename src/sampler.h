@@ -13,6 +13,7 @@ public:
     void            closeOutputFiles();
     void            printInstantValuesToFile(const Eigen::VectorXd positions);
     void            computeAverages();
+    void            computeTotals();
     double          getAverageEnergy()        { return m_averageEnergy; }
     Eigen::MatrixXd getAverageGradients()     { return m_averageGradients; }
     Eigen::MatrixXd getAverageGradientsE()    { return m_averageGradientsE; }
@@ -22,6 +23,7 @@ private:
     int              m_totalNumberOfSteps = 0;
     int              m_maxNumberOfParametersPerElement = 0;
     int              m_numberOfMetropolisSteps = 0;
+    int              m_numberOfProcesses = 0;
     int              m_numberOfParticles = 0;
     int              m_numberOfDimensions = 0;
     int              m_numberOfElements = 0;
@@ -41,6 +43,11 @@ private:
     double           m_cumulativeEnergy = 0;
     double           m_cumulativeEnergySqrd = 0;
     double           m_instantEnergy = 0;
+
+    double           m_totalCumulativeEnergy = 0;
+    double           m_totalCumulativeEnergySqrd = 0;
+    Eigen::MatrixXd  m_totalCumulativeGradients;
+    Eigen::MatrixXd  m_totalCumulativeGradientsE;
 
     Eigen::MatrixXd  m_averageGradients;
     Eigen::MatrixXd  m_averageGradientsE;

@@ -1,3 +1,4 @@
+#include <mpi.h>
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -17,6 +18,7 @@ using std::endl;
 
 Sampler::Sampler(System* system) {
     m_system                            = system;
+    m_numberOfProcesses                 = m_system->getNumberOfProcesses();
     m_numberOfParticles                 = m_system->getNumberOfParticles();
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfElements                  = m_system->getNumberOfWaveFunctionElements();
@@ -54,18 +56,33 @@ void Sampler::sample(int numberOfSteps, int equilibriationSteps, const bool acce
     m_cumulativeEnergy      += m_instantEnergy;
     m_cumulativeEnergySqrd  += m_instantEnergy * m_instantEnergy;
     if(stepNumber > (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches)) && stepNumber < (m_numberOfStepsPerBatch * (m_iter%m_numberOfBatches + 1))) {
-        m_cumulativeGradients       += m_instantGradients;
-        m_cumulativeGradientsE      += m_instantGradients * m_instantEnergy;
+        m_cumulativeGradients   += m_instantGradients;
+        m_cumulativeGradientsE  += m_instantGradients * m_instantEnergy;
     }
     if(acceptedStep) { m_acceptenceRatio += 1; }
 }
 
+void Sampler::computeTotals() {
+    m_totalCumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
+    m_totalCumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
+    MPI_Reduce(&m_cumulativeEnergy,     &m_totalCumulativeEnergy,     1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&m_cumulativeEnergySqrd, &m_totalCumulativeEnergySqrd, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    for(int i=0; i<m_numberOfElements; i++) {
+        for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
+            MPI_Reduce(&m_cumulativeGradients(i,j),  &m_totalCumulativeGradients(i,j),  1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            MPI_Reduce(&m_cumulativeGradientsE(i,j), &m_totalCumulativeGradientsE(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
+    }
+}
+
 void Sampler::computeAverages() {
-    m_averageEnergy         = m_cumulativeEnergy / m_numberOfSteps;
-    m_averageEnergySqrd     = m_cumulativeEnergySqrd / m_numberOfSteps;
-    m_averageGradients      = m_cumulativeGradients / m_numberOfStepsPerBatch;
-    m_averageGradientsE     = m_cumulativeGradientsE / m_numberOfStepsPerBatch;
-    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_numberOfSteps;
+    int    totalNumberOfMCSamples     = m_numberOfSteps * m_numberOfProcesses;
+    int    totalNumberOfStepsPerBatch = m_numberOfStepsPerBatch * m_numberOfProcesses;
+    m_averageEnergy         = m_totalCumulativeEnergy     / totalNumberOfMCSamples;
+    m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / totalNumberOfMCSamples;
+    m_averageGradients      = m_totalCumulativeGradients  / totalNumberOfStepsPerBatch;
+    m_averageGradientsE     = m_totalCumulativeGradientsE / totalNumberOfStepsPerBatch;
+    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / totalNumberOfMCSamples;
 }
 
 void Sampler::printOutputToTerminal(const int maxIter, const double time) {
@@ -74,9 +91,11 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << "  -- System info: " << m_iter << "/" << maxIter << " -- " << endl;
     cout << " Number of particles    : " << m_system->getNumberOfParticles()  << endl;
     cout << " Number of dimensions   : " << m_system->getNumberOfDimensions() << endl;
-    cout << " Oscillator frequency   : " << m_omega << endl;
+    cout << " Number of processes    : " << m_system->getNumberOfProcesses()  << endl;
     cout << " Number of parameters   : " << m_system->getTotalNumberOfParameters() << endl;
-    cout << " # Metropolis steps     : " << m_numberOfSteps + m_equilibriationSteps << " (" << m_numberOfSteps << " equilibration)" << endl;
+    cout << " Oscillator frequency   : " << m_omega << endl;
+    cout << " # Metropolis steps     : " << (m_numberOfSteps + m_equilibriationSteps) * m_numberOfProcesses << " ("
+                                         << m_numberOfSteps * m_numberOfProcesses << " equilibration)" << endl;
     cout << " Energy file stored as  : " << m_averageEnergyFileName << endl;
     cout << " Instant file stored as : " << m_instantEnergyFileName << endl;
     cout << endl;
@@ -85,7 +104,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " Acceptence Ratio  : " << double(m_acceptenceRatio)/m_numberOfSteps << endl;
     cout << " Variance          : " << m_variance << endl;
     cout << " STD               : " << sqrt(m_variance) << endl;
-    cout << " Time              : " << time << endl;
+    cout << " CPU Time          : " << time << endl;
     cout << endl;
 }
 
@@ -114,7 +133,7 @@ void Sampler::printFinalOutputToTerminal() {
         if(remove(m_instantEnergyFileName.c_str()) != 0 )
           perror( " Could not remove blocking file" );
         else
-          puts( " Removed blocking file" );
+          puts( " Successfully removed blocking file" );
     }
 }
 
@@ -127,7 +146,7 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
     filename += std::to_string(m_numberOfParticles) + "P/";
     filename += std::to_string(m_omega) + "w/";
     filename += optimization;
-    filename += "_MC" + std::to_string(m_numberOfMetropolisSteps);
+    filename += "_MC" + std::to_string(m_numberOfMetropolisSteps * m_numberOfProcesses);
     filename += extension;
     return filename;
 }

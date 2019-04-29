@@ -7,10 +7,17 @@ find_package(MPI REQUIRED)
 SET(CMAKE_C_COMPILER mpicc)
 SET(CMAKE_CXX_COMPILER mpicxx)
 
-# Compiling flags used
-SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -o - DNDEBUG")
+# Compilation flags used
+SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -o -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
+# Set default build configuration
+IF( NOT CMAKE_BUILD_TYPE )
+   SET(CMAKE_BUILD_TYPE Release ... FORCE)
+ENDIF()
+
+# Print which build configuration used
+message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 
 # Include directories
 include_directories(

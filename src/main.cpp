@@ -58,20 +58,15 @@ int main(int argc, char *argv[]) {
     MPI_Init (&argc, &argv);
     MPI_Comm_size (MPI_COMM_WORLD, &numberOfProcesses);
     MPI_Comm_rank (MPI_COMM_WORLD, &myRank);
-    //if(myRank == 0 && argc <= 1) {
-    //    std::cout << "Bad Usage: " << argv[0] << " Read also output file on same line and number of Monte Carlo cycles" << std::endl;
-    //}
-
-    //std::cout << myRank << std::endl;
 
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 5;
-    double  eta                 = 0.1;                      // Learning rate
+    int     numberOfSteps       = int(pow(2,18)/ numberOfProcesses);
+    int     numberOfIterations  = 100;
+    double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
@@ -122,6 +117,7 @@ int main(int argc, char *argv[]) {
     system->setDynamicStepTools         (applyDynamicSteps, rangeOfDynamicSteps, additionalSteps, additionalStepsLastIteration);
     system->setDensityTools             (computeDensity, numberOfBins, maxRadius);
     system->setEnergyPrintingTools      (printEnergyFile, doBlocking);
+    system->setMPITools                 (myRank, numberOfProcesses);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
