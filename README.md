@@ -11,8 +11,10 @@ There are several ways to compile the code. Below, we will present two easy and 
 ### CMake
 1. chmod +x CompileVMC
 2. ./CompileVMC
-3. mpiexec -n 4 ./vmc or mpirun -n 4 vmc
+3. mpiexec -n _NumProcs_ ./vmc or mpirun -n _NumProcs_ vmc
 4. make clean
+
+_NumProcs_ is number of parallel processes
 
 ### QMake (QT-creator)
 1. [Download QT-creator](https://www.qt.io/download-qt-installer?hsCtaTracking=9f6a2170-a938-42df-a8e2-a9f0b1d6cdce%7C6cb0de4f-9bb5-4778-ab02-bfb62735f3e5)
@@ -25,6 +27,7 @@ To run in parallel, one needs to add a run configuration that supports this. Go 
 - Command line arguments: -n _NumProcs_ -quiet ./QMC
 - Working directory: /where/the/executable/is
 
+where _NumProcs_ is number of parallel processes. An example implementation is showed below
 ![Run settings](screenshot.png)
 
 
