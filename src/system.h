@@ -7,7 +7,7 @@ class System {
 public:
     void runIterations                  (const int numberOfIterations);
     void runMetropolisCycles            (int numberOfSteps, int totalNumberOfSteps, int iter);
-    void printToTerminal                (int numberOfIterations, int iter, double time);
+    void printToTerminal                (int iter, int instantNumber, int numberOfIterations, double time, int myRank);
     void checkingConvergence            (int iter);
     int  dynamicSteps                   (int iter);
     void setNumberOfParticles           (const int numberOfParticles);

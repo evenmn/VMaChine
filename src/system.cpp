@@ -23,7 +23,12 @@ void System::runIterations(const int numberOfIterations) {
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     //m_sampler->openOutputFiles("../data/");
-    m_sampler->openOutputFiles("/home/evenmn/VMC/data/");
+    int instantNumber;
+    if(m_myRank == 0) {
+        instantNumber = getRandomNumberGenerator()->nextInt(1e6);
+    }
+    MPI_Bcast(&instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    m_sampler->openOutputFiles("/home/evenmn/VMC/data/", instantNumber, m_myRank);
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
     for(int iter = 0; iter < numberOfIterations; iter++) {
@@ -46,13 +51,13 @@ void System::runIterations(const int numberOfIterations) {
 
         if(m_myRank == 0) {
             m_sampler->computeAverages();
-            m_sampler->printOutputToFile();
             m_parameters -= m_optimization->updateParameters();
+        }
+        m_sampler->printOutputToFile(m_myRank);
+        printToTerminal(iter, instantNumber, numberOfIterations, totalTime, m_myRank);
 
-            printToTerminal(numberOfIterations, iter, totalTime);
-            if(m_checkConvergence) {
-                checkingConvergence(iter);
-            }
+        if(m_checkConvergence && m_myRank == 0) {
+            checkingConvergence(iter);
         }
 
         for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
@@ -80,14 +85,18 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
     }
 }
 
-void System::printToTerminal(int numberOfIterations, int iter, double time) {
+void System::printToTerminal(int iter, int instantNumber, int numberOfIterations, double time, int myRank) {
     if(iter == m_lastIteration + m_rangeOfDynamicSteps) {
         m_sampler->closeOutputFiles();
-        m_sampler->printFinalOutputToTerminal();
+        if(myRank == 0) {
+            m_sampler->printFinalOutputToTerminal(instantNumber, "/home/evenmn/VMC/data/");
+        }
         exit(0);
     }
     else {
-        m_sampler->printOutputToTerminal(numberOfIterations, time);
+        if(myRank == 0) {
+            m_sampler->printOutputToTerminal(numberOfIterations, time);
+        }
     }
 }
 

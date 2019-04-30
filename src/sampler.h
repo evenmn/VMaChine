@@ -7,9 +7,9 @@ public:
     Sampler(class System* system);
     void            sample(int numberOfSteps, int equilibriationSteps, const bool acceptedStep, const int stepNumber);
     void            printOutputToTerminal(const int maxIter, const double time);
-    void            printFinalOutputToTerminal();
-    void            openOutputFiles(const std::string path);
-    void            printOutputToFile();
+    void            printFinalOutputToTerminal(int instantNumber, std::string path);
+    void            openOutputFiles(const std::string path, int instantNumber, int myRank);
+    void            printOutputToFile(int myRank);
     void            closeOutputFiles();
     void            printInstantValuesToFile(const Eigen::VectorXd positions);
     void            computeAverages();

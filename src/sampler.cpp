@@ -77,11 +77,10 @@ void Sampler::computeTotals() {
 
 void Sampler::computeAverages() {
     int    totalNumberOfMCSamples     = m_numberOfSteps * m_numberOfProcesses;
-    int    totalNumberOfStepsPerBatch = m_numberOfStepsPerBatch * m_numberOfProcesses;
     m_averageEnergy         = m_totalCumulativeEnergy     / totalNumberOfMCSamples;
     m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / totalNumberOfMCSamples;
-    m_averageGradients      = m_totalCumulativeGradients  / totalNumberOfStepsPerBatch;
-    m_averageGradientsE     = m_totalCumulativeGradientsE / totalNumberOfStepsPerBatch;
+    m_averageGradients      = m_totalCumulativeGradients  / m_numberOfStepsPerBatch;
+    m_averageGradientsE     = m_totalCumulativeGradientsE / m_numberOfStepsPerBatch;
     m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / totalNumberOfMCSamples;
 }
 
@@ -108,7 +107,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << endl;
 }
 
-void Sampler::printFinalOutputToTerminal() {
+void Sampler::printFinalOutputToTerminal(int instantNumber, std::string path) {
     cout << endl;
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy           : " << m_averageEnergy << endl;
@@ -118,6 +117,20 @@ void Sampler::printFinalOutputToTerminal() {
     cout << endl;
 
     if(m_printInstantEnergyToFile) {
+        // Append all instant files into one file
+        std::ofstream ofile(m_instantEnergyFileName.c_str(), std::ios::out | std::ios::app);
+        for(int i=1; i<m_numberOfProcesses; i++) {
+            std::string name = path + "instant_" + std::to_string(instantNumber) + "_" + std::to_string(i) + ".dat";
+            std::ifstream ifile(name.c_str(), std::ios::in);
+            if (!ifile.is_open()) {
+                perror ( "File not found" );
+            }
+            else {
+                ofile << ifile.rdbuf();
+            }
+            if(remove(name.c_str()) != 0)
+                perror( " Could not remove blocking file" );
+        }
         std::ifstream infile(m_instantEnergyFileName.c_str());
         std::vector<double> x;
         std::string line;
@@ -130,10 +143,33 @@ void Sampler::printFinalOutputToTerminal() {
         printf( " Energy           : %g (with mean sq. err. = %g) \n", block.mean, block.mse_mean);
         printf( " STD              : %g (with mean sq. err. = %g) \n", block.stdErr, block.mse_stdErr);
 
-        if(remove(m_instantEnergyFileName.c_str()) != 0 )
-          perror( " Could not remove blocking file" );
+        if(remove(m_instantEnergyFileName.c_str()) != 0)
+            perror( " Could not remove blocking file" );
         else
-          puts( " Successfully removed blocking file" );
+            puts( " Successfully removed blocking file" );
+
+        // Merge all one-body files into one file
+        std::ifstream infile1;
+        std::string mainName = generateFileName(path, "onebody", "SGD", "_" + std::to_string(0) + ".dat");
+        infile1.open(mainName.c_str());
+        std::ofstream outfile;
+        outfile.open("file.dat");
+        for(int i=1; i<m_numberOfProcesses; i++) {
+            std::string name = generateFileName(path, "onebody", "SGD", "_" + std::to_string(i) + ".dat");
+            std::ifstream infile2;
+            infile2.open(name.c_str());
+            if (!infile1.is_open() || !infile2.is_open()) {
+                cout << "file not found";
+            }
+            else {
+                int value, value2;
+                while (infile1 >> value && infile2 >> value2) {
+                    outfile << double(value) + double(value2) << endl;
+                }
+            }
+            std::rename("file.dat", mainName.c_str());
+
+        }
     }
 }
 
@@ -151,28 +187,25 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
     return filename;
 }
 
-void Sampler::openOutputFiles(const std::string path) {
+void Sampler::openOutputFiles(const std::string path, int instantNumber, int myRank) {
     // Print average energies to file
     if(m_printEnergyToFile) {
         m_averageEnergyFileName = generateFileName(path, "energy", "SGD", ".dat");
         m_averageEnergyFile.open(m_averageEnergyFileName);
     }
 
-    // Print instant energies to file
     if(m_printInstantEnergyToFile) {
-        m_instantEnergyFileName = path + "instant_" + std::to_string(m_system->getRandomNumberGenerator()->nextInt(1e6)) + ".dat";
+        m_instantEnergyFileName = path + "instant_" + std::to_string(instantNumber) + "_" + std::to_string(myRank) + ".dat";
         m_instantEnergyFile.open(m_instantEnergyFileName);
     }
-
-    // Print onebody densities to file
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName(path, "onebody", "SGD", ".dat");
+        std::string oneBodyFileName = generateFileName(path, "onebody", "SGD", "_" + std::to_string(myRank) + ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
 }
 
-void Sampler::printOutputToFile() {
-    if(m_printEnergyToFile) {
+void Sampler::printOutputToFile(int myRank) {
+    if(m_printEnergyToFile && myRank == 0) {
         m_averageEnergyFile << m_averageEnergy << endl;
     }
     if(m_calculateOneBody){

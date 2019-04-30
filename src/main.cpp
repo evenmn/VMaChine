@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,18)/ numberOfProcesses);
+    int     numberOfSteps       = int(pow(2,22)/ numberOfProcesses);
     int     numberOfIterations  = 100;
     double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
@@ -122,16 +122,16 @@ int main(int argc, char *argv[]) {
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    WaveFunctionElements.push_back      (new class Gaussian             (system));
-    //WaveFunctionElements.push_back      (new class RBMGaussian          (system));
+    //WaveFunctionElements.push_back      (new class Gaussian             (system));
+    WaveFunctionElements.push_back      (new class RBMGaussian          (system));
     //WaveFunctionElements.push_back      (new class RBMGaussian2         (system));
-    //WaveFunctionElements.push_back      (new class RBMJastrow           (system));
+    WaveFunctionElements.push_back      (new class RBMJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
     //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
     system->setWaveFunctionElements     (WaveFunctionElements);
     system->setMaxNumberOfParametersPerElement ();
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Constant(system, 1.0));
+    system->setInitialWeights           (new Randomize(system, 0.5));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setGlobalArraysToCalculate  ();
