@@ -21,11 +21,11 @@ There are several ways to compile the code. Below, we will present two easy and 
 
 #### Parallel processing using QT-creator
 To run in parallel, one needs to add a run configuration that supports this. Go to Projects-> Run-> Add-> Custom Executable. Then set
-Executable: /usr/bin/mpirun
-Command line arguments: -n _NumProcs_ -quiet ./QMC
-Working directory: /where/the/executable/is
+- Executable: /usr/bin/mpirun
+- Command line arguments: -n _NumProcs_ -quiet ./QMC
+- Working directory: /where/the/executable/is
 
-![alt text](/Home/Screenshot from 2019-04-30 14-15-54.png)
+![Run settings](screenshot.png)
 
 
 ## Adjust parameters
