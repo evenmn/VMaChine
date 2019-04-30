@@ -22,25 +22,19 @@ void System::runIterations(const int numberOfIterations) {
     m_radialVector              = m_initialState->getRadialVector();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
-    //m_sampler->openOutputFiles("../data/");
-    int instantNumber;
-    if(m_myRank == 0) {
-        instantNumber = getRandomNumberGenerator()->nextInt(1e6);
-    }
-    MPI_Bcast(&instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    m_sampler->openOutputFiles("/home/evenmn/VMC/data/", instantNumber, m_myRank);
+    m_sampler->openOutputFiles();
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
-    for(int iter = 0; iter < numberOfIterations; iter++) {
+    for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
         int numberOfSteps       = m_numberOfMetropolisSteps;
         int equilibriationSteps = int(m_numberOfMetropolisSteps * m_equilibrationFraction);
 
         if(m_applyDynamicSteps) {
-            numberOfSteps *= dynamicSteps(iter);
+            numberOfSteps *= dynamicSteps();
         }
 
         double startTime = MPI_Wtime();
-        runMetropolisCycles(numberOfSteps, equilibriationSteps, iter);
+        runMetropolisCycles(numberOfSteps, equilibriationSteps);
         double endTime = MPI_Wtime();
         double time = endTime - startTime;
         double totalTime;
@@ -53,11 +47,11 @@ void System::runIterations(const int numberOfIterations) {
             m_sampler->computeAverages();
             m_parameters -= m_optimization->updateParameters();
         }
-        m_sampler->printOutputToFile(m_myRank);
-        printToTerminal(iter, instantNumber, numberOfIterations, totalTime, m_myRank);
+        m_sampler->printOutputToFile();
+        printToTerminal(numberOfIterations, totalTime);
 
         if(m_checkConvergence && m_myRank == 0) {
-            checkingConvergence(iter);
+            checkingConvergence();
         }
 
         for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
@@ -70,7 +64,7 @@ void System::runIterations(const int numberOfIterations) {
     }
 }
 
-void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  int iter) {
+void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps) {
     for(int i=0; i < numberOfSteps + equilibriationSteps; i++) {
         bool acceptedStep = m_metropolis->acceptMove();
         m_positions       = m_metropolis->updatePositions();
@@ -78,43 +72,43 @@ void System::runMetropolisCycles(int numberOfSteps, int equilibriationSteps,  in
         m_radialVector    = m_metropolis->updateRadialVector();
         if(i >= equilibriationSteps) {
             m_sampler->sample(numberOfSteps, equilibriationSteps, acceptedStep, i);
-            if(iter == m_lastIteration + m_rangeOfDynamicSteps) {
+            if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
                 m_sampler->printInstantValuesToFile(m_positions);
             }
         }
     }
 }
 
-void System::printToTerminal(int iter, int instantNumber, int numberOfIterations, double time, int myRank) {
-    if(iter == m_lastIteration + m_rangeOfDynamicSteps) {
+void System::printToTerminal(int numberOfIterations, double time) {
+    if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
         m_sampler->closeOutputFiles();
-        if(myRank == 0) {
-            m_sampler->printFinalOutputToTerminal(instantNumber, "/home/evenmn/VMC/data/");
+        if(m_myRank == 0) {
+            m_sampler->printFinalOutputToTerminal();
         }
         exit(0);
     }
     else {
-        if(myRank == 0) {
+        if(m_myRank == 0) {
             m_sampler->printOutputToTerminal(numberOfIterations, time);
         }
     }
 }
 
-void System::checkingConvergence(int iter) {
+void System::checkingConvergence() {
     m_energies.head(m_numberOfEnergies-1) = m_energies.tail(m_numberOfEnergies-1);
     m_energies(m_numberOfEnergies-1) = m_sampler->getAverageEnergy();
     if(fabs(m_energies(0) - m_energies(m_numberOfEnergies-1)) < m_tolerance) {
         std::cout << "The system has converged! Let's run one more cycle to collect data" << std::endl;
-        m_lastIteration = iter + 1;
+        m_lastIteration = m_iter + 1;
     }
 }
 
-int System::dynamicSteps(int iter) {
+int System::dynamicSteps() {
     int stepRatio = 1;
-    if(iter == m_lastIteration+m_rangeOfDynamicSteps) {
+    if(m_iter == m_lastIteration+m_rangeOfDynamicSteps) {
         stepRatio = int(pow(2,m_additionalStepsLastIteration));
     }
-    else if(iter >= m_lastIteration) {
+    else if(m_iter >= m_lastIteration) {
         stepRatio = int(pow(2,m_additionalSteps));
     }
     return stepRatio;
@@ -218,7 +212,12 @@ void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes) {
 }
 
 void System::setNumberOfMetropolisSteps(const int steps) {
-    m_numberOfMetropolisSteps = steps;
+    if(m_myRank == 0) {
+        m_numberOfMetropolisSteps = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
+    }
+    else {
+        m_numberOfMetropolisSteps = steps / m_numberOfProcesses;
+    }
 }
 
 void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionElements) {
@@ -305,6 +304,10 @@ void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnerg
 void System::setMPITools(int myRank, int numberOfProcesses) {
     m_myRank = myRank;
     m_numberOfProcesses = numberOfProcesses;
+}
+
+void System::setPath(std::string path) {
+    m_path = path;
 }
 
 void System::setHamiltonian(Hamiltonian* hamiltonian) {

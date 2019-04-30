@@ -34,6 +34,8 @@ Sampler::Sampler(System* system) {
     m_printInstantEnergyToFile          = m_system->getPrintInstantEnergy();
     m_numberOfBins                      = m_system->getNumberOfBins();
     m_maxRadius                         = m_system->getMaxRadius();
+    m_rank                              = m_system->getRank();
+    m_path                              = m_system->getPath();
     m_radialStep                        = m_maxRadius/m_numberOfBins;
     m_binLinSpace                       = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
     m_particlesPerBin                   = Eigen::VectorXd::Zero(m_numberOfBins);
@@ -107,7 +109,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << endl;
 }
 
-void Sampler::printFinalOutputToTerminal(int instantNumber, std::string path) {
+void Sampler::printFinalOutputToTerminal() {
     cout << endl;
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy           : " << m_averageEnergy << endl;
@@ -120,7 +122,7 @@ void Sampler::printFinalOutputToTerminal(int instantNumber, std::string path) {
         // Append all instant files into one file
         std::ofstream ofile(m_instantEnergyFileName.c_str(), std::ios::out | std::ios::app);
         for(int i=1; i<m_numberOfProcesses; i++) {
-            std::string name = path + "instant_" + std::to_string(instantNumber) + "_" + std::to_string(i) + ".dat";
+            std::string name = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(i) + ".dat";
             std::ifstream ifile(name.c_str(), std::ios::in);
             if (!ifile.is_open()) {
                 perror ( "File not found" );
@@ -147,15 +149,16 @@ void Sampler::printFinalOutputToTerminal(int instantNumber, std::string path) {
             perror( " Could not remove blocking file" );
         else
             puts( " Successfully removed blocking file" );
-
+    }
+    if(m_calculateOneBody) {
         // Merge all one-body files into one file
         std::ifstream infile1;
-        std::string mainName = generateFileName(path, "onebody", "SGD", "_" + std::to_string(0) + ".dat");
+        std::string mainName = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(0) + ".dat");
         infile1.open(mainName.c_str());
         std::ofstream outfile;
         outfile.open("file.dat");
         for(int i=1; i<m_numberOfProcesses; i++) {
-            std::string name = generateFileName(path, "onebody", "SGD", "_" + std::to_string(i) + ".dat");
+            std::string name = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(i) + ".dat");
             std::ifstream infile2;
             infile2.open(name.c_str());
             if (!infile1.is_open() || !infile2.is_open()) {
@@ -187,25 +190,30 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
     return filename;
 }
 
-void Sampler::openOutputFiles(const std::string path, int instantNumber, int myRank) {
+void Sampler::openOutputFiles() {
+    if(m_rank == 0) {
+        m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(1e6);
+    }
+    MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
     // Print average energies to file
     if(m_printEnergyToFile) {
-        m_averageEnergyFileName = generateFileName(path, "energy", "SGD", ".dat");
+        m_averageEnergyFileName = generateFileName(m_path, "energy", "SGD", ".dat");
         m_averageEnergyFile.open(m_averageEnergyFileName);
     }
 
     if(m_printInstantEnergyToFile) {
-        m_instantEnergyFileName = path + "instant_" + std::to_string(instantNumber) + "_" + std::to_string(myRank) + ".dat";
+        m_instantEnergyFileName = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + ".dat";
         m_instantEnergyFile.open(m_instantEnergyFileName);
     }
     if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName(path, "onebody", "SGD", "_" + std::to_string(myRank) + ".dat");
+        std::string oneBodyFileName = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(m_rank) + ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
 }
 
-void Sampler::printOutputToFile(int myRank) {
-    if(m_printEnergyToFile && myRank == 0) {
+void Sampler::printOutputToFile() {
+    if(m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFile << m_averageEnergy << endl;
     }
     if(m_calculateOneBody){

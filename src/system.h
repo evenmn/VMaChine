@@ -6,10 +6,10 @@
 class System {
 public:
     void runIterations                  (const int numberOfIterations);
-    void runMetropolisCycles            (int numberOfSteps, int totalNumberOfSteps, int iter);
-    void printToTerminal                (int iter, int instantNumber, int numberOfIterations, double time, int myRank);
-    void checkingConvergence            (int iter);
-    int  dynamicSteps                   (int iter);
+    void runMetropolisCycles            (int numberOfSteps, int totalNumberOfSteps);
+    void printToTerminal                (int numberOfIterations, double time);
+    void checkingConvergence            ();
+    int  dynamicSteps                   ();
     void setNumberOfParticles           (const int numberOfParticles);
     void setNumberOfDimensions          (const int numberOfDimensions);
     void setNumberOfHiddenNodes         (const int numberOfHiddenNodes);
@@ -24,6 +24,7 @@ public:
     void setAtomicNumber                (const int Z);
     void setWidth                       (const double sigma);
     void setLearningRate                (const double eta);
+    void setPath                        (std::string path);
     void setGradients                   ();
     void setGlobalArraysToCalculate     ();
 
@@ -62,6 +63,7 @@ public:
     int                                 getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
     int                                 getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
     int                                 getAtomicNumber()            { return m_Z; }
+    int                                 getRank()                    { return m_myRank; }
     int                                 getNumberOfBins()            { return m_numberOfBins; }
     double                              getMaxRadius()               { return m_maxRadius; }
     double                              getEquilibrationFraction()   { return m_equilibrationFraction; }
@@ -79,6 +81,7 @@ public:
     Eigen::VectorXd                     getRadialVector()            { return m_radialVector; }
     Eigen::MatrixXd                     getDistanceMatrix()          { return m_distanceMatrix; }
     Eigen::MatrixXd                     getWeights()                 { return m_parameters; }
+    std::string                         getPath()                    { return m_path; }
     std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionElements; }
 
     void                                updateAllArrays              (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord);
@@ -109,6 +112,7 @@ private:
     int                                 m_numberOfBins              = 1;
     int                                 m_numberOfProcesses         = 1;
     int                                 m_myRank                    = 0;
+    int                                 m_iter                      = 0;
 
     double                              m_equilibrationFraction     = 0.0;
     double                              m_stepLength                = 0.1;
@@ -126,6 +130,8 @@ private:
     bool                                m_printInstantEnergyFile    = true;
     bool                                m_calculateDistanceMatrix   = false;
     bool                                m_calculateRadialVector     = false;
+
+    std::string                         m_path                      = "../data/";
 
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;

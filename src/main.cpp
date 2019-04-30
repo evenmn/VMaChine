@@ -1,6 +1,7 @@
 #include <mpi.h>
 #include "system.h"
 #include <iostream>
+#include <string>
 
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/gaussian.h"
@@ -64,7 +65,7 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,22)/ numberOfProcesses);
+    int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 100;
     double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
@@ -83,6 +84,9 @@ int main(int argc, char *argv[]) {
 
 
     // --- ADVANCED SETTINGS ---
+    // Path to data file
+    std::string path = "/home/evenmn/VMC/data/";
+
     // Convergence tools
     int     numberOfEnergies                = 5;            // Check this number of energies for convergence
     double  tolerance                       = 1e-7;         // Convergence tolerance
@@ -99,6 +103,7 @@ int main(int argc, char *argv[]) {
 
     // --- SET PARAMETERS ---
     System* system = new System();
+    system->setPath                     (path);
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
     system->setFrequency                (omega);
@@ -108,6 +113,7 @@ int main(int argc, char *argv[]) {
     system->setNumberOfParticles        (numberOfParticles);
     system->setNumberOfDimensions       (numberOfDimensions);
     system->setNumberOfHiddenNodes      (numberOfHiddenNodes);
+    system->setMPITools                 (myRank, numberOfProcesses);
     system->setNumberOfMetropolisSteps  (numberOfSteps);
     system->setTotalNumberOfSteps       ();
     system->setNumberOfFreeDimensions   ();
@@ -117,21 +123,20 @@ int main(int argc, char *argv[]) {
     system->setDynamicStepTools         (applyDynamicSteps, rangeOfDynamicSteps, additionalSteps, additionalStepsLastIteration);
     system->setDensityTools             (computeDensity, numberOfBins, maxRadius);
     system->setEnergyPrintingTools      (printEnergyFile, doBlocking);
-    system->setMPITools                 (myRank, numberOfProcesses);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    //WaveFunctionElements.push_back      (new class Gaussian             (system));
-    WaveFunctionElements.push_back      (new class RBMGaussian          (system));
+    WaveFunctionElements.push_back      (new class Gaussian             (system));
+    //WaveFunctionElements.push_back      (new class RBMGaussian          (system));
     //WaveFunctionElements.push_back      (new class RBMGaussian2         (system));
-    WaveFunctionElements.push_back      (new class RBMJastrow           (system));
+    //WaveFunctionElements.push_back      (new class RBMJastrow           (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
     //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow          (system));
+    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
@@ -139,7 +144,7 @@ int main(int argc, char *argv[]) {
     system->setWaveFunctionElements     (WaveFunctionElements);
     system->setMaxNumberOfParametersPerElement ();
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Randomize(system, 0.5));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setGlobalArraysToCalculate  ();

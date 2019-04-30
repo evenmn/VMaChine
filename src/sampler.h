@@ -7,9 +7,9 @@ public:
     Sampler(class System* system);
     void            sample(int numberOfSteps, int equilibriationSteps, const bool acceptedStep, const int stepNumber);
     void            printOutputToTerminal(const int maxIter, const double time);
-    void            printFinalOutputToTerminal(int instantNumber, std::string path);
-    void            openOutputFiles(const std::string path, int instantNumber, int myRank);
-    void            printOutputToFile(int myRank);
+    void            printFinalOutputToTerminal();
+    void            openOutputFiles();
+    void            printOutputToFile();
     void            closeOutputFiles();
     void            printInstantValuesToFile(const Eigen::VectorXd positions);
     void            computeAverages();
@@ -33,6 +33,8 @@ private:
     int              m_equilibriationSteps = 0;
     int              m_acceptenceRatio = 0;
     int              m_iter = 0;
+    int              m_rank = 0;
+    int              m_instantNumber = 0;
     bool             m_interaction = 0;
     double           m_variance = 0;
     double           m_equilibrationFraction = 0;
@@ -59,6 +61,8 @@ private:
     std::ofstream    m_instantEnergyFile;
     std::string      m_averageEnergyFileName = "Filename not generated yet";
     std::string      m_instantEnergyFileName = "Filename not generated yet";
+    std::string      m_path                  = "Path not specified";
+
     class System*    m_system = nullptr;
 
     bool             m_printEnergyToFile = true;
