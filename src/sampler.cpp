@@ -23,9 +23,9 @@ Sampler::Sampler(System* system) {
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfElements                  = m_system->getNumberOfWaveFunctionElements();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-    m_totalNumberOfStepsWOEqui          = m_system->getTotalNumberOfStepsWOEqui();
-    m_totalNumberOfStepsWEqui           = m_system->getTotalNumberOfStepsWEqui();
-    m_numberOfStepsWOEqui               = m_system->getNumberOfStepsWOEqui();
+    //m_totalNumberOfStepsWOEqui          = m_system->getTotalNumberOfStepsWOEqui();
+    //m_totalNumberOfStepsWEqui           = m_system->getTotalNumberOfStepsWEqui();
+    //m_numberOfStepsWOEqui               = m_system->getNumberOfStepsWOEqui();
     m_numberOfEquilibriationSteps       = m_system->getnumberOfEquilibriationSteps();
     m_omega                             = m_system->getFrequency();
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
@@ -75,6 +75,12 @@ void Sampler::computeTotals() {
             MPI_Reduce(&m_cumulativeGradientsE(i,j), &m_totalCumulativeGradientsE(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
         }
     }
+}
+
+void Sampler::setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui) {
+    m_numberOfStepsWOEqui      = numberOfStepsWOEqui;
+    m_totalNumberOfStepsWOEqui = totalNumberOfStepsWOEqui;
+    m_totalNumberOfStepsWEqui  = totalNumberOfStepsWEqui;
 }
 
 void Sampler::computeAverages() {
@@ -159,9 +165,11 @@ void Sampler::appendInstantFiles() {
 }
 
 void Sampler::mergeOneBodyFiles() {
+    std::string name1 = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(0) + ".dat");
+    std::string mainName = generateFileName(m_path, "onebody", "SGD", + ".dat");
+    std::rename(name1.c_str(), mainName.c_str());
     for(int i=1; i<m_numberOfProcesses; i++) {
         std::ifstream infile1;
-        std::string mainName = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(0) + ".dat");
         infile1.open(mainName.c_str(), std::ios::in);
         std::string outfileName = std::to_string(i) + ".dat";
         std::string name = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(i) + ".dat");

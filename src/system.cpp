@@ -27,9 +27,12 @@ void System::runIterations(const int numberOfIterations) {
 
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
         if(m_applyDynamicSteps) {
-            m_numberOfStepsWOEqui *= dynamicSteps();
-            m_numberOfStepsWEqui   = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
+            m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * dynamicStepsPerRank();
+            m_numberOfStepsWEqui       = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
+            m_totalNumberOfStepsWOEqui = m_initialTotalNumberOfStepsWOEqui * dynamicStepsTotal();
+            m_totalNumberOfStepsWEqui  = m_totalNumberOfStepsWOEqui + m_numberOfEquilibriationSteps;
         }
+        m_sampler->setNumberOfSteps(m_numberOfStepsWOEqui, m_totalNumberOfStepsWOEqui, m_totalNumberOfStepsWEqui);
         double startTime = MPI_Wtime();
         runMetropolisCycles();
         double endTime = MPI_Wtime();
@@ -102,7 +105,7 @@ void System::checkingConvergence() {
     }
 }
 
-int System::dynamicSteps() {
+int System::dynamicStepsPerRank() {
     int stepRatio = 1;
     if(m_iter == m_lastIteration+m_rangeOfDynamicSteps) {
         if(m_myRank == 0) {
@@ -118,6 +121,27 @@ int System::dynamicSteps() {
         }
         else {
             stepRatio = int(pow(2,m_additionalSteps)) / m_numberOfProcesses;
+        }
+    }
+    return stepRatio;
+}
+
+int System::dynamicStepsTotal() {
+    int stepRatio = 1;
+    if(m_iter == m_lastIteration+m_rangeOfDynamicSteps) {
+        if(m_myRank == 0) {
+            stepRatio = int(pow(2,m_additionalStepsLastIteration));
+        }
+        else {
+            stepRatio = int(pow(2,m_additionalStepsLastIteration));
+        }
+    }
+    else if(m_iter >= m_lastIteration) {
+        if(m_myRank == 0) {
+            stepRatio = int(pow(2,m_additionalSteps));
+        }
+        else {
+            stepRatio = int(pow(2,m_additionalSteps));
         }
     }
     return stepRatio;
@@ -233,6 +257,8 @@ void System::setNumberOfMetropolisSteps(const int steps) {
     }
     m_numberOfStepsWEqui            = int(m_numberOfStepsWOEqui * (1 + m_equilibrationFraction));
     m_numberOfEquilibriationSteps   = m_numberOfStepsWEqui - m_numberOfStepsWOEqui;
+    m_initialNumberOfStepsWOEqui    = m_numberOfStepsWOEqui;
+    m_initialTotalNumberOfStepsWOEqui = m_totalNumberOfStepsWOEqui;
 }
 
 void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionElements) {

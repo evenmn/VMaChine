@@ -65,8 +65,8 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 50;
+    int     numberOfSteps       = int(pow(2,16));
+    int     numberOfIterations  = 100;
     double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
@@ -77,14 +77,14 @@ int main(int argc, char *argv[]) {
     // Switches
     bool    interaction         = true;                     // Repulsive interaction on or off
     bool    checkConvergence    = false;                    // Stops the program after it has converged
-    bool    applyDynamicSteps   = false;                    // Increase the number of MC-cycles for the last iterations
+    bool    applyDynamicSteps   = true;                     // Increase the number of MC-cycles for the last iterations
     bool    computeDensity      = true;                     // Compute one-body density and print to file
     bool    printEnergyFile     = true;                     // Print energy for every iteration to file
     bool    doBlocking          = true;                     // Print blocking file for the last iteration and do blocking
 
 
     // --- ADVANCED SETTINGS ---
-    // Path to data file
+    // Path to data files
     std::string path = "/home/evenmn/VMC/data/";
 
     // Convergence tools
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));

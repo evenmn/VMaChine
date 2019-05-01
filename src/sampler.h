@@ -18,6 +18,7 @@ public:
     void            computeTotals();
     void            appendInstantFiles();
     void            mergeOneBodyFiles();
+    void            setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui);
     double          getAverageEnergy()        { return m_averageEnergy; }
     Eigen::MatrixXd getAverageGradients()     { return m_averageGradients; }
     Eigen::MatrixXd getAverageGradientsE()    { return m_averageGradientsE; }
