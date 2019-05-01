@@ -5,33 +5,39 @@
 class Sampler {
 public:
     Sampler(class System* system);
-    void            sample(int numberOfSteps, int equilibriationSteps, const bool acceptedStep, const int stepNumber);
+    void            sample(const bool acceptedStep, const int stepNumber);
     void            printOutputToTerminal(const int maxIter, const double time);
     void            printFinalOutputToTerminal();
     void            openOutputFiles();
-    void            printOutputToFile();
+    void            printEnergyToFile();
+    void            printOneBodyDensityToFile();
     void            closeOutputFiles();
-    void            printInstantValuesToFile(const Eigen::VectorXd positions);
+    void            printInstantValuesToFile();
+    void            calculateOneBodyDensities(const Eigen::VectorXd positions);
     void            computeAverages();
     void            computeTotals();
+    void            appendInstantFiles();
+    void            mergeOneBodyFiles();
     double          getAverageEnergy()        { return m_averageEnergy; }
     Eigen::MatrixXd getAverageGradients()     { return m_averageGradients; }
     Eigen::MatrixXd getAverageGradientsE()    { return m_averageGradientsE; }
     std::string     generateFileName(std::string path, std::string name, std::string optimization, const std::string extension);
 
 private:
-    int              m_totalNumberOfSteps = 0;
+    int              m_numberOfStepsWOEqui = 0;
+    int              m_totalNumberOfStepsWOEqui = 0;
+    int              m_totalNumberOfStepsWEqui = 0;
+    int              m_numberOfEquilibriationSteps = 0;
+
     int              m_maxNumberOfParametersPerElement = 0;
-    int              m_numberOfMetropolisSteps = 0;
     int              m_numberOfProcesses = 0;
     int              m_numberOfParticles = 0;
     int              m_numberOfDimensions = 0;
     int              m_numberOfElements = 0;
     int              m_numberOfBatches = 0;
     int              m_numberOfStepsPerBatch = 0;
-    int              m_numberOfSteps = 0;
-    int              m_equilibriationSteps = 0;
-    int              m_acceptenceRatio = 0;
+    int              m_totalAcceptence = 0;
+    int              m_acceptence = 0;
     int              m_iter = 0;
     int              m_rank = 0;
     int              m_instantNumber = 0;

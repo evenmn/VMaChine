@@ -23,11 +23,13 @@ Sampler::Sampler(System* system) {
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfElements                  = m_system->getNumberOfWaveFunctionElements();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-    m_numberOfMetropolisSteps           = m_system->getNumberOfMetropolisSteps();
-    m_totalNumberOfSteps                = m_system->getTotalNumberOfSteps();
+    m_totalNumberOfStepsWOEqui          = m_system->getTotalNumberOfStepsWOEqui();
+    m_totalNumberOfStepsWEqui           = m_system->getTotalNumberOfStepsWEqui();
+    m_numberOfStepsWOEqui               = m_system->getNumberOfStepsWOEqui();
+    m_numberOfEquilibriationSteps       = m_system->getnumberOfEquilibriationSteps();
     m_omega                             = m_system->getFrequency();
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
-    m_numberOfStepsPerBatch             = int(m_numberOfMetropolisSteps/m_numberOfBatches);
+    m_numberOfStepsPerBatch             = int(m_numberOfStepsWOEqui/m_numberOfBatches);
     m_interaction                       = m_system->getInteraction();
     m_calculateOneBody                  = m_system->getDensity();
     m_printEnergyToFile                 = m_system->getPrintEnergy();
@@ -41,17 +43,14 @@ Sampler::Sampler(System* system) {
     m_particlesPerBin                   = Eigen::VectorXd::Zero(m_numberOfBins);
 }
 
-void Sampler::sample(int numberOfSteps, int equilibriationSteps, const bool acceptedStep, const int stepNumber) {
-    if (stepNumber == equilibriationSteps) {
-        m_acceptenceRatio           = 0;
+void Sampler::sample(const bool acceptedStep, const int stepNumber) {
+    if (stepNumber == m_numberOfEquilibriationSteps) {
+        m_acceptence                = 0;
         m_cumulativeEnergy          = 0;
         m_cumulativeEnergySqrd      = 0;
         m_cumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
         m_cumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
-
-        m_equilibriationSteps       = equilibriationSteps;
-        m_numberOfSteps             = numberOfSteps;
-        m_numberOfStepsPerBatch     = int(m_numberOfSteps/m_numberOfBatches);
+        m_numberOfStepsPerBatch     = int(m_numberOfStepsWOEqui/m_numberOfBatches);
     }
     m_instantEnergy    = m_system->getHamiltonian()->computeLocalEnergy();
     m_instantGradients = m_system->getAllInstantGradients();
@@ -61,12 +60,13 @@ void Sampler::sample(int numberOfSteps, int equilibriationSteps, const bool acce
         m_cumulativeGradients   += m_instantGradients;
         m_cumulativeGradientsE  += m_instantGradients * m_instantEnergy;
     }
-    if(acceptedStep) { m_acceptenceRatio += 1; }
+    if(acceptedStep) { m_acceptence += 1; }
 }
 
 void Sampler::computeTotals() {
     m_totalCumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
     m_totalCumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
+    MPI_Reduce(&m_acceptence,           &m_totalAcceptence,           1, MPI_INT,    MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_cumulativeEnergy,     &m_totalCumulativeEnergy,     1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_cumulativeEnergySqrd, &m_totalCumulativeEnergySqrd, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     for(int i=0; i<m_numberOfElements; i++) {
@@ -78,12 +78,11 @@ void Sampler::computeTotals() {
 }
 
 void Sampler::computeAverages() {
-    int    totalNumberOfMCSamples     = m_numberOfSteps * m_numberOfProcesses;
-    m_averageEnergy         = m_totalCumulativeEnergy     / totalNumberOfMCSamples;
-    m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / totalNumberOfMCSamples;
+    m_averageEnergy         = m_totalCumulativeEnergy     / m_totalNumberOfStepsWOEqui;
+    m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / m_totalNumberOfStepsWOEqui;
     m_averageGradients      = m_totalCumulativeGradients  / m_numberOfStepsPerBatch;
     m_averageGradientsE     = m_totalCumulativeGradientsE / m_numberOfStepsPerBatch;
-    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / totalNumberOfMCSamples;
+    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalNumberOfStepsWOEqui;
 }
 
 void Sampler::printOutputToTerminal(const int maxIter, const double time) {
@@ -95,14 +94,14 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " Number of processes    : " << m_system->getNumberOfProcesses()  << endl;
     cout << " Number of parameters   : " << m_system->getTotalNumberOfParameters() << endl;
     cout << " Oscillator frequency   : " << m_omega << endl;
-    cout << " # Metropolis steps     : " << (m_numberOfSteps + m_equilibriationSteps) * m_numberOfProcesses << " ("
-                                         << m_numberOfSteps * m_numberOfProcesses << " equilibration)" << endl;
+    cout << " # Metropolis steps     : " << m_totalNumberOfStepsWEqui << " ("
+                                         << m_totalNumberOfStepsWOEqui << " equilibration)" << endl;
     cout << " Energy file stored as  : " << m_averageEnergyFileName << endl;
     cout << " Instant file stored as : " << m_instantEnergyFileName << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy            : " << m_averageEnergy << endl;
-    cout << " Acceptence Ratio  : " << double(m_acceptenceRatio)/m_numberOfSteps << endl;
+    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui << endl;
     cout << " Variance          : " << m_variance << endl;
     cout << " STD               : " << sqrt(m_variance) << endl;
     cout << " CPU Time          : " << time << endl;
@@ -113,26 +112,14 @@ void Sampler::printFinalOutputToTerminal() {
     cout << endl;
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy           : " << m_averageEnergy << endl;
-    cout << " Acceptence Ratio : " << double(m_acceptenceRatio)/m_numberOfSteps << endl;
+    cout << " Acceptence Ratio : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui << endl;
     cout << " Variance         : " << m_variance << endl;
     cout << " STD              : " << sqrt(m_variance) << endl;
     cout << endl;
 
     if(m_printInstantEnergyToFile) {
-        // Append all instant files into one file
-        std::ofstream ofile(m_instantEnergyFileName.c_str(), std::ios::out | std::ios::app);
-        for(int i=1; i<m_numberOfProcesses; i++) {
-            std::string name = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(i) + ".dat";
-            std::ifstream ifile(name.c_str(), std::ios::in);
-            if (!ifile.is_open()) {
-                perror ( "File not found" );
-            }
-            else {
-                ofile << ifile.rdbuf();
-            }
-            if(remove(name.c_str()) != 0)
-                perror( " Could not remove blocking file" );
-        }
+        appendInstantFiles();
+
         std::ifstream infile(m_instantEnergyFileName.c_str());
         std::vector<double> x;
         std::string line;
@@ -151,28 +138,50 @@ void Sampler::printFinalOutputToTerminal() {
             puts( " Successfully removed blocking file" );
     }
     if(m_calculateOneBody) {
-        // Merge all one-body files into one file
+        mergeOneBodyFiles();
+    }
+}
+
+void Sampler::appendInstantFiles() {
+    std::ofstream outfile(m_instantEnergyFileName.c_str(), std::ios::out | std::ios::app);
+    for(int i=1; i<m_numberOfProcesses; i++) {
+        std::string name = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(i) + ".dat";
+        std::ifstream infile(name.c_str(), std::ios::in);
+        if (!infile.is_open()) {
+            perror ( "File not found" );
+        }
+        else {
+            outfile << infile.rdbuf();
+        }
+        if(remove(name.c_str()) != 0)
+            perror( " Could not remove blocking file" );
+    }
+}
+
+void Sampler::mergeOneBodyFiles() {
+    for(int i=1; i<m_numberOfProcesses; i++) {
         std::ifstream infile1;
         std::string mainName = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(0) + ".dat");
-        infile1.open(mainName.c_str());
+        infile1.open(mainName.c_str(), std::ios::in);
+        std::string outfileName = std::to_string(i) + ".dat";
+        std::string name = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(i) + ".dat");
         std::ofstream outfile;
-        outfile.open("file.dat");
-        for(int i=1; i<m_numberOfProcesses; i++) {
-            std::string name = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(i) + ".dat");
-            std::ifstream infile2;
-            infile2.open(name.c_str());
-            if (!infile1.is_open() || !infile2.is_open()) {
-                cout << "file not found";
-            }
-            else {
-                int value, value2;
-                while (infile1 >> value && infile2 >> value2) {
-                    outfile << double(value) + double(value2) << endl;
-                }
-            }
-            std::rename("file.dat", mainName.c_str());
-
+        std::ifstream infile2;
+        outfile.open(outfileName.c_str(), std::ios::out);
+        infile2.open(name.c_str(), std::ios::in);
+        if (!infile1.is_open() || !infile2.is_open()) {
+            cout << "file not found";
         }
+        else {
+            int value1, value2;
+            while (infile1 >> value1 && infile2 >> value2) {
+                outfile << double(value1) + double(value2) << endl;
+            }
+        }
+        std::rename(outfileName.c_str(), mainName.c_str());
+
+        if(remove(name.c_str()) != 0)
+            perror( " Could not remove onebody file" );
     }
 }
 
@@ -185,7 +194,7 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
     filename += std::to_string(m_numberOfParticles) + "P/";
     filename += std::to_string(m_omega) + "w/";
     filename += optimization;
-    filename += "_MC" + std::to_string(m_numberOfMetropolisSteps * m_numberOfProcesses);
+    filename += "_MC" + std::to_string(m_totalNumberOfStepsWOEqui);
     filename += extension;
     return filename;
 }
@@ -212,10 +221,13 @@ void Sampler::openOutputFiles() {
     }
 }
 
-void Sampler::printOutputToFile() {
+void Sampler::printEnergyToFile() {
     if(m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFile << m_averageEnergy << endl;
     }
+}
+
+void Sampler::printOneBodyDensityToFile() {
     if(m_calculateOneBody){
         m_oneBodyFile << m_particlesPerBin << endl;
     }
@@ -227,15 +239,20 @@ void Sampler::closeOutputFiles() {
     if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
 }
 
-void Sampler::printInstantValuesToFile(const Eigen::VectorXd positions) {
+void Sampler::printInstantValuesToFile() {
     if(m_printInstantEnergyToFile) {
         m_instantEnergyFile << m_instantEnergy << endl;  // Write instant energies to file for blocking
     }
+}
+
+void Sampler::calculateOneBodyDensities(const Eigen::VectorXd positions) {
     if(m_calculateOneBody) {                         // Calculate onebody densities
         for(int j=0; j<m_numberOfParticles; j++) {
             double dist = 0;
+            int numTimesJ = m_numberOfDimensions*j;
             for(int d=0; d<m_numberOfDimensions; d++) {
-                dist += positions(m_numberOfDimensions*j+d) * positions(m_numberOfDimensions*j+d);
+                double position = positions(numTimesJ+d);
+                dist += position * position;
             }
             double r = sqrt(dist);      // Distance from particle j to origin
             for(int k=0; k<m_numberOfBins; k++) {

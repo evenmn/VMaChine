@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 100;
+    int     numberOfIterations  = 50;
     double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
@@ -115,8 +115,6 @@ int main(int argc, char *argv[]) {
     system->setNumberOfHiddenNodes      (numberOfHiddenNodes);
     system->setMPITools                 (myRank, numberOfProcesses);
     system->setNumberOfMetropolisSteps  (numberOfSteps);
-    system->setTotalNumberOfSteps       ();
-    system->setNumberOfFreeDimensions   ();
 
     system->setInteraction              (interaction);
     system->setConvergenceTools         (checkConvergence, numberOfEnergies, tolerance);
@@ -134,7 +132,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
@@ -142,7 +140,6 @@ int main(int argc, char *argv[]) {
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunctionElements     (WaveFunctionElements);
-    system->setMaxNumberOfParametersPerElement ();
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
@@ -158,6 +155,7 @@ int main(int argc, char *argv[]) {
     //plots->plotEnergy(argc, argv);
     //plots->plotOneBodyDensity(argc, argv);
 
+    MPI_Barrier(MPI_COMM_WORLD);
     MPI_Finalize();
     return 0;
 }

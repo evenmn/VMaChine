@@ -6,15 +6,14 @@
 class System {
 public:
     void runIterations                  (const int numberOfIterations);
-    void runMetropolisCycles            (int numberOfSteps, int totalNumberOfSteps);
-    void printToTerminal                (int numberOfIterations, double time);
+    void runMetropolisCycles            ();
+    void printToTerminal                (int numberOfIterations);
     void checkingConvergence            ();
     int  dynamicSteps                   ();
     void setNumberOfParticles           (const int numberOfParticles);
     void setNumberOfDimensions          (const int numberOfDimensions);
     void setNumberOfHiddenNodes         (const int numberOfHiddenNodes);
     void setNumberOfFreeDimensions      ();
-    void setTotalNumberOfSteps          ();
     void setNumberOfMetropolisSteps     (const int steps);
     void setMaxNumberOfParametersPerElement ();
     void setNumberOfWaveFunctionElements (const int numberOfWaveFunctionElements);
@@ -57,14 +56,19 @@ public:
     int                                 getNumberOfDimensions()      { return m_numberOfDimensions; }
     int                                 getNumberOfHiddenNodes()     { return m_numberOfHiddenNodes; }
     int                                 getNumberOfFreeDimensions()  { return m_numberOfFreeDimensions; }
-    int                                 getNumberOfMetropolisSteps() { return m_numberOfMetropolisSteps; }
-    int                                 getTotalNumberOfSteps()      { return m_totalNumberOfSteps; }
     int                                 getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
     int                                 getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
     int                                 getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
     int                                 getAtomicNumber()            { return m_Z; }
     int                                 getRank()                    { return m_myRank; }
     int                                 getNumberOfBins()            { return m_numberOfBins; }
+
+    int                                 getTotalNumberOfStepsWOEqui(){ return m_totalNumberOfStepsWOEqui; }
+    int                                 getTotalNumberOfStepsWEqui() { return m_totalNumberOfStepsWEqui; }
+    int                                 getNumberOfStepsWOEqui()     { return m_numberOfStepsWOEqui; }
+    int                                 getNumberOfStepsWEqui()      { return m_numberOfStepsWEqui; }
+    int                                 getnumberOfEquilibriationSteps() { return m_numberOfEquilibriationSteps; }
+
     double                              getMaxRadius()               { return m_maxRadius; }
     double                              getEquilibrationFraction()   { return m_equilibrationFraction; }
     double                              getFrequency()               { return m_omega; }
@@ -98,10 +102,8 @@ private:
     int                                 m_numberOfParticles         = 0;
     int                                 m_numberOfDimensions        = 0;
     int                                 m_numberOfFreeDimensions    = 0;
-    int                                 m_numberOfMetropolisSteps   = 0;
     int                                 m_numberOfWaveFunctionElements = 0;
     int                                 m_maxNumberOfParametersPerElement = 0;
-    int                                 m_totalNumberOfSteps        = 0;
     int                                 m_totalNumberOfParameters   = 0;
     int                                 m_Z                         = 1;
     int                                 m_rangeOfDynamicSteps       = 10;
@@ -114,6 +116,12 @@ private:
     int                                 m_myRank                    = 0;
     int                                 m_iter                      = 0;
 
+    int                                 m_totalNumberOfStepsWOEqui  = 0;
+    int                                 m_totalNumberOfStepsWEqui   = 0;
+    int                                 m_numberOfStepsWOEqui       = 0;
+    int                                 m_numberOfStepsWEqui        = 0;
+    int                                 m_numberOfEquilibriationSteps = 0;
+
     double                              m_equilibrationFraction     = 0.0;
     double                              m_stepLength                = 0.1;
     double                              m_omega                     = 1.0;
@@ -121,6 +129,7 @@ private:
     double                              m_eta                       = 0.1;
     double                              m_tolerance                 = 1e-7;
     double                              m_maxRadius                 = 10;
+    double                              m_totalTime                 = 0;
 
     bool                                m_interaction               = false;
     bool                                m_checkConvergence          = false;
