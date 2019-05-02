@@ -27,9 +27,9 @@ void System::runIterations(const int numberOfIterations) {
 
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
         if(m_applyDynamicSteps) {
-            m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * dynamicStepsPerRank();
+            m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * dynamicSteps();
             m_numberOfStepsWEqui       = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
-            m_totalNumberOfStepsWOEqui = m_initialTotalNumberOfStepsWOEqui * dynamicStepsTotal();
+            m_totalNumberOfStepsWOEqui = m_initialTotalNumberOfStepsWOEqui * dynamicSteps();
             m_totalNumberOfStepsWEqui  = m_totalNumberOfStepsWOEqui + m_numberOfEquilibriationSteps;
         }
         m_sampler->setNumberOfSteps(m_numberOfStepsWOEqui, m_totalNumberOfStepsWOEqui, m_totalNumberOfStepsWEqui);
@@ -105,44 +105,15 @@ void System::checkingConvergence() {
     }
 }
 
-int System::dynamicStepsPerRank() {
+int System::dynamicSteps() {
     int stepRatio = 1;
     if(m_iter == m_lastIteration+m_rangeOfDynamicSteps) {
-        if(m_myRank == 0) {
-            stepRatio = int(pow(2,m_additionalStepsLastIteration)) / m_numberOfProcesses + int(pow(2,m_additionalStepsLastIteration)) % m_numberOfProcesses;
-        }
-        else {
-            stepRatio = int(pow(2,m_additionalStepsLastIteration)) / m_numberOfProcesses;
-        }
+        stepRatio = int(pow(2,m_additionalStepsLastIteration));
+        stepRatio = int(pow(2,m_additionalStepsLastIteration));
     }
     else if(m_iter >= m_lastIteration) {
-        if(m_myRank == 0) {
-            stepRatio = int(pow(2,m_additionalSteps)) / m_numberOfProcesses + int(pow(2,m_additionalSteps)) % m_numberOfProcesses;
-        }
-        else {
-            stepRatio = int(pow(2,m_additionalSteps)) / m_numberOfProcesses;
-        }
-    }
-    return stepRatio;
-}
-
-int System::dynamicStepsTotal() {
-    int stepRatio = 1;
-    if(m_iter == m_lastIteration+m_rangeOfDynamicSteps) {
-        if(m_myRank == 0) {
-            stepRatio = int(pow(2,m_additionalStepsLastIteration));
-        }
-        else {
-            stepRatio = int(pow(2,m_additionalStepsLastIteration));
-        }
-    }
-    else if(m_iter >= m_lastIteration) {
-        if(m_myRank == 0) {
-            stepRatio = int(pow(2,m_additionalSteps));
-        }
-        else {
-            stepRatio = int(pow(2,m_additionalSteps));
-        }
+        stepRatio = int(pow(2,m_additionalSteps));
+        stepRatio = int(pow(2,m_additionalSteps));
     }
     return stepRatio;
 }

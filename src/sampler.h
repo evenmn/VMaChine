@@ -29,6 +29,7 @@ private:
     int              m_totalNumberOfStepsWOEqui = 0;
     int              m_totalNumberOfStepsWEqui = 0;
     int              m_numberOfEquilibriationSteps = 0;
+    int              m_initialTotalNumberOfStepsWOEqui = 0;
 
     int              m_maxNumberOfParametersPerElement = 0;
     int              m_numberOfProcesses = 0;

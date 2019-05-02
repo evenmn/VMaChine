@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,16));
+    int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 100;
     double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 
     // Density tools
     double  maxRadius                       = 15;                       // Max radius of one-body density plots
-    int     numberOfBins                    = int(100 * maxRadius);     // Number of bins
+    int     numberOfBins                    = int(100 * maxRadius);     // 100 bins per radius unit
 
 
     // --- SET PARAMETERS ---

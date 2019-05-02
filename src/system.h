@@ -9,8 +9,7 @@ public:
     void runMetropolisCycles            ();
     void printToTerminal                (int numberOfIterations);
     void checkingConvergence            ();
-    int  dynamicStepsPerRank            ();
-    int  dynamicStepsTotal              ();
+    int  dynamicSteps                   ();
     void setNumberOfParticles           (const int numberOfParticles);
     void setNumberOfDimensions          (const int numberOfDimensions);
     void setNumberOfHiddenNodes         (const int numberOfHiddenNodes);
@@ -68,6 +67,7 @@ public:
     int                                 getTotalNumberOfStepsWEqui() { return m_totalNumberOfStepsWEqui; }
     int                                 getNumberOfStepsWOEqui()     { return m_numberOfStepsWOEqui; }
     int                                 getNumberOfStepsWEqui()      { return m_numberOfStepsWEqui; }
+    int                                 getInitialTotalNumberOfStepsWOEqui() { return m_initialTotalNumberOfStepsWOEqui; }
     int                                 getnumberOfEquilibriationSteps() { return m_numberOfEquilibriationSteps; }
 
     double                              getMaxRadius()               { return m_maxRadius; }

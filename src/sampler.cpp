@@ -23,9 +23,10 @@ Sampler::Sampler(System* system) {
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfElements                  = m_system->getNumberOfWaveFunctionElements();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-    //m_totalNumberOfStepsWOEqui          = m_system->getTotalNumberOfStepsWOEqui();
-    //m_totalNumberOfStepsWEqui           = m_system->getTotalNumberOfStepsWEqui();
-    //m_numberOfStepsWOEqui               = m_system->getNumberOfStepsWOEqui();
+    m_totalNumberOfStepsWOEqui          = m_system->getTotalNumberOfStepsWOEqui();
+    m_totalNumberOfStepsWEqui           = m_system->getTotalNumberOfStepsWEqui();
+    m_numberOfStepsWOEqui               = m_system->getNumberOfStepsWOEqui();
+    m_initialTotalNumberOfStepsWOEqui   = m_system->getInitialTotalNumberOfStepsWOEqui();
     m_numberOfEquilibriationSteps       = m_system->getnumberOfEquilibriationSteps();
     m_omega                             = m_system->getFrequency();
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
@@ -50,7 +51,6 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber) {
         m_cumulativeEnergySqrd      = 0;
         m_cumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
         m_cumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
-        m_numberOfStepsPerBatch     = int(m_numberOfStepsWOEqui/m_numberOfBatches);
     }
     m_instantEnergy    = m_system->getHamiltonian()->computeLocalEnergy();
     m_instantGradients = m_system->getAllInstantGradients();
@@ -81,9 +81,11 @@ void Sampler::setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWO
     m_numberOfStepsWOEqui      = numberOfStepsWOEqui;
     m_totalNumberOfStepsWOEqui = totalNumberOfStepsWOEqui;
     m_totalNumberOfStepsWEqui  = totalNumberOfStepsWEqui;
+    m_numberOfStepsPerBatch    = int(m_totalNumberOfStepsWOEqui/m_numberOfBatches);
 }
 
 void Sampler::computeAverages() {
+    cout << m_averageGradients << endl;
     m_averageEnergy         = m_totalCumulativeEnergy     / m_totalNumberOfStepsWOEqui;
     m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / m_totalNumberOfStepsWOEqui;
     m_averageGradients      = m_totalCumulativeGradients  / m_numberOfStepsPerBatch;
@@ -100,7 +102,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " Number of processes    : " << m_system->getNumberOfProcesses()  << endl;
     cout << " Number of parameters   : " << m_system->getTotalNumberOfParameters() << endl;
     cout << " Oscillator frequency   : " << m_omega << endl;
-    cout << " # Metropolis steps     : " << m_totalNumberOfStepsWEqui << " ("
+    cout << " # Metropolis steps     : " << m_totalNumberOfStepsWEqui  << " ("
                                          << m_totalNumberOfStepsWOEqui << " equilibration)" << endl;
     cout << " Energy file stored as  : " << m_averageEnergyFileName << endl;
     cout << " Instant file stored as : " << m_instantEnergyFileName << endl;
@@ -202,7 +204,7 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
     filename += std::to_string(m_numberOfParticles) + "P/";
     filename += std::to_string(m_omega) + "w/";
     filename += optimization;
-    filename += "_MC" + std::to_string(m_totalNumberOfStepsWOEqui);
+    filename += "_MC" + std::to_string(m_initialTotalNumberOfStepsWOEqui);
     filename += extension;
     return filename;
 }
