@@ -10,7 +10,7 @@
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
 #include "Optimization/optimization.h"
-#include "Resampling/blocker.h"
+#include "block/c++/blocker.h"
 
 using std::cout;
 using std::endl;
@@ -85,7 +85,6 @@ void Sampler::setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWO
 }
 
 void Sampler::computeAverages() {
-    cout << m_averageGradients << endl;
     m_averageEnergy         = m_totalCumulativeEnergy     / m_totalNumberOfStepsWOEqui;
     m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / m_totalNumberOfStepsWOEqui;
     m_averageGradients      = m_totalCumulativeGradients  / m_numberOfStepsPerBatch;
@@ -96,16 +95,17 @@ void Sampler::computeAverages() {
 void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     m_iter += 1;
     cout << endl;
-    cout << "  -- System info: " << m_iter << "/" << maxIter << " -- " << endl;
-    cout << " Number of particles    : " << m_system->getNumberOfParticles()  << endl;
-    cout << " Number of dimensions   : " << m_system->getNumberOfDimensions() << endl;
-    cout << " Number of processes    : " << m_system->getNumberOfProcesses()  << endl;
-    cout << " Number of parameters   : " << m_system->getTotalNumberOfParameters() << endl;
-    cout << " Oscillator frequency   : " << m_omega << endl;
-    cout << " # Metropolis steps     : " << m_totalNumberOfStepsWEqui  << " ("
-                                         << m_totalNumberOfStepsWOEqui << " equilibration)" << endl;
-    cout << " Energy file stored as  : " << m_averageEnergyFileName << endl;
-    cout << " Instant file stored as : " << m_instantEnergyFileName << endl;
+    cout << "  -- System info: " << " -- " << endl;
+    cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
+    cout << " Number of particles     : " << m_system->getNumberOfParticles()  << endl;
+    cout << " Number of dimensions    : " << m_system->getNumberOfDimensions() << endl;
+    cout << " Number of processes     : " << m_system->getNumberOfProcesses()  << endl;
+    cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
+    cout << " Oscillator frequency    : " << m_omega << endl;
+    cout << " # Metropolis steps      : " << m_totalNumberOfStepsWEqui  << " ("
+                                          << m_totalNumberOfStepsWOEqui << " equilibration)" << endl;
+    cout << " Energy file stored as   : " << m_averageEnergyFileName << endl;
+    cout << " Blocking file stored as : " << m_instantEnergyFileName << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy            : " << m_averageEnergy << endl;

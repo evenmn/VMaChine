@@ -8,6 +8,7 @@
 #include "Metropolis/metropolis.h"
 #include "Optimization/optimization.h"
 #include "RNG/rng.h"
+//#include "tqdm/tqdm.h"
 
 #include <mpi.h>
 #include <iostream>
@@ -26,6 +27,7 @@ void System::runIterations(const int numberOfIterations) {
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
+    //for(m_iter : tqdm::range(numberOfIterations)) {
         if(m_applyDynamicSteps) {
             m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * dynamicSteps();
             m_numberOfStepsWEqui       = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;

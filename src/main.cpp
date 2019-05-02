@@ -65,8 +65,8 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 100;
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 30;
     double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setGlobalArraysToCalculate  ();
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new SGD(system,0.0,0.0));
+    system->setOptimization             (new GradientDescent(system,0.0,0.0));
     system->setGradients                ();
     system->runIterations               (numberOfIterations);
 

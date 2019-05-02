@@ -13,7 +13,7 @@ SET(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 # Set default build configuration
 IF( NOT CMAKE_BUILD_TYPE )
-   SET(CMAKE_BUILD_TYPE Release ... FORCE)
+   SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
 # Print which build configuration used
@@ -28,10 +28,11 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/InitialWeights
     ${PROJECT_SOURCE_DIR}/src/Metropolis
     ${PROJECT_SOURCE_DIR}/src/Optimization
-    ${PROJECT_SOURCE_DIR}/src/Resampling
     ${PROJECT_SOURCE_DIR}/src/RNG
     ${PROJECT_SOURCE_DIR}/src/WaveFunctions
     ${PROJECT_SOURCE_DIR}/src/Eigen
+    ${PROJECT_SOURCE_DIR}/src/blocker/c++
+    ${PROJECT_SOURCE_DIR}/src/tqdm
     ${MPI_INCLUDE_PATH}
 )
 
@@ -71,7 +72,6 @@ set(SOURCES
     src/Optimization/adam.cpp
     src/Basis/none.cpp
     src/WaveFunctions/padejastrow.cpp
-    src/Resampling/blocker.cpp
     src/WaveFunctions/simplejastrow.cpp
     src/WaveFunctions/samsethjastrow.cpp
     src/WaveFunctions/padejastrow2.cpp
@@ -81,6 +81,7 @@ set(SOURCES
     src/WaveFunctions/rbmjastrow.cpp
     src/WaveFunctions/rbmjastrow2.cpp
     src/WaveFunctions/rbmjastrow3.cpp
+    src/block/c++/blocker.cpp
 )
 
 

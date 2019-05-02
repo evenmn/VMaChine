@@ -8,12 +8,12 @@ QT += widgets
 QT += core
 QT += charts
 
-# remove possible other optimization flags
+# Remove possible other optimization flags
 QMAKE_CXXFLAGS_RELEASE -= -O
 QMAKE_CXXFLAGS_RELEASE -= -O1
 QMAKE_CXXFLAGS_RELEASE -= -O2
 
-# add the desired -O3 if not present
+# Add the desired -O3 if not present
 QMAKE_CXXFLAGS_RELEASE *= -O3
 
 # MPI Settings
@@ -23,11 +23,12 @@ QMAKE_CXX_DEBUG         = $$QMAKE_CXX
 QMAKE_LINK              = $$QMAKE_CXX
 QMAKE_CC                = mpicc
 
-QMAKE_CFLAGS           += $$system(mpicc --showme:compile)
+QMAKE_CFLAGS           += $$system(mpicc  --showme:compile)
 QMAKE_LFLAGS           += $$system(mpicxx --showme:link)
 QMAKE_CXXFLAGS         += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK
 QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK
 
+# Load internal source files
 SOURCES += main.cpp \
     system.cpp \
     sampler.cpp \
@@ -69,9 +70,13 @@ SOURCES += main.cpp \
     Basis/basis.cpp \
     Basis/hermite.cpp \
     Basis/hydrogenorbital.cpp \
-    Basis/none.cpp \
-    Resampling/blocker.cpp
+    Basis/none.cpp
 
+# Load external source files
+SOURCES += \
+    block/c++/blocker.cpp
+
+# Load internal header files
 HEADERS += \
     system.h \
     sampler.h \
@@ -113,5 +118,9 @@ HEADERS += \
     Basis/basis.h \
     Basis/hermite.h \
     Basis/hydrogenorbital.h \
-    Basis/none.h \
-    Resampling/blocker.h
+    Basis/none.h
+
+# Load external header files
+HEADERS += \
+    block/c++/blocker.h \
+    tqdm/tqdm.h
