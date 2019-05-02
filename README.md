@@ -58,7 +58,7 @@ again for 4 parallel processes. An example implementation is showed below
 -------------------
 
 ## Adjust parameters
-All adjustable parameters can currently be found in ´´´main.cpp´´´, including
+All adjustable parameters can currently be found in ```main.cpp```, including
 
 - number of particles
 - number of dimensions
@@ -76,14 +76,14 @@ For the last iteration, blocking is performed and the blocking results are print
 ![terminal](screenshots/terminal.png)
 
 The energies for all iterations are stored in a file found in the data folder. The exact location and file name is also printed to the terminal, see image above. To plot this energy file, run 
-```python
+```bash
 python3 scripts/plot_energy.py
 ```
 which also support multiple files. 
 
 ### One-body density
 The one-body density is calculated during the last iteration by default, and the file is stored in the same way as the energy files described above. The one-body density can be plotted by 
-```python
+```bash
 python3 scripts/plot_ob_density.py
 ```
 which again supports multiple files. Remember to set correct number of dimensions inside the script!
