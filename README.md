@@ -1,5 +1,5 @@
 # VMC
-===============
+----------------------
 VMC is a general variational Monte-Carlo solver written in C++. It was implemented with respect to being flexible, such that various wave functions based on neural networks easily can added. At this point, several machine learning wave functions are already implemented, in particular based on Gaussian-binary Boltzmann machines. 
 
 ## Prerequisites
