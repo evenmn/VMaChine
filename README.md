@@ -1,6 +1,6 @@
 # VMC
 ----------------------
-VMC is a general variational Monte-Carlo solver written in C++. It was implemented with respect to being flexible, such that various wave functions based on neural networks easily can added. At this point, several machine learning wave functions are already implemented, in particular based on Gaussian-binary Boltzmann machines. 
+VMC is a general variational Monte-Carlo solver written in C++. It was implemented with the purpose of being flexible, such that various wave functions based on neural networks easily can added. At this point, several machine learning wave functions are already implemented, in particular based on Gaussian-binary Boltzmann machines. 
 
 ## Prerequisites
 To run this project without issues, the most recent C++ version, C++17, is recommended. In addition, a few external packages are required, that is
@@ -36,7 +36,7 @@ There are several ways to compile and run the code. Below, we will present two e
 ```bash
 1. chmod +x CompileVMC
 2. ./CompileVMC
-3. mpirun -n 4 -quiet vmc
+3. mpirun -n 4 vmc
 4. make clean
 ```
 for 4 parallel processes.
@@ -49,7 +49,7 @@ for 4 parallel processes.
 #### Parallel processing using QT-creator
 To run in parallel, one needs to add a run configuration that supports this. Go to Projects-> Run-> Add-> Custom Executable. Then set
 - Executable: ```/usr/bin/mpirun```
-- Command line arguments: ```-n 4 -quiet ./QMC```
+- Command line arguments: ```-n 4 ./QMC```
 - Working directory: ```/where/the/executable/is```
 
 again for 4 parallel processes. An example implementation is showed below
