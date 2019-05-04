@@ -1,5 +1,6 @@
 #pragma once
 #include <Eigen/Dense>
+#include <mpi.h>
 
 class Hamiltonian {
 public:
