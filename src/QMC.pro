@@ -70,7 +70,9 @@ SOURCES += main.cpp \
     Basis/basis.cpp \
     Basis/hermite.cpp \
     Basis/hydrogenorbital.cpp \
-    Basis/none.cpp
+    Basis/none.cpp \
+    Basis/hartreefockhermite.cpp \
+    Hamiltonians/doublewell.cpp
 
 # Load external source files
 SOURCES += \
@@ -118,7 +120,9 @@ HEADERS += \
     Basis/basis.h \
     Basis/hermite.h \
     Basis/hydrogenorbital.h \
-    Basis/none.h
+    Basis/none.h \
+    Basis/hartreefockhermite.h \
+    Hamiltonians/doublewell.h
 
 # Load external header files
 HEADERS += \

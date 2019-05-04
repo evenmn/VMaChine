@@ -88,8 +88,10 @@ void System::printToTerminal(int numberOfIterations) {
         m_sampler->closeOutputFiles();
         if(m_myRank == 0) {
             m_sampler->printFinalOutputToTerminal();
-            exit(0);
         }
+        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Finalize();
+        exit(0);
     }
     else {
         if(m_myRank == 0) {

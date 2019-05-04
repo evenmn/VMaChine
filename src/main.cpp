@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,20));
-    int     numberOfIterations  = 30;
+    int     numberOfIterations  = 100;
     double  eta                 = 0.5;                      // Learning rate
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
@@ -155,7 +155,5 @@ int main(int argc, char *argv[]) {
     //plots->plotEnergy(argc, argv);
     //plots->plotOneBodyDensity(argc, argv);
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Finalize();
     return 0;
 }

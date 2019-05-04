@@ -4,9 +4,6 @@
 #include "../system.h"
 #include "../WaveFunctions/wavefunction.h"
 
-using std::cout;
-using std::endl;
-
 HarmonicOscillator::HarmonicOscillator(System* system) :
         Hamiltonian(system) {
     m_omega                 = m_system->getFrequency();

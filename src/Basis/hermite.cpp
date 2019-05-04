@@ -13,6 +13,7 @@ Hermite::Hermite(System *system)  :
     numberOfOrbitals();
 }
 
+/*
 int factorial(const int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
@@ -21,18 +22,20 @@ double binomial(const int n, const int p) {
     //Binomial coefficients, equal to magic numbers
     return factorial(n+p)/(factorial(n)*factorial(p));
 }
+*/
 
 void Hermite::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
     while(true) {
-        double orb = 2*binomial(counter, m_numberOfDimensions);
+        double orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
         if(int(orb) == m_numberOfParticles) {
             m_numberOfOrbitals = counter+1;
             break;
         }
         else if(orb > m_numberOfParticles) {
             std::cout << "This program supports closed-shells only. Please choose a number of particles such that the orbital is full" << std::endl;
+            MPI_Finalize();
             exit(0);
         }
         counter += 1;
