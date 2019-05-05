@@ -65,6 +65,7 @@ public:
 
     int                                 getTotalNumberOfStepsWOEqui(){ return m_totalNumberOfStepsWOEqui; }
     int                                 getTotalNumberOfStepsWEqui() { return m_totalNumberOfStepsWEqui; }
+    int                                 getTotalNumberOfEquilibriationSteps() { return m_totalNumberOfEquilibriationSteps; }
     int                                 getNumberOfStepsWOEqui()     { return m_numberOfStepsWOEqui; }
     int                                 getNumberOfStepsWEqui()      { return m_numberOfStepsWEqui; }
     int                                 getInitialTotalNumberOfStepsWOEqui() { return m_initialTotalNumberOfStepsWOEqui; }
@@ -119,6 +120,7 @@ private:
 
     int                                 m_totalNumberOfStepsWOEqui  = 0;
     int                                 m_totalNumberOfStepsWEqui   = 0;
+    int                                 m_totalNumberOfEquilibriationSteps = 0;
     int                                 m_numberOfStepsWOEqui       = 0;
     int                                 m_numberOfStepsWEqui        = 0;
     int                                 m_numberOfEquilibriationSteps = 0;

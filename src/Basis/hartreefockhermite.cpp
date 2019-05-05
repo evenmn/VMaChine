@@ -2,6 +2,7 @@
 #include "hermite.h"
 #include "../system.h"
 #include <iostream>
+#include <fstream>
 
 HartreeFockHermite::HartreeFockHermite(System *system)  :
     Basis(system) {
@@ -10,11 +11,50 @@ HartreeFockHermite::HartreeFockHermite(System *system)  :
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     m_omega                 = m_system->getFrequency();
     m_omegaSqrt             = sqrt(m_omega);
-    m_basisSize             = 120;
-    m_coefficients          = Eigen::MatrixXd::Zero(int(m_numberOfParticles/2), m_basisSize);
+    m_path                  = m_system->getPath();
     m_hermite               = new Hermite(system);
+    readCoefficientFile();
     numberOfOrbitals();
 
+}
+
+std::ifstream::pos_type fileLength(std::string fileName)
+{
+    std::ifstream inFile(fileName.c_str());
+    return std::count(std::istreambuf_iterator<char>(inFile),
+                      std::istreambuf_iterator<char>(), '\n');
+}
+
+std::string HartreeFockHermite::generateFileName() {
+    std::string fileName = m_path;
+    fileName += "int1/";
+    fileName += "hartree-fock/";
+    fileName += "harmonicoscillator/";
+    fileName += std::to_string(m_numberOfDimensions) + "D/";
+    fileName += std::to_string(m_numberOfParticles) + "P/";
+    fileName += std::to_string(m_omega) + "w/";
+    fileName += "coeffs.dat";
+    return fileName;
+}
+
+void HartreeFockHermite::readCoefficientFile() {
+    std::string fileName = generateFileName();
+    std::ifstream inFile(generateFileName().c_str(), std::ios::in);
+    m_basisSize             = fileLength(fileName);
+    m_coefficients          = Eigen::MatrixXd::Zero(int(m_numberOfParticles/2), m_basisSize);
+    if (!inFile.is_open()) {
+        std::cout << "file not found";
+        MPI_Finalize();
+        exit(0);
+    }
+    else {
+        double value;
+        int counter = 0;
+        while (inFile >> value) {
+            m_coefficients(int(counter/m_basisSize), counter % m_basisSize) = value;
+            counter += 1;
+        }
+    }
 }
 
 void HartreeFockHermite::numberOfOrbitals() {

@@ -196,17 +196,17 @@ void Sampler::mergeOneBodyFiles() {
 }
 
 std::string Sampler::generateFileName(std::string path, std::string name, std::string optimization, std::string extension) {
-    std::string filename = path;
-    filename += "int" + std::to_string(m_interaction) + "/";
-    filename += name + "/";
-    filename += m_system->getAllLabels() + "/";
-    filename += std::to_string(m_numberOfDimensions) + "D/";
-    filename += std::to_string(m_numberOfParticles) + "P/";
-    filename += std::to_string(m_omega) + "w/";
-    filename += optimization;
-    filename += "_MC" + std::to_string(m_initialTotalNumberOfStepsWOEqui);
-    filename += extension;
-    return filename;
+    std::string fileName = path;
+    fileName += "int" + std::to_string(m_interaction) + "/";
+    fileName += name + "/";
+    fileName += m_system->getAllLabels() + "/";
+    fileName += std::to_string(m_numberOfDimensions) + "D/";
+    fileName += std::to_string(m_numberOfParticles) + "P/";
+    fileName += std::to_string(m_omega) + "w/";
+    fileName += optimization;
+    fileName += "_MC" + std::to_string(m_initialTotalNumberOfStepsWOEqui);
+    fileName += extension;
+    return fileName;
 }
 
 void Sampler::openOutputFiles() {

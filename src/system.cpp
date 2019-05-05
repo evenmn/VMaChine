@@ -222,18 +222,20 @@ void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes) {
 }
 
 void System::setNumberOfMetropolisSteps(const int steps) {
-    m_totalNumberOfStepsWOEqui      = steps;
-    m_totalNumberOfStepsWEqui       = int(steps * (1 + m_equilibrationFraction));
+    m_totalNumberOfStepsWOEqui         = steps;
+    m_totalNumberOfEquilibriationSteps = m_totalNumberOfStepsWOEqui * m_equilibrationFraction;
+    m_totalNumberOfStepsWEqui          = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
+
     if(m_myRank == 0) {
-        m_numberOfStepsWOEqui       = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
+        m_numberOfStepsWOEqui          = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
     }
     else {
-        m_numberOfStepsWOEqui       = steps / m_numberOfProcesses;
+        m_numberOfStepsWOEqui          = steps / m_numberOfProcesses;
     }
-    m_numberOfStepsWEqui            = int(m_numberOfStepsWOEqui * (1 + m_equilibrationFraction));
-    m_numberOfEquilibriationSteps   = m_numberOfStepsWEqui - m_numberOfStepsWOEqui;
-    m_initialNumberOfStepsWOEqui    = m_numberOfStepsWOEqui;
-    m_initialTotalNumberOfStepsWOEqui = m_totalNumberOfStepsWOEqui;
+    m_numberOfStepsWEqui               = int(m_numberOfStepsWOEqui * (1 + m_equilibrationFraction));
+    m_numberOfEquilibriationSteps      = m_numberOfStepsWEqui - m_numberOfStepsWOEqui;
+    m_initialNumberOfStepsWOEqui       = m_numberOfStepsWOEqui;
+    m_initialTotalNumberOfStepsWOEqui  = m_totalNumberOfStepsWOEqui;
 }
 
 void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionElements) {
