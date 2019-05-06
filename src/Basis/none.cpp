@@ -24,6 +24,19 @@ double None::evaluateSecondDerivative(double x, int n) {
     return 0;
 }
 
-Eigen::MatrixXd None::generateListOfStates() {
-    return Eigen::MatrixXd::Ones(1,1);
+double None::basisElement(const int n, Eigen::VectorXd positions) {
+    return 1;
+}
+
+double None::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
+    // i is the dimension we are derivating with respect to
+    return 0;
+}
+
+double None::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
+    // i is the dimension we are derivating with respect to
+    return 0;
+}
+
+void None::generateListOfStates() {
 }

@@ -6,15 +6,13 @@ class Basis {
 public:
     Basis(class System* system);
     virtual void numberOfOrbitals() = 0;
-    virtual double evaluate(double x, int n) = 0;
-    virtual double evaluateDerivative(double x, int n) = 0;
-    virtual double evaluateSecondDerivative(double x, int n) = 0;
-    virtual Eigen::MatrixXd generateListOfStates() = 0;
-    virtual ~Basis() = 0;
+    virtual void generateListOfStates() = 0;
 
     virtual double basisElement(const int n, Eigen::VectorXd positions) = 0;
     virtual double basisElementDer(const int n, const int i, Eigen::VectorXd positions) = 0;
     virtual double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) = 0;
+
+    virtual ~Basis() = 0;
 
     int factorial(const int n);
     double binomial(const int n, const int p);

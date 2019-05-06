@@ -23,16 +23,19 @@ Sampler::Sampler(System* system) {
     m_numberOfDimensions                = m_system->getNumberOfDimensions();
     m_numberOfElements                  = m_system->getNumberOfWaveFunctionElements();
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+
     m_totalNumberOfStepsWOEqui          = m_system->getTotalNumberOfStepsWOEqui();
     m_totalNumberOfStepsWEqui           = m_system->getTotalNumberOfStepsWEqui();
     m_numberOfStepsWOEqui               = m_system->getNumberOfStepsWOEqui();
     m_initialTotalNumberOfStepsWOEqui   = m_system->getInitialTotalNumberOfStepsWOEqui();
     m_numberOfEquilibriationSteps       = m_system->getnumberOfEquilibriationSteps();
+
     m_omega                             = m_system->getFrequency();
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch             = int(m_numberOfStepsWOEqui/m_numberOfBatches);
     m_interaction                       = m_system->getInteraction();
     m_calculateOneBody                  = m_system->getDensity();
+    m_computeTwoBodyDensity             = m_system->computeTwoBodyDensity();
     m_printEnergyToFile                 = m_system->getPrintEnergy();
     m_printInstantEnergyToFile          = m_system->getPrintInstantEnergy();
     m_numberOfBins                      = m_system->getNumberOfBins();
@@ -42,6 +45,7 @@ Sampler::Sampler(System* system) {
     m_radialStep                        = m_maxRadius/m_numberOfBins;
     m_binLinSpace                       = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
     m_particlesPerBin                   = Eigen::VectorXd::Zero(m_numberOfBins);
+    m_particlesPerBinPairwise           = Eigen::MatrixXd::Zero(m_numberOfBins, m_numberOfBins);
 }
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber) {
@@ -229,6 +233,10 @@ void Sampler::openOutputFiles() {
         std::string oneBodyFileName = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(m_rank) + ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
+    if(m_computeTwoBodyDensity) {
+        std::string twoBodyFileName = generateFileName(m_path, "twobody", "SGD", "_" + std::to_string(m_rank) + ".dat");
+        m_twoBodyFile.open (twoBodyFileName);
+    }
 }
 
 void Sampler::printEnergyToFile() {
@@ -243,9 +251,16 @@ void Sampler::printOneBodyDensityToFile() {
     }
 }
 
+void Sampler::printTwoBodyDensityToFile() {
+    if(m_computeTwoBodyDensity) {
+        m_twoBodyFile << m_particlesPerBinPairwise << endl;
+    }
+}
+
 void Sampler::closeOutputFiles() {
     if(m_averageEnergyFile.is_open())      { m_averageEnergyFile.close(); }
     if(m_oneBodyFile.is_open())            { m_oneBodyFile.close(); }
+    if(m_twoBodyFile.is_open())            { m_twoBodyFile.close(); }
     if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
 }
 
@@ -255,21 +270,53 @@ void Sampler::printInstantValuesToFile() {
     }
 }
 
-void Sampler::calculateOneBodyDensities(const Eigen::VectorXd positions) {
+void Sampler::calculateOneBodyDensity(const Eigen::VectorXd positions) {
     if(m_calculateOneBody) {                         // Calculate onebody densities
-        for(int j=0; j<m_numberOfParticles; j++) {
+        for(int particle=0; particle<m_numberOfParticles; particle++) {
             double dist = 0;
-            int numTimesJ = m_numberOfDimensions*j;
+            int positionIndex = m_numberOfDimensions * particle;
             for(int d=0; d<m_numberOfDimensions; d++) {
-                double position = positions(numTimesJ+d);
+                double position = positions(positionIndex+d);
                 dist += position * position;
             }
-            double r = sqrt(dist);      // Distance from particle j to origin
+            double r = sqrt(dist);      // Distance from particle to origin
             for(int k=0; k<m_numberOfBins; k++) {
                 if(r < m_binLinSpace(k)) {
                     m_particlesPerBin(k) += 1;
                     break;
                 }
+            }
+        }
+    }
+}
+
+void Sampler::calculateTwoBodyDensity(const Eigen::VectorXd positions) {
+    if(m_computeTwoBodyDensity) {                         // Calculate twobody densities
+        for(int particle1=0; particle1<m_numberOfParticles; particle1++) {
+            double dist1 = 0;
+            int position1Index = m_numberOfDimensions * particle1;
+            for(int d=0; d<m_numberOfDimensions; d++) {
+                double position1 = positions(position1Index+d);
+                dist1 += position1 * position1;
+            }
+            double r1 = sqrt(dist1);      // Distance from particle 1 to origin
+            int counter1 = 0;
+            while(m_binLinSpace(counter1) < r1) {
+                counter1 += 1;
+            }
+            for(int particle2=particle1+1; particle2<m_numberOfParticles; particle2++) {
+                double dist2 = 0;
+                int position2Index = m_numberOfDimensions * particle2;
+                for(int d=0; d<m_numberOfDimensions; d++) {
+                    double position2 = positions(position2Index+d);
+                    dist2 += position2 * position2;
+                }
+                double r2 = sqrt(dist2);      // Distance from particle 2 to origin
+                int counter2 = 0;
+                while(m_binLinSpace(counter2) < r2) {
+                    counter2 += 1;
+                }
+                m_particlesPerBinPairwise(counter1, counter2) += 1;
             }
         }
     }

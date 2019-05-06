@@ -61,7 +61,6 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions, const 
     // Set matrices
     m_positions                 = positions;
     m_probabilityRatio          = 1;
-    m_listOfStates              = m_system->getBasis()->generateListOfStates();
 
     Eigen::Map<Eigen::MatrixXd> positionBlock(m_positions.data(), m_numberOfDimensions, m_numberOfParticles);
     m_positionBlock = positionBlock;
@@ -84,22 +83,22 @@ void SlaterDeterminant::updateParameters(Eigen::MatrixXd parameters, const int e
 
 void SlaterDeterminant::initializeSlaterMatrix() {
     m_slaterMatrix = Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticlesHalf);
-    for(int j=0; j<m_numberOfParticles; j++) {
-        updateSlaterMatrixRow(j);
+    for(int row=0; row<m_numberOfParticles; row++) {
+        updateSlaterMatrixRow(row);
     }
 }
 
 void SlaterDeterminant::initializeSlaterMatrixDer() {
     m_slaterMatrixDer = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfParticlesHalf);
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        updateSlaterMatrixDerRow(k);
+    for(int row=0; row<m_numberOfFreeDimensions; row++) {
+        updateSlaterMatrixDerRow(row);
     }
 }
 
 void SlaterDeterminant::initializeSlaterMatrixSecDer() {
     m_slaterMatrixSecDer = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfParticlesHalf);
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        updateSlaterMatrixSecDerRow(k);
+    for(int row=0; row<m_numberOfFreeDimensions; row++) {
+        updateSlaterMatrixSecDerRow(row);
     }
 }
 
@@ -149,7 +148,6 @@ void SlaterDeterminant::updateSlaterMatrixDerRow(const int row) {
 void SlaterDeterminant::updateSlaterMatrixSecDerRow(const int row) {
     int particle  = int(row/m_numberOfDimensions);
     int dimension = row%m_numberOfDimensions;
-
     for(int col=0; col<m_numberOfParticlesHalf; col++) {
         m_slaterMatrixSecDer(row,col) = m_system->getBasis()->basisElementSecDer(col, dimension, m_positionBlock.col(particle));
     }

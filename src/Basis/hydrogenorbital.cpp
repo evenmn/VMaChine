@@ -83,7 +83,21 @@ double HydrogenOrbital::evaluateDerivative(double x, int n) {
     return - prefactor * (associatedLaguerre(2*m_Z*x/n, 2, n-2)*exp(-m_Z*x/n) + associatedLaguerre(2*m_Z*x/n, 1, n-1)*exp(-m_Z*x/n) * m_Z/n);
 }
 
-Eigen::MatrixXd HydrogenOrbital::generateListOfStates() {
+double HydrogenOrbital::basisElement(const int n, Eigen::VectorXd positions) {
+    return 1;
+}
+
+double HydrogenOrbital::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
+    // i is the dimension we are derivating with respect to
+    return 0;
+}
+
+double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
+    // i is the dimension we are derivating with respect to
+    return 0;
+}
+
+void HydrogenOrbital::generateListOfStates() {
     Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
     int counter = 0;
     // Three dimensions
@@ -98,5 +112,4 @@ Eigen::MatrixXd HydrogenOrbital::generateListOfStates() {
             }
         }
     }
-    return listOfStates;
 }

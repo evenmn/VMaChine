@@ -11,7 +11,7 @@ Hermite::Hermite(System *system)  :
     m_omega                 = m_system->getFrequency();
     m_omegaSqrt             = sqrt(m_omega);
     numberOfOrbitals();
-    m_listOfStates = generateListOfStates();
+    generateListOfStates();
 }
 
 void Hermite::numberOfOrbitals() {
@@ -193,17 +193,17 @@ double Hermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd pos
     return prod;
 }
 
-Eigen::MatrixXd Hermite::generateListOfStates() {
+void Hermite::generateListOfStates() {
     // Returns the index list used in Slater
     // For instance (0,0), (1,0), (0,1) for 6P in 2D
     //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
     numberOfOrbitals();
-    Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
+    m_listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
     int counter = 0;
     // One dimension
     if (m_numberOfDimensions == 1) {
         for(int i=0; i<m_numberOfOrbitals; i++) {
-            listOfStates(i) = i;
+            m_listOfStates(i) = i;
         }
     }
     // Two dimensions
@@ -211,8 +211,8 @@ Eigen::MatrixXd Hermite::generateListOfStates() {
         for(int i=0; i<m_numberOfOrbitals; i++) {
             for(int s=i; s<m_numberOfOrbitals; s++) {
                 int j = s - i;
-                listOfStates(counter,1) = i;
-                listOfStates(counter,0) = j;
+                m_listOfStates(counter,1) = i;
+                m_listOfStates(counter,0) = j;
                 counter += 1;
             }
         }
@@ -223,9 +223,9 @@ Eigen::MatrixXd Hermite::generateListOfStates() {
             for(int j=0; j<m_numberOfOrbitals; j++) {
                 for(int s=i+j; s<m_numberOfOrbitals; s++) {
                     int k = s - i - j;
-                    listOfStates(counter,0) = i;
-                    listOfStates(counter,1) = j;
-                    listOfStates(counter,2) = k;
+                    m_listOfStates(counter,0) = i;
+                    m_listOfStates(counter,1) = j;
+                    m_listOfStates(counter,2) = k;
                     counter += 1;
                 }
             }
@@ -238,10 +238,10 @@ Eigen::MatrixXd Hermite::generateListOfStates() {
                 for(int k=0; k<m_numberOfOrbitals; k++) {
                     for(int s=i+j; s<m_numberOfOrbitals; s++) {
                         int l = s - i - j - k;
-                        listOfStates(counter,0) = i;
-                        listOfStates(counter,1) = j;
-                        listOfStates(counter,2) = k;
-                        listOfStates(counter,3) = l;
+                        m_listOfStates(counter,0) = i;
+                        m_listOfStates(counter,1) = j;
+                        m_listOfStates(counter,2) = k;
+                        m_listOfStates(counter,3) = l;
                         counter += 1;
                     }
                 }
@@ -253,7 +253,6 @@ Eigen::MatrixXd Hermite::generateListOfStates() {
         std::cout << "Number of dimensions should be in the range [1, 4]" << std::endl;
         exit(0);
     }
-    return listOfStates;
 }
 
 

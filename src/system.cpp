@@ -32,7 +32,7 @@ void System::runIterations(const int numberOfIterations) {
             m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * dynamicSteps();
             m_numberOfStepsWEqui       = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
             m_totalNumberOfStepsWOEqui = m_initialTotalNumberOfStepsWOEqui * dynamicSteps();
-            m_totalNumberOfStepsWEqui  = m_totalNumberOfStepsWOEqui + m_numberOfEquilibriationSteps;
+            m_totalNumberOfStepsWEqui  = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
         }
         m_sampler->setNumberOfSteps(m_numberOfStepsWOEqui, m_totalNumberOfStepsWOEqui, m_totalNumberOfStepsWEqui);
         double startTime = MPI_Wtime();
@@ -50,6 +50,7 @@ void System::runIterations(const int numberOfIterations) {
         m_sampler->printEnergyToFile();
         if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
             m_sampler->printOneBodyDensityToFile();
+            m_sampler->printTwoBodyDensityToFile();
         }
         printToTerminal(numberOfIterations);
 
@@ -77,7 +78,8 @@ void System::runMetropolisCycles() {
             m_sampler->sample(acceptedStep, i);
             if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
                 m_sampler->printInstantValuesToFile();
-                m_sampler->calculateOneBodyDensities(m_positions);
+                m_sampler->calculateOneBodyDensity(m_positions);
+                m_sampler->calculateTwoBodyDensity(m_positions);
             }
         }
     }
@@ -201,7 +203,7 @@ void System::setGlobalArraysToCalculate() {
 }
 
 void System::setNumberOfParticles(const int numberOfParticles) {
-    assert(numberOfParticles > 0);// Check if the elements need distance matrix or radial distance vector
+    assert(numberOfParticles > 0); // Check if the elements need distance matrix or radial distance vector
     m_numberOfParticles = numberOfParticles;
 }
 
@@ -222,20 +224,26 @@ void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes) {
 }
 
 void System::setNumberOfMetropolisSteps(const int steps) {
+    // Calculate number of steps without equilibriation (power of 2)
     m_totalNumberOfStepsWOEqui         = steps;
-    m_totalNumberOfEquilibriationSteps = m_totalNumberOfStepsWOEqui * m_equilibrationFraction;
-    m_totalNumberOfStepsWEqui          = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
-
     if(m_myRank == 0) {
         m_numberOfStepsWOEqui          = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
     }
     else {
         m_numberOfStepsWOEqui          = steps / m_numberOfProcesses;
     }
-    m_numberOfStepsWEqui               = int(m_numberOfStepsWOEqui * (1 + m_equilibrationFraction));
-    m_numberOfEquilibriationSteps      = m_numberOfStepsWEqui - m_numberOfStepsWOEqui;
+
+    // Store the initial steps in case adaptive step is chosen
     m_initialNumberOfStepsWOEqui       = m_numberOfStepsWOEqui;
     m_initialTotalNumberOfStepsWOEqui  = m_totalNumberOfStepsWOEqui;
+
+    // Calculate the number of equilibriation steps (needs to be unaffected by the number of processes)
+    m_numberOfEquilibriationSteps      = int(m_totalNumberOfStepsWOEqui * m_equilibrationFraction);
+    m_totalNumberOfEquilibriationSteps = int(m_totalNumberOfStepsWOEqui * m_equilibrationFraction * m_numberOfProcesses);
+
+    // Calculate the number of steps included equilibriation
+    m_totalNumberOfStepsWEqui          = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
+    m_numberOfStepsWEqui               = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
 }
 
 void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionElements) {
@@ -304,10 +312,11 @@ void System::setDynamicStepTools(bool applyDynamicSteps, int rangeOfDynamicSteps
     m_additionalStepsLastIteration = additionalStepsLastIteration;
 }
 
-void System::setDensityTools(bool computeDensity, int numberOfBins, double maxRadius) {
-    m_computeDensity    = computeDensity;
-    m_numberOfBins      = numberOfBins;
-    m_maxRadius         = maxRadius;
+void System::setDensityTools(bool computeDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius) {
+    m_computeDensity        = computeDensity;
+    m_computeTwoBodyDensity = computeTwoBodyDensity;
+    m_numberOfBins          = numberOfBins;
+    m_maxRadius             = maxRadius;
 }
 
 void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnergyFile) {

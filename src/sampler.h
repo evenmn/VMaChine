@@ -11,9 +11,11 @@ public:
     void            openOutputFiles();
     void            printEnergyToFile();
     void            printOneBodyDensityToFile();
+    void            printTwoBodyDensityToFile();
     void            closeOutputFiles();
     void            printInstantValuesToFile();
-    void            calculateOneBodyDensities(const Eigen::VectorXd positions);
+    void            calculateOneBodyDensity(const Eigen::VectorXd positions);
+    void            calculateTwoBodyDensity(const Eigen::VectorXd positions);
     void            computeAverages();
     void            computeTotals();
     void            appendInstantFiles();
@@ -76,12 +78,15 @@ private:
     bool             m_printEnergyToFile = true;
     bool             m_printInstantEnergyToFile = true;
 
-    // One-body density related stuff
+    // Electron density related stuff
     bool             m_calculateOneBody  = true;
+    bool             m_computeTwoBodyDensity = true;
     int              m_numberOfBins      = 100;
     double           m_maxRadius         = 10;
     double           m_radialStep        = 0.1;
     Eigen::VectorXd  m_binLinSpace;
     Eigen::VectorXd  m_particlesPerBin;
+    Eigen::MatrixXd  m_particlesPerBinPairwise;
     std::ofstream    m_oneBodyFile;
+    std::ofstream    m_twoBodyFile;
 };

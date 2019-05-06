@@ -30,7 +30,7 @@ public:
     void setInteraction                 (const bool interaction);
     void setConvergenceTools            (bool checkConvergence, int numberOfEnergies, double tolerance);
     void setDynamicStepTools            (bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration);
-    void setDensityTools                (bool computeDensity, int numberOfBins, double maxRadius);
+    void setDensityTools                (bool computeDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius);
     void setEnergyPrintingTools         (bool printEnergyFile, bool printInstantEnergyFile);
     void setMPITools                    (int myRank, int numberOfProcesses);
 
@@ -79,6 +79,7 @@ public:
     double                              getStepLength()              { return m_stepLength; }
     bool                                getInteraction()             { return m_interaction; }
     bool                                getDensity()                 { return m_computeDensity; }
+    bool                                computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
     bool                                getPrintEnergy()             { return m_printEnergyFile; }
     bool                                getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
     bool                                getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
@@ -140,6 +141,7 @@ private:
     bool                                m_checkConvergence          = false;
     bool                                m_applyDynamicSteps         = false;
     bool                                m_computeDensity            = true;
+    bool                                m_computeTwoBodyDensity     = false;
     bool                                m_printEnergyFile           = true;
     bool                                m_printInstantEnergyFile    = true;
     bool                                m_calculateDistanceMatrix   = false;
