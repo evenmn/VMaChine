@@ -10,19 +10,19 @@ To run this project without issues, the most recent C++ version, C++17, is recom
 - TQDM
 
 ### MPI
-MPI is used in parallel processing. On Linux, the package can be installed by the following commands
+MPI is used for parallel processing. On Linux, the package can be installed by the following commands
 ```bash
 sudo apt-get install libopenmpi-dev
 sudo apt-get install openmpi-bin
 ```
-MPI is also availiable on other systems.
+MPI is also availiable on other platforms.
 
 ### Eigen
 Eigen is a C++ template library for linear algebra operations. See 
 [http://eigen.tuxfamily.org/](http://eigen.tuxfamily.org/) for installation details.
 
 ### Blocker
-Blocker is an auto blocking package developed by Marius Jonsson, which is our preffered resampling tool. To get the package, go to [https://github.com/computative/](https://github.com/computative/) and clone the repository. 
+Blocker is an auto blocking package developed by Marius Jonsson, which is our preferred resampling tool. To get the package, go to [https://github.com/computative/block](https://github.com/computative/block) and clone the repository. 
 
 ### TQDM
 The TQDM package provides fast and clean progress bars built in the for loops. To get the package, go to [https://github.com/tqdm/tqdm.cpp](https://github.com/tqdm/tqdm.cpp) and clone the repository. 
@@ -30,13 +30,13 @@ The TQDM package provides fast and clean progress bars built in the for loops. T
 -------------------
 
 ## Build & run
-There are several ways to compile and run the code. Below, we will present two easy and rebust methods based on CMake and QMake. 
+There are several ways to compile and run the code. Below, we will present two easy and rebust methods based on CMake and QMake, respectively. 
 
 ### CMake
 ```bash
 1. chmod +x CompileVMC
 2. ./CompileVMC
-3. mpirun -n 4 vmc
+3. mpirun -n 4 build/vmc
 4. make clean
 ```
 for 4 parallel processes.
@@ -49,7 +49,7 @@ for 4 parallel processes.
 #### Parallel processing using QT-creator
 To run in parallel, one needs to add a run configuration that supports this. Go to Projects-> Run-> Add-> Custom Executable. Then set
 - Executable: ```/usr/bin/mpirun```
-- Command line arguments: ```-n 4 ./QMC```
+- Command line arguments: ```-n 4 ./build-qt/QMC```
 - Working directory: ```/where/the/executable/is```
 
 again for 4 parallel processes. An example implementation is showed below
