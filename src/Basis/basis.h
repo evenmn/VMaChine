@@ -6,7 +6,7 @@ class Basis {
 public:
     Basis(class System* system);
     virtual void numberOfOrbitals() = 0;
-    virtual void generateListOfStates() = 0;
+    virtual void generateListOfStates(int orbitals) = 0;
 
     virtual double basisElement(const int n, Eigen::VectorXd positions) = 0;
     virtual double basisElementDer(const int n, const int i, Eigen::VectorXd positions) = 0;
@@ -14,7 +14,7 @@ public:
 
     virtual ~Basis() = 0;
 
-    int factorial(const int n);
+    long long factorial(const int n);
     double binomial(const int n, const int p);
 
     int getNumberOfOrbitals() { return m_numberOfOrbitals; }

@@ -5,7 +5,7 @@ class Hermite : public Basis {
 public:
     Hermite(System* system);
     void numberOfOrbitals();
-    void generateListOfStates();
+    void generateListOfStates(int orbitals);
 
     double evaluate(double x, int n);
     double evaluateDerivative(double x, int n);

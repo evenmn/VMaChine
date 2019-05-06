@@ -15,9 +15,7 @@ HartreeFockHermite::HartreeFockHermite(System *system)  :
     m_hermite               = new Hermite(system);
     readCoefficientFile();
     numberOfOrbitals();
-    generateListOfStates();
-    std::cout << "WORKS" << std::endl;
-
+    generateListOfStates(m_numberOfOrbitals);
 }
 
 std::ifstream::pos_type fileLength(std::string fileName)
@@ -60,41 +58,41 @@ void HartreeFockHermite::readCoefficientFile() {
 }
 
 void HartreeFockHermite::numberOfOrbitals() {
-    m_hermite->numberOfOrbitals();
+    int counter = 0;
+    double orb = 0;
+    while(orb <= m_basisSize * 2) {
+        orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
+        m_numberOfOrbitals = counter+1;
+        counter += 1;
+    }
+}
+
+void HartreeFockHermite::generateListOfStates(int orbitals) {
+    m_hermite->generateListOfStates(orbitals);
 }
 
 double HartreeFockHermite::basisElement(const int n, Eigen::VectorXd positions) {
-    std::cout << "basisElement1" << std::endl;
     double sum = 0;
     for(int lambda=0; lambda<m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_hermite->basisElement(lambda, positions);
     }
-        std::cout << "basisElement2" << std::endl;
     return sum;
 }
 
 double HartreeFockHermite::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
-    std::cout << "basisElementDer1" << std::endl;
     double sum = 0;
     for(int lambda=0; lambda<m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_hermite->basisElementDer(lambda, i, positions);
     }
-    std::cout << "basisElementDer2" << std::endl;
     return sum;
 }
 
 double HartreeFockHermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
-    std::cout << "basisElementSecDer1" << std::endl;
     double sum = 0;
     for(int lambda=0; lambda<m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_hermite->basisElementSecDer(lambda, i, positions);
     }
-    std::cout << "basisElementSecDer2" << std::endl;
     return sum;
-}
-
-void HartreeFockHermite::generateListOfStates() {
-    m_hermite->generateListOfStates();
 }

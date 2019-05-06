@@ -5,7 +5,7 @@ class HartreeFockHermite : public Basis {
 public:
     HartreeFockHermite(System* system);
     void numberOfOrbitals();
-    void generateListOfStates();
+    void generateListOfStates(int orbitals);
 
     double basisElement(const int n, Eigen::VectorXd positions);
     double basisElementDer(const int n, const int i, Eigen::VectorXd positions);

@@ -3,7 +3,7 @@
 Basis::Basis(System *system) {
 }
 
-int Basis::factorial(const int n) {
+long long Basis::factorial(const int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
