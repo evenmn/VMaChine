@@ -34,7 +34,7 @@ Sampler::Sampler(System* system) {
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch             = int(m_numberOfStepsWOEqui/m_numberOfBatches);
     m_interaction                       = m_system->getInteraction();
-    m_calculateOneBody                  = m_system->getDensity();
+    m_computeOneBodyDensity             = m_system->getDensity();
     m_computeTwoBodyDensity             = m_system->computeTwoBodyDensity();
     m_printEnergyToFile                 = m_system->getPrintEnergy();
     m_printInstantEnergyToFile          = m_system->getPrintInstantEnergy();
@@ -44,8 +44,8 @@ Sampler::Sampler(System* system) {
     m_path                              = m_system->getPath();
     m_radialStep                        = m_maxRadius/m_numberOfBins;
     m_binLinSpace                       = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
-    m_particlesPerBin                   = Eigen::VectorXd::Zero(m_numberOfBins);
-    m_particlesPerBinPairwise           = Eigen::MatrixXd::Zero(m_numberOfBins, m_numberOfBins);
+    m_particlesPerBin                   = Eigen::VectorXi::Zero(m_numberOfBins);
+    m_particlesPerBinPairwise           = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
 }
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber) {
@@ -149,9 +149,11 @@ void Sampler::printFinalOutputToTerminal() {
         else
             puts( " Successfully removed blocking file" );
     }
+    /*
     if(m_calculateOneBody) {
         mergeOneBodyFiles();
     }
+    */
 }
 
 void Sampler::appendInstantFiles() {
@@ -220,7 +222,7 @@ void Sampler::openOutputFiles() {
     MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     // Print average energies to file
-    if(m_printEnergyToFile) {
+    if(m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFileName = generateFileName(m_path, "energy", "SGD", ".dat");
         m_averageEnergyFile.open(m_averageEnergyFileName);
     }
@@ -229,12 +231,12 @@ void Sampler::openOutputFiles() {
         m_instantEnergyFileName = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + ".dat";
         m_instantEnergyFile.open(m_instantEnergyFileName);
     }
-    if(m_calculateOneBody) {
-        std::string oneBodyFileName = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(m_rank) + ".dat");
+    if(m_computeOneBodyDensity && m_rank == 0) {
+        std::string oneBodyFileName = generateFileName(m_path, "onebody", "SGD", ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
-    if(m_computeTwoBodyDensity) {
-        std::string twoBodyFileName = generateFileName(m_path, "twobody", "SGD", "_" + std::to_string(m_rank) + ".dat");
+    if(m_computeTwoBodyDensity && m_rank == 0) {
+        std::string twoBodyFileName = generateFileName(m_path, "twobody", "SGD", ".dat");
         m_twoBodyFile.open (twoBodyFileName);
     }
 }
@@ -246,14 +248,30 @@ void Sampler::printEnergyToFile() {
 }
 
 void Sampler::printOneBodyDensityToFile() {
-    if(m_calculateOneBody){
-        m_oneBodyFile << m_particlesPerBin << endl;
+    if(m_computeOneBodyDensity){
+        m_totalParticlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
+        //MPI_Gather(m_particlesPerBin.data(), m_numberOfBins, MPI_DOUBLE, m_totalParticlesPerBin.data(), m_numberOfBins, MPI_DOUBLE, MPI_COMM_WORLD);
+        for(int i=0; i<m_numberOfBins; i++) {
+            MPI_Reduce(&m_particlesPerBin(i), &m_totalParticlesPerBin(i), 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+        }
+        if(m_rank == 0) {
+            m_oneBodyFile << m_totalParticlesPerBin << endl;
+            cout << m_totalParticlesPerBin << endl;
+        }
     }
 }
 
 void Sampler::printTwoBodyDensityToFile() {
-    if(m_computeTwoBodyDensity) {
-        m_twoBodyFile << m_particlesPerBinPairwise << endl;
+    if(m_computeTwoBodyDensity){
+        m_totalParticlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
+        for(int i=0; i<m_numberOfBins; i++) {
+            for(int j=0; j<m_numberOfBins; j++) {
+                MPI_Reduce(&m_particlesPerBinPairwise(i,j), &m_totalParticlesPerBinPairwise(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+            }
+        }
+        if(m_rank == 0) {
+            m_twoBodyFile << m_totalParticlesPerBinPairwise << endl;
+        }
     }
 }
 
@@ -270,8 +288,8 @@ void Sampler::printInstantValuesToFile() {
     }
 }
 
-void Sampler::calculateOneBodyDensity(const Eigen::VectorXd positions) {
-    if(m_calculateOneBody) {                         // Calculate onebody densities
+void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
+    if(m_computeOneBodyDensity) {                         // Calculate onebody densities
         for(int particle=0; particle<m_numberOfParticles; particle++) {
             double dist = 0;
             int positionIndex = m_numberOfDimensions * particle;
@@ -290,7 +308,7 @@ void Sampler::calculateOneBodyDensity(const Eigen::VectorXd positions) {
     }
 }
 
-void Sampler::calculateTwoBodyDensity(const Eigen::VectorXd positions) {
+void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
     if(m_computeTwoBodyDensity) {                         // Calculate twobody densities
         for(int particle1=0; particle1<m_numberOfParticles; particle1++) {
             double dist1 = 0;

@@ -9,8 +9,5 @@ cd build
 # Run CMake to create a Makefile
 cmake ../
 
-# Make the Makefile using four threads (the number of cores in a standard pc)
+# Make the Makefile using four threads (the number of cores in a standard comp)
 make -j4
-
-# Move the executable to the working directory
-mv vmc ..

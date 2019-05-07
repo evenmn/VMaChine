@@ -78,8 +78,8 @@ void System::runMetropolisCycles() {
             m_sampler->sample(acceptedStep, i);
             if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
                 m_sampler->printInstantValuesToFile();
-                m_sampler->calculateOneBodyDensity(m_positions);
-                m_sampler->calculateTwoBodyDensity(m_positions);
+                m_sampler->computeOneBodyDensity(m_positions);
+                m_sampler->computeTwoBodyDensity(m_positions);
             }
         }
     }
