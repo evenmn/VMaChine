@@ -12,31 +12,19 @@ void None::numberOfOrbitals() {
     m_numberOfOrbitals = 1;
 }
 
-double None::evaluate(double x, int n) {
+double None::basisElement(const unsigned int n, const Eigen::VectorXd positions) {
     return 1;
 }
 
-double None::evaluateDerivative(double x, int n) {
-    return 0;
-}
-
-double None::evaluateSecondDerivative(double x, int n) {
-    return 0;
-}
-
-double None::basisElement(const int n, Eigen::VectorXd positions) {
-    return 1;
-}
-
-double None::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
+double None::basisElementDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     return 0;
 }
 
-double None::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
+double None::basisElementSecDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     return 0;
 }
 
-void None::generateListOfStates() {
+void None::generateListOfStates(const int orbitals) {
 }

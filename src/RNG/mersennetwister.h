@@ -4,7 +4,7 @@
 class MersenneTwister : public RandomNumberGenerator {
 public:
     MersenneTwister();
-    int    nextInt(int upperLimit);
-    double nextDouble();
-    double nextGaussian(double mean, double standardDeviation);
+    unsigned int nextInt     (unsigned int upperLimit);
+    double       nextDouble  ();
+    double       nextGaussian(double mean, double standardDeviation);
 };

@@ -32,7 +32,7 @@ Sampler::Sampler(System* system) {
 
     m_omega                             = m_system->getFrequency();
     m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
-    m_numberOfStepsPerBatch             = int(m_numberOfStepsWOEqui/m_numberOfBatches);
+    m_numberOfStepsPerBatch             = unsigned(m_numberOfStepsWOEqui/m_numberOfBatches);
     m_interaction                       = m_system->getInteraction();
     m_computeOneBodyDensity             = m_system->getDensity();
     m_computeTwoBodyDensity             = m_system->computeTwoBodyDensity();
@@ -48,7 +48,7 @@ Sampler::Sampler(System* system) {
     m_particlesPerBinPairwise           = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
 }
 
-void Sampler::sample(const bool acceptedStep, const int stepNumber) {
+void Sampler::sample(const bool acceptedStep, const unsigned long stepNumber) {
     if (stepNumber == m_numberOfEquilibriationSteps) {
         m_acceptence                = 0;
         m_cumulativeEnergy          = 0;
@@ -73,19 +73,19 @@ void Sampler::computeTotals() {
     MPI_Reduce(&m_acceptence,           &m_totalAcceptence,           1, MPI_INT,    MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_cumulativeEnergy,     &m_totalCumulativeEnergy,     1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_cumulativeEnergySqrd, &m_totalCumulativeEnergySqrd, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-    for(int i=0; i<m_numberOfElements; i++) {
-        for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
+    for(unsigned int i=0; i<m_numberOfElements; i++) {
+        for(unsigned int j=0; j<m_maxNumberOfParametersPerElement; j++) {
             MPI_Reduce(&m_cumulativeGradients(i,j),  &m_totalCumulativeGradients(i,j),  1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
             MPI_Reduce(&m_cumulativeGradientsE(i,j), &m_totalCumulativeGradientsE(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
         }
     }
 }
 
-void Sampler::setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui) {
+void Sampler::setNumberOfSteps(const unsigned long numberOfStepsWOEqui, const unsigned long totalNumberOfStepsWOEqui, const unsigned long totalNumberOfStepsWEqui) {
     m_numberOfStepsWOEqui      = numberOfStepsWOEqui;
     m_totalNumberOfStepsWOEqui = totalNumberOfStepsWOEqui;
     m_totalNumberOfStepsWEqui  = totalNumberOfStepsWEqui;
-    m_numberOfStepsPerBatch    = int(m_totalNumberOfStepsWOEqui/m_numberOfBatches);
+    m_numberOfStepsPerBatch    = unsigned(m_totalNumberOfStepsWOEqui/m_numberOfBatches);
 }
 
 void Sampler::computeAverages() {
@@ -96,7 +96,7 @@ void Sampler::computeAverages() {
     m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalNumberOfStepsWOEqui;
 }
 
-void Sampler::printOutputToTerminal(const int maxIter, const double time) {
+void Sampler::printOutputToTerminal(const unsigned int maxIter, const double time) {
     m_iter += 1;
     cout << endl;
     cout << "  -- System info: " << " -- " << endl;
@@ -149,11 +149,6 @@ void Sampler::printFinalOutputToTerminal() {
         else
             puts( " Successfully removed blocking file" );
     }
-    /*
-    if(m_calculateOneBody) {
-        mergeOneBodyFiles();
-    }
-    */
 }
 
 void Sampler::appendInstantFiles() {
@@ -169,35 +164,6 @@ void Sampler::appendInstantFiles() {
         }
         if(remove(name.c_str()) != 0)
             perror( " Could not remove blocking file" );
-    }
-}
-
-void Sampler::mergeOneBodyFiles() {
-    std::string name1 = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(0) + ".dat");
-    std::string mainName = generateFileName(m_path, "onebody", "SGD", + ".dat");
-    std::rename(name1.c_str(), mainName.c_str());
-    for(int i=1; i<m_numberOfProcesses; i++) {
-        std::ifstream infile1;
-        infile1.open(mainName.c_str(), std::ios::in);
-        std::string outfileName = std::to_string(i) + ".dat";
-        std::string name = generateFileName(m_path, "onebody", "SGD", "_" + std::to_string(i) + ".dat");
-        std::ofstream outfile;
-        std::ifstream infile2;
-        outfile.open(outfileName.c_str(), std::ios::out);
-        infile2.open(name.c_str(), std::ios::in);
-        if (!infile1.is_open() || !infile2.is_open()) {
-            cout << "file not found";
-        }
-        else {
-            int value1, value2;
-            while (infile1 >> value1 && infile2 >> value2) {
-                outfile << double(value1) + double(value2) << endl;
-            }
-        }
-        std::rename(outfileName.c_str(), mainName.c_str());
-
-        if(remove(name.c_str()) != 0)
-            perror( " Could not remove onebody file" );
     }
 }
 
@@ -217,7 +183,7 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
 
 void Sampler::openOutputFiles() {
     if(m_rank == 0) {
-        m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(1e6);
+        m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(unsigned(1e6));
     }
     MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -251,12 +217,11 @@ void Sampler::printOneBodyDensityToFile() {
     if(m_computeOneBodyDensity){
         m_totalParticlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
         //MPI_Gather(m_particlesPerBin.data(), m_numberOfBins, MPI_DOUBLE, m_totalParticlesPerBin.data(), m_numberOfBins, MPI_DOUBLE, MPI_COMM_WORLD);
-        for(int i=0; i<m_numberOfBins; i++) {
+        for(unsigned int i=0; i<m_numberOfBins; i++) {
             MPI_Reduce(&m_particlesPerBin(i), &m_totalParticlesPerBin(i), 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
         }
         if(m_rank == 0) {
             m_oneBodyFile << m_totalParticlesPerBin << endl;
-            cout << m_totalParticlesPerBin << endl;
         }
     }
 }
@@ -264,8 +229,8 @@ void Sampler::printOneBodyDensityToFile() {
 void Sampler::printTwoBodyDensityToFile() {
     if(m_computeTwoBodyDensity){
         m_totalParticlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
-        for(int i=0; i<m_numberOfBins; i++) {
-            for(int j=0; j<m_numberOfBins; j++) {
+        for(unsigned int i=0; i<m_numberOfBins; i++) {
+            for(unsigned int j=0; j<m_numberOfBins; j++) {
                 MPI_Reduce(&m_particlesPerBinPairwise(i,j), &m_totalParticlesPerBinPairwise(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
             }
         }
@@ -290,15 +255,15 @@ void Sampler::printInstantValuesToFile() {
 
 void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
     if(m_computeOneBodyDensity) {                         // Calculate onebody densities
-        for(int particle=0; particle<m_numberOfParticles; particle++) {
+        for(unsigned int particle=0; particle<m_numberOfParticles; particle++) {
             double dist = 0;
-            int positionIndex = m_numberOfDimensions * particle;
-            for(int d=0; d<m_numberOfDimensions; d++) {
+            unsigned int positionIndex = m_numberOfDimensions * particle;
+            for(unsigned short d=0; d<m_numberOfDimensions; d++) {
                 double position = positions(positionIndex+d);
                 dist += position * position;
             }
             double r = sqrt(dist);      // Distance from particle to origin
-            for(int k=0; k<m_numberOfBins; k++) {
+            for(unsigned int k=0; k<m_numberOfBins; k++) {
                 if(r < m_binLinSpace(k)) {
                     m_particlesPerBin(k) += 1;
                     break;
@@ -310,10 +275,10 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
 
 void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
     if(m_computeTwoBodyDensity) {                         // Calculate twobody densities
-        for(int particle1=0; particle1<m_numberOfParticles; particle1++) {
+        for(unsigned int particle1=0; particle1<m_numberOfParticles; particle1++) {
             double dist1 = 0;
-            int position1Index = m_numberOfDimensions * particle1;
-            for(int d=0; d<m_numberOfDimensions; d++) {
+            unsigned int position1Index = m_numberOfDimensions * particle1;
+            for(unsigned short d=0; d<m_numberOfDimensions; d++) {
                 double position1 = positions(position1Index+d);
                 dist1 += position1 * position1;
             }
@@ -322,10 +287,10 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
             while(m_binLinSpace(counter1) < r1) {
                 counter1 += 1;
             }
-            for(int particle2=particle1+1; particle2<m_numberOfParticles; particle2++) {
+            for(unsigned int particle2=particle1+1; particle2<m_numberOfParticles; particle2++) {
                 double dist2 = 0;
-                int position2Index = m_numberOfDimensions * particle2;
-                for(int d=0; d<m_numberOfDimensions; d++) {
+                unsigned int position2Index = m_numberOfDimensions * particle2;
+                for(unsigned short d=0; d<m_numberOfDimensions; d++) {
                     double position2 = positions(position2Index+d);
                     dist2 += position2 * position2;
                 }

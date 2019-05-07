@@ -4,32 +4,41 @@
 class SamsethJastrow : public WaveFunction {
 public:
     SamsethJastrow(class System* system);
-    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
-    int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
-    std::string     getLabel                    ()      { return m_label; }
+    unsigned int    getNumberOfParameters       ()  { return m_numberOfParameters; }
+    unsigned short  getGlobalArrayNeed          ()  { return m_globalArrayNeed; }
+    std::string     getLabel                    ()  { return m_label; }
 
-    void            updateArrays                    (const Eigen::VectorXd positions, \
-                                                     const Eigen::VectorXd radialVector, \
-                                                     const Eigen::MatrixXd distanceMatrix, \
-                                                     const int changedCoord);
+    void            updateArrays                (const Eigen::VectorXd positions,      \
+                                                 const Eigen::VectorXd radialVector,   \
+                                                 const Eigen::MatrixXd distanceMatrix, \
+                                                 const unsigned int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
-    void            initializeArrays            (const Eigen::VectorXd positions, \
-                                                 const Eigen::VectorXd radialVector, \
+    void            initializeArrays            (const Eigen::VectorXd positions,      \
+                                                 const Eigen::VectorXd radialVector,   \
                                                  const Eigen::MatrixXd distanceMatrix);
-    void            updateParameters            (const Eigen::MatrixXd parameters, const int elementNumber);
+    void            updateParameters            (const Eigen::MatrixXd parameters,     \
+                                                 const unsigned short elementNumber);
     double          evaluateRatio               ();
-    double          computeGradient             (const int k);
+    double          computeGradient             (const unsigned int k);
     double          computeLaplacian            ();
     Eigen::VectorXd computeParameterGradient    ();
 
-    void            calculateG(int pRand);
-    void            calculateProbabilityRatio(int particle);
+    void            calculateG                  (const unsigned int changedCoord);
+    void            calculateProbabilityRatio   (const unsigned int particle);
 
 private:
-    int     m_numberOfParameters       = 2;
-    int     m_globalArrayNeed          = 1;
-    int     m_elementNumber = 1;
+    unsigned int    m_numberOfParameters    = 2;
+    unsigned short  m_globalArrayNeed       = 0;
+    unsigned short  m_elementNumber         = 0;
+
+    double          m_beta                  = 0;
+    double          m_betaSqrd              = 0;
+    double          m_gamma                 = 0;
+    double          m_betagamma             = 0;
+    double          m_probabilityRatioOld   = 0;
+    double          m_probabilityRatio      = 0;
+
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
     Eigen::MatrixXd m_distanceMatrixSqrd;
@@ -40,12 +49,6 @@ private:
     Eigen::MatrixXd m_gOld;
     Eigen::MatrixXd m_gSqrd;
     Eigen::MatrixXd m_gSqrdOld;
-    double m_beta;
-    double m_betaSqrd;
-    double m_gamma;
-    double m_betagamma;
-    double m_probabilityRatioOld;
-    double m_probabilityRatio;
 
     std::string m_label = "samsethjastrow";
 };

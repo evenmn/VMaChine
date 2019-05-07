@@ -20,25 +20,25 @@ BruteForce::BruteForce(System* system) :
 }
 
 bool BruteForce::acceptMove() {
-    int pRand = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
+    unsigned int changedCoord = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 
     m_positionsOld      = m_positions;
     m_radialVectorOld   = m_radialVector;
     m_distanceMatrixOld = m_distanceMatrix;
 
-    m_positions(pRand) = m_positionsOld(pRand) + 10 * (m_system->getRandomNumberGenerator()->nextDouble() - 0.5) * m_stepLength;
+    m_positions(changedCoord) = m_positionsOld(changedCoord) + 10 * (m_system->getRandomNumberGenerator()->nextDouble() - 0.5) * m_stepLength;
     if(m_calculateDistanceMatrix) {
-        calculateDistanceMatrixCross(int(pRand/m_numberOfDimensions));
+        Metropolis::calculateDistanceMatrixCross((unsigned int)(changedCoord/m_numberOfDimensions));
     }
     if(m_calculateRadialVector) {
-        calculateRadialVectorElement(int(pRand/m_numberOfDimensions));
+        Metropolis::calculateRadialVectorElement((unsigned int)(changedCoord/m_numberOfDimensions));
     }
-    m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, pRand);
+    m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, changedCoord);
 
     double ratio = m_system->evaluateWaveFunctionRatio();
     double r = m_system->getRandomNumberGenerator()->nextDouble();
     if(ratio < r) {
-        m_positions(pRand) = m_positionsOld(pRand);
+        m_positions(changedCoord) = m_positionsOld(changedCoord);
         m_distanceMatrix   = m_distanceMatrixOld;
         m_radialVector     = m_radialVectorOld;
         m_system->resetAllArrays();
@@ -47,28 +47,28 @@ bool BruteForce::acceptMove() {
     return true;
 }
 
-double BruteForce::calculateDistanceMatrixElement(int i, int j) {
+double BruteForce::calculateDistanceMatrixElement(const unsigned int i, const unsigned int j) {
     double dist = 0;
-    int parti   = m_numberOfDimensions*i;
-    int partj   = m_numberOfDimensions*j;
-    for(int d=0; d<m_numberOfDimensions; d++) {
+    unsigned int parti   = m_numberOfDimensions*i;
+    unsigned int partj   = m_numberOfDimensions*j;
+    for(unsigned short d=0; d<m_numberOfDimensions; d++) {
         double diff = m_positions(parti+d)-m_positions(partj+d);
         dist += diff*diff;
     }
     return sqrt(dist);
 }
 
-void BruteForce::calculateDistanceMatrixCross(int particle) {
-    for(int i=0; i<m_numberOfParticles; i++) {
+void BruteForce::calculateDistanceMatrixCross(const unsigned int particle) {
+    for(unsigned int i=0; i<m_numberOfParticles; i++) {
         m_distanceMatrix(particle, i) = calculateDistanceMatrixElement(particle, i);
         m_distanceMatrix(i, particle) = m_distanceMatrix(particle, i);
     }
 }
 
-double BruteForce::calculateRadialVectorElement(int particle) {
+double BruteForce::calculateRadialVectorElement(const unsigned int particle) {
     double sqrtElementWise = 0;
-    int part = particle*m_numberOfDimensions;
-    for(int d=0; d<m_numberOfDimensions; d++) {
+    unsigned int part = particle*m_numberOfDimensions;
+    for(unsigned short d=0; d<m_numberOfDimensions; d++) {
         sqrtElementWise += m_positions(part + d) * m_positions(part + d);
     }
     return sqrt(sqrtElementWise);

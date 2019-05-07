@@ -66,7 +66,6 @@ SOURCES += main.cpp \
     Optimization/adam.cpp \
     RNG/rng.cpp \
     RNG/mersennetwister.cpp \
-    RNG/parkmiller.cpp \
     Basis/basis.cpp \
     Basis/hermite.cpp \
     Basis/hydrogenorbital.cpp \
@@ -116,7 +115,6 @@ HEADERS += \
     Optimization/adam.h \
     RNG/rng.h \
     RNG/mersennetwister.h \
-    RNG/parkmiller.h \
     Basis/basis.h \
     Basis/hermite.h \
     Basis/hydrogenorbital.h \

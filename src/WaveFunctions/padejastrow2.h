@@ -4,36 +4,42 @@
 class PadeJastrow2 : public WaveFunction {
 public:
     PadeJastrow2(class System* system);
-    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
-    int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
-    std::string     getLabel                    ()      { return m_label; }
+    unsigned int    getNumberOfParameters       ()  { return m_numberOfParameters; }
+    unsigned short  getGlobalArrayNeed          ()  { return m_globalArrayNeed; }
+    std::string     getLabel                    ()  { return m_label; }
 
-    void            updateArrays                    (const Eigen::VectorXd positions, \
-                                                     const Eigen::VectorXd radialVector, \
-                                                     const Eigen::MatrixXd distanceMatrix, \
-                                                     const int changedCoord);
+    void            updateArrays                (const Eigen::VectorXd positions,      \
+                                                 const Eigen::VectorXd radialVector,   \
+                                                 const Eigen::MatrixXd distanceMatrix, \
+                                                 const unsigned int changedCoord);
     void            setArrays                   ();
     void            resetArrays                 ();
-    void            initializeArrays            (const Eigen::VectorXd positions, \
-                                                 const Eigen::VectorXd radialVector, \
+    void            initializeArrays            (const Eigen::VectorXd positions,      \
+                                                 const Eigen::VectorXd radialVector,   \
                                                  const Eigen::MatrixXd distanceMatrix);
-    void            updateParameters            (const Eigen::MatrixXd parameters, const int elementNumber);
+    void            updateParameters            (const Eigen::MatrixXd parameters,     \
+                                                 const unsigned short elementNumber);
     double          evaluateRatio               ();
-    double          computeGradient             (const int k);
+    double          computeGradient             (const unsigned int k);
     double          computeLaplacian            ();
     Eigen::VectorXd computeParameterGradient    ();
 
 
-    void            calculateF(int particle);
-    void            calculateG(int particle, int changedCoord);
-    void            calculateH(int particle);
-    void            calculateProbabilityRatio(int particle);
-    void            initializeBeta();
+    void            calculateF                  (const unsigned int particle);
+    void            calculateG                  (const unsigned int particle, const unsigned int changedCoord);
+    void            calculateH                  (const unsigned int particle);
+    void            calculateProbabilityRatio   (const unsigned int particle);
+    void            initializeBeta              ();
 
 private:
-    int m_numberOfParameters       = 1;
-    int m_globalArrayNeed          = 0;
-    int m_elementNumber = 1;
+    unsigned int    m_numberOfParameters    = 1;
+    unsigned short  m_globalArrayNeed       = 1;
+    unsigned short  m_elementNumber         = 0;
+
+    double          m_gamma                 = 1;
+    double          m_probabilityRatioOld   = 1;
+    double          m_probabilityRatio      = 1;
+
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
     Eigen::MatrixXd m_distanceMatrixSqrd;
@@ -54,9 +60,6 @@ private:
     Eigen::MatrixXd m_h;
     Eigen::MatrixXd m_hOld;
     Eigen::MatrixXd m_hOldOld;
-    double m_gamma;
-    double m_probabilityRatioOld;
-    double m_probabilityRatio;
 
-    std::string m_label = "padejastrow2";
+    std::string     m_label = "padejastrow2";
 };

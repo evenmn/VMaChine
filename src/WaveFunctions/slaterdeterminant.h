@@ -4,22 +4,23 @@
 class SlaterDeterminant : public WaveFunction {
 public:
     SlaterDeterminant(class System* system);
-    int             getNumberOfParameters           ()  { return m_numberOfParameters; }
-    int             getGlobalArrayNeed              ()  { return m_globalArrayNeed; }
+    unsigned int    getNumberOfParameters           ()  { return m_numberOfParameters; }
+    unsigned short  getGlobalArrayNeed              ()  { return m_globalArrayNeed; }
     std::string     getLabel                        ()  { return m_label; }
 
     void            updateArrays                    (const Eigen::VectorXd positions, \
                                                      const Eigen::VectorXd radialVector, \
                                                      const Eigen::MatrixXd distanceMatrix, \
-                                                     const int changedCoord);
+                                                     const unsigned int changedCoord);
     void            setArrays                       ();
     void            resetArrays                     ();
     void            initializeArrays                (const Eigen::VectorXd positions, \
                                                      const Eigen::VectorXd radialVector, \
                                                      const Eigen::MatrixXd distanceMatrix);
-    void            updateParameters                (const Eigen::MatrixXd parameters, const int elementNumber);
+    void            updateParameters                (const Eigen::MatrixXd parameters, \
+                                                     const unsigned short elementNumber);
     double          evaluateRatio                   ();
-    double          computeGradient                 (const int k);
+    double          computeGradient                 (const unsigned int k);
     double          computeLaplacian                ();
     Eigen::VectorXd computeParameterGradient        ();
 
@@ -28,22 +29,25 @@ public:
     void            initializeSlaterMatrixSecDer    ();
     void            initializeSlaterMatrixInverse   ();
 
-    void            updateSlaterMatrixElement       (const int i, const int j);
-    void            updateSlaterMatrixRow           (const int row);
-    void            updateSlaterMatrixDerRow        (const int row);
-    void            updateSlaterMatrixSecDerRow     (const int k);
-    void            updateSlaterMatrixInverse       (int start, int end);
-    void            updateSlaterDeterminantDerivatives(int start, int end);
+    void            updateSlaterMatrixElement       (const unsigned int row, const unsigned int col);
+    void            updateSlaterMatrixRow           (const unsigned int row);
+    void            updateSlaterMatrixDerRow        (const unsigned int row);
+    void            updateSlaterMatrixSecDerRow     (const unsigned int k);
+    void            updateSlaterMatrixInverse       (const unsigned int start, const unsigned int end);
+    void            updateSlaterDeterminantDer      (const unsigned int start, const unsigned int end);
     double          updateRatio                     ();
 
 private:
-    int             m_numberOfParameters    = 0;
-    int             m_globalArrayNeed       = 0;
-    int             m_elementNumber         = 0;
-    int             m_numberOfParticlesHalf = 0;
-    int             m_freeDimensionsHalf    = 0;
-    int             m_particle              = 0;
-    int             m_dimension             = 0;
+    unsigned int    m_numberOfParticlesHalf = 0;
+    unsigned int    m_freeDimensionsHalf    = 0;
+    unsigned int    m_particle              = 0;
+    unsigned int    m_numberOfParameters    = 0;
+    unsigned short  m_globalArrayNeed       = 0;
+    unsigned short  m_elementNumber         = 0;
+    unsigned short  m_dimension             = 0;
+
+    double          m_probabilityRatio      = 0;
+    double          m_probabilityRatioOld   = 0;
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_positionBlock;
@@ -53,7 +57,6 @@ private:
     Eigen::MatrixXd m_slaterMatrixInverse;
     Eigen::VectorXd m_determinantDerivative;
     Eigen::VectorXd m_determinantSecondDerivative;
-    double          m_probabilityRatio = 0;
 
     Eigen::VectorXd m_positionsOld;
     Eigen::MatrixXd m_positionBlockOld;
@@ -63,7 +66,6 @@ private:
     Eigen::MatrixXd m_slaterMatrixInverseOld;
     Eigen::VectorXd m_determinantDerivativeOld;
     Eigen::VectorXd m_determinantSecondDerivativeOld;
-    double          m_probabilityRatioOld = 0;
 
     std::string     m_label = "slaterdeterminant";
 };

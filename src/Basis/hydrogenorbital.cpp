@@ -12,11 +12,7 @@ HydrogenOrbital::HydrogenOrbital(System *system)  :
     numberOfOrbitals();
 }
 
-int fact(const int n) {
-    return (n == 1 || n == 0) ? 1 : fact(n - 1) * n;
-}
-
-double laguerre(double x, int n) {
+double laguerre(const double x, const int n) {
     if(n == 0) {
         return 1;
     }
@@ -28,7 +24,7 @@ double laguerre(double x, int n) {
     }
 }
 
-double associatedLaguerre(double x, int p, int q) {
+double associatedLaguerre(const double x, const unsigned int p, const unsigned int q) {
     if(q == 0) {
         return 1;
     }
@@ -40,7 +36,7 @@ double associatedLaguerre(double x, int p, int q) {
     }
 }
 
-int maxElectrons(int i) {
+unsigned int maxElectrons(const unsigned int i) {
     if(i==0) {
         return 2;
     }
@@ -51,11 +47,11 @@ int maxElectrons(int i) {
 
 void HydrogenOrbital::numberOfOrbitals() {
     //Number of closed-shell orbitals
-    int i = 0;
-    int orbital = 0;
-    int numberOfElectrons = 0;
+    int             orbital           = 0;
+    unsigned int    i                 = 0;
+    unsigned int    numberOfElectrons = 0;
     while(true) {
-        for(int j=0; j<i; j++) {
+        for(unsigned int j=0; j<i; j++) {
             numberOfElectrons += maxElectrons(j);
             if(numberOfElectrons == m_numberOfParticles) {
                 m_numberOfOrbitals = orbital+1;
@@ -71,34 +67,34 @@ void HydrogenOrbital::numberOfOrbitals() {
     }
 }
 
-double HydrogenOrbital::evaluate(double x, int n) {
+double HydrogenOrbital::evaluate(const double x, const unsigned int n) {
     //Hydrogen-like orbitals of a given n and l=0 (S-wave)
-    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(fact(n-1)/(2 * n * fact(n)));
+    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
     return prefactor * associatedLaguerre(2*m_Z*x/n, 1, n-1) * exp(-m_Z*x/n);
 }
 
-double HydrogenOrbital::evaluateDerivative(double x, int n) {
+double HydrogenOrbital::evaluateDerivative(const double x, const unsigned int n) {
     //First derivative of Hydrogen-like orbitals of a given n and l=0 (S-wave)
-    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(fact(n-1)/(2 * n * fact(n)));
+    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
     return - prefactor * (associatedLaguerre(2*m_Z*x/n, 2, n-2)*exp(-m_Z*x/n) + associatedLaguerre(2*m_Z*x/n, 1, n-1)*exp(-m_Z*x/n) * m_Z/n);
 }
 
-double HydrogenOrbital::basisElement(const int n, Eigen::VectorXd positions) {
+double HydrogenOrbital::basisElement(const unsigned int n, const Eigen::VectorXd positions) {
     return 1;
 }
 
-double HydrogenOrbital::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
+double HydrogenOrbital::basisElementDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     return 0;
 }
 
-double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
+double HydrogenOrbital::basisElementSecDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     return 0;
 }
 
-void HydrogenOrbital::generateListOfStates() {
-    Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
+void HydrogenOrbital::generateListOfStates(const int orbitals) {
+    Eigen::MatrixXi listOfStates = Eigen::MatrixXi::Zero(m_numberOfParticles/2, m_numberOfDimensions);
     int counter = 0;
     // Three dimensions
     for(int i=0; i<m_numberOfOrbitals; i++) {

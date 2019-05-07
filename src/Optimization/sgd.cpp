@@ -7,10 +7,8 @@
 
 SGD::SGD(System* system, const double gamma, const double monotonicExp) :
         Optimization(system) {
-    //m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
     m_numberOfWaveFunctionElements    = m_system->getNumberOfWaveFunctionElements();
     m_maxNumberOfParametersPerElement = m_system->getMaxNumberOfParametersPerElement();
-    //m_waveFunctionVector              = m_system->getWaveFunctionElements();
     m_eta                             = m_system->getLearningRate();
     m_v                               = Eigen::MatrixXd::Ones(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
     m_gamma                           = gamma;
@@ -25,9 +23,8 @@ Eigen::MatrixXd SGD::getEnergyGradient() {
 }
 
 Eigen::MatrixXd SGD::updateParameters() {
-    m_step += 1;
-    double monotonic = 1/pow(m_step, m_monotonicExp);
-    m_v = m_gamma * m_v + m_eta * getEnergyGradient() * monotonic;
+    m_iter += 1;
+    double monotonic = 1/pow(m_iter, m_monotonicExp);
+    m_v = m_gamma * m_v + m_eta * Optimization::getEnergyGradient() * monotonic;
     return m_v;
-    //return Eigen::MatrixXd(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }

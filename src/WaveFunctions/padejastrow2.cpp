@@ -11,40 +11,40 @@ PadeJastrow2::PadeJastrow2(System* system) :
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
 }
 
-void PadeJastrow2::calculateF(int particle) {
-    for(int i=0; i<particle; i++) {
+void PadeJastrow2::calculateF(const unsigned int particle) {
+    for(unsigned int i=0; i<particle; i++) {
         m_f(i, particle) = 1/(1 + m_gamma * m_distanceMatrix(i, particle));
     }
-    for(int j=particle+1; j<m_numberOfParticles; j++) {
+    for(unsigned int j=particle+1; j<m_numberOfParticles; j++) {
         m_f(particle, j) = 1/(1 + m_gamma * m_distanceMatrix(particle, j));
     }
     m_fSqrd = m_f.cwiseAbs2();
 }
 
-void PadeJastrow2::calculateG(int particle, int changedCoord) {
-    for(int i=0; i<changedCoord; i++) {
-        int i_p = int(i/m_numberOfDimensions);
+void PadeJastrow2::calculateG(const unsigned int particle, const unsigned int changedCoord) {
+    for(unsigned int i=0; i<changedCoord; i++) {
+        unsigned int i_p = (unsigned int)(i/m_numberOfDimensions);
         m_g(i, changedCoord) = (m_positions(i) - m_positions(changedCoord))/m_distanceMatrix(i_p, particle);
     }
-    for(int j=changedCoord+1; j<m_numberOfFreeDimensions; j++) {
-        int j_p = int(j/m_numberOfDimensions);
+    for(unsigned int j=changedCoord+1; j<m_numberOfFreeDimensions; j++) {
+        unsigned int j_p = (unsigned int)(j/m_numberOfDimensions);
         m_g(changedCoord, j) = (m_positions(changedCoord) - m_positions(j))/m_distanceMatrix(particle, j_p);
     }
     m_gSqrd = m_g.cwiseAbs2();
 }
 
-void PadeJastrow2::calculateH(int particle) {
-    for(int i=0; i<particle; i++) {
+void PadeJastrow2::calculateH(const unsigned int particle) {
+    for(unsigned int i=0; i<particle; i++) {
         m_h(i, particle) = m_distanceMatrix(i, particle) * m_f(i, particle);
     }
-    for(int j=particle+1; j<m_numberOfParticles; j++) {
+    for(unsigned int j=particle+1; j<m_numberOfParticles; j++) {
         m_h(particle, j) = m_distanceMatrix(particle, j) * m_f(particle, j);
     }
 }
 
-void PadeJastrow2::calculateProbabilityRatio(int particle) {
+void PadeJastrow2::calculateProbabilityRatio(const unsigned int particle) {
     double ratio = 0;
-    for(int j=particle+1; j<m_numberOfParticles; j++) {
+    for(unsigned int j=particle+1; j<m_numberOfParticles; j++) {
         ratio += m_beta(particle, j) * (m_h(particle, j) - m_hOld(particle, j));
     }
     m_probabilityRatio = exp(2*ratio);
@@ -72,9 +72,9 @@ void PadeJastrow2::initializeBeta() {
 
     m_beta = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfParticles);
 
-    int numberOfParticlesHalf = m_numberOfParticles/2;
-    for (int i = 0; i < m_numberOfParticles; i++) {
-        for (int j = 0; j < m_numberOfParticles; j++) {
+    unsigned int numberOfParticlesHalf = m_numberOfParticles/2;
+    for (unsigned int i = 0; i < m_numberOfParticles; i++) {
+        for (unsigned int j = 0; j < m_numberOfParticles; j++) {
 
             if ((j <  numberOfParticlesHalf && i <  numberOfParticlesHalf) ||  \
                 (j >= numberOfParticlesHalf && i >= numberOfParticlesHalf)) {
@@ -92,8 +92,8 @@ void PadeJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen
     m_probabilityRatio  = 1;
     m_f     = (Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticles) + m_gamma * m_distanceMatrix).cwiseInverse();
     m_g     = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        for(int j=i+1; j<m_numberOfFreeDimensions; j++) {
+    for(unsigned int i=0; i<m_numberOfFreeDimensions; i++) {
+        for(unsigned int j=i+1; j<m_numberOfFreeDimensions; j++) {
             m_g(i,j) = m_positions(i) - m_positions(j);
         }
     }
@@ -105,8 +105,8 @@ void PadeJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen
     initializeBeta();
 }
 
-void PadeJastrow2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
-    int particle = int(changedCoord/m_numberOfDimensions);
+void PadeJastrow2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
+    unsigned int particle = (unsigned int)(changedCoord/m_numberOfDimensions);
     setArrays();
 
     m_positions                = positions;
@@ -141,7 +141,7 @@ void PadeJastrow2::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void PadeJastrow2::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+void PadeJastrow2::updateParameters(const Eigen::MatrixXd parameters, const unsigned short elementNumber) {
     m_elementNumber                     = elementNumber;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_gamma                             = parameters(m_elementNumber, 0);
@@ -151,17 +151,17 @@ double PadeJastrow2::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double PadeJastrow2::computeGradient(const int k) {
-    int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
-    int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+double PadeJastrow2::computeGradient(const unsigned int k) {
+    unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
     double derivative = 0;
-    for(int i_p=0; i_p<k_p; i_p++) {
-        int i = i_p * m_numberOfDimensions + k_d;
+    for(unsigned int i_p=0; i_p<k_p; i_p++) {
+        unsigned int i = i_p * m_numberOfDimensions + k_d;
         derivative -= m_beta(i_p,k_p) * m_fSqrd(i_p,k_p) * m_g(i,k);
     }
-    for(int j_p=k_p+1; j_p<m_numberOfParticles; j_p++) {
-        int j = j_p * m_numberOfDimensions + k_d;
+    for(unsigned int j_p=k_p+1; j_p<m_numberOfParticles; j_p++) {
+        unsigned int j = j_p * m_numberOfDimensions + k_d;
         derivative += m_beta(k_p,j_p) * m_fSqrd(k_p,j_p) * m_g(k,j);
     }
     return derivative;
@@ -169,15 +169,15 @@ double PadeJastrow2::computeGradient(const int k) {
 
 double PadeJastrow2::computeLaplacian() {
     double derivative = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
-        int k_d = k%m_numberOfDimensions;       //Dimension associated with k
-        for(int i_p=0; i_p<k_p; i_p++) {
-            int i = i_p * m_numberOfDimensions + k_d;
+    for(unsigned int k=0; k<m_numberOfFreeDimensions; k++) {
+        unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+        unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+        for(unsigned int i_p=0; i_p<k_p; i_p++) {
+            unsigned int i = i_p * m_numberOfDimensions + k_d;
             derivative -= m_beta(i_p,k_p) * m_fSqrd(i_p,k_p) * (1-(1+2*m_gamma*m_h(i_p,k_p))*m_gSqrd(i,k)) / m_distanceMatrix(i_p,k_p);
         }
-        for(int j_p=k_p+1; j_p<m_numberOfParticles; j_p++) {
-            int j = j_p * m_numberOfDimensions + k_d;
+        for(unsigned int j_p=k_p+1; j_p<m_numberOfParticles; j_p++) {
+            unsigned int j = j_p * m_numberOfDimensions + k_d;
             derivative += m_beta(k_p,j_p) * m_fSqrd(k_p,j_p) * (1-(1+2*m_gamma*m_h(k_p,j_p))*m_gSqrd(k,j)) / m_distanceMatrix(k_p,j_p);
         }
     }
@@ -188,8 +188,8 @@ Eigen::VectorXd PadeJastrow2::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
 
     double derivative = 0;
-    for(int i_p=0; i_p<m_numberOfParticles; i_p++) {
-        for(int j_p=i_p+1; j_p<m_numberOfParticles; j_p++) {
+    for(unsigned int i_p=0; i_p<m_numberOfParticles; i_p++) {
+        for(unsigned int j_p=i_p+1; j_p<m_numberOfParticles; j_p++) {
             derivative -= m_beta(i_p,j_p) * m_h(i_p, j_p) * m_h(i_p, j_p);
         }
     }

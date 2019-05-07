@@ -16,20 +16,20 @@ RBMJastrow3::RBMJastrow3(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
-void RBMJastrow3::calculateG(int changedCoord) {
-    for(int i=changedCoord+1; i<m_numberOfFreeDimensions; i++) {
+void RBMJastrow3::calculateG(const unsigned int changedCoord) {
+    for(unsigned int i=changedCoord+1; i<m_numberOfFreeDimensions; i++) {
         m_g(changedCoord,i) = m_positions(changedCoord) - m_positions(i);
     }
-    for(int i=0; i<changedCoord; i++) {
+    for(unsigned int i=0; i<changedCoord; i++) {
         m_g(i,changedCoord) = m_positions(i) - m_positions(changedCoord);
     }
 }
 
 void RBMJastrow3::updateVectors() {
-    for(int l=0; l<m_numberOfHiddenNodes; l++) {
+    for(unsigned int l=0; l<m_numberOfHiddenNodes; l++) {
         m_v(l) = m_b(l);
-        for(int i=0; i<m_numberOfParticles; i++) {
-            for(int j=i+1; j<m_numberOfParticles; j++) {
+        for(unsigned int i=0; i<m_numberOfParticles; i++) {
+            for(unsigned int j=i+1; j<m_numberOfParticles; j++) {
                 m_v(l) += m_W(l*i,j) * m_distanceMatrix(i,j) / m_sigmaSqrd;
             }
         }
@@ -42,14 +42,13 @@ void RBMJastrow3::updateVectors() {
 
 void RBMJastrow3::updateRatio() {
     double Prod = 1;
-    for(int j=0; j<m_numberOfHiddenNodes; j++) {
+    for(unsigned int j=0; j<m_numberOfHiddenNodes; j++) {
         Prod *= m_pOld(j)/m_p(j);
     }
     m_probabilityRatio  = Prod * Prod;
 }
 
-void RBMJastrow3::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
-    int particle = int(changedCoord/m_numberOfDimensions);
+void RBMJastrow3::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
     setArrays();
 
     m_positions = positions;
@@ -88,8 +87,8 @@ void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     m_n  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     m_p  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     m_g  = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        for(int j=i; j<m_numberOfFreeDimensions; j++) {
+    for(unsigned int i=0; i<m_numberOfFreeDimensions; i++) {
+        for(unsigned int j=i; j<m_numberOfFreeDimensions; j++) {
             m_g(i,j) = m_positions(i) - m_positions(j);
             m_g(j,i) = -m_g(i,j);
         }
@@ -98,10 +97,10 @@ void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     setArrays();
 }
 
-void RBMJastrow3::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
+void RBMJastrow3::updateParameters(Eigen::MatrixXd parameters, const unsigned short elementNumber) {
     m_elementNumber                     = elementNumber;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-    Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfParticles*m_numberOfParticles*m_numberOfHiddenNodes);
+    Eigen::VectorXd wFlatten            = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfParticles*m_numberOfParticles*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfParticles*m_numberOfHiddenNodes, m_numberOfParticles);
     m_W     = W;
     m_WSqrd = W.cwiseAbs2();
@@ -112,18 +111,18 @@ double RBMJastrow3::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double RBMJastrow3::computeGradient(const int k) {
-    int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
-    int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+double RBMJastrow3::computeGradient(const unsigned int k) {
+    unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
     double derivative = 0;
-    for(int l=0; l<m_numberOfHiddenNodes; l++) {
+    for(unsigned int l=0; l<m_numberOfHiddenNodes; l++) {
         double firstder = 0;
-        for(int i_p=0; i_p<k_p; i_p++) {
-            int i = i_p * m_numberOfDimensions + k_d;
+        for(unsigned int i_p=0; i_p<k_p; i_p++) {
+            unsigned int i = i_p * m_numberOfDimensions + k_d;
             firstder -= m_W(l*i_p,k_p) * m_g(i,k) / m_distanceMatrix(i_p,k_p);
         }
-        for(int i_p=k_p+1; i_p<m_numberOfParticles; i_p++) {
-            int i = i_p * m_numberOfDimensions + k_d;
+        for(unsigned int i_p=k_p+1; i_p<m_numberOfParticles; i_p++) {
+            unsigned int i = i_p * m_numberOfDimensions + k_d;
             firstder += m_W(l*k_p,i_p) * m_g(k,i) / m_distanceMatrix(k_p,i_p);
         }
         derivative += m_n(l) * firstder;
@@ -133,19 +132,19 @@ double RBMJastrow3::computeGradient(const int k) {
 
 double RBMJastrow3::computeLaplacian() {
     double derivative = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        int k_p = int(k/m_numberOfDimensions);  //Particle associated with k
-        int k_d = k%m_numberOfDimensions;       //Dimension associated with k
-        for(int l=0; l<m_numberOfHiddenNodes; l++) {
+    for(unsigned int k=0; k<m_numberOfFreeDimensions; k++) {
+        unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+        unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+        for(unsigned int l=0; l<m_numberOfHiddenNodes; l++) {
             double firstder = 0;
             double secondder = 0;
-            for(int i_p=0; i_p<k_p; i_p++) {
-                int i = i_p * m_numberOfDimensions + k_d;
+            for(unsigned int i_p=0; i_p<k_p; i_p++) {
+                unsigned int i = i_p * m_numberOfDimensions + k_d;
                 firstder -= m_W(l*i_p,k_p) * m_g(i,k) / m_distanceMatrix(i_p,k_p);
                 secondder -= m_W(l*i_p,k_p) * (1 - m_g(i,k) * m_g(i,k) / (m_distanceMatrix(i_p,k_p) * m_distanceMatrix(i_p,k_p)));
             }
-            for(int i_p=k_p+1; i_p<m_numberOfParticles; i_p++) {
-                int i = i_p * m_numberOfDimensions + k_d;
+            for(unsigned int i_p=k_p+1; i_p<m_numberOfParticles; i_p++) {
+                unsigned int i = i_p * m_numberOfDimensions + k_d;
                 firstder += m_W(l*k_p,i_p) * m_g(k,i) / m_distanceMatrix(k_p,i_p);
                 secondder += m_W(l*k_p,i_p) * (1 - m_g(k,i) * m_g(k,i) / (m_distanceMatrix(k_p,i_p) * m_distanceMatrix(k_p,i_p)));
             }
@@ -157,13 +156,13 @@ double RBMJastrow3::computeLaplacian() {
 
 Eigen::VectorXd RBMJastrow3::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-    for(int l=0; l<m_numberOfHiddenNodes; l++) {
+    for(unsigned int l=0; l<m_numberOfHiddenNodes; l++) {
         gradients(l) = m_n(l);
     }
-    for(int m=0; m<m_numberOfParticles; m++) {
-        for(int n=m+1; n<m_numberOfParticles; n++) {
-            for(int o=0; o<m_numberOfHiddenNodes; o++) {
-                int p = o * m_numberOfParticles*m_numberOfHiddenNodes + m*m_numberOfParticles + n + m_numberOfHiddenNodes;
+    for(unsigned int m=0; m<m_numberOfParticles; m++) {
+        for(unsigned int n=m+1; n<m_numberOfParticles; n++) {
+            for(unsigned int o=0; o<m_numberOfHiddenNodes; o++) {
+                unsigned int p = o * m_numberOfParticles*m_numberOfHiddenNodes + m*m_numberOfParticles + n + m_numberOfHiddenNodes;
                 gradients(p) = m_n(o) * m_distanceMatrix(m,n) / m_sigmaSqrd;
             }
         }

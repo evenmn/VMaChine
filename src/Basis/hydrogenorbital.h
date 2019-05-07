@@ -4,16 +4,17 @@
 class HydrogenOrbital : public Basis {
 public:
     HydrogenOrbital(System* system);
-    void numberOfOrbitals();
-    void generateListOfStates();
+    void            numberOfOrbitals        ();
+    void            generateListOfStates    (const int orbitals);
 
-    double evaluate(double x, int n);
-    double evaluateDerivative(double x, int n);
+    double          basisElement            (const unsigned int n, const Eigen::VectorXd positions);
+    double          basisElementDer         (const unsigned int n, const unsigned int i, const Eigen::VectorXd positions);
+    double          basisElementSecDer      (const unsigned int n, const unsigned int i, const Eigen::VectorXd positions);
 
-    double basisElement(const int n, Eigen::VectorXd positions);
-    double basisElementDer(const int n, const int i, Eigen::VectorXd positions);
-    double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
+    double          evaluate                (const double x, const unsigned int n);
+    double          evaluateDerivative      (const double x, const unsigned int n);
+    double          evaluateSecondDerivative(const double x, const unsigned int n);
 
 private:
-    int m_Z = 1;
+    unsigned int    m_Z = 1;
 };

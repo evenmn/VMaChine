@@ -19,7 +19,7 @@ void HydrogenLike::initializeArrays(const Eigen::VectorXd positions, const Eigen
     setArrays();
 }
 
-void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
 
     setArrays();
@@ -41,7 +41,7 @@ void HydrogenLike::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void HydrogenLike::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+void HydrogenLike::updateParameters(const Eigen::MatrixXd parameters, const unsigned short elementNumber) {
     m_elementNumber                     = elementNumber;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_alpha                             = parameters(m_elementNumber, 0);
@@ -51,7 +51,7 @@ double HydrogenLike::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double HydrogenLike::computeGradient(const int k) {
+double HydrogenLike::computeGradient(const unsigned int k) {
     if(k%m_numberOfDimensions == 0) {
         return - m_alpha * m_Z;
     }

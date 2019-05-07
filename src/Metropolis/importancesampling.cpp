@@ -20,7 +20,7 @@ ImportanceSampling::ImportanceSampling(System* system) :
     m_radialVector           = m_system->getInitialState()->getRadialVector();
     m_distanceMatrix         = m_system->getInitialState()->getDistanceMatrix();
     m_quantumForceOld        = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
+    for(unsigned int i=0; i<m_numberOfFreeDimensions; i++) {
         m_quantumForceOld(i) = QuantumForce(i);
     }
     m_quantumForceNew        = m_quantumForceOld;
@@ -28,7 +28,7 @@ ImportanceSampling::ImportanceSampling(System* system) :
     m_calculateRadialVector  = m_system->getCalculateRadialVector();
 }
 
-double ImportanceSampling::QuantumForce(const int i) {
+double ImportanceSampling::QuantumForce(const unsigned int i) {
     double QF = 0;
     for(auto& j : m_waveFunctionVector) {
         QF += j->computeGradient(i);
@@ -38,10 +38,10 @@ double ImportanceSampling::QuantumForce(const int i) {
 
 double ImportanceSampling::GreenFuncSum() {
     double GreenSum  = 0;
-    for(int i=0; i<m_numberOfParticles; i++) {
+    for(unsigned int i=0; i<m_numberOfParticles; i++) {
         double GreenFunc = 0;
-        for(int j=0; j<m_numberOfDimensions; j++) {
-            int l = m_numberOfDimensions*i+j;
+        for(unsigned short d=0; d<m_numberOfDimensions; d++) {
+            unsigned int l = m_numberOfDimensions*i+d;
             double QForceOld = m_quantumForceOld(l);
             double QForceNew = m_quantumForceNew(l);
             GreenFunc += 0.5 * (QForceOld + QForceNew) * (0.5 * m_diff*m_stepLength*(QForceOld - QForceNew) - m_positions(l)+m_positionsOld(l));
@@ -52,7 +52,7 @@ double ImportanceSampling::GreenFuncSum() {
 }
 
 bool ImportanceSampling::acceptMove() {
-    int changedCoord  = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
+    unsigned int changedCoord  = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 
     m_quantumForceOld = m_quantumForceNew;
     m_positionsOld    = m_positions;
@@ -61,10 +61,10 @@ bool ImportanceSampling::acceptMove() {
 
     m_positions(changedCoord) += m_diff * QuantumForce(changedCoord) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
     if(m_calculateDistanceMatrix) {
-        calculateDistanceMatrixCross(int(changedCoord/m_numberOfDimensions));
+        Metropolis::calculateDistanceMatrixCross((unsigned int)(changedCoord/m_numberOfDimensions));
     }
     if(m_calculateRadialVector) {
-        calculateRadialVectorElement(int(changedCoord/m_numberOfDimensions));
+        Metropolis::calculateRadialVectorElement((unsigned int)(changedCoord/m_numberOfDimensions));
     }
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, changedCoord);
     m_quantumForceNew(changedCoord) = QuantumForce(changedCoord);
@@ -84,28 +84,28 @@ bool ImportanceSampling::acceptMove() {
     return true;
 }
 
-double ImportanceSampling::calculateDistanceMatrixElement(int i, int j) {
+double ImportanceSampling::calculateDistanceMatrixElement(const unsigned int i, const unsigned int j) {
     double dist = 0;
-    int parti   = m_numberOfDimensions*i;
-    int partj   = m_numberOfDimensions*j;
-    for(int d=0; d<m_numberOfDimensions; d++) {
+    unsigned int parti   = m_numberOfDimensions*i;
+    unsigned int partj   = m_numberOfDimensions*j;
+    for(unsigned short d=0; d<m_numberOfDimensions; d++) {
         double diff = m_positions(parti+d)-m_positions(partj+d);
         dist += diff*diff;
     }
     return sqrt(dist);
 }
 
-void ImportanceSampling::calculateDistanceMatrixCross(int particle) {
-    for(int i=0; i<m_numberOfParticles; i++) {
+void ImportanceSampling::calculateDistanceMatrixCross(const unsigned int particle) {
+    for(unsigned int i=0; i<m_numberOfParticles; i++) {
         m_distanceMatrix(particle, i) = calculateDistanceMatrixElement(particle, i);
         m_distanceMatrix(i, particle) = m_distanceMatrix(particle, i);
     }
 }
 
-double ImportanceSampling::calculateRadialVectorElement(int particle) {
+double ImportanceSampling::calculateRadialVectorElement(const unsigned int particle) {
     double sqrtElementWise = 0;
-    int part = particle*m_numberOfDimensions;
-    for(int d=0; d<m_numberOfDimensions; d++) {
+    unsigned int part = particle*m_numberOfDimensions;
+    for(unsigned short d=0; d<m_numberOfDimensions; d++) {
         sqrtElementWise += m_positions(part + d) * m_positions(part + d);
     }
     return sqrt(sqrtElementWise);

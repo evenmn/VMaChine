@@ -12,7 +12,7 @@ RBMGaussian::RBMGaussian(System* system) :
     m_sigmaSqrd = sigma*sigma;
 }
 
-void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters, const unsigned short elementNumber) {
     m_elementNumber                     = elementNumber;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_a                                 = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
@@ -26,7 +26,7 @@ void RBMGaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     setArrays();
 }
 
-void RBMGaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+void RBMGaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
     setArrays();
 
     m_positions             = positions;
@@ -50,7 +50,7 @@ double RBMGaussian::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double RBMGaussian::computeGradient(const int k) {
+double RBMGaussian::computeGradient(const unsigned int k) {
     return - m_Xa(k)/m_sigmaSqrd;
 }
 

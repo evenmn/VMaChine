@@ -4,19 +4,19 @@
 class Hermite : public Basis {
 public:
     Hermite(System* system);
-    void numberOfOrbitals();
-    void generateListOfStates(int orbitals);
+    void            numberOfOrbitals         ();
+    void            generateListOfStates     (const int orbitals);
 
-    double evaluate(double x, int n);
-    double evaluateDerivative(double x, int n);
-    double evaluateSecondDerivative(double x, int n);
+    double          basisElement             (const unsigned int n, const Eigen::VectorXd positions);
+    double          basisElementDer          (const unsigned int n, const unsigned int i, Eigen::VectorXd positions);
+    double          basisElementSecDer       (const unsigned int n, const unsigned int i, Eigen::VectorXd positions);
 
-    double basisElement(const int n, Eigen::VectorXd positions);
-    double basisElementDer(const int n, const int i, Eigen::VectorXd positions);
-    double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
+    double          evaluate                 (const double x, const int n);
+    double          evaluateDerivative       (const double x, const int n);
+    double          evaluateSecondDerivative (const double x, const int n);
 
 private:
-    double m_omega = 1;
-    double m_omegaSqrt = 1;
-    Eigen::MatrixXd m_listOfStates;
+    double          m_omega         = 1;
+    double          m_omegaSqrt     = 1;
+    Eigen::MatrixXi m_listOfStates;
 };

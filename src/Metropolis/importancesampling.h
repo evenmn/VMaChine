@@ -7,15 +7,16 @@ class ImportanceSampling : public Metropolis {
 public:
     ImportanceSampling(System* system);
     bool acceptMove();
-    double QuantumForce(const int i);
+    double QuantumForce(const unsigned int i);
     double GreenFuncSum();
 
-    double calculateDistanceMatrixElement(int i, int j);
-    void   calculateDistanceMatrixCross(int particle);
-    double calculateRadialVectorElement(int particle);
+    double calculateDistanceMatrixElement   (const unsigned int i, const unsigned int j);
+    void   calculateDistanceMatrixCross     (const unsigned int particle);
+    double calculateRadialVectorElement     (const unsigned int particle);
 
 private:
     Eigen::VectorXd m_quantumForceOld;
     Eigen::VectorXd m_quantumForceNew;
+
     std::vector<class WaveFunction*>    m_waveFunctionVector;
 };

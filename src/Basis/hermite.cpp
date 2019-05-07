@@ -18,8 +18,8 @@ void Hermite::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
     while(true) {
-        double orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
-        if(int(orb) == m_numberOfParticles) {
+        unsigned int orb = 2 * Basis::binomial(unsigned(counter), m_numberOfDimensions);
+        if(orb == m_numberOfParticles) {
             m_numberOfOrbitals = counter+1;
             break;
         }
@@ -32,13 +32,13 @@ void Hermite::numberOfOrbitals() {
     }
 }
 
-void Hermite::generateListOfStates(int orbitals) {
+void Hermite::generateListOfStates(const int orbitals) {
     // Returns the index list used in Slater
     // For instance (0,0), (1,0), (0,1) for 6P in 2D
     //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
-    int numberOfStates = Basis::binomial(orbitals-1, m_numberOfDimensions);
-    m_listOfStates = Eigen::MatrixXd::Zero(numberOfStates, m_numberOfDimensions);
-    int counter = 0;
+    unsigned int numberOfStates = Basis::binomial(unsigned(orbitals-1), unsigned(m_numberOfDimensions));
+    m_listOfStates = Eigen::MatrixXi::Zero(numberOfStates, m_numberOfDimensions);
+    unsigned int counter = 0;
     // One dimension
     if (m_numberOfDimensions == 1) {
         for(int i=0; i<orbitals; i++) {
@@ -131,10 +131,9 @@ double DH15(const double x) {return 491520*pow(x, 14) - 22364160*pow(x, 12) + 36
 double DH16(const double x) {return 1048576*pow(x, 15) - 55050240*pow(x, 13) + 1073479680*pow(x, 11) - 9840230400*pow(x, 9) + 44281036800*pow(x, 7) - 92990177280*pow(x, 5) + 77491814400*pow(x, 3) - 16605388800*x;}
 double DH17(const double x) {return 2228224*pow(x, 16) - 133693440*pow(x, 14) + 3041525760*pow(x, 12) - 33456783360*pow(x, 10) + 188194406400*pow(x, 8) - 52694337920*pow(x, 6) + 658680422400*pow(x, 4) - 282291609600*pow(x, 2) + 17643225600;}
 
-double Hermite::evaluate(double x, int n) {
+double Hermite::evaluate(const double x, const int n) {
     //Hermite polynomial of n'th degree
     bool hardcoded = true;
-
     if(hardcoded) {
         switch(n) {
             case 0: return H0(x);
@@ -156,7 +155,6 @@ double Hermite::evaluate(double x, int n) {
             case 16: return H16(x);
             case 17: return H17(x);
             default: return 0;
-
             if (n > 17) {
                 return -1;
             }
@@ -173,11 +171,9 @@ double Hermite::evaluate(double x, int n) {
             return 2 * (m_omegaSqrt * x * evaluate(x,n-1) - (n-1) * evaluate(x,n-2));
         }
     }
-
-    //return std::hermite(unsigned(n),x);
 }
 
-double Hermite::evaluateDerivative(double x, int n) {
+double Hermite::evaluateDerivative(const double x, const int n) {
     //First derivative of Hermite polynomial of n'th degree
     bool hardcoded = true;
 
@@ -214,7 +210,7 @@ double Hermite::evaluateDerivative(double x, int n) {
     }
 }
 
-double Hermite::evaluateSecondDerivative(double x, int n) {
+double Hermite::evaluateSecondDerivative(const double x, const int n) {
     //Second derivative of Hermite polynomial of n'th degree
     if(n < 2) {
         return 0;
@@ -224,31 +220,31 @@ double Hermite::evaluateSecondDerivative(double x, int n) {
     }
 }
 
-double Hermite::basisElement(const int n, Eigen::VectorXd positions) {
+double Hermite::basisElement(const unsigned int n, const Eigen::VectorXd positions) {
     double prod = 1;
-    for(int i=0; i<m_numberOfDimensions; i++) {
-        prod *= evaluate(positions(i), int(m_listOfStates(n, i)));
+    for(unsigned short i=0; i<m_numberOfDimensions; i++) {
+        prod *= evaluate(positions(i), m_listOfStates(n, i));
     }
     return prod;
 }
 
-double Hermite::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
+double Hermite::basisElementDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
-    double prod = evaluateDerivative(positions(i), int(m_listOfStates(n, i)));
-    for(int j=0; j<m_numberOfDimensions; j++) {
+    double prod = evaluateDerivative(positions(i), m_listOfStates(n, i));
+    for(unsigned short j=0; j<m_numberOfDimensions; j++) {
         if(i != j) {
-            prod *= evaluate(positions(j), int(m_listOfStates(n, j)));
+            prod *= evaluate(positions(j), m_listOfStates(n, j));
         }
     }
     return prod;
 }
 
-double Hermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
+double Hermite::basisElementSecDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
-    double prod = evaluateSecondDerivative(positions(i), int(m_listOfStates(n, i)));
-    for(int j=0; j<m_numberOfDimensions; j++) {
+    double prod = evaluateSecondDerivative(positions(i), m_listOfStates(n, i));
+    for(unsigned int j=0; j<m_numberOfDimensions; j++) {
         if(i != j) {
-            prod *= evaluate(positions(j), int(m_listOfStates(n, j)));
+            prod *= evaluate(positions(j), m_listOfStates(n, j));
         }
     }
     return prod;

@@ -18,8 +18,7 @@ HartreeFockHermite::HartreeFockHermite(System *system)  :
     generateListOfStates(m_numberOfOrbitals);
 }
 
-std::ifstream::pos_type fileLength(std::string fileName)
-{
+long fileLength(const std::string fileName) {
     std::ifstream inFile(fileName.c_str());
     return std::count(std::istreambuf_iterator<char>(inFile),
                       std::istreambuf_iterator<char>(), '\n');
@@ -49,7 +48,7 @@ void HartreeFockHermite::readCoefficientFile() {
     }
     else {
         double value;
-        int counter = 0;
+        unsigned int counter = 0;
         while (inFile >> value) {
             m_coefficients(int(counter/m_basisSize), counter % m_basisSize) = value;
             counter += 1;
@@ -67,31 +66,31 @@ void HartreeFockHermite::numberOfOrbitals() {
     }
 }
 
-void HartreeFockHermite::generateListOfStates(int orbitals) {
+void HartreeFockHermite::generateListOfStates(const int orbitals) {
     m_hermite->generateListOfStates(orbitals);
 }
 
-double HartreeFockHermite::basisElement(const int n, Eigen::VectorXd positions) {
+double HartreeFockHermite::basisElement(const unsigned int n, const Eigen::VectorXd positions) {
     double sum = 0;
-    for(int lambda=0; lambda<m_basisSize; lambda++) {
+    for(unsigned int lambda=0; lambda<m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_hermite->basisElement(lambda, positions);
     }
     return sum;
 }
 
-double HartreeFockHermite::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
+double HartreeFockHermite::basisElementDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     double sum = 0;
-    for(int lambda=0; lambda<m_basisSize; lambda++) {
+    for(unsigned int lambda=0; lambda<m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_hermite->basisElementDer(lambda, i, positions);
     }
     return sum;
 }
 
-double HartreeFockHermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
+double HartreeFockHermite::basisElementSecDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     double sum = 0;
-    for(int lambda=0; lambda<m_basisSize; lambda++) {
+    for(unsigned int lambda=0; lambda<m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_hermite->basisElementSecDer(lambda, i, positions);
     }
     return sum;

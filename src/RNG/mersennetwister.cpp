@@ -18,8 +18,8 @@ double MersenneTwister::nextGaussian(double mean, double standardDeviation) {
     return rand_gauss(gen);
 }
 
-int MersenneTwister::nextInt(int upperLimit) {
-    std::uniform_int_distribution<> rand_int(0, upperLimit - 1);
+unsigned int MersenneTwister::nextInt(unsigned int upperLimit) {
+    std::uniform_int_distribution<unsigned int> rand_int(0, upperLimit - 1);
     return rand_int(gen);
 }
 

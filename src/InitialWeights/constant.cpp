@@ -1,7 +1,6 @@
 #include "constant.h"
 #include <iostream>
 #include <cassert>
-#include "RNG/parkmiller.h"
 #include "../system.h"
 
 Constant::Constant(System* system, const double factor)  :  InitialWeights(system) {

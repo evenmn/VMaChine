@@ -17,7 +17,7 @@
 #include <ctime>
 #include <string>
 
-void System::runIterations(const int numberOfIterations) {
+void System::runIterations(const unsigned int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_distanceMatrix            = m_initialState->getDistanceMatrix();
     m_radialVector              = m_initialState->getRadialVector();
@@ -28,10 +28,10 @@ void System::runIterations(const int numberOfIterations) {
 
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
     //for(m_iter : tqdm::range(numberOfIterations)) {
-        if(m_applyDynamicSteps) {
-            m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * dynamicSteps();
+        if(m_applyAdaptiveSteps) {
+            m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * adaptiveSteps();
             m_numberOfStepsWEqui       = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
-            m_totalNumberOfStepsWOEqui = m_initialTotalNumberOfStepsWOEqui * dynamicSteps();
+            m_totalNumberOfStepsWOEqui = m_initialTotalNumberOfStepsWOEqui * adaptiveSteps();
             m_totalNumberOfStepsWEqui  = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
         }
         m_sampler->setNumberOfSteps(m_numberOfStepsWOEqui, m_totalNumberOfStepsWOEqui, m_totalNumberOfStepsWEqui);
@@ -58,8 +58,8 @@ void System::runIterations(const int numberOfIterations) {
             checkingConvergence();
         }
 
-        for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-            for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
+        for(unsigned int i=0; i<m_numberOfWaveFunctionElements; i++) {
+            for(unsigned int j=0; j<m_maxNumberOfParametersPerElement; j++) {
                 MPI_Bcast(&m_parameters(i,j), 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             }
         }
@@ -69,7 +69,7 @@ void System::runIterations(const int numberOfIterations) {
 }
 
 void System::runMetropolisCycles() {
-    for(int i=0; i < m_numberOfStepsWEqui; i++) {
+    for(unsigned long i=0; i < m_numberOfStepsWEqui; i++) {
         bool acceptedStep = m_metropolis->acceptMove();
         m_positions       = m_metropolis->updatePositions();
         m_distanceMatrix  = m_metropolis->updateDistanceMatrix();
@@ -85,7 +85,7 @@ void System::runMetropolisCycles() {
     }
 }
 
-void System::printToTerminal(int numberOfIterations) {
+void System::printToTerminal(unsigned int numberOfIterations) {
     if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
         m_sampler->closeOutputFiles();
         if(m_myRank == 0) {
@@ -111,20 +111,20 @@ void System::checkingConvergence() {
     }
 }
 
-int System::dynamicSteps() {
-    int stepRatio = 1;
+unsigned long System::adaptiveSteps() {
+    unsigned long stepRatio = 1;
     if(m_iter == m_lastIteration+m_rangeOfDynamicSteps) {
-        stepRatio = int(pow(2,m_additionalStepsLastIteration));
-        stepRatio = int(pow(2,m_additionalStepsLastIteration));
+        stepRatio = unsigned(pow(2,m_additionalStepsLastIteration));
+        stepRatio = unsigned(pow(2,m_additionalStepsLastIteration));
     }
     else if(m_iter >= m_lastIteration) {
-        stepRatio = int(pow(2,m_additionalSteps));
-        stepRatio = int(pow(2,m_additionalSteps));
+        stepRatio = unsigned(pow(2,m_additionalSteps));
+        stepRatio = unsigned(pow(2,m_additionalSteps));
     }
     return stepRatio;
 }
 
-void System::updateAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+void System::updateAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
     for(auto& i : m_waveFunctionElements) {
         i->updateArrays(positions, radialVector, distanceMatrix, changedCoord);
     }
@@ -137,8 +137,8 @@ void System::resetAllArrays() {
 }
 
 void System::updateAllParameters(const Eigen::MatrixXd parameters) {
-    for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        m_waveFunctionElements[unsigned(i)]->updateParameters(parameters, i);
+    for(unsigned long i=0; i<m_numberOfWaveFunctionElements; i++) {
+        m_waveFunctionElements[i]->updateParameters(parameters, i);
     }
 }
 
@@ -155,7 +155,7 @@ double System::getKineticEnergy() {
     for(auto& i : m_waveFunctionElements) {
         kineticEnergy += i->computeLaplacian();
     }
-    for(int k = 0; k < m_numberOfFreeDimensions; k++) {
+    for(unsigned int k = 0; k < m_numberOfFreeDimensions; k++) {
         double nablaLnPsi = 0;
         for(auto& i : m_waveFunctionElements) {
             nablaLnPsi += i->computeGradient(k);
@@ -166,9 +166,9 @@ double System::getKineticEnergy() {
 }
 
 Eigen::MatrixXd System::getAllInstantGradients() {
-    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-    for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
+    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfWaveFunctionElements), m_maxNumberOfParametersPerElement);
+    for(unsigned long i = 0; i < m_numberOfWaveFunctionElements; i++) {
+        gradients.row(Eigen::Index(i)) = m_waveFunctionElements[i]->computeParameterGradient();
     }
     return gradients;
 }
@@ -178,36 +178,36 @@ void System::setGlobalArraysToCalculate() {
     for(auto& i : m_waveFunctionElements) {
         int need = i->getGlobalArrayNeed();
         if(need == 1) {
-            m_calculateDistanceMatrix = true;
+            m_calculateDistanceMatrix   = true;
         }
         if(need == 2) {
-            m_calculateRadialVector = true;
+            m_calculateRadialVector     = true;
         }
         if(need == 3) {
-            m_calculateDistanceMatrix = true;
-            m_calculateRadialVector = true;
+            m_calculateDistanceMatrix   = true;
+            m_calculateRadialVector     = true;
         }
     }
     // Check if the Hemiltonian needs distance matrix or radial distance vector
-    int need = m_hamiltonian->getGlobalArrayNeed();
+    unsigned int need = m_hamiltonian->getGlobalArrayNeed();
     if(need == 1) {
-        m_calculateDistanceMatrix = true;
+        m_calculateDistanceMatrix   = true;
     }
     if(need == 2) {
-        m_calculateRadialVector = true;
+        m_calculateRadialVector     = true;
     }
     if(need == 3) {
-        m_calculateDistanceMatrix = true;
-        m_calculateRadialVector = true;
+        m_calculateDistanceMatrix   = true;
+        m_calculateRadialVector     = true;
     }
 }
 
-void System::setNumberOfParticles(const int numberOfParticles) {
+void System::setNumberOfParticles(const unsigned int numberOfParticles) {
     assert(numberOfParticles > 0); // Check if the elements need distance matrix or radial distance vector
     m_numberOfParticles = numberOfParticles;
 }
 
-void System::setNumberOfDimensions(const int numberOfDimensions) {
+void System::setNumberOfDimensions(const unsigned short numberOfDimensions) {
     assert(numberOfDimensions > 0);
     assert(m_numberOfParticles > 0);
     m_numberOfDimensions = numberOfDimensions;
@@ -218,12 +218,12 @@ void System::setNumberOfFreeDimensions() {
     m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
 }
 
-void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes) {
+void System::setNumberOfHiddenNodes(const unsigned int numberOfHiddenNodes) {
     assert(numberOfHiddenNodes > 0);
     m_numberOfHiddenNodes = numberOfHiddenNodes;
 }
 
-void System::setNumberOfMetropolisSteps(const int steps) {
+void System::setNumberOfMetropolisSteps(const unsigned long steps) {
     // Calculate number of steps without equilibriation (power of 2)
     m_totalNumberOfStepsWOEqui         = steps;
     if(m_myRank == 0) {
@@ -238,23 +238,23 @@ void System::setNumberOfMetropolisSteps(const int steps) {
     m_initialTotalNumberOfStepsWOEqui  = m_totalNumberOfStepsWOEqui;
 
     // Calculate the number of equilibriation steps (needs to be unaffected by the number of processes)
-    m_numberOfEquilibriationSteps      = int(m_totalNumberOfStepsWOEqui * m_equilibrationFraction);
-    m_totalNumberOfEquilibriationSteps = int(m_totalNumberOfStepsWOEqui * m_equilibrationFraction * m_numberOfProcesses);
+    m_numberOfEquilibriationSteps      = unsigned(m_totalNumberOfStepsWOEqui * m_equilibrationFraction);
+    m_totalNumberOfEquilibriationSteps = unsigned(m_totalNumberOfStepsWOEqui * m_equilibrationFraction * m_numberOfProcesses);
 
     // Calculate the number of steps included equilibriation
     m_totalNumberOfStepsWEqui          = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
     m_numberOfStepsWEqui               = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
 }
 
-void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionElements) {
+void System::setNumberOfWaveFunctionElements(const unsigned long numberOfWaveFunctionElements) {
     m_numberOfWaveFunctionElements = numberOfWaveFunctionElements;
 }
 
 void System::setMaxNumberOfParametersPerElement() {
-    int maxNumberOfWaveFunctionElements = 0;
-    int counter = 0;
+    unsigned int maxNumberOfWaveFunctionElements = 0;
+    unsigned int counter = 0;
     for(auto& i : m_waveFunctionElements) {
-        int numberOfParameters = i->getNumberOfParameters();
+        unsigned int numberOfParameters = i->getNumberOfParameters();
         if(numberOfParameters > maxNumberOfWaveFunctionElements) {
             maxNumberOfWaveFunctionElements = numberOfParameters;
         }
@@ -279,14 +279,14 @@ void System::setFrequency(const double omega) {
     m_omega = omega;
 }
 
-void System::setAtomicNumber(const int Z) {
+void System::setAtomicNumber(const unsigned int Z) {
     assert(Z > 0);
     m_Z = Z;
 }
 
-void System::setLearningRate(const double eta) {
-    assert(eta > 0);
-    m_eta = eta;
+void System::setLearningRate(const double learningRate) {
+    assert(learningRate > 0);
+    m_eta = learningRate;
 }
 
 void System::setWidth(const double sigma) {
@@ -298,22 +298,22 @@ void System::setInteraction(const bool interaction) {
     m_interaction = interaction;
 }
 
-void System::setConvergenceTools(bool checkConvergence, int numberOfEnergies, double tolerance) {
+void System::setConvergenceTools(bool checkConvergence, unsigned int numberOfEnergies, double tolerance) {
     m_checkConvergence = checkConvergence;
     m_tolerance        = tolerance;
     m_numberOfEnergies = numberOfEnergies;
     m_energies         = Eigen::VectorXd::Zero(numberOfEnergies);
 }
 
-void System::setDynamicStepTools(bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration) {
-    m_applyDynamicSteps = applyDynamicSteps;
+void System::setDynamicStepTools(bool applyAdaptiveSteps, unsigned int rangeOfDynamicSteps, unsigned int additionalSteps, unsigned int additionalStepsLastIteration) {
+    m_applyAdaptiveSteps = applyAdaptiveSteps;
     m_rangeOfDynamicSteps = rangeOfDynamicSteps;
     m_additionalSteps = additionalSteps;
     m_additionalStepsLastIteration = additionalStepsLastIteration;
 }
 
-void System::setDensityTools(bool computeDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius) {
-    m_computeDensity        = computeDensity;
+void System::setDensityTools(bool computeOneBodyDensity, bool computeTwoBodyDensity, unsigned int numberOfBins, double maxRadius) {
+    m_computeOneBodyDensity = computeOneBodyDensity;
     m_computeTwoBodyDensity = computeTwoBodyDensity;
     m_numberOfBins          = numberOfBins;
     m_maxRadius             = maxRadius;
@@ -329,7 +329,7 @@ void System::setMPITools(int myRank, int numberOfProcesses) {
     m_numberOfProcesses = numberOfProcesses;
 }
 
-void System::setPath(std::string path) {
+void System::setPath(const std::string path) {
     m_path = path;
 }
 
@@ -362,12 +362,12 @@ void System::setOptimization(Optimization* optimization) {
     m_optimization = optimization;
 }
 
-void System::setRandomNumberGenerator(RandomNumberGenerator* randomnumbergenerator) {
-    m_randomnumbergenerator = randomnumbergenerator;
+void System::setRandomNumberGenerator(RandomNumberGenerator* randomNumberGenerator) {
+    m_randomNumberGenerator = randomNumberGenerator;
 }
 
 void System::setGradients() {
-    m_gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
+    m_gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfWaveFunctionElements), m_maxNumberOfParametersPerElement);
 }
 
 std::string System::getAllLabels() {

@@ -7,7 +7,7 @@ public:
     BruteForce(System* system);
     bool acceptMove();
 
-    double calculateDistanceMatrixElement(int i, int j);
-    void   calculateDistanceMatrixCross(int particle);
-    double calculateRadialVectorElement(int particle);
+    double calculateDistanceMatrixElement(const unsigned int i, const unsigned int j);
+    void   calculateDistanceMatrixCross(const unsigned int particle);
+    double calculateRadialVectorElement(const unsigned int particle);
 };

@@ -25,8 +25,8 @@ Eigen::MatrixXd GradientDescent::getEnergyGradient() {
 }
 
 Eigen::MatrixXd GradientDescent::updateParameters() {
-    m_step += 1;
-    double monotonic = 1/pow(m_step, m_monotonicExp);
-    m_v = m_gamma * m_v + m_eta * getEnergyGradient() * monotonic;
+    m_iter += 1;
+    double monotonic = 1/pow(m_iter, m_monotonicExp);
+    m_v = m_gamma * m_v + m_eta * Optimization::getEnergyGradient() * monotonic;
     return m_v;
 }

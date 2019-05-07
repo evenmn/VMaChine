@@ -24,8 +24,8 @@ Eigen::MatrixXd ASGD::getEnergyGradient() {
 }
 
 Eigen::MatrixXd ASGD::updateParameters() {
-    m_step += 1;
+    m_iter += 1;
     //m_t = m_t + m_A;
-    m_v = m_gamma * m_v + m_eta * getEnergyGradient() / sqrt(m_step);
+    m_v = m_gamma * m_v + m_eta * Optimization::getEnergyGradient() / sqrt(m_iter);
     return m_v;
 }

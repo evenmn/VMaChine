@@ -14,7 +14,7 @@ RBMJastrow::RBMJastrow(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
-void RBMJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
+void RBMJastrow::updateParameters(Eigen::MatrixXd parameters, const unsigned short elementNumber) {
     m_elementNumber                     = elementNumber;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
@@ -33,7 +33,7 @@ void RBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::
     setArrays();
 }
 
-void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
     setArrays();
     m_positions = positions;
     updateVectors();
@@ -62,9 +62,9 @@ double RBMJastrow::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double RBMJastrow::computeGradient(const int k) {
+double RBMJastrow::computeGradient(const unsigned  int k) {
     double Sum = 0;
-    for(int j=0; j<m_numberOfHiddenNodes; j++) {
+    for(unsigned int j=0; j<m_numberOfHiddenNodes; j++) {
         Sum += m_W(k,j) * m_n(j);
     }
     return Sum / m_sigmaSqrd;
@@ -72,8 +72,8 @@ double RBMJastrow::computeGradient(const int k) {
 
 double RBMJastrow::computeLaplacian() {
     double Sum = 0;
-    for(int k=0; k<m_numberOfFreeDimensions; k++) {
-        for(int j=0; j<m_numberOfHiddenNodes; j++) {
+    for(unsigned int k=0; k<m_numberOfFreeDimensions; k++) {
+        for(unsigned int j=0; j<m_numberOfHiddenNodes; j++) {
             Sum += m_WSqrd(k,j) * m_pDotN(j);
         }
     }
@@ -82,10 +82,10 @@ double RBMJastrow::computeLaplacian() {
 
 Eigen::VectorXd RBMJastrow::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
-    for(int l=0; l<m_numberOfHiddenNodes; l++) {
+    for(unsigned int l=0; l<m_numberOfHiddenNodes; l++) {
         gradients(l) = m_n(l);
-        for(int m=0; m<m_numberOfFreeDimensions; m++) {
-            int n = l * m_numberOfFreeDimensions + m + m_numberOfHiddenNodes;
+        for(unsigned int m=0; m<m_numberOfFreeDimensions; m++) {
+            unsigned int n = l * m_numberOfFreeDimensions + m + m_numberOfHiddenNodes;
             gradients(n) = m_positions(m) * m_n(l) / m_sigmaSqrd;
         }
     }
@@ -102,7 +102,7 @@ void RBMJastrow::updateVectors() {
 
 void RBMJastrow::updateRatio() {
     double Prod = 1;
-    for(int j=0; j<m_numberOfHiddenNodes; j++) {
+    for(unsigned int j=0; j<m_numberOfHiddenNodes; j++) {
         Prod *= m_pOld(j)/m_p(j);
     }
     m_probabilityRatio  = Prod * Prod;

@@ -5,18 +5,21 @@
 class Hamiltonian {
 public:
     Hamiltonian(class System* system);
-    virtual int    getGlobalArrayNeed() = 0;
-    virtual double computeLocalEnergy() = 0;
-    virtual ~Hamiltonian() = 0;
+    virtual unsigned int    getGlobalArrayNeed() = 0;
+    virtual double          computeLocalEnergy() = 0;
+    virtual                 ~Hamiltonian()       = 0;
 
 protected:
-    class System* m_system = nullptr;
+    unsigned int    m_numberOfParticles  = 0;
+    unsigned short  m_numberOfDimensions = 0;
+
+    bool            m_interaction        = true;
+
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_radialVector;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_parameters;
-    int m_numberOfParticles = 0;
-    int m_numberOfDimensions = 0;
-    int m_interaction = false;
+
+    class System* m_system = nullptr;
 };
 

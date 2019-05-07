@@ -15,13 +15,13 @@ void Gaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::Ve
     setArrays();
 }
 
-void Gaussian::updateProbabilityRatio(int changedCoord) {
+void Gaussian::updateProbabilityRatio(unsigned int changedCoord) {
     m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(changedCoord)*m_positionsOld(changedCoord) \
                                                      - m_positions   (changedCoord)*m_positions   (changedCoord)));
 }
 
 
-void Gaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+void Gaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
     setArrays();
     m_positions             = positions;
     updateProbabilityRatio(changedCoord);
@@ -37,7 +37,7 @@ void Gaussian::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
+void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const unsigned short elementNumber) {
     m_elementNumber                     = elementNumber;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_alpha                             = parameters(m_elementNumber,0);
@@ -47,7 +47,7 @@ double Gaussian::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double Gaussian::computeGradient(const int k) {
+double Gaussian::computeGradient(const unsigned int k) {
     return - m_omega * m_alpha * m_positions(k);
 }
 

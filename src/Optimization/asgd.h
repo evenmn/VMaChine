@@ -5,15 +5,17 @@
 class ASGD : public Optimization {
 public:
     ASGD(System* system, const double gamma);
-    int             getNumberOfBatches() { return m_numberOfBatches; }
+    unsigned int    getNumberOfBatches() { return m_numberOfBatches; }
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();
 
 private:
-    double m_A     = 20;
-    double m_gamma = 0;
-    double m_t     = m_A;
-    int    m_step  = 0;
-    int    m_numberOfBatches = 10;
+    unsigned int    m_iter            = 0;
+    unsigned int    m_numberOfBatches = 10;
+
+    double          m_A               = 20;
+    double          m_gamma           = 0;
+    double          m_t               = m_A;
+
     Eigen::MatrixXd m_v;
 };

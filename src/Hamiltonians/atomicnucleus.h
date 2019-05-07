@@ -5,10 +5,10 @@
 class AtomicNucleus : public Hamiltonian {
 public:
     AtomicNucleus(System* system);
-    double computeLocalEnergy();
-    int    getGlobalArrayNeed()  { return m_globalArrayNeed; }
+    double          computeLocalEnergy();
+    unsigned int    getGlobalArrayNeed()  { return m_globalArrayNeed; }
 
 private:
-    int m_Z = 1;
-    int m_globalArrayNeed = 3;
+    unsigned int m_Z                = 1;
+    unsigned int m_globalArrayNeed  = 3;
 };

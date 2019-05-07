@@ -3,13 +3,13 @@
 Basis::Basis(System *system) {
 }
 
-long long Basis::factorial(const int n) {
+unsigned long long Basis::factorial(const unsigned int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
-double Basis::binomial(const int n, const int p) {
+unsigned int Basis::binomial(const unsigned int n, const unsigned int p) {
     //Binomial coefficients, equal to magic numbers
-    return factorial(n+p)/(factorial(n)*factorial(p));
+    return unsigned(factorial(n+p)/(factorial(n)*factorial(p)));
 }
 
 Basis::~Basis() {};

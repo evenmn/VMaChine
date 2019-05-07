@@ -51,7 +51,6 @@
 
 #include "RNG/rng.h"
 #include "RNG/mersennetwister.h"
-#include "RNG/parkmiller.h"
 
 //#include "Plotter/plotter.h"
 
@@ -64,26 +63,26 @@ int main(int argc, char *argv[]) {
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
-    int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 10;
-    double  eta                 = 0.5;                      // Learning rate
-    double  omega               = 1.0;                      // Oscillator frequency
-    int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
-    double  sigma               = 1/sqrt(omega);            // Width of probability distribution
-    double  stepLength          = 0.1;                      // Metropolis step length
-    double  equilibration       = 0.1;                      // Amount of the total steps used
+    unsigned short   numberOfDimensions  = 2;
+    unsigned int     numberOfParticles   = 2;
+    unsigned int     numberOfHiddenNodes = numberOfParticles;
+    unsigned long    numberOfSteps       = unsigned(pow(2,18));
+    unsigned int     numberOfIterations  = 10;
+    double           learningRate        = 0.5;                      // Learning rate
+    double           omega               = 1.0;                      // Oscillator frequency
+    unsigned int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
+    double           sigma               = 1/sqrt(omega);            // Width of probability distribution
+    double           stepLength          = 0.1;                      // Metropolis step length
+    double           equilibration       = 0.1;                      // Amount of the total steps used
 
     // Switches
-    bool    interaction             = true;                     // Repulsive interaction on or off
-    bool    checkConvergence        = false;                    // Stops the program after it has converged
-    bool    applyAdaptiveSteps      = false;                     // Increase the number of MC-cycles for the last iterations
-    bool    computeDensity          = false;                     // Compute one-body density and print to file
-    bool    computeTwoBodyDensity   = true;
-    bool    printEnergyFile         = false;                     // Print energy for every iteration to file
-    bool    doBlocking              = false;                     // Print blocking file for the last iteration and do blocking
+    bool             interaction             = true;                 // Repulsive interaction on or off
+    bool             checkConvergence        = false;                // Stops the program after it has converged
+    bool             applyAdaptiveSteps      = false;                // Increase the number of MC-cycles for the last iterations
+    bool             computeOneBodyDensity   = true;                 // Compute one-body density and print to file
+    bool             computeTwoBodyDensity   = true;                 // Compute two-body density and print to file
+    bool             printEnergyFile         = false;                // Print energy for every iteration to file
+    bool             doBlocking              = false;                // Print blocking file for the last iteration and do blocking
 
 
     // --- ADVANCED SETTINGS ---
@@ -91,17 +90,17 @@ int main(int argc, char *argv[]) {
     std::string path = "data/";
 
     // Convergence tools
-    int     numberOfEnergies                = 5;            // Check this number of energies for convergence
-    double  tolerance                       = 1e-7;         // Convergence tolerance
+    unsigned int     numberOfEnergies                = 5;            // Check this number of energies for convergence
+    double           tolerance                       = 1e-7;         // Convergence tolerance
 
     // Dynamic step tools
-    int     rangeOfDynamicSteps             = 10;           // For how many iterations should we increase # MC-cycles?
-    int     additionalSteps                 = 4;            // How much should we increase it? (as a power of 2)
-    int     additionalStepsLastIteration    = 8;            // How much should we increase the very last? (as a power of 2)
+    unsigned int     rangeOfDynamicSteps             = 10;           // For how many iterations should we increase # MC-cycles?
+    unsigned int     additionalSteps                 = 4;            // How much should we increase it? (as a power of 2)
+    unsigned int     additionalStepsLastIteration    = 8;            // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius                       = 5;                       // Max radius of one-body density plots
-    int     numberOfBins                    = int(100 * maxRadius);     // 100 bins per radius unit
+    double           maxRadius                       = 5;                       // Max radius of electron density plots
+    unsigned int     numberOfBins                    = unsigned(100 * maxRadius);    // 100 bins per radius unit
 
 
     // --- SET PARAMETERS ---
@@ -112,7 +111,7 @@ int main(int argc, char *argv[]) {
     system->setFrequency                (omega);
     system->setAtomicNumber             (Z);
     system->setWidth                    (sigma);
-    system->setLearningRate             (eta);
+    system->setLearningRate             (learningRate);
     system->setNumberOfParticles        (numberOfParticles);
     system->setNumberOfDimensions       (numberOfDimensions);
     system->setNumberOfHiddenNodes      (numberOfHiddenNodes);
@@ -122,7 +121,7 @@ int main(int argc, char *argv[]) {
     system->setInteraction              (interaction);
     system->setConvergenceTools         (checkConvergence, numberOfEnergies, tolerance);
     system->setDynamicStepTools         (applyAdaptiveSteps, rangeOfDynamicSteps, additionalSteps, additionalStepsLastIteration);
-    system->setDensityTools             (computeDensity, computeTwoBodyDensity, numberOfBins, maxRadius);
+    system->setDensityTools             (computeOneBodyDensity, computeTwoBodyDensity, numberOfBins, maxRadius);
     system->setEnergyPrintingTools      (printEnergyFile, doBlocking);
 
     system->setBasis                    (new Hermite(system));
@@ -141,7 +140,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
     //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
 
-    system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
+    system->setNumberOfWaveFunctionElements(WaveFunctionElements.size());
     system->setWaveFunctionElements     (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setInitialWeights           (new Constant(system, 1.0));

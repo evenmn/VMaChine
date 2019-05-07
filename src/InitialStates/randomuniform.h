@@ -4,9 +4,9 @@
 class RandomUniform : public InitialState {
 public:
     RandomUniform(System* system);
-    double  calculateDistanceMatrixElement  (int i, int j);
+    double  calculateDistanceMatrixElement  (const unsigned int i, const unsigned int j);
+    double  calculateRadialVectorElement    (const unsigned int particle);
     void    calculateDistanceMatrix         ();
-    double  calculateRadialVectorElement    (int particle);
     void    calculateRadialVector           ();
     void    setupInitialState               ();
 };
