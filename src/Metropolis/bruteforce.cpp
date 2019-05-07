@@ -46,30 +46,3 @@ bool BruteForce::acceptMove() {
     }
     return true;
 }
-
-double BruteForce::calculateDistanceMatrixElement(const unsigned int i, const unsigned int j) {
-    double dist = 0;
-    unsigned int parti   = m_numberOfDimensions*i;
-    unsigned int partj   = m_numberOfDimensions*j;
-    for(unsigned short d=0; d<m_numberOfDimensions; d++) {
-        double diff = m_positions(parti+d)-m_positions(partj+d);
-        dist += diff*diff;
-    }
-    return sqrt(dist);
-}
-
-void BruteForce::calculateDistanceMatrixCross(const unsigned int particle) {
-    for(unsigned int i=0; i<m_numberOfParticles; i++) {
-        m_distanceMatrix(particle, i) = calculateDistanceMatrixElement(particle, i);
-        m_distanceMatrix(i, particle) = m_distanceMatrix(particle, i);
-    }
-}
-
-double BruteForce::calculateRadialVectorElement(const unsigned int particle) {
-    double sqrtElementWise = 0;
-    unsigned int part = particle*m_numberOfDimensions;
-    for(unsigned short d=0; d<m_numberOfDimensions; d++) {
-        sqrtElementWise += m_positions(part + d) * m_positions(part + d);
-    }
-    return sqrt(sqrtElementWise);
-}

@@ -41,6 +41,7 @@ private:
     unsigned int    m_numberOfParticlesHalf = 0;
     unsigned int    m_freeDimensionsHalf    = 0;
     unsigned int    m_particle              = 0;
+    unsigned int    m_particleHalf          = 0;
     unsigned int    m_numberOfParameters    = 0;
     unsigned short  m_globalArrayNeed       = 0;
     unsigned short  m_elementNumber         = 0;

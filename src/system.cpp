@@ -89,9 +89,9 @@ void System::printToTerminal(unsigned int numberOfIterations) {
     if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
         m_sampler->closeOutputFiles();
         if(m_myRank == 0) {
+            m_sampler->doResampling();
             m_sampler->printFinalOutputToTerminal();
         }
-        MPI_Barrier(MPI_COMM_WORLD);
         MPI_Finalize();
         exit(0);
     }

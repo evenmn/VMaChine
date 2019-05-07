@@ -16,13 +16,6 @@ ASGD::ASGD(System* system, const double gamma) :
     m_gamma                           = gamma;
 }
 
-Eigen::MatrixXd ASGD::getEnergyGradient() {
-    double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
-    Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();
-    Eigen::MatrixXd averageGradientsE = m_system->getSampler()->getAverageGradientsE();
-    return 2 * (averageGradientsE - averageEnergy * averageGradients);
-}
-
 Eigen::MatrixXd ASGD::updateParameters() {
     m_iter += 1;
     //m_t = m_t + m_A;

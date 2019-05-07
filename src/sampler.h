@@ -19,6 +19,7 @@ public:
     void            openOutputFiles             ();
     void            closeOutputFiles            ();
     void            appendInstantFiles          ();
+    void            doResampling                ();
     void            computeAverages             ();
     void            computeTotals               ();
     void            computeOneBodyDensity       (const Eigen::VectorXd positions);
@@ -41,10 +42,10 @@ private:
     unsigned int    m_totalAcceptence           = 0;
     unsigned int    m_acceptence                = 0;
     unsigned int    m_iter                      = 0;
-    unsigned int    m_instantNumber             = 0;
     unsigned int    m_numberOfBins              = 100;
     unsigned int    m_numberOfEquilibriationSteps = 0;
 
+    unsigned long   m_instantNumber             = 0;
     unsigned long   m_numberOfStepsWOEqui       = 0;
     unsigned long   m_totalNumberOfStepsWOEqui  = 0;
     unsigned long   m_totalNumberOfStepsWEqui   = 0;

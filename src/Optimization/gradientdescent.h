@@ -7,7 +7,6 @@ public:
     GradientDescent(System* system, const double gamma, const double monotonicExp);
     unsigned int    getNumberOfBatches() { return m_numberOfBatches; }
     Eigen::MatrixXd updateParameters();
-    Eigen::MatrixXd getEnergyGradient();
 
 private:
     unsigned int    m_iter              = 0;

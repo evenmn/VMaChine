@@ -128,7 +128,9 @@ void Sampler::printFinalOutputToTerminal() {
     cout << " Variance         : " << m_variance << endl;
     cout << " STD              : " << sqrt(m_variance) << endl;
     cout << endl;
+}
 
+void Sampler::doResampling() {
     if(m_printInstantEnergyToFile) {
         appendInstantFiles();
 
@@ -182,20 +184,9 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
 }
 
 void Sampler::openOutputFiles() {
-    if(m_rank == 0) {
-        m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(unsigned(1e6));
-    }
-    MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    // Print average energies to file
     if(m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFileName = generateFileName(m_path, "energy", "SGD", ".dat");
         m_averageEnergyFile.open(m_averageEnergyFileName);
-    }
-
-    if(m_printInstantEnergyToFile) {
-        m_instantEnergyFileName = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + ".dat";
-        m_instantEnergyFile.open(m_instantEnergyFileName);
     }
     if(m_computeOneBodyDensity && m_rank == 0) {
         std::string oneBodyFileName = generateFileName(m_path, "onebody", "SGD", ".dat");
@@ -204,6 +195,14 @@ void Sampler::openOutputFiles() {
     if(m_computeTwoBodyDensity && m_rank == 0) {
         std::string twoBodyFileName = generateFileName(m_path, "twobody", "SGD", ".dat");
         m_twoBodyFile.open (twoBodyFileName);
+    }
+    if(m_printInstantEnergyToFile) {
+        if(m_rank == 0) {
+            m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(unsigned(1e6));
+        }
+        MPI_Bcast(&m_instantNumber, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+        m_instantEnergyFileName = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + ".dat";
+        m_instantEnergyFile.open(m_instantEnergyFileName);
     }
 }
 
@@ -216,10 +215,7 @@ void Sampler::printEnergyToFile() {
 void Sampler::printOneBodyDensityToFile() {
     if(m_computeOneBodyDensity){
         m_totalParticlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
-        //MPI_Gather(m_particlesPerBin.data(), m_numberOfBins, MPI_DOUBLE, m_totalParticlesPerBin.data(), m_numberOfBins, MPI_DOUBLE, MPI_COMM_WORLD);
-        for(unsigned int i=0; i<m_numberOfBins; i++) {
-            MPI_Reduce(&m_particlesPerBin(i), &m_totalParticlesPerBin(i), 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-        }
+        MPI_Reduce(m_particlesPerBin.data(), m_totalParticlesPerBin.data(), m_numberOfBins, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
         if(m_rank == 0) {
             m_oneBodyFile << m_totalParticlesPerBin << endl;
         }
@@ -229,6 +225,8 @@ void Sampler::printOneBodyDensityToFile() {
 void Sampler::printTwoBodyDensityToFile() {
     if(m_computeTwoBodyDensity){
         m_totalParticlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
+        //Eigen::Map<Eigen::VectorXi> t(m_totalParticlesPerBinPairwise.data(), m_numberOfBins*m_numberOfBins);
+        //MPI_Reduce(m_particlesPerBinPairwise.data(), t.data(), m_numberOfBins, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
         for(unsigned int i=0; i<m_numberOfBins; i++) {
             for(unsigned int j=0; j<m_numberOfBins; j++) {
                 MPI_Reduce(&m_particlesPerBinPairwise(i,j), &m_totalParticlesPerBinPairwise(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -242,19 +240,19 @@ void Sampler::printTwoBodyDensityToFile() {
 
 void Sampler::closeOutputFiles() {
     if(m_averageEnergyFile.is_open())      { m_averageEnergyFile.close(); }
+    if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
     if(m_oneBodyFile.is_open())            { m_oneBodyFile.close(); }
     if(m_twoBodyFile.is_open())            { m_twoBodyFile.close(); }
-    if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
 }
 
 void Sampler::printInstantValuesToFile() {
     if(m_printInstantEnergyToFile) {
-        m_instantEnergyFile << m_instantEnergy << endl;  // Write instant energies to file for blocking
+        m_instantEnergyFile << m_instantEnergy << endl;
     }
 }
 
 void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
-    if(m_computeOneBodyDensity) {                         // Calculate onebody densities
+    if(m_computeOneBodyDensity) {
         for(unsigned int particle=0; particle<m_numberOfParticles; particle++) {
             double dist = 0;
             unsigned int positionIndex = m_numberOfDimensions * particle;
@@ -262,7 +260,7 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
                 double position = positions(positionIndex+d);
                 dist += position * position;
             }
-            double r = sqrt(dist);      // Distance from particle to origin
+            double r = sqrt(dist);
             for(unsigned int k=0; k<m_numberOfBins; k++) {
                 if(r < m_binLinSpace(k)) {
                     m_particlesPerBin(k) += 1;
@@ -274,7 +272,7 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
 }
 
 void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
-    if(m_computeTwoBodyDensity) {                         // Calculate twobody densities
+    if(m_computeTwoBodyDensity) {
         for(unsigned int particle1=0; particle1<m_numberOfParticles; particle1++) {
             double dist1 = 0;
             unsigned int position1Index = m_numberOfDimensions * particle1;
@@ -282,7 +280,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
                 double position1 = positions(position1Index+d);
                 dist1 += position1 * position1;
             }
-            double r1 = sqrt(dist1);      // Distance from particle 1 to origin
+            double r1 = sqrt(dist1);
             int counter1 = 0;
             while(m_binLinSpace(counter1) < r1) {
                 counter1 += 1;
@@ -294,7 +292,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
                     double position2 = positions(position2Index+d);
                     dist2 += position2 * position2;
                 }
-                double r2 = sqrt(dist2);      // Distance from particle 2 to origin
+                double r2 = sqrt(dist2);
                 int counter2 = 0;
                 while(m_binLinSpace(counter2) < r2) {
                     counter2 += 1;

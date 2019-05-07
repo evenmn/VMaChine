@@ -7,7 +7,6 @@ public:
     BarzilaiBorwein(System* system);
     unsigned int    getNumberOfBatches() { return m_numberOfBatches; }
     Eigen::MatrixXd updateParameters();
-    Eigen::MatrixXd getEnergyGradient();
 
 private:
     unsigned int    m_iter            = 0;

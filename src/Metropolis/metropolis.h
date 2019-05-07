@@ -9,9 +9,6 @@ public:
     virtual Eigen::MatrixXd updateDistanceMatrix()    { return m_distanceMatrix; }
 
     virtual bool            acceptMove() = 0;
-    //virtual double          calculateDistanceMatrixElement  (const unsigned int i, const unsigned int j) = 0;
-    //virtual void            calculateDistanceMatrixCross    (const unsigned int particle) = 0;
-    //virtual double          calculateRadialVectorElement    (const unsigned int particle) = 0;
     virtual                 ~Metropolis() = 0;
 
     double calculateDistanceMatrixElement   (const unsigned int i, const unsigned int j);

@@ -17,13 +17,6 @@ GradientDescent::GradientDescent(System* system, const double gamma, const doubl
     m_monotonicExp                    = monotonicExp;
 }
 
-Eigen::MatrixXd GradientDescent::getEnergyGradient() {
-    double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
-    Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();
-    Eigen::MatrixXd averageGradientsE = m_system->getSampler()->getAverageGradientsE();
-    return 2 * (averageGradientsE - averageEnergy * averageGradients);
-}
-
 Eigen::MatrixXd GradientDescent::updateParameters() {
     m_iter += 1;
     double monotonic = 1/pow(m_iter, m_monotonicExp);

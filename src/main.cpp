@@ -64,11 +64,11 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     unsigned short   numberOfDimensions  = 2;
-    unsigned int     numberOfParticles   = 2;
+    unsigned int     numberOfParticles   = 6;
     unsigned int     numberOfHiddenNodes = numberOfParticles;
     unsigned long    numberOfSteps       = unsigned(pow(2,18));
     unsigned int     numberOfIterations  = 10;
-    double           learningRate        = 0.5;                      // Learning rate
+    double           learningRate        = 0.01;                      // Learning rate
     double           omega               = 1.0;                      // Oscillator frequency
     unsigned int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double           sigma               = 1/sqrt(omega);            // Width of probability distribution
@@ -81,8 +81,8 @@ int main(int argc, char *argv[]) {
     bool             applyAdaptiveSteps      = false;                // Increase the number of MC-cycles for the last iterations
     bool             computeOneBodyDensity   = true;                 // Compute one-body density and print to file
     bool             computeTwoBodyDensity   = true;                 // Compute two-body density and print to file
-    bool             printEnergyFile         = false;                // Print energy for every iteration to file
-    bool             doBlocking              = false;                // Print blocking file for the last iteration and do blocking
+    bool             printEnergyFile         = true;                // Print energy for every iteration to file
+    bool             doBlocking              = true;                // Print blocking file for the last iteration and do blocking
 
 
     // --- ADVANCED SETTINGS ---
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
