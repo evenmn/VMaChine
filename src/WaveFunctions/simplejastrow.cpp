@@ -30,12 +30,10 @@ void SimpleJastrow::initializeArrays(const Eigen::VectorXd positions, const Eige
             m_g(j,i) = -m_g(i,j);
         }
     }
-    setArrays();
 }
 
 void SimpleJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    unsigned int particle = (unsigned int)(changedCoord/m_numberOfDimensions);
-    setArrays();
+    unsigned int particle = unsigned(changedCoord/m_numberOfDimensions);
 
     m_positions         = positions;
     m_distanceMatrix    = distanceMatrix;
@@ -77,7 +75,7 @@ double SimpleJastrow::evaluateRatio() {
 }
 
 double SimpleJastrow::computeGradient(const unsigned int k) {
-    unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
     unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
     double derivative = 0;
@@ -93,7 +91,7 @@ double SimpleJastrow::computeGradient(const unsigned int k) {
 double SimpleJastrow::computeLaplacian() {
     double derivative = 0;
     for(unsigned int i=0; i<m_numberOfFreeDimensions; i++) {
-        unsigned int i_p = (unsigned int)(i/m_numberOfDimensions);  //Particle associated with k
+        unsigned int i_p = unsigned(i/m_numberOfDimensions);  //Particle associated with k
         unsigned int i_d = i%m_numberOfDimensions;       //Dimension associated with k
         for(unsigned int j_p=0; j_p<m_numberOfParticles; j_p++) {
             unsigned int j = j_p * m_numberOfDimensions + i_d;

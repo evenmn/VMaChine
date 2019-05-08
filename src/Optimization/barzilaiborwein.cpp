@@ -1,17 +1,11 @@
 #include "barzilaiborwein.h"
-#include <cassert>
-#include <iostream>
 #include "../system.h"
-#include "../sampler.h"
-#include "../WaveFunctions/wavefunction.h"
 #include "../InitialWeights/initialweights.h"
 
 BarzilaiBorwein::BarzilaiBorwein(System* system) :
         Optimization(system) {
-    m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
     m_numberOfWaveFunctionElements    = m_system->getNumberOfWaveFunctionElements();
     m_maxNumberOfParametersPerElement = m_system->getMaxNumberOfParametersPerElement();
-    m_waveFunctionVector              = m_system->getWaveFunctionElements();
     m_eta                             = m_system->getLearningRate();
     m_parameters                      = m_system->getInitialWeights()->getWeights();
     m_gradients                       = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);

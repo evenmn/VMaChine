@@ -80,12 +80,16 @@ double HydrogenOrbital::evaluateDerivative(const double x, const unsigned int n)
 }
 
 double HydrogenOrbital::basisElement(const unsigned int n, const Eigen::VectorXd positions) {
-    return 1;
+    double r = positions.norm();
+    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
+    return prefactor * associatedLaguerre(2*m_Z*r/n, 1, n-1) * exp(-m_Z*r/n);
 }
 
 double HydrogenOrbital::basisElementDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
-    return 0;
+    double r = positions.norm();
+    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
+    return - prefactor * (associatedLaguerre(2*m_Z*r/n, 2, n-2)*exp(-m_Z*r/n) + associatedLaguerre(2*m_Z*r/n, 1, n-1)*exp(-m_Z*r/n) * m_Z/n);
 }
 
 double HydrogenOrbital::basisElementSecDer(const unsigned int n, const unsigned int i, const Eigen::VectorXd positions) {

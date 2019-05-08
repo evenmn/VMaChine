@@ -38,10 +38,12 @@ Sampler::Sampler(System* system) {
     m_computeTwoBodyDensity             = m_system->computeTwoBodyDensity();
     m_printEnergyToFile                 = m_system->getPrintEnergy();
     m_printInstantEnergyToFile          = m_system->getPrintInstantEnergy();
+    m_printParametersToFile             = m_system->getPrintParametersToFile();
     m_numberOfBins                      = m_system->getNumberOfBins();
     m_maxRadius                         = m_system->getMaxRadius();
     m_rank                              = m_system->getRank();
     m_path                              = m_system->getPath();
+    m_waveFunction                      = m_system->getAllLabels();
     m_radialStep                        = m_maxRadius/m_numberOfBins;
     m_binLinSpace                       = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
     m_particlesPerBin                   = Eigen::VectorXi::Zero(m_numberOfBins);
@@ -68,17 +70,14 @@ void Sampler::sample(const bool acceptedStep, const unsigned long stepNumber) {
 }
 
 void Sampler::computeTotals() {
+    int parameterSlots               = int(m_numberOfElements * m_maxNumberOfParametersPerElement);
     m_totalCumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
     m_totalCumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
-    MPI_Reduce(&m_acceptence,           &m_totalAcceptence,           1, MPI_INT,    MPI_SUM, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&m_cumulativeEnergy,     &m_totalCumulativeEnergy,     1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&m_cumulativeEnergySqrd, &m_totalCumulativeEnergySqrd, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-    for(unsigned int i=0; i<m_numberOfElements; i++) {
-        for(unsigned int j=0; j<m_maxNumberOfParametersPerElement; j++) {
-            MPI_Reduce(&m_cumulativeGradients(i,j),  &m_totalCumulativeGradients(i,j),  1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            MPI_Reduce(&m_cumulativeGradientsE(i,j), &m_totalCumulativeGradientsE(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-        }
-    }
+    MPI_Reduce(&m_acceptence,                &m_totalAcceptence,                  1,              MPI_INT,    MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&m_cumulativeEnergy,          &m_totalCumulativeEnergy,            1,              MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&m_cumulativeEnergySqrd,      &m_totalCumulativeEnergySqrd,        1,              MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(m_cumulativeGradients.data(),  m_totalCumulativeGradients.data(),  parameterSlots, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(m_cumulativeGradientsE.data(), m_totalCumulativeGradientsE.data(), parameterSlots, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 }
 
 void Sampler::setNumberOfSteps(const unsigned long numberOfStepsWOEqui, const unsigned long totalNumberOfStepsWOEqui, const unsigned long totalNumberOfStepsWEqui) {
@@ -91,49 +90,58 @@ void Sampler::setNumberOfSteps(const unsigned long numberOfStepsWOEqui, const un
 void Sampler::computeAverages() {
     m_averageEnergy         = m_totalCumulativeEnergy     / m_totalNumberOfStepsWOEqui;
     m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / m_totalNumberOfStepsWOEqui;
+    cout << m_totalCumulativeGradients << endl;
+    cout << endl;
+    cout << m_totalCumulativeGradientsE << endl;
+    cout << endl;
     m_averageGradients      = m_totalCumulativeGradients  / m_numberOfStepsPerBatch;
     m_averageGradientsE     = m_totalCumulativeGradientsE / m_numberOfStepsPerBatch;
     m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalNumberOfStepsWOEqui;
+    if(std::isnan(m_averageEnergy)) {
+        perror( "Energy exploded, please decrease the learning rate");
+        MPI_Finalize();
+        exit(0);
+    }
 }
 
 void Sampler::printOutputToTerminal(const unsigned int maxIter, const double time) {
     m_iter += 1;
-    cout << endl;
-    cout << "  -- System info: " << " -- " << endl;
-    cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
-    cout << " Number of particles     : " << m_system->getNumberOfParticles()  << endl;
-    cout << " Number of dimensions    : " << m_system->getNumberOfDimensions() << endl;
-    cout << " Number of processes     : " << m_system->getNumberOfProcesses()  << endl;
-    cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
-    cout << " Oscillator frequency    : " << m_omega << endl;
+    cout                                                                                     << endl;
+    cout << "  -- System info: " << " -- "                                                   << endl;
+    cout << " Iteration progress      : " << m_iter << "/" << maxIter                        << endl;
+    cout << " Number of particles     : " << m_numberOfParticles                             << endl;
+    cout << " Number of dimensions    : " << m_numberOfDimensions                            << endl;
+    cout << " Number of processes     : " << m_numberOfProcesses                             << endl;
+    cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters()          << endl;
+    cout << " Oscillator frequency    : " << m_omega                                         << endl;
+    cout << " Wave function           : " << m_waveFunction                                  << endl;
     cout << " # Metropolis steps      : " << m_totalNumberOfStepsWEqui  << " ("
                                           << m_totalNumberOfStepsWOEqui << " equilibration)" << endl;
-    cout << " Energy file stored as   : " << m_averageEnergyFileName << endl;
-    cout << " Blocking file stored as : " << m_instantEnergyFileName << endl;
-    cout << endl;
-    cout << "  -- Results -- " << endl;
-    cout << " Energy            : " << m_averageEnergy << endl;
-    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui << endl;
-    cout << " Variance          : " << m_variance << endl;
-    cout << " STD               : " << sqrt(m_variance) << endl;
-    cout << " CPU Time          : " << time << endl;
+    cout << " Data files stored as    : " << generateFileName("{type}", ".dat")              << endl;
+    cout << " Blocking file stored as : " << m_instantEnergyFileName                         << endl;
+    cout                                                                                     << endl;
+    cout << "  -- Results -- "                                                               << endl;
+    cout << " Energy            : " << m_averageEnergy                                       << endl;
+    cout << " Variance          : " << m_variance                                            << endl;
+    cout << " STD               : " << sqrt(m_variance)                                      << endl;
+    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui  << endl;
+    cout << " CPU Time          : " << time                                                  << endl;
     cout << endl;
 }
 
 void Sampler::printFinalOutputToTerminal() {
     cout << endl;
     cout << "  ===  Final results:  === " << endl;
-    cout << " Energy           : " << m_averageEnergy << endl;
-    cout << " Acceptence Ratio : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui << endl;
-    cout << " Variance         : " << m_variance << endl;
-    cout << " STD              : " << sqrt(m_variance) << endl;
+    cout << " Energy            : " << m_averageEnergy << " (with MSE = " << m_mseEnergy   << ")" << endl;
+    cout << " Variance          : " << m_variance      << " (with MSE = " << m_mseVariance << ")" << endl;
+    cout << " STD               : " << m_stdError      << " (with MSE = " << m_mseSTD      << ")" << endl;
+    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui << endl;
     cout << endl;
 }
 
 void Sampler::doResampling() {
     if(m_printInstantEnergyToFile) {
         appendInstantFiles();
-
         std::ifstream infile(m_instantEnergyFileName.c_str());
         std::vector<double> x;
         std::string line;
@@ -141,15 +149,16 @@ void Sampler::doResampling() {
             x.push_back(strtod(line.c_str(), nullptr));
         }
         Blocker block(x);
-
-        cout << " --- Blocking results: ---" << endl;
-        printf( " Energy           : %g (with mean sq. err. = %g) \n", block.mean, block.mse_mean);
-        printf( " STD              : %g (with mean sq. err. = %g) \n", block.stdErr, block.mse_stdErr);
-
+        m_averageEnergy = block.mean;
+        m_stdError      = block.stdErr;
+        m_variance      = m_stdError * m_stdError;
+        m_mseEnergy     = block.mse_mean;
+        m_mseSTD        = block.mse_stdErr;
+        m_mseVariance   = m_mseSTD * m_mseSTD;
         if(remove(m_instantEnergyFileName.c_str()) != 0)
             perror( " Could not remove blocking file" );
-        else
-            puts( " Successfully removed blocking file" );
+        //else
+        //    puts( " Successfully removed blocking file" );
     }
 }
 
@@ -169,15 +178,15 @@ void Sampler::appendInstantFiles() {
     }
 }
 
-std::string Sampler::generateFileName(std::string path, std::string name, std::string optimization, std::string extension) {
-    std::string fileName = path;
+std::string Sampler::generateFileName(std::string name, std::string extension) {
+    std::string fileName = m_path;
     fileName += "int" + std::to_string(m_interaction) + "/";
-    fileName += name + "/";
-    fileName += m_system->getAllLabels() + "/";
-    fileName += std::to_string(m_numberOfDimensions) + "D/";
-    fileName += std::to_string(m_numberOfParticles) + "P/";
-    fileName += std::to_string(m_omega) + "w/";
-    fileName += optimization;
+    fileName += name                                  + "/";
+    fileName += m_waveFunction                        + "/";
+    fileName += std::to_string(m_numberOfDimensions)  + "D/";
+    fileName += std::to_string(m_numberOfParticles)   + "P/";
+    fileName += std::to_string(m_omega)               + "w/";
+    fileName += m_system->getOptimization()->getLabel();
     fileName += "_MC" + std::to_string(m_initialTotalNumberOfStepsWOEqui);
     fileName += extension;
     return fileName;
@@ -185,15 +194,19 @@ std::string Sampler::generateFileName(std::string path, std::string name, std::s
 
 void Sampler::openOutputFiles() {
     if(m_printEnergyToFile && m_rank == 0) {
-        m_averageEnergyFileName = generateFileName(m_path, "energy", "SGD", ".dat");
-        m_averageEnergyFile.open(m_averageEnergyFileName);
+        std::string energyFileName    = generateFileName("energy", ".dat");
+        m_averageEnergyFile.open(energyFileName);
     }
+    //if(m_printParametersToFile && m_rank == 0) {
+    //    std::string parameterFileName = generateFileName("weights", ".dat");
+    //    m_parameterFile.open(parameterFileName);
+    //}
     if(m_computeOneBodyDensity && m_rank == 0) {
-        std::string oneBodyFileName = generateFileName(m_path, "onebody", "SGD", ".dat");
+        std::string oneBodyFileName   = generateFileName("onebody", ".dat");
         m_oneBodyFile.open (oneBodyFileName);
     }
     if(m_computeTwoBodyDensity && m_rank == 0) {
-        std::string twoBodyFileName = generateFileName(m_path, "twobody", "SGD", ".dat");
+        std::string twoBodyFileName   = generateFileName("twobody", ".dat");
         m_twoBodyFile.open (twoBodyFileName);
     }
     if(m_printInstantEnergyToFile) {
@@ -212,6 +225,15 @@ void Sampler::printEnergyToFile() {
     }
 }
 
+void Sampler::printParametersToFile() {
+    if(m_printParametersToFile && m_rank == 0) {
+        std::string parameterFileName = generateFileName("weights", ".dat");
+        m_parameterFile.open(parameterFileName);
+        m_parameterFile << m_system->getWeights() << endl;
+        m_parameterFile.close();
+    }
+}
+
 void Sampler::printOneBodyDensityToFile() {
     if(m_computeOneBodyDensity){
         m_totalParticlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
@@ -225,13 +247,7 @@ void Sampler::printOneBodyDensityToFile() {
 void Sampler::printTwoBodyDensityToFile() {
     if(m_computeTwoBodyDensity){
         m_totalParticlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
-        //Eigen::Map<Eigen::VectorXi> t(m_totalParticlesPerBinPairwise.data(), m_numberOfBins*m_numberOfBins);
-        //MPI_Reduce(m_particlesPerBinPairwise.data(), t.data(), m_numberOfBins, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-        for(unsigned int i=0; i<m_numberOfBins; i++) {
-            for(unsigned int j=0; j<m_numberOfBins; j++) {
-                MPI_Reduce(&m_particlesPerBinPairwise(i,j), &m_totalParticlesPerBinPairwise(i,j), 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-            }
-        }
+        MPI_Reduce(m_particlesPerBinPairwise.data(), m_totalParticlesPerBinPairwise.data(), m_numberOfBins*m_numberOfBins, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
         if(m_rank == 0) {
             m_twoBodyFile << m_totalParticlesPerBinPairwise << endl;
         }
@@ -239,10 +255,11 @@ void Sampler::printTwoBodyDensityToFile() {
 }
 
 void Sampler::closeOutputFiles() {
-    if(m_averageEnergyFile.is_open())      { m_averageEnergyFile.close(); }
-    if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
     if(m_oneBodyFile.is_open())            { m_oneBodyFile.close(); }
     if(m_twoBodyFile.is_open())            { m_twoBodyFile.close(); }
+    if(m_parameterFile.is_open())          { m_parameterFile.close(); }
+    if(m_averageEnergyFile.is_open())      { m_averageEnergyFile.close(); }
+    if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
 }
 
 void Sampler::printInstantValuesToFile() {
@@ -261,7 +278,7 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
                 dist += position * position;
             }
             double r = sqrt(dist);
-            for(unsigned int k=0; k<m_numberOfBins; k++) {
+            for(int k=0; k<m_numberOfBins; k++) {
                 if(r < m_binLinSpace(k)) {
                     m_particlesPerBin(k) += 1;
                     break;
@@ -282,7 +299,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
             }
             double r1 = sqrt(dist1);
             int counter1 = 0;
-            while(m_binLinSpace(counter1) < r1) {
+            while(m_binLinSpace(counter1) < r1 && counter1 < m_numberOfBins) {
                 counter1 += 1;
             }
             for(unsigned int particle2=particle1+1; particle2<m_numberOfParticles; particle2++) {
@@ -294,10 +311,12 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
                 }
                 double r2 = sqrt(dist2);
                 int counter2 = 0;
-                while(m_binLinSpace(counter2) < r2) {
+                while(m_binLinSpace(counter2) < r2 && counter2 < m_numberOfBins) {
                     counter2 += 1;
                 }
+                cout << counter1 << " " << counter2 << endl;
                 m_particlesPerBinPairwise(counter1, counter2) += 1;
+                cout << endl;
             }
         }
     }

@@ -59,5 +59,6 @@ void RandomNormal::setupInitialState() {
     calculateRadialVector();
     for(auto& i : m_system->getWaveFunctionElements()) {
         i->initializeArrays(m_positions, m_radialVector, m_distanceMatrix);
+        i->setArrays();
     }
 }

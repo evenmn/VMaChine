@@ -29,10 +29,11 @@ public:
     void setGlobalArraysToCalculate     ();
 
     void setInteraction                 (const bool interaction);
+    void setParameterPrintingTools      (bool printParametersToFile);
+    void setEnergyPrintingTools         (bool printEnergyFile, bool printInstantEnergyFile);
     void setConvergenceTools            (bool checkConvergence, unsigned int numberOfEnergies, double tolerance);
     void setDynamicStepTools            (bool applyAdaptiveSteps, unsigned int rangeOfDynamicSteps, unsigned int additionalSteps, unsigned int additionalStepsLastIteration);
-    void setDensityTools                (bool computeOneBodyDensity, bool computeTwoBodyDensity, unsigned int numberOfBins, double maxRadius);
-    void setEnergyPrintingTools         (bool printEnergyFile, bool printInstantEnergyFile);
+    void setDensityTools                (bool computeOneBodyDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius);
     void setMPITools                    (int myRank, int numberOfProcesses);
 
     unsigned long  adaptiveSteps        ();
@@ -56,6 +57,7 @@ public:
     class RandomNumberGenerator*        getRandomNumberGenerator()   { return m_randomNumberGenerator; }
 
     int                                 getNumberOfProcesses()       { return m_numberOfProcesses; }
+    int                                 getNumberOfBins()            { return m_numberOfBins; }
     int                                 getRank()                    { return m_myRank; }
     unsigned short                      getNumberOfDimensions()      { return m_numberOfDimensions; }
     unsigned int                        getNumberOfParticles()       { return m_numberOfParticles; }
@@ -64,7 +66,6 @@ public:
     unsigned int                        getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
     unsigned int                        getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
     unsigned int                        getAtomicNumber()            { return m_Z; }
-    unsigned int                        getNumberOfBins()            { return m_numberOfBins; }
 
     unsigned long                       getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
     unsigned long                       getTotalNumberOfStepsWOEqui(){ return m_totalNumberOfStepsWOEqui; }
@@ -85,6 +86,7 @@ public:
     bool                                getDensity()                 { return m_computeOneBodyDensity; }
     bool                                computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
     bool                                getPrintEnergy()             { return m_printEnergyFile; }
+    bool                                getPrintParametersToFile()   { return m_printParametersToFile; }
     bool                                getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
     bool                                getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
     bool                                getCalculateRadialVector()   { return m_calculateRadialVector; }
@@ -107,6 +109,7 @@ public:
 private:
     int                                 m_numberOfProcesses         = 1;
     int                                 m_myRank                    = 0;
+    int                                 m_numberOfBins              = 1;
     unsigned short                      m_numberOfDimensions        = 0;
     unsigned int                        m_numberOfHiddenNodes       = 0;
     unsigned int                        m_numberOfParticles         = 0;
@@ -119,9 +122,8 @@ private:
     unsigned int                        m_additionalStepsLastIteration = 8;
     unsigned int                        m_lastIteration             = 1;
     unsigned int                        m_numberOfEnergies          = 0;
-    unsigned int                        m_numberOfBins              = 1;
     unsigned int                        m_iter                      = 0;
-    unsigned long                      m_numberOfWaveFunctionElements = 0;
+    unsigned long                       m_numberOfWaveFunctionElements = 0;
 
     unsigned long                       m_totalNumberOfStepsWOEqui  = 0;
     unsigned long                       m_numberOfStepsWOEqui       = 0;
@@ -148,6 +150,7 @@ private:
     bool                                m_computeTwoBodyDensity     = true;
     bool                                m_printEnergyFile           = true;
     bool                                m_printInstantEnergyFile    = true;
+    bool                                m_printParametersToFile     = true;
     bool                                m_calculateDistanceMatrix   = true;
     bool                                m_calculateRadialVector     = true;
 

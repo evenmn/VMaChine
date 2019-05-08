@@ -46,13 +46,10 @@ void RBMGaussian2::initializeArrays(const Eigen::VectorXd positions, const Eigen
         }
     }
     m_gSqrd = m_g.cwiseAbs2();
-
-    setArrays();
 }
 
 void RBMGaussian2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    unsigned int particle = (unsigned int)(changedCoord/m_numberOfDimensions);
-    setArrays();
+    unsigned int particle = unsigned(changedCoord/m_numberOfDimensions);
 
     m_positions             = positions;
     m_distanceMatrix        = distanceMatrix;
@@ -90,8 +87,8 @@ double RBMGaussian2::evaluateRatio() {
 }
 
 double RBMGaussian2::computeGradient(const unsigned int k) {
-    unsigned int k_p = (int unsigned)(k/m_numberOfDimensions);  //Particle associated with k
-    unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+    unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_d = k%m_numberOfDimensions;            //Dimension associated with k
 
     double sum = 0;
     for(unsigned int i_p=0; i_p<k_p; i_p++) {
@@ -108,8 +105,8 @@ double RBMGaussian2::computeGradient(const unsigned int k) {
 double RBMGaussian2::computeLaplacian() {
     double sum = 0;
     for(unsigned int k=0; k<m_numberOfFreeDimensions; k++) {
-        unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
-        unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+        unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
+        unsigned int k_d = k%m_numberOfDimensions;            //Dimension associated with k
 
         for(unsigned int i_p=0; i_p<k_p; i_p++) {
          unsigned int i = i_p * m_numberOfDimensions + k_d;

@@ -1,8 +1,6 @@
 #include "sgd.h"
-#include <cassert>
 #include <iostream>
 #include "../system.h"
-#include "../sampler.h"
 #include "../WaveFunctions/wavefunction.h"
 
 SGD::SGD(System* system, const double gamma, const double monotonicExp) :

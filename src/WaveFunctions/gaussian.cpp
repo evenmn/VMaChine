@@ -12,17 +12,18 @@ Gaussian::Gaussian(System* system) :
 void Gaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions             = positions;
     m_probabilityRatio      = 1;
-    setArrays();
 }
 
 void Gaussian::updateProbabilityRatio(unsigned int changedCoord) {
-    m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(changedCoord)*m_positionsOld(changedCoord) \
-                                                     - m_positions   (changedCoord)*m_positions   (changedCoord)));
+    double oldPos = m_positionsOld(changedCoord);
+    double newPos = m_positions   (changedCoord);
+    double diff   = oldPos*oldPos - newPos*newPos;
+    m_probabilityRatio = exp(m_omega * m_alpha * diff);
+    //m_probabilityRatio      = exp(m_omega * m_alpha * (m_positionsOld(changedCoord)*m_positionsOld(changedCoord) \
+    //                                                 - m_positions   (changedCoord)*m_positions   (changedCoord)));
 }
 
-
 void Gaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    setArrays();
     m_positions             = positions;
     updateProbabilityRatio(changedCoord);
 }

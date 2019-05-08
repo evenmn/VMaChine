@@ -6,6 +6,7 @@ class SGD : public Optimization {
 public:
     SGD(System* system, const double gamma, const double monotonicExp);
     unsigned int    getNumberOfBatches() { return m_numberOfBatches; }
+    std::string     getLabel()           { return m_label; }
     Eigen::MatrixXd updateParameters();
 
 private:
@@ -15,4 +16,6 @@ private:
     double          m_monotonicExp      = 0;
 
     Eigen::MatrixXd m_v;
+
+    std::string     m_label = "SGD";
 };

@@ -41,12 +41,10 @@ void SamsethJastrow::initializeArrays(const Eigen::VectorXd positions, const Eig
             m_g(j,i) = -m_g(i,j);
         }
     }
-    setArrays();
 }
 
 void SamsethJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    unsigned int particle = (unsigned int)(changedCoord/m_numberOfDimensions);
-    setArrays();
+    unsigned int particle = unsigned(changedCoord/m_numberOfDimensions);
     m_positions             = positions;
     m_distanceMatrix        = distanceMatrix;
     calculateG                  (changedCoord);
@@ -85,7 +83,7 @@ double SamsethJastrow::evaluateRatio() {
 }
 
 double SamsethJastrow::computeGradient(const unsigned int k) {
-    unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
     unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
     double derivative = 0;
@@ -101,7 +99,7 @@ double SamsethJastrow::computeGradient(const unsigned int k) {
 double SamsethJastrow::computeLaplacian() {
     double derivative = 0;
     for(unsigned int i=0; i<m_numberOfFreeDimensions; i++) {
-        unsigned int i_p = (unsigned int)(i/m_numberOfDimensions);  //Particle associated with k
+        unsigned int i_p = unsigned(i/m_numberOfDimensions);  //Particle associated with k
         unsigned int i_d = i%m_numberOfDimensions;       //Dimension associated with k
         for(unsigned int j_p=i_p+1; j_p<m_numberOfParticles; j_p++) {
             unsigned int j = j_p * m_numberOfDimensions + i_d;
@@ -117,7 +115,7 @@ Eigen::VectorXd SamsethJastrow::computeParameterGradient() {
     double updateBeta  = 0;
     double updateGamma = 0;
     for(unsigned int k=0; k<m_numberOfFreeDimensions; k++) {
-        unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+        unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
         for(unsigned int j_p=k_p+1; j_p<m_numberOfParticles; j_p++) {
             updateBeta  += -m_beta * m_distanceMatrixSqrd(k_p, j_p) + m_gamma * m_distanceMatrix(k_p,j_p);
             updateGamma += m_beta * m_distanceMatrix(k_p, j_p);

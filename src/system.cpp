@@ -46,8 +46,10 @@ void System::runIterations(const unsigned int numberOfIterations) {
         if(m_myRank == 0) {
             m_sampler->computeAverages();
             m_parameters -= m_optimization->updateParameters();
+            std::cout << m_optimization->updateParameters() << std::endl;
         }
         m_sampler->printEnergyToFile();
+        m_sampler->printParametersToFile();
         if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
             m_sampler->printOneBodyDensityToFile();
             m_sampler->printTwoBodyDensityToFile();
@@ -58,11 +60,7 @@ void System::runIterations(const unsigned int numberOfIterations) {
             checkingConvergence();
         }
 
-        for(unsigned int i=0; i<m_numberOfWaveFunctionElements; i++) {
-            for(unsigned int j=0; j<m_maxNumberOfParametersPerElement; j++) {
-                MPI_Bcast(&m_parameters(i,j), 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            }
-        }
+        MPI_Bcast(m_parameters.data(), int(m_numberOfWaveFunctionElements*m_maxNumberOfParametersPerElement), MPI_DOUBLE, 0, MPI_COMM_WORLD);
         MPI_Barrier(MPI_COMM_WORLD);
         updateAllParameters(m_parameters);
     }
@@ -126,6 +124,7 @@ unsigned long System::adaptiveSteps() {
 
 void System::updateAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
     for(auto& i : m_waveFunctionElements) {
+        i->setArrays();
         i->updateArrays(positions, radialVector, distanceMatrix, changedCoord);
     }
 }
@@ -312,7 +311,7 @@ void System::setDynamicStepTools(bool applyAdaptiveSteps, unsigned int rangeOfDy
     m_additionalStepsLastIteration = additionalStepsLastIteration;
 }
 
-void System::setDensityTools(bool computeOneBodyDensity, bool computeTwoBodyDensity, unsigned int numberOfBins, double maxRadius) {
+void System::setDensityTools(bool computeOneBodyDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius) {
     m_computeOneBodyDensity = computeOneBodyDensity;
     m_computeTwoBodyDensity = computeTwoBodyDensity;
     m_numberOfBins          = numberOfBins;
@@ -322,6 +321,10 @@ void System::setDensityTools(bool computeOneBodyDensity, bool computeTwoBodyDens
 void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnergyFile) {
     m_printEnergyFile        = printEnergyFile;
     m_printInstantEnergyFile = printInstantEnergyFile;
+}
+
+void System::setParameterPrintingTools(bool printParametersToFile) {
+    m_printParametersToFile        = printParametersToFile;
 }
 
 void System::setMPITools(int myRank, int numberOfProcesses) {

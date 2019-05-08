@@ -49,8 +49,6 @@ void RBMJastrow3::updateRatio() {
 }
 
 void RBMJastrow3::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    setArrays();
-
     m_positions = positions;
     m_distanceMatrix = distanceMatrix;
     calculateG(changedCoord);
@@ -94,7 +92,6 @@ void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions, const Eigen:
         }
     }
     updateVectors();
-    setArrays();
 }
 
 void RBMJastrow3::updateParameters(Eigen::MatrixXd parameters, const unsigned short elementNumber) {
@@ -112,7 +109,7 @@ double RBMJastrow3::evaluateRatio() {
 }
 
 double RBMJastrow3::computeGradient(const unsigned int k) {
-    unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
     unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
     double derivative = 0;
     for(unsigned int l=0; l<m_numberOfHiddenNodes; l++) {
@@ -133,7 +130,7 @@ double RBMJastrow3::computeGradient(const unsigned int k) {
 double RBMJastrow3::computeLaplacian() {
     double derivative = 0;
     for(unsigned int k=0; k<m_numberOfFreeDimensions; k++) {
-        unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+        unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
         unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
         for(unsigned int l=0; l<m_numberOfHiddenNodes; l++) {
             double firstder = 0;

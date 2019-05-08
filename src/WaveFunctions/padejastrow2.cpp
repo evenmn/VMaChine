@@ -23,11 +23,11 @@ void PadeJastrow2::calculateF(const unsigned int particle) {
 
 void PadeJastrow2::calculateG(const unsigned int particle, const unsigned int changedCoord) {
     for(unsigned int i=0; i<changedCoord; i++) {
-        unsigned int i_p = (unsigned int)(i/m_numberOfDimensions);
+        unsigned int i_p = unsigned(i/m_numberOfDimensions);
         m_g(i, changedCoord) = (m_positions(i) - m_positions(changedCoord))/m_distanceMatrix(i_p, particle);
     }
     for(unsigned int j=changedCoord+1; j<m_numberOfFreeDimensions; j++) {
-        unsigned int j_p = (unsigned int)(j/m_numberOfDimensions);
+        unsigned int j_p = unsigned(j/m_numberOfDimensions);
         m_g(changedCoord, j) = (m_positions(changedCoord) - m_positions(j))/m_distanceMatrix(particle, j_p);
     }
     m_gSqrd = m_g.cwiseAbs2();
@@ -101,13 +101,11 @@ void PadeJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen
     m_fSqrd = m_f.cwiseAbs2();
     m_gSqrd = m_g.cwiseAbs2();
 
-    setArrays();
     initializeBeta();
 }
 
 void PadeJastrow2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    unsigned int particle = (unsigned int)(changedCoord/m_numberOfDimensions);
-    setArrays();
+    unsigned int particle = unsigned(changedCoord/m_numberOfDimensions);
 
     m_positions                = positions;
     m_distanceMatrix           = distanceMatrix;
@@ -152,8 +150,8 @@ double PadeJastrow2::evaluateRatio() {
 }
 
 double PadeJastrow2::computeGradient(const unsigned int k) {
-    unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
-    unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+    unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_d = k%m_numberOfDimensions;            //Dimension associated with k
 
     double derivative = 0;
     for(unsigned int i_p=0; i_p<k_p; i_p++) {
@@ -170,8 +168,8 @@ double PadeJastrow2::computeGradient(const unsigned int k) {
 double PadeJastrow2::computeLaplacian() {
     double derivative = 0;
     for(unsigned int k=0; k<m_numberOfFreeDimensions; k++) {
-        unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
-        unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
+        unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
+        unsigned int k_d = k%m_numberOfDimensions;            //Dimension associated with k
         for(unsigned int i_p=0; i_p<k_p; i_p++) {
             unsigned int i = i_p * m_numberOfDimensions + k_d;
             derivative -= m_beta(i_p,k_p) * m_fSqrd(i_p,k_p) * (1-(1+2*m_gamma*m_h(i_p,k_p))*m_gSqrd(i,k)) / m_distanceMatrix(i_p,k_p);

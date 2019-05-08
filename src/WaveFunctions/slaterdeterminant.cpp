@@ -13,7 +13,6 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
 }
 
 void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    setArrays();
     m_particle  = unsigned(changedCoord/m_numberOfDimensions);
     m_dimension = changedCoord%m_numberOfDimensions;
     m_positions = positions;
@@ -33,19 +32,9 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const Eige
     updateSlaterDeterminantDer(start, end);
 }
 
-void SlaterDeterminant::resetArrays() {
-    m_positions                         = m_positionsOld;
-    m_determinantDerivative             = m_determinantDerivativeOld;
-    m_determinantSecondDerivative       = m_determinantSecondDerivativeOld;
-    m_probabilityRatio                  = m_probabilityRatioOld;
-    m_slaterMatrix                      = m_slaterMatrixOld;
-    m_slaterMatrixInverse               = m_slaterMatrixInverseOld;
-    m_slaterMatrixDer                   = m_slaterMatrixDerOld;
-    m_slaterMatrixSecDer                = m_slaterMatrixSecDerOld;
-}
-
 void SlaterDeterminant::setArrays() {
     m_positionsOld                      = m_positions;
+    m_positionBlockOld                  = m_positionBlock;
     m_determinantDerivativeOld          = m_determinantDerivative;
     m_determinantSecondDerivativeOld    = m_determinantSecondDerivative;
     m_probabilityRatioOld               = m_probabilityRatio;
@@ -53,6 +42,18 @@ void SlaterDeterminant::setArrays() {
     m_slaterMatrixInverseOld            = m_slaterMatrixInverse;
     m_slaterMatrixDerOld                = m_slaterMatrixDer;
     m_slaterMatrixSecDerOld             = m_slaterMatrixSecDer;
+}
+
+void SlaterDeterminant::resetArrays() {
+    m_positions                         = m_positionsOld;
+    m_positionBlock                     = m_positionBlockOld;
+    m_determinantDerivative             = m_determinantDerivativeOld;
+    m_determinantSecondDerivative       = m_determinantSecondDerivativeOld;
+    m_probabilityRatio                  = m_probabilityRatioOld;
+    m_slaterMatrix                      = m_slaterMatrixOld;
+    m_slaterMatrixInverse               = m_slaterMatrixInverseOld;
+    m_slaterMatrixDer                   = m_slaterMatrixDerOld;
+    m_slaterMatrixSecDer                = m_slaterMatrixSecDerOld;
 }
 
 void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
@@ -68,7 +69,6 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions, const 
     m_determinantDerivative         = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     m_determinantSecondDerivative   = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     updateSlaterDeterminantDer(0, m_numberOfParticles);
-    setArrays();
 }
 
 void SlaterDeterminant::updateParameters(const Eigen::MatrixXd parameters, const unsigned short elementNumber) {
@@ -169,7 +169,9 @@ double SlaterDeterminant::computeGradient(const unsigned int k) {
 }
 
 double SlaterDeterminant::computeLaplacian() {
-    return m_determinantSecondDerivative.sum() - double(m_determinantDerivative.transpose() * m_determinantDerivative);
+    //std::cout << m_determinantSecondDerivative.sum() << std::endl;
+    return m_determinantSecondDerivative.sum() - m_determinantDerivative.cwiseAbs2().sum();
+    //return - m_determinantDerivative.cwiseAbs2().sum();
 }
 
 Eigen::VectorXd SlaterDeterminant::computeParameterGradient() {

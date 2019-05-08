@@ -6,6 +6,7 @@ class ASGD : public Optimization {
 public:
     ASGD(System* system, const double gamma);
     unsigned int    getNumberOfBatches() { return m_numberOfBatches; }
+    std::string     getLabel()           { return m_label; }
     Eigen::MatrixXd updateParameters();
 
 private:
@@ -17,4 +18,6 @@ private:
     double          m_t               = m_A;
 
     Eigen::MatrixXd m_v;
+
+    std::string     m_label = "ASGD";
 };

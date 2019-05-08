@@ -12,6 +12,7 @@ public:
     void            sample                      (const bool acceptedStep, const unsigned long stepNumber);
     void            printOutputToTerminal       (const unsigned int maxIter, const double time);
     void            printFinalOutputToTerminal  ();
+    void            printParametersToFile       ();
     void            printEnergyToFile           ();
     void            printOneBodyDensityToFile   ();
     void            printTwoBodyDensityToFile   ();
@@ -26,11 +27,12 @@ public:
     void            computeTwoBodyDensity       (const Eigen::VectorXd positions);
     void            setNumberOfSteps            (const unsigned long numberOfStepsWOEqui, const unsigned long totalNumberOfStepsWOEqui, const unsigned long totalNumberOfStepsWEqui);
 
-    std::string     generateFileName(const std::string path, const std::string name, const std::string optimization, const std::string extension);
+    std::string     generateFileName(const std::string name, const std::string extension);
 
 private:
     int             m_rank                      = 0;
     int             m_numberOfProcesses         = 0;
+    int             m_numberOfBins              = 100;
 
     unsigned short  m_numberOfElements          = 0;
     unsigned short  m_numberOfDimensions        = 0;
@@ -42,7 +44,6 @@ private:
     unsigned int    m_totalAcceptence           = 0;
     unsigned int    m_acceptence                = 0;
     unsigned int    m_iter                      = 0;
-    unsigned int    m_numberOfBins              = 100;
     unsigned int    m_numberOfEquilibriationSteps = 0;
 
     unsigned long   m_instantNumber             = 0;
@@ -51,20 +52,25 @@ private:
     unsigned long   m_totalNumberOfStepsWEqui   = 0;
     unsigned long   m_initialTotalNumberOfStepsWOEqui = 0;
 
-    double          m_variance                 = 0;
-    double          m_equilibrationFraction    = 0;
-    double          m_omega                    = 0;
-    double          m_averageEnergy            = 0;
-    double          m_averageEnergySqrd        = 0;
-    double          m_cumulativeEnergy         = 0;
-    double          m_cumulativeEnergySqrd     = 0;
-    double          m_instantEnergy            = 0;
-    double          m_totalCumulativeEnergy    = 0;
+    double          m_stdError                  = 0;
+    double          m_variance                  = 0;
+    double          m_mseEnergy                 = 0;
+    double          m_mseSTD                    = 0;
+    double          m_mseVariance               = 0;
+    double          m_equilibrationFraction     = 0;
+    double          m_omega                     = 0;
+    double          m_averageEnergy             = 0;
+    double          m_averageEnergySqrd         = 0;
+    double          m_cumulativeEnergy          = 0;
+    double          m_cumulativeEnergySqrd      = 0;
+    double          m_instantEnergy             = 0;
+    double          m_totalCumulativeEnergy     = 0;
     double          m_totalCumulativeEnergySqrd = 0;
-    double          m_maxRadius                = 10;
-    double          m_radialStep               = 0.1;
+    double          m_maxRadius                 = 10;
+    double          m_radialStep                = 0.1;
 
     bool            m_interaction              = true;
+    bool            m_printParametersToFile    = true;
     bool            m_printEnergyToFile        = true;
     bool            m_printInstantEnergyToFile = true;
     bool            m_computeOneBodyDensity    = true;
@@ -84,14 +90,15 @@ private:
     Eigen::VectorXi m_totalParticlesPerBin;
     Eigen::VectorXd m_binLinSpace;
 
+    std::ofstream   m_parameterFile;
     std::ofstream   m_averageEnergyFile;
     std::ofstream   m_instantEnergyFile;
     std::ofstream   m_oneBodyFile;
     std::ofstream   m_twoBodyFile;
 
-    std::string     m_averageEnergyFileName = "Filename not generated yet";
     std::string     m_instantEnergyFileName = "Filename not generated yet";
     std::string     m_path                  = "Path not specified";
+    std::string     m_waveFunction          = "WaveFunction configuration now given";
 
     class System*   m_system                = nullptr;
 };

@@ -30,11 +30,9 @@ void RBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::
     m_n  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     m_p  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     updateVectors();
-    setArrays();
 }
 
 void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    setArrays();
     m_positions = positions;
     updateVectors();
     updateRatio();

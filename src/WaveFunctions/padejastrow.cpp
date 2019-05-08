@@ -97,13 +97,11 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     m_h = m_distanceMatrix.cwiseProduct(m_f);
     m_fSqrd = m_f.cwiseAbs2();
 
-    setArrays();
     initializeBeta();
 }
 
 void PadeJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const unsigned int changedCoord) {
-    unsigned int particle = (unsigned int)(changedCoord/m_numberOfDimensions);
-    setArrays();
+    unsigned int particle = unsigned(changedCoord/m_numberOfDimensions);
 
     m_positions                = positions;
     m_distanceMatrix           = distanceMatrix;
@@ -146,7 +144,7 @@ double PadeJastrow::evaluateRatio() {
 }
 
 double PadeJastrow::computeGradient(const unsigned int k) {
-    unsigned int k_p = (unsigned int)(k/m_numberOfDimensions);  //Particle associated with k
+    unsigned int k_p = unsigned(k/m_numberOfDimensions);  //Particle associated with k
     unsigned int k_d = k%m_numberOfDimensions;       //Dimension associated with k
 
     double derivative = 0;
@@ -162,7 +160,7 @@ double PadeJastrow::computeGradient(const unsigned int k) {
 double PadeJastrow::computeLaplacian() {
     double derivative = 0;
     for(unsigned int i=0; i<m_numberOfFreeDimensions; i++) {
-        unsigned int i_p = (unsigned int)(i/m_numberOfDimensions);  //Particle associated with k
+        unsigned int i_p = unsigned(i/m_numberOfDimensions);  //Particle associated with k
         unsigned int i_d = i%m_numberOfDimensions;       //Dimension associated with k
         for(unsigned int j_p=i_p+1; j_p<m_numberOfParticles; j_p++) {
             unsigned int j = j_p * m_numberOfDimensions + i_d;
