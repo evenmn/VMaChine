@@ -26,7 +26,7 @@ Eigen::MatrixXd ADAM::getEnergyGradient() {
 
 Eigen::MatrixXd ADAM::updateParameters() {
     m_step += 1;
-    m_g = getEnergyGradient();
+    m_g = Optimization::getEnergyGradient();
     m_m = m_beta1 * m_m + (1 - m_beta1) * m_g;
     m_v = m_beta2 * m_v + (1 - m_beta2) * m_g.cwiseAbs2();
     m_mHat = m_m/(1 - pow(m_beta1, m_step));

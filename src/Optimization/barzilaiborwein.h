@@ -6,6 +6,7 @@ class BarzilaiBorwein : public Optimization {
 public:
     BarzilaiBorwein(System* system);
     int             getNumberOfBatches() { return m_numberOfBatches; }
+    std::string     getLabel()           { return m_label; }
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();
 
@@ -18,4 +19,6 @@ private:
     Eigen::MatrixXd m_parameters;
     Eigen::MatrixXd m_oldGradients;
     Eigen::MatrixXd m_gradients;
+
+    std::string     m_label = "BB";
 };

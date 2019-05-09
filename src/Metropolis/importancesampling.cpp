@@ -61,10 +61,10 @@ bool ImportanceSampling::acceptMove() {
 
     m_positions(changedCoord) += m_diff * QuantumForce(changedCoord) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
     if(m_calculateDistanceMatrix) {
-        calculateDistanceMatrixCross(int(changedCoord/m_numberOfDimensions));
+        Metropolis::calculateDistanceMatrixCross(int(changedCoord/m_numberOfDimensions));
     }
     if(m_calculateRadialVector) {
-        calculateRadialVectorElement(int(changedCoord/m_numberOfDimensions));
+        Metropolis::calculateRadialVectorElement(int(changedCoord/m_numberOfDimensions));
     }
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, changedCoord);
     m_quantumForceNew(changedCoord) = QuantumForce(changedCoord);

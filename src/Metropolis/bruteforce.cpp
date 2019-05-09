@@ -28,10 +28,10 @@ bool BruteForce::acceptMove() {
 
     m_positions(pRand) = m_positionsOld(pRand) + 10 * (m_system->getRandomNumberGenerator()->nextDouble() - 0.5) * m_stepLength;
     if(m_calculateDistanceMatrix) {
-        calculateDistanceMatrixCross(int(pRand/m_numberOfDimensions));
+        Metropolis::calculateDistanceMatrixCross(int(pRand/m_numberOfDimensions));
     }
     if(m_calculateRadialVector) {
-        calculateRadialVectorElement(int(pRand/m_numberOfDimensions));
+        Metropolis::calculateRadialVectorElement(int(pRand/m_numberOfDimensions));
     }
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, pRand);
 

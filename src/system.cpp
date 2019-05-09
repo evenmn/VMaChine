@@ -58,11 +58,12 @@ void System::runIterations(const int numberOfIterations) {
             checkingConvergence();
         }
 
-        for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-            for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
-                MPI_Bcast(&m_parameters(i,j), 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            }
-        }
+        //for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
+        //    for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
+        //        MPI_Bcast(&m_parameters(i,j), 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        //    }
+        //}
+        MPI_Bcast(m_parameters.data(), int(m_numberOfWaveFunctionElements*m_maxNumberOfParametersPerElement), MPI_DOUBLE, 0, MPI_COMM_WORLD);
         MPI_Barrier(MPI_COMM_WORLD);
         updateAllParameters(m_parameters);
     }
@@ -89,9 +90,10 @@ void System::printToTerminal(int numberOfIterations) {
     if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
         m_sampler->closeOutputFiles();
         if(m_myRank == 0) {
+            m_sampler->doResampling();
             m_sampler->printFinalOutputToTerminal();
         }
-        MPI_Barrier(MPI_COMM_WORLD);
+        //MPI_Barrier(MPI_COMM_WORLD);
         MPI_Finalize();
         exit(0);
     }
@@ -324,6 +326,10 @@ void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnerg
     m_printInstantEnergyFile = printInstantEnergyFile;
 }
 
+void System::setParameterPrintingTools(bool printParametersToFile) {
+    m_printParametersToFile        = printParametersToFile;
+}
+
 void System::setMPITools(int myRank, int numberOfProcesses) {
     m_myRank = myRank;
     m_numberOfProcesses = numberOfProcesses;
@@ -362,8 +368,8 @@ void System::setOptimization(Optimization* optimization) {
     m_optimization = optimization;
 }
 
-void System::setRandomNumberGenerator(RandomNumberGenerator* randomnumbergenerator) {
-    m_randomnumbergenerator = randomnumbergenerator;
+void System::setRandomNumberGenerator(RandomNumberGenerator* randomNumberGenerator) {
+    m_randomNumberGenerator = randomNumberGenerator;
 }
 
 void System::setGradients() {

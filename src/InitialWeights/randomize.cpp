@@ -1,7 +1,6 @@
 #include "randomize.h"
 #include <iostream>
 #include <cassert>
-#include "RNG/parkmiller.h"
 #include "../system.h"
 
 Randomize::Randomize(System*    system, const double factor)  :  InitialWeights(system) {

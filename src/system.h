@@ -28,6 +28,7 @@ public:
     void setGlobalArraysToCalculate     ();
 
     void setInteraction                 (const bool interaction);
+    void setParameterPrintingTools      (bool printParametersToFile);
     void setConvergenceTools            (bool checkConvergence, int numberOfEnergies, double tolerance);
     void setDynamicStepTools            (bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration);
     void setDensityTools                (bool computeDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius);
@@ -40,7 +41,7 @@ public:
     void setInitialWeights              (class InitialWeights* initialWeights);
     void setMetropolis                  (class Metropolis* metropolis);
     void setOptimization                (class Optimization* optimization);
-    void setRandomNumberGenerator       (class RandomNumberGenerator* randomnumbergenerator);
+    void setRandomNumberGenerator       (class RandomNumberGenerator* randomNumberGenerator);
     void setWaveFunctionElements        (std::vector<class WaveFunction*> waveFunctionElements);
 
     class WaveFunction*                 getWaveFunction()            { return m_waveFunction; }
@@ -50,7 +51,7 @@ public:
     class Optimization*                 getOptimization()            { return m_optimization; }
     class InitialWeights*               getInitialWeights()          { return m_initialWeights; }
     class InitialState*                 getInitialState()            { return m_initialState; }
-    class RandomNumberGenerator*        getRandomNumberGenerator()   { return m_randomnumbergenerator; }
+    class RandomNumberGenerator*        getRandomNumberGenerator()   { return m_randomNumberGenerator; }
     int                                 getNumberOfProcesses()       { return m_numberOfProcesses; }
     int                                 getNumberOfParticles()       { return m_numberOfParticles; }
     int                                 getNumberOfDimensions()      { return m_numberOfDimensions; }
@@ -81,6 +82,7 @@ public:
     bool                                getDensity()                 { return m_computeDensity; }
     bool                                computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
     bool                                getPrintEnergy()             { return m_printEnergyFile; }
+    bool                                getPrintParametersToFile()   { return m_printParametersToFile; }
     bool                                getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
     bool                                getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
     bool                                getCalculateRadialVector()   { return m_calculateRadialVector; }
@@ -144,6 +146,7 @@ private:
     bool                                m_computeTwoBodyDensity     = false;
     bool                                m_printEnergyFile           = true;
     bool                                m_printInstantEnergyFile    = true;
+    bool                                m_printParametersToFile     = true;
     bool                                m_calculateDistanceMatrix   = false;
     bool                                m_calculateRadialVector     = false;
 
@@ -157,7 +160,7 @@ private:
     class Sampler*                      m_sampler                   = nullptr;
     class Metropolis*                   m_metropolis                = nullptr;
     class Optimization*                 m_optimization              = nullptr;
-    class RandomNumberGenerator*        m_randomnumbergenerator     = nullptr;
+    class RandomNumberGenerator*        m_randomNumberGenerator     = nullptr;
     std::vector<class WaveFunction*>    m_waveFunctionElements;
 
     Eigen::VectorXd                     m_positions;

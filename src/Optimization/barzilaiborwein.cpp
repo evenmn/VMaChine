@@ -28,7 +28,7 @@ Eigen::MatrixXd BarzilaiBorwein::getEnergyGradient() {
 Eigen::MatrixXd BarzilaiBorwein::updateParameters() {
     m_oldGradients = m_gradients;
     m_parameters    = m_system->getWeights();
-    m_gradients     = getEnergyGradient();
+    m_gradients     = Optimization::getEnergyGradient();
     Eigen::MatrixXd learningRate = (m_parameters - m_oldParameters).cwiseProduct((m_gradients - m_oldGradients).cwiseInverse());
     for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
         for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {

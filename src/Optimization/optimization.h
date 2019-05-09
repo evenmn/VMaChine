@@ -6,8 +6,11 @@ class Optimization {
 public:
     Optimization(class System* system);
     virtual int  getNumberOfBatches() = 0;
+    virtual std::string     getLabel() = 0;
     virtual Eigen::MatrixXd updateParameters() = 0;
     virtual ~Optimization() = 0;
+
+    Eigen::MatrixXd getEnergyGradient();
 
 protected:
     class System* m_system = nullptr;

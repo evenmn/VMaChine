@@ -9,10 +9,14 @@ public:
     virtual Eigen::MatrixXd updateDistanceMatrix()    { return m_distanceMatrix; }
 
     virtual bool acceptMove() = 0;
-    virtual double calculateDistanceMatrixElement(int i, int j) = 0;
-    virtual void   calculateDistanceMatrixCross(int particle) = 0;
-    virtual double calculateRadialVectorElement(int particle) = 0;
+    //virtual double calculateDistanceMatrixElement(int i, int j) = 0;
+    //virtual void   calculateDistanceMatrixCross(int particle) = 0;
+    //virtual double calculateRadialVectorElement(int particle) = 0;
     virtual ~Metropolis() = 0;
+
+    double calculateDistanceMatrixElement   (const int i, const int j);
+    void   calculateDistanceMatrixCross     (const int particle);
+    double calculateRadialVectorElement     (const int particle);
 
 protected:
     class System*   m_system = nullptr;

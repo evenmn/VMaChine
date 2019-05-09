@@ -6,6 +6,7 @@ class ADAM : public Optimization {
 public:
     ADAM(System* system);
     int             getNumberOfBatches() { return m_numberOfBatches; }
+    std::string     getLabel()           { return m_label; }
     Eigen::MatrixXd updateParameters();
     Eigen::MatrixXd getEnergyGradient();
 
@@ -21,4 +22,6 @@ private:
     Eigen::MatrixXd m_mHat;
     Eigen::MatrixXd m_vHat;
     Eigen::MatrixXd m_theta;
+
+    std::string     m_label = "ADAM";
 };

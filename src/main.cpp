@@ -51,7 +51,6 @@
 
 #include "RNG/rng.h"
 #include "RNG/mersennetwister.h"
-#include "RNG/parkmiller.h"
 
 //#include "Plotter/plotter.h"
 
@@ -65,25 +64,26 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 12;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 10;
-    double  eta                 = 0.5;                      // Learning rate
+    int     numberOfIterations  = 100;
+    double  learningRate        = 0.05;
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
-    double  equilibration       = 0.1;                      // Amount of the total steps used
+    double  equilibration       = 0.001;                      // Amount of the total steps used
 
     // Switches
     bool    interaction             = true;                     // Repulsive interaction on or off
     bool    checkConvergence        = false;                    // Stops the program after it has converged
-    bool    applyAdaptiveSteps      = false;                     // Increase the number of MC-cycles for the last iterations
-    bool    computeDensity          = false;                     // Compute one-body density and print to file
-    bool    computeTwoBodyDensity   = true;
-    bool    printEnergyFile         = false;                     // Print energy for every iteration to file
-    bool    doBlocking              = false;                     // Print blocking file for the last iteration and do blocking
+    bool    applyAdaptiveSteps      = true;                     // Increase the number of MC-cycles for the last iterations
+    bool    computeOneBodyDensity   = true;                     // Compute one-body density and print to file
+    bool    computeTwoBodyDensity   = false;
+    bool    printEnergyFile         = true;                     // Print energy for every iteration to file
+    bool    printParametersToFile   = true;
+    bool    doResampling            = true;                     // Print blocking file for the last iteration and do blocking
 
 
     // --- ADVANCED SETTINGS ---
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
     system->setFrequency                (omega);
     system->setAtomicNumber             (Z);
     system->setWidth                    (sigma);
-    system->setLearningRate             (eta);
+    system->setLearningRate             (learningRate);
     system->setNumberOfParticles        (numberOfParticles);
     system->setNumberOfDimensions       (numberOfDimensions);
     system->setNumberOfHiddenNodes      (numberOfHiddenNodes);
@@ -120,10 +120,11 @@ int main(int argc, char *argv[]) {
     system->setNumberOfMetropolisSteps  (numberOfSteps);
 
     system->setInteraction              (interaction);
+    system->setParameterPrintingTools   (printParametersToFile);
     system->setConvergenceTools         (checkConvergence, numberOfEnergies, tolerance);
     system->setDynamicStepTools         (applyAdaptiveSteps, rangeOfDynamicSteps, additionalSteps, additionalStepsLastIteration);
-    system->setDensityTools             (computeDensity, computeTwoBodyDensity, numberOfBins, maxRadius);
-    system->setEnergyPrintingTools      (printEnergyFile, doBlocking);
+    system->setDensityTools             (computeOneBodyDensity, computeTwoBodyDensity, numberOfBins, maxRadius);
+    system->setEnergyPrintingTools      (printEnergyFile, doResampling);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
@@ -135,7 +136,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
     //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
     WaveFunctionElements.push_back      (new class PadeJastrow          (system));
     //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
@@ -150,7 +151,7 @@ int main(int argc, char *argv[]) {
     //system->setHamiltonian              (new DoubleWell(system));
     system->setGlobalArraysToCalculate  ();
     system->setMetropolis               (new ImportanceSampling(system));
-    system->setOptimization             (new GradientDescent(system,0.0,0.0));
+    system->setOptimization             (new ADAM(system));
     system->setGradients                ();
     system->runIterations               (numberOfIterations);
 

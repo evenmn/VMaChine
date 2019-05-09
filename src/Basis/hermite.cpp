@@ -18,8 +18,8 @@ void Hermite::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
     while(true) {
-        double orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
-        if(int(orb) == m_numberOfParticles) {
+        int orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
+        if(orb == m_numberOfParticles) {
             m_numberOfOrbitals = counter+1;
             break;
         }
@@ -131,6 +131,25 @@ double DH15(const double x) {return 491520*pow(x, 14) - 22364160*pow(x, 12) + 36
 double DH16(const double x) {return 1048576*pow(x, 15) - 55050240*pow(x, 13) + 1073479680*pow(x, 11) - 9840230400*pow(x, 9) + 44281036800*pow(x, 7) - 92990177280*pow(x, 5) + 77491814400*pow(x, 3) - 16605388800*x;}
 double DH17(const double x) {return 2228224*pow(x, 16) - 133693440*pow(x, 14) + 3041525760*pow(x, 12) - 33456783360*pow(x, 10) + 188194406400*pow(x, 8) - 52694337920*pow(x, 6) + 658680422400*pow(x, 4) - 282291609600*pow(x, 2) + 17643225600;}
 
+double DDH0(const double x) {return 0;}
+double DDH1(const double x) {return 0;}
+double DDH2(const double x) {return 8;}
+double DDH3(const double x) {return 48*x;}
+double DDH4(const double x) {return 192*pow(x, 2) - 96;}
+double DDH5(const double x) {return 640*pow(x, 3) - 960*x;}
+double DDH6(const double x) {return 1920*pow(x, 4) - 5760*pow(x, 2) + 1440;}
+double DDH7(const double x) {return 5376*pow(x, 5) - 26880*pow(x, 3) + 20160*x;}
+double DDH8(const double x) {return 14336*pow(x, 6) - 107520*pow(x, 4) + 161280*pow(x, 2) - 26880;}
+double DDH9(const double x) {return 36864*pow(x, 7) - 387072*pow(x, 5) + 967680*pow(x, 3) - 483840*x;}
+double DDH10(const double x) {return 92160*pow(x, 8) - 1290240*pow(x, 6) + 4838400*pow(x, 4) - 4838400*pow(x, 2) + 604800;}
+double DDH11(const double x) {return 225280*pow(x, 9) - 4055040*pow(x, 7) + 21288960*pow(x, 5) - 35481600*pow(x, 3) + 13305600*x;}
+double DDH12(const double x) {return 540672*pow(x, 10) - 12165120*pow(x, 8) + 85155840*pow(x, 6) - 212889600*pow(x, 4) + 159667200*pow(x, 2) - 15966720;}
+double DDH13(const double x) {return 1277952*pow(x, 11) - 35143680*pow(x, 9) + 316293120*pow(x, 7) - 1107025920*pow(x, 5) + 1383782400*pow(x, 3) - 415134720*x;}
+double DDH14(const double x) {return 2981888*pow(x, 12) - 98402304*pow(x, 10) + 1107025920*pow(x, 8) - 5166120960*pow(x, 6) + 9686476800*pow(x, 4) - 5811886080*pow(x, 2) + 484323840;}
+double DDH15(const double x) {return 6881280*pow(x, 13) - 268369920*pow(x, 11) + 3690086400*pow(x, 9) - 22140518400*pow(x, 7) + 58118860800*pow(x, 5) - 58118860800*pow(x, 3) + 14529715200*x;}
+double DDH16(const double x) {return 15728640*pow(x, 14) - 715653120*pow(x, 12) + 11808276480*pow(x, 10) - 88562073600*pow(x, 8) + 309967257600*pow(x, 6) - 464950886400*pow(x, 4) + 232475443200*pow(x, 2) - 16605388800;}
+double DDH17(const double x) {return 35651584*pow(x, 15) - 1871708160*pow(x, 13) + 36498309120*pow(x, 11) - 334567833600*pow(x, 9) + 1505555251200*pow(x, 7) - 316166027520*pow(x, 5) + 2634721689600*pow(x, 3) - 565583219200*x;}
+
 double Hermite::evaluate(double x, int n) {
     //Hermite polynomial of n'th degree
     bool hardcoded = true;
@@ -214,13 +233,40 @@ double Hermite::evaluateDerivative(double x, int n) {
     }
 }
 
-double Hermite::evaluateSecondDerivative(double x, int n) {
+double Hermite::evaluateSecondDerivative(const double x, const int n) {
     //Second derivative of Hermite polynomial of n'th degree
-    if(n < 2) {
-        return 0;
+    bool hardcoded = true;
+
+    if(hardcoded || n < 18) {
+        switch(n) {
+            case 0: return DDH0(x);
+            case 1: return DDH1(x);
+            case 2: return DDH2(x);
+            case 3: return DDH3(x);
+            case 4: return DDH4(x);
+            case 5: return DDH5(x);
+            case 6: return DDH6(x);
+            case 7: return DDH7(x);
+            case 8: return DDH8(x);
+            case 9: return DDH9(x);
+            case 10: return DDH10(x);
+            case 11: return DDH11(x);
+            case 12: return DDH12(x);
+            case 13: return DDH13(x);
+            case 14: return DDH14(x);
+            case 15: return DDH15(x);
+            case 16: return DDH16(x);
+            case 17: return DDH17(x);
+            default: return 0;
+        }
     }
     else {
-        return 4 * m_omegaSqrt * n * (n-1) * evaluate(x,n-2);
+        if(n < 2) {
+            return 0;
+        }
+        else {
+            return 4 * m_omegaSqrt * n * (n-1) * evaluate(x,n-2);
+        }
     }
 }
 

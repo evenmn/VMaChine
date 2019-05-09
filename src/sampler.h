@@ -10,6 +10,7 @@ public:
     void            printFinalOutputToTerminal();
     void            openOutputFiles();
     void            printEnergyToFile();
+    void            printParametersToFile();
     void            printOneBodyDensityToFile();
     void            printTwoBodyDensityToFile();
     void            closeOutputFiles();
@@ -18,13 +19,14 @@ public:
     void            computeTwoBodyDensity(const Eigen::VectorXd positions);
     void            computeAverages();
     void            computeTotals();
+    void            doResampling();
     void            appendInstantFiles();
     void            mergeOneBodyFiles();
     void            setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui);
     double          getAverageEnergy()        { return m_averageEnergy; }
     Eigen::MatrixXd getAverageGradients()     { return m_averageGradients; }
     Eigen::MatrixXd getAverageGradientsE()    { return m_averageGradientsE; }
-    std::string     generateFileName(std::string path, std::string name, std::string optimization, const std::string extension);
+    std::string     generateFileName(std::string name, std::string extension);
 
 private:
     int              m_numberOfStepsWOEqui = 0;
@@ -50,6 +52,10 @@ private:
     double           m_equilibrationFraction = 0;
     double           m_omega = 0;
 
+    double           m_stdError                  = 0;
+    double           m_mseEnergy                 = 0;
+    double           m_mseSTD                    = 0;
+    double           m_mseVariance               = 0;
     double           m_averageEnergy = 0;
     double           m_averageEnergySqrd = 0;
     double           m_cumulativeEnergy = 0;
@@ -69,14 +75,17 @@ private:
 
     std::ofstream    m_averageEnergyFile;
     std::ofstream    m_instantEnergyFile;
+    std::ofstream    m_parameterFile;
     std::string      m_averageEnergyFileName = "Filename not generated yet";
     std::string      m_instantEnergyFileName = "Filename not generated yet";
     std::string      m_path                  = "Path not specified";
+    std::string      m_waveFunction          = "Wave function not found";
 
     class System*    m_system = nullptr;
 
     bool             m_printEnergyToFile = true;
     bool             m_printInstantEnergyToFile = true;
+    bool             m_printParametersToFile = true;
 
     // Electron density related stuff
     bool             m_computeOneBodyDensity = true;
