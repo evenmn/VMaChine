@@ -15,6 +15,7 @@ public:
     virtual ~Basis() = 0;
 
     long long factorial(const int n);
+    int factorialDifference(const int high, const int low);
     int binomial(const int n, const int p);
 
     int getNumberOfOrbitals() { return m_numberOfOrbitals; }
