@@ -47,6 +47,7 @@ void System::runIterations(const int numberOfIterations) {
             m_sampler->computeAverages();
             m_parameters -= m_optimization->updateParameters();
         }
+        m_sampler->printParametersToFile();
         m_sampler->printEnergyToFile();
         if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
             m_sampler->printOneBodyDensityToFile();

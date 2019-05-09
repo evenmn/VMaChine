@@ -321,7 +321,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
             }
             double r1 = sqrt(dist1);      // Distance from particle 1 to origin
             int counter1 = 0;
-            while(m_binLinSpace(counter1) < r1 && counter1 < m_numberOfBins) {
+            while(counter1 < m_numberOfBins && m_binLinSpace(counter1) < r1) {
                 counter1 += 1;
             }
             for(int particle2=particle1+1; particle2<m_numberOfParticles; particle2++) {
@@ -333,10 +333,10 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
                 }
                 double r2 = sqrt(dist2);      // Distance from particle 2 to origin
                 int counter2 = 0;
-                while(m_binLinSpace(counter2 && counter2 < m_numberOfBins) < r2) {
+                while(counter2 < m_numberOfBins && m_binLinSpace(counter2) < r2) {
                     counter2 += 1;
                 }
-                m_particlesPerBinPairwise(counter1, counter2) += 1;
+                //m_particlesPerBinPairwise(counter1, counter2) += 1;
             }
         }
     }
