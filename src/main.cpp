@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 10;
-    double  learningRate        = 0.001;
+    double  learningRate        = 0.01;
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     int     additionalStepsLastIteration    = 8;            // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius                       = 5;                       // Max radius of one-body density plots
+    double  maxRadius                       = 40;                       // Max radius of one-body density plots
     int     numberOfBins                    = int(100 * maxRadius);     // 100 bins per radius unit
 
 

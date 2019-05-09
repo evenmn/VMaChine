@@ -336,7 +336,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
                 while(counter2 < m_numberOfBins && m_binLinSpace(counter2) < r2) {
                     counter2 += 1;
                 }
-                //m_particlesPerBinPairwise(counter1, counter2) += 1;
+                m_particlesPerBinPairwise(counter1, counter2) += 1;
             }
         }
     }
