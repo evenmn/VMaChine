@@ -4,12 +4,12 @@ import seaborn as sns
 sns.set()
 
 # Load file
-fileName = "../data/int1/twobody/VMC/2D/2P/1.000000w/SGD_MC262144_0.dat"
+fileName = "../data/int1/twobody/RBMPJ/2D/12P/0.100000w/ADAM_MC262144.dat"
 data = np.loadtxt(fileName)
 
 # Define parameters
 numberOfDimensions = 2
-maxRadius = 5
+maxRadius = 25
 numBins = len(data)
 
 r = np.linspace(0, maxRadius, numBins)
@@ -22,5 +22,7 @@ for i in range(numBins):
 data /= r_mat
 data /= np.sum(np.nan_to_num(data))
 
-plt.imshow(data, cmap=plt.cm.jet, extent=[0,5,5,0])
+plt.imshow(data, cmap=plt.cm.jet, extent=[0,maxRadius,maxRadius,0])
+plt.xlabel("Radial distance from particle 1")
+plt.ylabel("Radial distance from particle 2")
 plt.show()

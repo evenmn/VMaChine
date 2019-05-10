@@ -81,8 +81,6 @@ private:
     std::string      m_path                  = "Path not specified";
     std::string      m_waveFunction          = "Wave function not found";
 
-    class System*    m_system = nullptr;
-
     bool             m_printEnergyToFile = true;
     bool             m_printInstantEnergyToFile = true;
     bool             m_printParametersToFile = true;
@@ -100,4 +98,6 @@ private:
     Eigen::MatrixXi  m_totalParticlesPerBinPairwise;
     std::ofstream    m_oneBodyFile;
     std::ofstream    m_twoBodyFile;
+
+    class System*    m_system = nullptr;
 };

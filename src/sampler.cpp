@@ -167,7 +167,7 @@ void Sampler::doResampling() {
 void Sampler::appendInstantFiles() {
     std::ofstream outfile(m_instantEnergyFileName.c_str(), std::ios::out | std::ios::app);
     for(int i=1; i<m_numberOfProcesses; i++) {
-        std::string name = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(i) + ".dat";
+        std::string name = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(i) + ".dat";
         std::ifstream infile(name.c_str(), std::ios::in);
         if (!infile.is_open()) {
             perror ( "File not found" );
@@ -175,8 +175,9 @@ void Sampler::appendInstantFiles() {
         else {
             outfile << infile.rdbuf();
         }
-        if(remove(name.c_str()) != 0)
+        if(remove(name.c_str()) != 0) {
             perror( " Could not remove blocking file" );
+        }
     }
 }
 
@@ -216,18 +217,18 @@ void Sampler::openOutputFiles() {
     }
     if(m_computeOneBodyDensity && m_rank == 0) {
         std::string oneBodyFileName = generateFileName("onebody", ".dat");
-        m_oneBodyFile.open (oneBodyFileName);
+        m_oneBodyFile.open(oneBodyFileName);
     }
     if(m_computeTwoBodyDensity && m_rank == 0) {
         std::string twoBodyFileName = generateFileName("twobody", ".dat");
-        m_twoBodyFile.open (twoBodyFileName);
+        m_twoBodyFile.open(twoBodyFileName);
     }
     if(m_printInstantEnergyToFile) {
         if(m_rank == 0) {
             m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(unsigned(1e6));
         }
         MPI_Bcast(&m_instantNumber, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        m_instantEnergyFileName = m_path + "instant_" + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + ".dat";
+        m_instantEnergyFileName = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + ".dat";
         m_instantEnergyFile.open(m_instantEnergyFileName);
     }
 }
@@ -286,12 +287,12 @@ void Sampler::closeOutputFiles() {
 
 void Sampler::printInstantValuesToFile() {
     if(m_printInstantEnergyToFile) {
-        m_instantEnergyFile << m_instantEnergy << endl;  // Write instant energies to file for blocking
+        m_instantEnergyFile << m_instantEnergy << endl;
     }
 }
 
 void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions) {
-    if(m_computeOneBodyDensity) {                         // Calculate onebody densities
+    if(m_computeOneBodyDensity) {
         for(int particle=0; particle<m_numberOfParticles; particle++) {
             double dist = 0;
             int positionIndex = m_numberOfDimensions * particle;

@@ -10,7 +10,7 @@ def exact(r1, w):
 
 files = [#"../data/int1/onebody/RBM/2D/30P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/20P/1.000000w/SGD_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/30P/0.100000w/SGD_MC1048576.dat",
+         "../data/int1/onebody/RBMPJ/2D/12P/0.100000w/ADAM_MC262144.dat",
          #"../data/int1/onebody/RBMPJ/2D/6P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBM/2D/2P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/12P/0.500000w/SGD_MC1048576.dat",
@@ -38,7 +38,7 @@ label = [#"RBM",
          #"VMC, $\omega=1.0$",
          ]
          
-maxRadius = [10,10,10]
+maxRadius = [25,10,10]
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])
