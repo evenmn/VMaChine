@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(vmc)
+project(DotNet)
 
 find_package(MPI REQUIRED)
 
@@ -33,6 +33,9 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/Eigen
     ${PROJECT_SOURCE_DIR}/src/blocker/c++
     ${PROJECT_SOURCE_DIR}/src/tqdm
+    ${PROJECT_SOURCE_DIR}/test
+    ${gtest_SOURCE_DIR}
+    ${gtest_SOURCE_DIR}/include
     ${MPI_INCLUDE_PATH}
 )
 
@@ -61,7 +64,6 @@ set(SOURCES
     src/Optimization/barzilaiborwein.cpp
     src/RNG/rng.cpp
     src/RNG/mersennetwister.cpp
-    src/RNG/parkmiller.cpp
     src/Optimization/gradientdescent.cpp
     src/Basis/basis.cpp
     src/Basis/hermite.cpp
@@ -84,18 +86,37 @@ set(SOURCES
     src/block/c++/blocker.cpp
 )
 
+set(TESTSOURCES 
+    tests/test_basis.cpp
+)
 
-# Add executable file vmc
-add_executable(vmc ${SOURCES})
-target_link_libraries(vmc ${MPI_LIBRARIES})
+################################
+# GTest
+################################
+#ADD_SUBDIRECTORY (gtest-1.6.0)
+#enable_testing()
+
+################################
+# Unit Tests
+################################
+# Add test cpp file
+#add_executable( runUnitTests testgtest.cpp )
+# Link test executable against gtest & gtest_main
+#target_link_libraries(runUnitTests gtest gtest_main)
+#add_test( runUnitTests runUnitTests )
+
+
+# Add executable file dotnet
+add_executable(dotnet ${SOURCES})
+target_link_libraries(dotnet ${MPI_LIBRARIES})
 
 if(MPI_COMPILE_FLAGS)
-  set_target_properties(vmc PROPERTIES
+  set_target_properties(dotnet PROPERTIES
     COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
 endif()
 
 if(MPI_LINK_FLAGS)
-  set_target_properties(vmc PROPERTIES
+  set_target_properties(dotnet PROPERTIES
     LINK_FLAGS "${MPI_LINK_FLAGS}")
 endif()
 

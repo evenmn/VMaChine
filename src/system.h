@@ -5,6 +5,7 @@
 
 class System {
 public:
+    void parser(std::string configFile, int &numberOfIterations);
     void runIterations                  (const int numberOfIterations);
     void runMetropolisCycles            ();
     void printToTerminal                (int numberOfIterations);

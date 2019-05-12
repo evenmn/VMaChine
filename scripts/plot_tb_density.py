@@ -4,7 +4,7 @@ import seaborn as sns
 sns.set()
 
 # Load file
-fileName = "../data/int1/twobody/RBMPJ/2D/12P/0.100000w/ADAM_MC262144.dat"
+fileName = "../data/int1/twobody/VMC/2D/30P/0.100000w/ADAM_MC1048576.dat"
 data = np.loadtxt(fileName)
 
 # Define parameters

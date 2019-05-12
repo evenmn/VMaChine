@@ -127,6 +127,48 @@ int System::dynamicSteps() {
     return stepRatio;
 }
 
+void System::parser(std::string configFile, int &numberOfIterations) {
+
+    std::ifstream infile;
+    infile.open(configFile.c_str());
+    if (!infile.is_open()) {
+        perror("File not found");
+    }
+    std::string line;
+    while(std::getline(infile,line)) {
+        std::istringstream is_line(line);
+        std::string key;
+        if(std::getline(is_line, key, ':')) {
+            std::string value;
+            if(std::getline(is_line, value))
+            if(key == "numParticles") {
+                m_numberOfParticles = std::stoi(value);
+            }
+            else if(key == "numDimensions") {
+                m_numberOfDimensions = std::stoi(value);
+            }
+            else if(key == "omega") {
+                m_omega = std::stod(value);
+            }
+            else if(key == "learningRate") {
+                m_eta = std::stod(value);
+            }
+            else if(key == "maxRadius") {
+                m_maxRadius = std::stoi(value);
+            }
+            else if(key == "numIterations") {
+                numberOfIterations = std::stoi(value);
+            }
+            else {
+                perror("Key not found, please choose a valid key");
+            }
+        }
+    }
+    m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
+    m_numberOfHiddenNodes    = m_numberOfParticles;
+    m_Z                      = m_numberOfParticles;
+}
+
 void System::initializeAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     for(auto& i : m_waveFunctionElements) {
         i->initializeArrays(positions, radialVector, distanceMatrix);

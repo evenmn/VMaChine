@@ -3,4 +3,4 @@ RM := rm -r
 .PHONY: clean
 
 clean:
-	$(RM) build data/instant*
+	$(RM) build data/*.dat
