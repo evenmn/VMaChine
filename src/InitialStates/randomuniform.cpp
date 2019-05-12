@@ -55,10 +55,11 @@ void RandomUniform::setupInitialState() {
     for (int i=0; i < m_numberOfFreeDimensions; i++) {
         m_positions(i) = m_system->getRandomNumberGenerator()->nextDouble();
     }
-    calculateDistanceMatrix();
-    calculateRadialVector();
+    InitialState::calculateDistanceMatrix();
+    InitialState::calculateRadialVector();
 
     for(auto& i : m_system->getWaveFunctionElements()) {
         i->initializeArrays(m_positions, m_radialVector, m_distanceMatrix);
+        i->setArrays();
     }
 }

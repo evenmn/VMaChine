@@ -101,13 +101,11 @@ void PadeJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen
     m_fSqrd = m_f.cwiseAbs2();
     m_gSqrd = m_g.cwiseAbs2();
 
-    setArrays();
     initializeBeta();
 }
 
 void PadeJastrow2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
-    setArrays();
 
     m_positions                = positions;
     m_distanceMatrix           = distanceMatrix;

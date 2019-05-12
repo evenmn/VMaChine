@@ -41,12 +41,10 @@ void SamsethJastrow::initializeArrays(const Eigen::VectorXd positions, const Eig
             m_g(j,i) = -m_g(i,j);
         }
     }
-    setArrays();
 }
 
 void SamsethJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
-    setArrays();
     m_positions             = positions;
     m_distanceMatrix        = distanceMatrix;
     calculateG                  (changedCoord);

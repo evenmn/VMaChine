@@ -93,6 +93,7 @@ public:
     std::string                         getPath()                    { return m_path; }
     std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionElements; }
 
+    void                                initializeAllArrays          (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix);
     void                                updateAllArrays              (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord);
     void                                resetAllArrays               ();
     void                                updateAllParameters          (const Eigen::MatrixXd parameters);

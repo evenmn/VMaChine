@@ -15,14 +15,10 @@ void HydrogenLike::initializeArrays(const Eigen::VectorXd positions, const Eigen
     m_positions         = positions;
     m_radialVector      = radialVector;
     m_probabilityRatio  = 1;
-
-    setArrays();
 }
 
 void HydrogenLike::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
-
-    setArrays();
 
     m_positions                 = positions;
     m_radialVector              = radialVector;

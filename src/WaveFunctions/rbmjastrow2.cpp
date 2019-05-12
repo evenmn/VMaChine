@@ -31,7 +31,6 @@ void RBMJastrow2::updateRatio() {
 }
 
 void RBMJastrow2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
-    setArrays();
     m_positions = positions;
     updateVectors();
     updateRatio();
@@ -63,7 +62,6 @@ void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     m_p  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
 
     updateVectors();
-    setArrays();
 }
 
 void RBMJastrow2::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {

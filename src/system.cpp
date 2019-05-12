@@ -127,8 +127,16 @@ int System::dynamicSteps() {
     return stepRatio;
 }
 
+void System::initializeAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
+    for(auto& i : m_waveFunctionElements) {
+        i->initializeArrays(positions, radialVector, distanceMatrix);
+        i->setArrays();
+    }
+}
+
 void System::updateAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     for(auto& i : m_waveFunctionElements) {
+        i->setArrays();
         i->updateArrays(positions, radialVector, distanceMatrix, changedCoord);
     }
 }

@@ -145,12 +145,12 @@ void Sampler::doResampling() {
     if(m_printInstantEnergyToFile) {
         appendInstantFiles();
         std::ifstream infile(m_instantEnergyFileName.c_str());
-        std::vector<double> x;
+        std::vector<double> instantEnergies;
         std::string line;
         while(std::getline(infile,line)) {
-            x.push_back(strtod(line.c_str(), nullptr));
+            instantEnergies.push_back(strtod(line.c_str(), nullptr));
         }
-        Blocker block(x);
+        Blocker block(instantEnergies);
         m_averageEnergy = block.mean;
         m_stdError      = block.stdErr;
         m_variance      = m_stdError * m_stdError;
@@ -159,8 +159,6 @@ void Sampler::doResampling() {
         m_mseVariance   = m_mseSTD * m_mseSTD;
         if(remove(m_instantEnergyFileName.c_str()) != 0)
             perror( " Could not remove blocking file" );
-        //else
-        //    puts( " Successfully removed blocking file" );
     }
 }
 
@@ -322,7 +320,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
             }
             double r1 = sqrt(dist1);      // Distance from particle 1 to origin
             int counter1 = 0;
-            while(counter1 < m_numberOfBins && m_binLinSpace(counter1) < r1) {
+            while(counter1 < m_numberOfBins-1 && m_binLinSpace(counter1) < r1) {
                 counter1 += 1;
             }
             for(int particle2=particle1+1; particle2<m_numberOfParticles; particle2++) {
@@ -334,7 +332,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions) {
                 }
                 double r2 = sqrt(dist2);      // Distance from particle 2 to origin
                 int counter2 = 0;
-                while(counter2 < m_numberOfBins && m_binLinSpace(counter2) < r2) {
+                while(counter2 < m_numberOfBins-1 && m_binLinSpace(counter2) < r2) {
                     counter2 += 1;
                 }
                 m_particlesPerBinPairwise(counter1, counter2) += 1;

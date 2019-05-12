@@ -5,14 +5,14 @@ class InitialState {
 public:
     InitialState(class System* system);
     virtual void setupInitialState() = 0;
-    Eigen::VectorXd getParticles() { return m_positions; }
+    Eigen::VectorXd getParticles()      { return m_positions; }
     Eigen::MatrixXd getDistanceMatrix() { return m_distanceMatrix; }
-    Eigen::VectorXd getRadialVector() { return m_radialVector; }
+    Eigen::VectorXd getRadialVector()   { return m_radialVector; }
 
-    virtual double  calculateDistanceMatrixElement  (int i, int j) = 0;
-    virtual void    calculateDistanceMatrix         () = 0;
-    virtual double  calculateRadialVectorElement    (int particle) = 0;
-    virtual void    calculateRadialVector           () = 0;
+    double  calculateDistanceMatrixElement  (int i, int j);
+    void    calculateDistanceMatrix         ();
+    double  calculateRadialVectorElement    (int particle);
+    void    calculateRadialVector           ();
 
     virtual ~InitialState() = 0;
 

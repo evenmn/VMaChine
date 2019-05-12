@@ -46,13 +46,10 @@ void RBMGaussian2::initializeArrays(const Eigen::VectorXd positions, const Eigen
         }
     }
     m_gSqrd = m_g.cwiseAbs2();
-
-    setArrays();
 }
 
 void RBMGaussian2::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
-    setArrays();
 
     m_positions             = positions;
     m_distanceMatrix        = distanceMatrix;

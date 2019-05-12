@@ -30,16 +30,12 @@ void SimpleJastrow::initializeArrays(Eigen::VectorXd positions, const Eigen::Vec
             m_g(j,i) = -m_g(i,j);
         }
     }
-    setArrays();
 }
 
 void SimpleJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
-    int particle = int(changedCoord/m_numberOfDimensions);
-    setArrays();
-
-    m_positions         = positions;
-    m_distanceMatrix    = distanceMatrix;
-
+    int particle      = int(changedCoord/m_numberOfDimensions);
+    m_positions       = positions;
+    m_distanceMatrix  = distanceMatrix;
     calculateProbabilityRatio(particle);
     calculateG(changedCoord);
 }

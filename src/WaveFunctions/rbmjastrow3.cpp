@@ -50,8 +50,6 @@ void RBMJastrow3::updateRatio() {
 
 void RBMJastrow3::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     int particle = int(changedCoord/m_numberOfDimensions);
-    setArrays();
-
     m_positions = positions;
     m_distanceMatrix = distanceMatrix;
     calculateG(changedCoord);
@@ -95,7 +93,6 @@ void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions, const Eigen:
         }
     }
     updateVectors();
-    setArrays();
 }
 
 void RBMJastrow3::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {

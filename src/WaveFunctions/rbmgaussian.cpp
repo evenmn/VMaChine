@@ -22,13 +22,9 @@ void RBMGaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     m_positions             = positions;
     m_Xa                    = positions - m_a;
     m_probabilityRatio      = 1;
-
-    setArrays();
 }
 
 void RBMGaussian::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
-    setArrays();
-
     m_positions             = positions;
     m_Xa                    = positions - m_a;
     m_probabilityRatio      = exp((m_XaOld(changedCoord)*m_XaOld(changedCoord) - m_Xa(changedCoord)*m_Xa(changedCoord)) / (2 * m_sigmaSqrd));
