@@ -64,12 +64,12 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 110;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,16));
-    int     numberOfIterations  = 2000;
-    double  learningRate        = 0.00001;
-    double  omega               = 1.0;                      // Oscillator frequency
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 1000;
+    double  learningRate        = 0.5;
+    double  omega               = 0.1;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -100,8 +100,8 @@ int main(int argc, char *argv[]) {
     int     additionalStepsLastIteration    = 8;            // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius                       = 35;                       // Max radius of one-body density plots
-    int     numberOfBins                    = int(100 * maxRadius);     // 100 bins per radius unit
+    double  maxRadius                       = 10;          // Max radius of one-body density plots
+    int     numberOfBins                    = 1000;        // 100 bins per radius unit
 
 
     // --- SET PARAMETERS ---
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
     system->setDensityTools             (computeOneBodyDensity, computeTwoBodyDensity, numberOfBins, maxRadius);
     system->setEnergyPrintingTools      (printEnergyFile, doResampling);
 
-    system->parser                      (argv[1], numberOfIterations);
+    if(argc == 2) system->parser        (argv[1], numberOfIterations);
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;

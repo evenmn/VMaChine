@@ -1,6 +1,6 @@
 numParticles: 2
 numDimensions: 2
-numIterations: 5000
-maxRadius: 25
+numIterations: 1000
+maxRadius: 10
 learningRate: 0.5
-omega: 0.166667
+omega: 0.1

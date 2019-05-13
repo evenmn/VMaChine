@@ -4,12 +4,12 @@ import seaborn as sns
 sns.set()
 
 # Load file
-fileName = "../data/int1/twobody/VMC/2D/30P/0.100000w/ADAM_MC1048576.dat"
+fileName = "../data/int1/twobody/VMC/2D/2P/0.100000w/ADAM_MC1048576.dat"
 data = np.loadtxt(fileName)
 
 # Define parameters
 numberOfDimensions = 2
-maxRadius = 25
+maxRadius = 10
 numBins = len(data)
 
 r = np.linspace(0, maxRadius, numBins)
