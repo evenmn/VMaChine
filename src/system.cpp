@@ -468,6 +468,16 @@ std::string System::getAllLabels() {
             (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian_padejastrow")) {
         total_string = "RBMPJ";
     }
+    else if((total_string == "_rbmgaussian_drbmjastrow") || \
+            (total_string == "_drbmjastrow_rbmgaussian") || \
+            (total_string == "_rbmgaussian_drbmjastrow_slaterdeterminant") || \
+            (total_string == "_rbmgaussian_slaterdeterminant_drbmjastrow") || \
+            (total_string == "_drbmjastrow_rbmgaussian_slaterdeterminant") || \
+            (total_string == "_drbmjastrow_slaterdeterminant_rbmgaussian") || \
+            (total_string == "_slaterdeterminant_rbmgaussian_drbmjastrow") || \
+            (total_string == "_slaterdeterminant_drbmjastrow_rbmgaussian")) {
+        total_string = "DRBM";
+    }
     /*
     std::vector<std::string> elementLabels;
     elementLabels.push_back("_rbmgaussian");

@@ -6,17 +6,17 @@
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/gaussian.h"
 #include "WaveFunctions/padejastrow.h"
-#include "WaveFunctions/padejastrow2.h"
+//#include "WaveFunctions/padejastrow2.h"
 #include "WaveFunctions/slaterdeterminant.h"
 #include "WaveFunctions/rbmgaussian.h"
-#include "WaveFunctions/rbmgaussian2.h"
+//#include "WaveFunctions/rbmgaussian2.h"
 #include "WaveFunctions/rbmjastrow.h"
 #include "WaveFunctions/rbmjastrow2.h"
 #include "WaveFunctions/rbmjastrow3.h"
 //#include "WaveFunctions/rbmjastrow4.h"
-#include "WaveFunctions/rbmjastrow5.h"
+#include "WaveFunctions/drbmjastrow.h"
 #include "WaveFunctions/simplejastrow.h"
-#include "WaveFunctions/samsethjastrow.h"
+//#include "WaveFunctions/samsethjastrow.h"
 #include "WaveFunctions/partlyrestricted.h"
 #include "WaveFunctions/hydrogenlike.h"
 
@@ -66,10 +66,10 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 1000;
-    double  learningRate        = 0.5;
-    double  omega               = 0.1;                      // Oscillator frequency
+    double  learningRate        = 0.001;
+    double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -78,12 +78,12 @@ int main(int argc, char *argv[]) {
     // Switches
     bool    interaction             = true;                     // Repulsive interaction on or off
     bool    checkConvergence        = false;                    // Stops the program after it has converged
-    bool    applyAdaptiveSteps      = true;                     // Increase the number of MC-cycles for the last iterations
-    bool    computeOneBodyDensity   = true;                     // Compute one-body density and print to file
-    bool    computeTwoBodyDensity   = true;
-    bool    printEnergyFile         = true;                     // Print energy for every iteration to file
-    bool    printParametersToFile   = true;
-    bool    doResampling            = true;                     // Print blocking file for the last iteration and do blocking
+    bool    applyAdaptiveSteps      = false;                     // Increase the number of MC-cycles for the last iterations
+    bool    computeOneBodyDensity   = false;                     // Compute one-body density and print to file
+    bool    computeTwoBodyDensity   = false;
+    bool    printEnergyFile         = false;                     // Print energy for every iteration to file
+    bool    printParametersToFile   = false;
+    bool    doResampling            = false;                     // Print blocking file for the last iteration and do blocking
 
 
     // --- ADVANCED SETTINGS ---
@@ -131,24 +131,20 @@ int main(int argc, char *argv[]) {
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
-    //WaveFunctionElements.push_back      (new class HydrogenLike         (system));
-    WaveFunctionElements.push_back      (new class Gaussian             (system));
-    //WaveFunctionElements.push_back      (new class RBMGaussian          (system));
-    //WaveFunctionElements.push_back      (new class RBMGaussian2         (system));
-    //WaveFunctionElements.push_back      (new class RBMJastrow           (system));
-    //WaveFunctionElements.push_back      (new class SimpleJastrow        (system));
-    //WaveFunctionElements.push_back      (new class RBMJastrow2          (system));
-    //WaveFunctionElements.push_back      (new class RBMJastrow5          (system));
-    WaveFunctionElements.push_back      (new class SlaterDeterminant    (system));
-    //WaveFunctionElements.push_back      (new class PartlyRestricted     (system));
-    WaveFunctionElements.push_back      (new class PadeJastrow          (system));
-    //WaveFunctionElements.push_back      (new class PadeJastrow2         (system));
-    //WaveFunctionElements.push_back      (new class SamsethJastrow       (system));
+    //WaveFunctionElements.push_back      (new class HydrogenLike      (system));
+    //WaveFunctionElements.push_back      (new class Gaussian          (system));
+    WaveFunctionElements.push_back      (new class RBMGaussian       (system));
+    //WaveFunctionElements.push_back      (new class RBMJastrow        (system));
+    //WaveFunctionElements.push_back      (new class SimpleJastrow     (system));
+    WaveFunctionElements.push_back      (new class DRBMJastrow       (system, 5));
+    //WaveFunctionElements.push_back      (new class SlaterDeterminant (system));
+    //WaveFunctionElements.push_back      (new class PartlyRestricted  (system));
+    //WaveFunctionElements.push_back      (new class PadeJastrow       (system));
 
     system->setNumberOfWaveFunctionElements(int(WaveFunctionElements.size()));
     system->setWaveFunctionElements     (WaveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setInitialWeights           (new Constant(system, 1.0));
+    system->setInitialWeights           (new Randomize(system, 0.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     //system->setHamiltonian              (new DoubleWell(system));

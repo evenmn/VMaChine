@@ -57,16 +57,15 @@ void RBMJastrow2::resetArrays() {
 void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_probabilityRatio  = 1;
-
     m_n  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     m_p  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
-
     updateVectors();
 }
 
 void RBMJastrow2::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
     m_elementNumber                     = elementNumber;
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+
     m_b1     = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
     m_b2     = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes,m_numberOfHiddenNodes);
     Eigen::VectorXd w1Flatten = parameters.row(m_elementNumber).segment(2*m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
