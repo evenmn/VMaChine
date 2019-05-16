@@ -40,8 +40,8 @@ std::string HartreeFockHermite::generateFileName() {
 void HartreeFockHermite::readCoefficientFile() {
     std::string fileName = generateFileName();
     std::ifstream inFile(generateFileName().c_str(), std::ios::in);
-    m_basisSize             = fileLength(fileName);
-    m_coefficients          = Eigen::MatrixXd::Zero(int(m_numberOfParticles/2), m_basisSize);
+    m_basisSize     = fileLength(fileName);
+    m_coefficients  = Eigen::MatrixXd::Zero(int(m_numberOfParticles/2), m_basisSize);
     if (!inFile.is_open()) {
         std::cout << "file not found";
         MPI_Finalize();
@@ -58,11 +58,19 @@ void HartreeFockHermite::readCoefficientFile() {
 }
 
 void HartreeFockHermite::numberOfOrbitals() {
+    //Number of closed-shell orbitals
     int counter = 0;
-    double orb = 0;
-    while(orb <= m_basisSize * 2) {
-        orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
-        m_numberOfOrbitals = counter+1;
+    while(true) {
+        int orb = Basis::binomial(counter, m_numberOfDimensions);
+        if(orb == m_basisSize) {
+            m_numberOfOrbitals = counter+1;
+            break;
+        }
+        else if(orb > m_basisSize) {
+            std::cout << "Basis size must correspond to a closed shell..." << std::endl;
+            MPI_Finalize();
+            exit(0);
+        }
         counter += 1;
     }
 }
