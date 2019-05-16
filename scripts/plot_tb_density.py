@@ -52,13 +52,13 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [10,10,10,10]
-    newRadius = [8, 3.5, 3.5, 2.5]
+    maxRadius = [10]
+    newRadius = [4]
     
     methods   = ['VMC']
     dims      = ['2']
-    particles = ['2', '6']
-    omegas    = ['0.100000', '0.280000', '0.500000', '1.000000']
+    particles = ['2']
+    omegas    = ['0.280000']
     
     for method in methods:
         for dim in dims:

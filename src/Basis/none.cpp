@@ -38,5 +38,5 @@ double None::basisElementSecDer(const int n, const int i, Eigen::VectorXd positi
     return 0;
 }
 
-void None::generateListOfStates() {
+void None::generateListOfStates(int orbitals) {
 }

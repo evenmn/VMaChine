@@ -18,13 +18,6 @@ BarzilaiBorwein::BarzilaiBorwein(System* system) :
     m_oldParameters                   = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }
 
-Eigen::MatrixXd BarzilaiBorwein::getEnergyGradient() {
-    double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
-    Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();
-    Eigen::MatrixXd averageGradientsE = m_system->getSampler()->getAverageGradientsE();
-    return 2 * (averageGradientsE - averageEnergy * averageGradients);
-}
-
 Eigen::MatrixXd BarzilaiBorwein::updateParameters() {
     m_oldGradients = m_gradients;
     m_parameters    = m_system->getWeights();

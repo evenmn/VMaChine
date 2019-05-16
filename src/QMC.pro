@@ -30,6 +30,7 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 # Load internal source files
 SOURCES += main.cpp \
+    WaveFunctions/drbmjastrow.cpp \
     system.cpp \
     sampler.cpp \
     Hamiltonians/hamiltonian.cpp \
@@ -50,14 +51,15 @@ SOURCES += main.cpp \
     WaveFunctions/slaterdeterminant.cpp \
     WaveFunctions/hydrogenlike.cpp \
     WaveFunctions/padejastrow.cpp \
-    WaveFunctions/padejastrow2.cpp \
+    #WaveFunctions/padejastrow2.cpp \
     WaveFunctions/simplejastrow.cpp \
-    WaveFunctions/samsethjastrow.cpp \
+    #WaveFunctions/samsethjastrow.cpp \
     WaveFunctions/rbmgaussian.cpp \
-    WaveFunctions/rbmgaussian2.cpp \
+    #WaveFunctions/rbmgaussian2.cpp \
     WaveFunctions/rbmjastrow.cpp \
     WaveFunctions/rbmjastrow2.cpp \
     WaveFunctions/rbmjastrow3.cpp \
+    #WaveFunctions/rbmjastrow4.cpp \
     Optimization/optimization.cpp \
     Optimization/barzilaiborwein.cpp \
     Optimization/gradientdescent.cpp \
@@ -79,6 +81,7 @@ SOURCES += \
 
 # Load internal header files
 HEADERS += \
+    WaveFunctions/drbmjastrow.h \
     system.h \
     sampler.h \
     Hamiltonians/hamiltonian.h \
@@ -99,14 +102,15 @@ HEADERS += \
     WaveFunctions/slaterdeterminant.h \
     WaveFunctions/hydrogenlike.h \
     WaveFunctions/padejastrow.h \
-    WaveFunctions/padejastrow2.h \
+    #WaveFunctions/padejastrow2.h \
     WaveFunctions/simplejastrow.h \
-    WaveFunctions/samsethjastrow.h \
+    #WaveFunctions/samsethjastrow.h \
     WaveFunctions/rbmgaussian.h \
-    WaveFunctions/rbmgaussian2.h \
+    #WaveFunctions/rbmgaussian2.h \
     WaveFunctions/rbmjastrow.h \
     WaveFunctions/rbmjastrow2.h \
     WaveFunctions/rbmjastrow3.h \
+    #WaveFunctions/rbmjastrow4.h \
     Optimization/optimization.h \
     Optimization/barzilaiborwein.h \
     Optimization/gradientdescent.h \

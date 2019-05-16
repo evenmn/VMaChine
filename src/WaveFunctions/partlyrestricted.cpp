@@ -56,6 +56,7 @@ void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters, const int el
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     Eigen::Map<Eigen::MatrixXd> c(parameters.row(m_elementNumber).data(), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     m_c = c;
+    //m_c = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
 }
 
 double PartlyRestricted::evaluateRatio() {
@@ -86,7 +87,7 @@ Eigen::VectorXd PartlyRestricted::computeParameterGradient() {
 
     for(int m=0; m<m_numberOfFreeDimensions; m++) {
         for(int l=m; l<m_numberOfFreeDimensions; l++) {
-            gradients(l * m_numberOfFreeDimensions + m) = m_positions(m) * m_positions(l) * sgn(m_positions(m) * m_c(m,l) * m_positions(l));
+            gradients(l * m_numberOfFreeDimensions + m) = -m_positions(m) * m_positions(l) * sgn(m_positions(m) * m_c(m,l) * m_positions(l));
         }
     }
     return gradients;

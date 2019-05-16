@@ -17,17 +17,9 @@ SGD::SGD(System* system, const double gamma, const double monotonicExp) :
     m_monotonicExp                    = monotonicExp;
 }
 
-Eigen::MatrixXd SGD::getEnergyGradient() {
-    double          averageEnergy     = m_system->getSampler()->getAverageEnergy();
-    Eigen::MatrixXd averageGradients  = m_system->getSampler()->getAverageGradients();
-    Eigen::MatrixXd averageGradientsE = m_system->getSampler()->getAverageGradientsE();
-    return 2 * (averageGradientsE - averageEnergy * averageGradients);
-}
-
 Eigen::MatrixXd SGD::updateParameters() {
     m_step += 1;
     double monotonic = 1/pow(m_step, m_monotonicExp);
     m_v = m_gamma * m_v + m_eta * Optimization::getEnergyGradient() * monotonic;
     return m_v;
-    //return Eigen::MatrixXd(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
 }

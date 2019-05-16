@@ -6,7 +6,7 @@ mkdir build
 # Go to the build-directory
 cd build
 
-# Run CMake to create a Makefile
+# CMake creates a Makefile based on CMakeLists.txt
 cmake ../
 
 # Make the Makefile using four threads (the number of cores in a standard comp)

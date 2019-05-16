@@ -10,10 +10,6 @@ public:
     double QuantumForce(const int i);
     double GreenFuncSum();
 
-    double calculateDistanceMatrixElement(int i, int j);
-    void   calculateDistanceMatrixCross(int particle);
-    double calculateRadialVectorElement(int particle);
-
 private:
     Eigen::VectorXd m_quantumForceOld;
     Eigen::VectorXd m_quantumForceNew;

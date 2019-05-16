@@ -58,12 +58,6 @@ void System::runIterations(const int numberOfIterations) {
         if(m_checkConvergence && m_myRank == 0) {
             checkingConvergence();
         }
-
-        //for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        //    for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
-        //        MPI_Bcast(&m_parameters(i,j), 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-        //    }
-        //}
         MPI_Bcast(m_parameters.data(), int(m_numberOfWaveFunctionElements*m_maxNumberOfParametersPerElement), MPI_DOUBLE, 0, MPI_COMM_WORLD);
         MPI_Barrier(MPI_COMM_WORLD);
         updateAllParameters(m_parameters);
@@ -94,7 +88,6 @@ void System::printToTerminal(int numberOfIterations) {
             m_sampler->doResampling();
             m_sampler->printFinalOutputToTerminal();
         }
-        //MPI_Barrier(MPI_COMM_WORLD);
         MPI_Finalize();
         exit(0);
     }
