@@ -3,4 +3,4 @@
 RandomNumberGenerator::RandomNumberGenerator() {
 }
 
-RandomNumberGenerator::~RandomNumberGenerator() {};
+RandomNumberGenerator::~RandomNumberGenerator() {}

@@ -9,16 +9,17 @@ public:
     int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
     std::string     getLabel                    ()      { return m_label; }
 
-    void            updateArrays                    (const Eigen::VectorXd positions, \
-                                                     const Eigen::VectorXd radialVector, \
-                                                     const Eigen::MatrixXd distanceMatrix, \
-                                                     const int changedCoord);
-    void            setArrays                   ();
-    void            resetArrays                 ();
+    void            updateParameters            (const Eigen::MatrixXd parameters);
     void            initializeArrays            (const Eigen::VectorXd positions, \
                                                  const Eigen::VectorXd radialVector, \
                                                  const Eigen::MatrixXd distanceMatrix);
-    void            updateParameters            (const Eigen::MatrixXd parameters, const int elementNumber);
+    void            updateArrays                (const Eigen::VectorXd positions, \
+                                                 const Eigen::VectorXd radialVector, \
+                                                 const Eigen::MatrixXd distanceMatrix, \
+                                                 const int changedCoord);
+    void            setConstants                (const int elementNumber);
+    void            setArrays                   ();
+    void            resetArrays                 ();
     double          evaluateRatio               ();
     double          computeGradient             (const int k);
     double          computeLaplacian            ();

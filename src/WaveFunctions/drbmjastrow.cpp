@@ -15,6 +15,11 @@ DRBMJastrow::DRBMJastrow(System* system, int numberOfLayers) :
     m_sigmaSqrd                         = sigma*sigma;
 }
 
+void DRBMJastrow::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void DRBMJastrow::updateGradient() {
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
@@ -106,10 +111,7 @@ void DRBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     updateLaplacian();
 }
 
-void DRBMJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-
+void DRBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
     m_W = Eigen::MatrixXd::Zero(m_numberOfLayers*m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     for(int n=0; n<m_numberOfLayers; n++) {

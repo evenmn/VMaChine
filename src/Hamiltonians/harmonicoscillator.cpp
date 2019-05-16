@@ -1,6 +1,5 @@
 #include "harmonicoscillator.h"
 #include <cassert>
-#include <iostream>
 #include "../system.h"
 #include "../WaveFunctions/wavefunction.h"
 
@@ -14,22 +13,15 @@ HarmonicOscillator::HarmonicOscillator(System* system) :
     m_interaction           = m_system->getInteraction();
 }
 
+double HarmonicOscillator::getExternalEnergy() {
+    m_positions = m_system->getPositions();
+    return 0.5 * m_omega_sqrd * m_positions.cwiseAbs2().sum();
+}
+
 double HarmonicOscillator::computeLocalEnergy() {
-    m_positions             = m_system->getPositions();
-    m_distanceMatrix        = m_system->getDistanceMatrix();
-
-    double interactionEnergy = 0;
-    if(m_interaction) {
-        for(int i=0; i<m_numberOfParticles; i++) {
-            for(int j=i+1; j<m_numberOfParticles; j++) {
-                interactionEnergy += 1/m_distanceMatrix(i,j);
-            }
-        }
-    }
-
-    double externalEnergy = 0.5 * m_omega_sqrd * (m_positions.cwiseAbs2()).sum();
-    double kineticEnergy  = m_system->getKineticEnergy();
-
+    double kineticEnergy     = m_system->getKineticEnergy();
+    double externalEnergy    = getExternalEnergy();
+    double interactionEnergy = Hamiltonian::getInteractionEnergy();
     return kineticEnergy + externalEnergy + interactionEnergy;
 }
 

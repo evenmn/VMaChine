@@ -13,4 +13,4 @@ Eigen::MatrixXd Optimization::getEnergyGradient() {
     return 2 * (averageGradientsE - averageEnergy * averageGradients);
 }
 
-Optimization::~Optimization() {};
+Optimization::~Optimization() {}

@@ -16,6 +16,11 @@ RBMJastrow3::RBMJastrow3(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
+void RBMJastrow3::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void RBMJastrow3::calculateG(int changedCoord) {
     for(int i=changedCoord+1; i<m_numberOfFreeDimensions; i++) {
         m_g(changedCoord,i) = m_positions(changedCoord) - m_positions(i);
@@ -95,9 +100,7 @@ void RBMJastrow3::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     updateVectors();
 }
 
-void RBMJastrow3::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void RBMJastrow3::updateParameters(Eigen::MatrixXd parameters) {
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfParticles*m_numberOfParticles*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfParticles*m_numberOfHiddenNodes, m_numberOfParticles);
     m_W     = W;

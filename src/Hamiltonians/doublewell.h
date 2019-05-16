@@ -6,6 +6,7 @@ class DoubleWell : public Hamiltonian {
 public:
     DoubleWell(System* system);
     double computeLocalEnergy();
+    double getExternalEnergy();
     int    getGlobalArrayNeed()  { return m_globalArrayNeed; }
 
 private:

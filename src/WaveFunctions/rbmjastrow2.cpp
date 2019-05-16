@@ -14,6 +14,11 @@ RBMJastrow2::RBMJastrow2(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
+void RBMJastrow2::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void RBMJastrow2::updateVectors() {
     m_g = m_b1 + m_W1.transpose() * m_positions;
     m_h = m_b2 + m_W2.transpose() * m_positions + Eigen::VectorXd::Ones(m_numberOfHiddenNodes);
@@ -62,10 +67,7 @@ void RBMJastrow2::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     updateVectors();
 }
 
-void RBMJastrow2::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-
+void RBMJastrow2::updateParameters(Eigen::MatrixXd parameters) {
     m_b1     = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
     m_b2     = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes,m_numberOfHiddenNodes);
     Eigen::VectorXd w1Flatten = parameters.row(m_elementNumber).segment(2*m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);

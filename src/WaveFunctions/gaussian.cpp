@@ -9,6 +9,11 @@ Gaussian::Gaussian(System* system) :
     m_omega                             = m_system->getFrequency();
 }
 
+void Gaussian::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void Gaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions             = positions;
     m_probabilityRatio      = 1;
@@ -35,9 +40,7 @@ void Gaussian::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void Gaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void Gaussian::updateParameters(const Eigen::MatrixXd parameters) {
     m_alpha                             = parameters(m_elementNumber,0);
 }
 

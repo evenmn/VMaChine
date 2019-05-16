@@ -5,7 +5,7 @@
 
 class System {
 public:
-    void parser(std::string configFile, int &numberOfIterations);
+    void parser                         (std::string configFile, int &numberOfIterations);
     void runIterations                  (const int numberOfIterations);
     void runMetropolisCycles            ();
     void printToTerminal                (int numberOfIterations);
@@ -97,6 +97,7 @@ public:
     void                                initializeAllArrays          (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix);
     void                                updateAllArrays              (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord);
     void                                resetAllArrays               ();
+    void                                setAllConstants              ();
     void                                updateAllParameters          (const Eigen::MatrixXd parameters);
     double                              evaluateWaveFunctionRatio    ();
     double                              getKineticEnergy             ();

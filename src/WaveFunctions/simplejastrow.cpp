@@ -12,6 +12,11 @@ SimpleJastrow::SimpleJastrow(System* system) :
     m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles;
 }
 
+void SimpleJastrow::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void SimpleJastrow::calculateG(int pRand) {
     for(int i=0; i<m_numberOfFreeDimensions; i++) {
         m_g(pRand,i) = m_positions(pRand) - m_positions(i);
@@ -60,9 +65,7 @@ void SimpleJastrow::resetArrays() {
     m_probabilityRatio  = m_probabilityRatioOld;
 }
 
-void SimpleJastrow::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void SimpleJastrow::updateParameters(const Eigen::MatrixXd parameters) {
     Eigen::VectorXd betaFlatten = parameters.row(m_elementNumber).head(m_numberOfFreeDimensions*m_numberOfFreeDimensions);
     Eigen::Map<Eigen::MatrixXd> beta(betaFlatten.data(), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     m_beta     = beta;

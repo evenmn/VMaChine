@@ -32,4 +32,4 @@ double Metropolis::calculateRadialVectorElement(const int particle) {
     return sqrt(sqrtElementWise);
 }
 
-Metropolis::~Metropolis() {};
+Metropolis::~Metropolis() {}

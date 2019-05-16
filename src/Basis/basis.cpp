@@ -17,4 +17,4 @@ int Basis::binomial(const int n, const int p) {
     return factorialDifference(n+p, n) / factorial(p);
 }
 
-Basis::~Basis() {};
+Basis::~Basis() {}

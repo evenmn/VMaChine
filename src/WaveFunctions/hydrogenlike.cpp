@@ -11,6 +11,11 @@ HydrogenLike::HydrogenLike(System* system) :
     m_Z                                 = m_system->getAtomicNumber();
 }
 
+void HydrogenLike::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void HydrogenLike::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_radialVector      = radialVector;
@@ -37,9 +42,7 @@ void HydrogenLike::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void HydrogenLike::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void HydrogenLike::updateParameters(const Eigen::MatrixXd parameters) {
     m_alpha                             = parameters(m_elementNumber, 0);
 }
 

@@ -5,4 +5,4 @@ WaveFunction::WaveFunction(System * system) {
     m_system = system;
 }
 
-WaveFunction::~WaveFunction() {};
+WaveFunction::~WaveFunction() {}

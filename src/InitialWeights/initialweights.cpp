@@ -4,6 +4,6 @@ InitialWeights::InitialWeights(System* system) {
     m_system = system;
 }
 
-InitialWeights::~InitialWeights() {};
+InitialWeights::~InitialWeights() {}
 
 

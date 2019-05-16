@@ -11,6 +11,11 @@ PadeJastrow::PadeJastrow(System* system) :
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
 }
 
+void PadeJastrow::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void PadeJastrow::initializeBeta() {
     double symmetric, antisymmetric;
     if (m_numberOfDimensions == 2) {
@@ -132,9 +137,7 @@ void PadeJastrow::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void PadeJastrow::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void PadeJastrow::updateParameters(const Eigen::MatrixXd parameters) {
     m_gamma                             = parameters(m_elementNumber, 0);
 }
 

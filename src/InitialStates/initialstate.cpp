@@ -41,4 +41,4 @@ void InitialState::calculateRadialVector() {
     }
 }
 
-InitialState::~InitialState() {};
+InitialState::~InitialState() {}

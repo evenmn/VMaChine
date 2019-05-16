@@ -12,10 +12,13 @@ RBMGaussian::RBMGaussian(System* system) :
     m_sigmaSqrd = sigma*sigma;
 }
 
-void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
+void RBMGaussian::setConstants(const int elementNumber) {
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
-    m_a                                 = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
+    m_elementNumber                     = elementNumber;
+}
+
+void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters) {
+    m_a = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
 }
 
 void RBMGaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {

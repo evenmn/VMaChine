@@ -4,20 +4,21 @@
 class SlaterDeterminant : public WaveFunction {
 public:
     SlaterDeterminant(class System* system);
-    int             getNumberOfParameters           ()  { return m_numberOfParameters; }
-    int             getGlobalArrayNeed              ()  { return m_globalArrayNeed; }
-    std::string     getLabel                        ()  { return m_label; }
+    int             getNumberOfParameters           ()      { return m_numberOfParameters; }
+    int             getGlobalArrayNeed              ()      { return m_globalArrayNeed; }
+    std::string     getLabel                        ()      { return m_label; }
 
+    void            updateParameters                (const Eigen::MatrixXd parameters);
+    void            initializeArrays                (const Eigen::VectorXd positions, \
+                                                     const Eigen::VectorXd radialVector, \
+                                                     const Eigen::MatrixXd distanceMatrix);
     void            updateArrays                    (const Eigen::VectorXd positions, \
                                                      const Eigen::VectorXd radialVector, \
                                                      const Eigen::MatrixXd distanceMatrix, \
                                                      const int changedCoord);
+    void            setConstants                    (const int elementNumber);
     void            setArrays                       ();
     void            resetArrays                     ();
-    void            initializeArrays                (const Eigen::VectorXd positions, \
-                                                     const Eigen::VectorXd radialVector, \
-                                                     const Eigen::MatrixXd distanceMatrix);
-    void            updateParameters                (const Eigen::MatrixXd parameters, const int elementNumber);
     double          evaluateRatio                   ();
     double          computeGradient                 (const int k);
     double          computeLaplacian                ();

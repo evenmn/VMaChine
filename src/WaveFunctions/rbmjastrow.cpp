@@ -14,9 +14,12 @@ RBMJastrow::RBMJastrow(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
-void RBMJastrow::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
+void RBMJastrow::setConstants(const int elementNumber) {
     m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
+void RBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
     Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     m_W     = W;

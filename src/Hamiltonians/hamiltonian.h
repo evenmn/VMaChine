@@ -6,8 +6,11 @@ class Hamiltonian {
 public:
     Hamiltonian(class System* system);
     virtual int    getGlobalArrayNeed() = 0;
+    virtual double getExternalEnergy()  = 0;
     virtual double computeLocalEnergy() = 0;
     virtual ~Hamiltonian() = 0;
+
+    double getInteractionEnergy();
 
 protected:
     class System* m_system = nullptr;

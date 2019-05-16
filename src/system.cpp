@@ -26,6 +26,8 @@ void System::runIterations(const int numberOfIterations) {
     m_sampler->openOutputFiles();
     m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
 
+    setAllConstants();
+
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
     //for(m_iter : tqdm::range(numberOfIterations)) {
         if(m_applyDynamicSteps) {
@@ -162,6 +164,12 @@ void System::parser(std::string configFile, int &numberOfIterations) {
     m_Z                      = m_numberOfParticles;
 }
 
+void System::setAllConstants() {
+    for(unsigned int i=0; i<m_numberOfWaveFunctionElements; i++) {
+        m_waveFunctionElements[i]->setConstants(i);
+    }
+}
+
 void System::initializeAllArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     for(auto& i : m_waveFunctionElements) {
         i->initializeArrays(positions, radialVector, distanceMatrix);
@@ -183,8 +191,8 @@ void System::resetAllArrays() {
 }
 
 void System::updateAllParameters(const Eigen::MatrixXd parameters) {
-    for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        m_waveFunctionElements[unsigned(i)]->updateParameters(parameters, i);
+    for(auto& i : m_waveFunctionElements) {
+        i->updateParameters(parameters);
     }
 }
 
@@ -213,8 +221,8 @@ double System::getKineticEnergy() {
 
 Eigen::MatrixXd System::getAllInstantGradients() {
     Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-    for(int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
+    for(unsigned int i = 0; i < m_numberOfWaveFunctionElements; i++) {
+        gradients.row(i) = m_waveFunctionElements[i]->computeParameterGradient();
     }
     return gradients;
 }
@@ -227,11 +235,11 @@ void System::setGlobalArraysToCalculate() {
             m_calculateDistanceMatrix = true;
         }
         if(need == 2) {
-            m_calculateRadialVector = true;
+            m_calculateRadialVector   = true;
         }
         if(need == 3) {
             m_calculateDistanceMatrix = true;
-            m_calculateRadialVector = true;
+            m_calculateRadialVector   = true;
         }
     }
     // Check if the Hemiltonian needs distance matrix or radial distance vector
@@ -240,11 +248,11 @@ void System::setGlobalArraysToCalculate() {
         m_calculateDistanceMatrix = true;
     }
     if(need == 2) {
-        m_calculateRadialVector = true;
+        m_calculateRadialVector   = true;
     }
     if(need == 3) {
         m_calculateDistanceMatrix = true;
-        m_calculateRadialVector = true;
+        m_calculateRadialVector   = true;
     }
 }
 

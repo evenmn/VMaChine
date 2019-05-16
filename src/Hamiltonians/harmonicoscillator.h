@@ -6,6 +6,7 @@ class HarmonicOscillator : public Hamiltonian {
 public:
     HarmonicOscillator(System* system);
     double computeLocalEnergy();
+    double getExternalEnergy();
     int    getGlobalArrayNeed()  { return m_globalArrayNeed; }
 
 private:

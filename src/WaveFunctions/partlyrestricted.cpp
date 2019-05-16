@@ -13,6 +13,11 @@ template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+void PartlyRestricted::setConstants(const int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_elementNumber                     = elementNumber;
+}
+
 void PartlyRestricted::calculateProbabilityRatio(int changedCoord) {
     //double ratio = (m_beta.row(particle).transpose() * (m_h.row(particle) - m_hOld.row(particle))).sum();
 
@@ -51,9 +56,7 @@ void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions, const E
     m_probabilityRatio = 1;
 }
 
-void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters, const int elementNumber) {
-    m_elementNumber                     = elementNumber;
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters) {
     Eigen::Map<Eigen::MatrixXd> c(parameters.row(m_elementNumber).data(), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
     m_c = c;
     //m_c = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
