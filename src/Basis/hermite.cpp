@@ -39,24 +39,18 @@ void Hermite::generateListOfStates(int orbitals) {
     int numberOfStates = Basis::binomial(orbitals-1, m_numberOfDimensions);
     m_listOfStates = Eigen::MatrixXd::Zero(numberOfStates, m_numberOfDimensions);
     int counter = 0;
-    // One dimension
-    if (m_numberOfDimensions == 1) {
-        for(int i=0; i<orbitals; i++) {
-            m_listOfStates(i) = i;
-        }
-    }
     // Two dimensions
     if (m_numberOfDimensions == 2) {
         for(int i=0; i<orbitals; i++) {
-            for(int s=i; s<orbitals; s++) {
-                int j = s - i;
-                m_listOfStates(counter,1) = i;
-                m_listOfStates(counter,0) = j;
+            for(int j=0; j<i+1; j++) {
+                m_listOfStates(counter,0) = i-j;
+                m_listOfStates(counter,1) = j;
                 counter += 1;
             }
         }
     }
     // Three dimensions
+    /*
     else if (m_numberOfDimensions == 3) {
         for(int i=0; i<orbitals; i++) {
             for(int j=0; j<orbitals; j++) {
@@ -70,27 +64,25 @@ void Hermite::generateListOfStates(int orbitals) {
             }
         }
     }
-    // Four dimensions
-    else if (m_numberOfDimensions == 4) {
+    */
+    else if (m_numberOfDimensions == 3) {
         for(int i=0; i<orbitals; i++) {
-            for(int j=0; j<orbitals; j++) {
-                for(int k=0; k<orbitals; k++) {
-                    for(int s=i+j; s<orbitals; s++) {
-                        int l = s - i - j - k;
-                        m_listOfStates(counter,0) = i;
-                        m_listOfStates(counter,1) = j;
-                        m_listOfStates(counter,2) = k;
-                        m_listOfStates(counter,3) = l;
-                        counter += 1;
-                    }
+            for(int j=0; j<i+1; j++) {
+                for(int k=0; k<i-j+1; k++) {
+                    m_listOfStates(counter,0) = i-j-k;
+                    m_listOfStates(counter,1) = j;
+                    m_listOfStates(counter,2) = k;
+                    counter += 1;
                 }
             }
         }
     }
     else {
-        std::cout << "Number of dimensions should be in the range [1, 4]" << std::endl;
+        std::cout << "Number of dimensions should be either 2 or 3" << std::endl;
         exit(0);
     }
+    std::cout << m_listOfStates << std::endl;
+    std::cout << std::endl;
 }
 
 double H0(const double x) {return 1;}

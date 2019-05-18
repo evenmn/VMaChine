@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 1000;
     double  learningRate        = 0.5;
     double  omega               = 1.0;                      // Oscillator frequency
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2) system->parser        (argv[1], numberOfIterations);
 
-    system->setBasis                    (new Hermite(system));
+    system->setBasis                    (new HartreeFockHermite(system));
     std::vector<class WaveFunction*> WaveFunctionElements;
     //WaveFunctionElements.push_back      (new class HydrogenLike      (system));
     WaveFunctionElements.push_back      (new class Gaussian          (system));
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
     //WaveFunctionElements.push_back      (new class RBMJastrow        (system));
     //WaveFunctionElements.push_back      (new class SimpleJastrow     (system));
     //WaveFunctionElements.push_back      (new class DRBMJastrow       (system, 2));
-    //WaveFunctionElements.push_back      (new class SlaterDeterminant (system));
+    WaveFunctionElements.push_back      (new class SlaterDeterminant (system));
     //WaveFunctionElements.push_back      (new class PartlyRestricted  (system));
     WaveFunctionElements.push_back      (new class PadeJastrow       (system));
 
