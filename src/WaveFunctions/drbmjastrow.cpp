@@ -63,7 +63,7 @@ void DRBMJastrow::updateRatio() {
 void DRBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     m_positions     = positions;
     for(int n=1; n<m_numberOfLayers+1; n++) {
-        m_positionsPow(n+1, changedCoord) = pow(m_positions(changedCoord),n);
+        m_positionsPow(n+1, changedCoord) = pow(m_positions(changedCoord),n+1);
     }
     updateVectors();
     updateRatio();
@@ -97,7 +97,7 @@ void DRBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     m_positions         = positions;
     m_positionsPow      = Eigen::MatrixXd::Zero(m_numberOfLayers+2, m_numberOfFreeDimensions);
     for(int n=0; n<m_numberOfLayers+1; n++) {
-        m_positionsPow.row(n+1) = m_positions.array().pow(n);
+        m_positionsPow.row(n+1) = m_positions.array().pow(n+1);
     }
     m_probabilityRatio  = 1;
 
@@ -119,6 +119,8 @@ void DRBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
         Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
         m_W.block(n*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = W;
     }
+    m_W.block(0, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    std::cout << m_W << std::endl;
 }
 
 double DRBMJastrow::evaluateRatio() {

@@ -81,8 +81,6 @@ void Hermite::generateListOfStates(int orbitals) {
         std::cout << "Number of dimensions should be either 2 or 3" << std::endl;
         exit(0);
     }
-    std::cout << m_listOfStates << std::endl;
-    std::cout << std::endl;
 }
 
 double H0(const double x) {return 1;}

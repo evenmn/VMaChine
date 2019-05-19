@@ -161,6 +161,7 @@ void System::parser(std::string configFile, int &numberOfIterations) {
     }
     m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
     m_numberOfHiddenNodes    = m_numberOfParticles;
+    m_sigma                  = 1/sqrt(m_omega);
     m_Z                      = m_numberOfParticles;
 }
 
