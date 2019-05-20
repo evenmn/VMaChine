@@ -11,8 +11,8 @@ PadeJastrow::PadeJastrow(System* system) :
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
 }
 
-void PadeJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void PadeJastrow::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

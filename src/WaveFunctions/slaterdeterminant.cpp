@@ -12,8 +12,8 @@ SlaterDeterminant::SlaterDeterminant(System* system) :
     m_numberOfParticlesHalf             = m_numberOfParticles/2;
 }
 
-void SlaterDeterminant::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void SlaterDeterminant::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

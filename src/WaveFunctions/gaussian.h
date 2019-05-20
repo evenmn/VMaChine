@@ -16,7 +16,7 @@ public:
                                                  const Eigen::VectorXd radialVector, \
                                                  const Eigen::MatrixXd distanceMatrix, \
                                                  const int changedCoord);
-    void            setConstants                (const int elementNumber);
+    void            setConstants                (const unsigned int elementNumber);
     void            setArrays                   ();
     void            resetArrays                 ();
     double          evaluateRatio               ();
@@ -29,7 +29,8 @@ public:
 private:
     int     m_numberOfParameters       = 1;
     int     m_globalArrayNeed          = 0;
-    int     m_elementNumber            = 0;
+    unsigned int    m_elementNumber         = 0;
+
     double  m_omega                    = 0;
     double  m_alpha                    = 0;
     double  m_probabilityRatio         = 0;

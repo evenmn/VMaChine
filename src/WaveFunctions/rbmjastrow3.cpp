@@ -16,8 +16,8 @@ RBMJastrow3::RBMJastrow3(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
-void RBMJastrow3::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void RBMJastrow3::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

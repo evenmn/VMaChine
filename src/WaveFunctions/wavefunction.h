@@ -19,7 +19,7 @@ public:
                                                          const Eigen::VectorXd radialVector, \
                                                          const Eigen::MatrixXd distanceMatrix, \
                                                          const int changedCoord) = 0;
-    virtual void            setConstants                (const int elementNumber) = 0;
+    virtual void            setConstants                (const unsigned int elementNumber) = 0;
     virtual void            setArrays                   () = 0;
     virtual void            resetArrays                 () = 0;
     virtual double          evaluateRatio               () = 0;

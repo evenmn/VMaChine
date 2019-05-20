@@ -12,8 +12,8 @@ RBMGaussian::RBMGaussian(System* system) :
     m_sigmaSqrd = sigma*sigma;
 }
 
-void RBMGaussian::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void RBMGaussian::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

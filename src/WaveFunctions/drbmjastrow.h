@@ -16,7 +16,7 @@ public:
                                                  const Eigen::VectorXd radialVector, \
                                                  const Eigen::MatrixXd distanceMatrix, \
                                                  const int changedCoord);
-    void            setConstants                (const int elementNumber);
+    void            setConstants                (const unsigned int elementNumber);
     void            setArrays                   ();
     void            resetArrays                 ();
     double          evaluateRatio               ();
@@ -30,7 +30,7 @@ public:
     void            updateLaplacian             ();
 
 private:
-    int    m_elementNumber          = 1;
+    unsigned int    m_elementNumber         = 0;
     int    m_numberOfHiddenNodes    = 1;
     int    m_globalArrayNeed        = 0;
     int    m_numberOfParameters     = 0;

@@ -8,13 +8,13 @@
 ADAM::ADAM(System* system) :
         Optimization(system) {
     m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
-    m_numberOfWaveFunctionElements    = m_system->getNumberOfWaveFunctionElements();
-    m_maxNumberOfParametersPerElement = m_system->getMaxNumberOfParametersPerElement();
+    m_numberOfElements    = m_system->getNumberOfElements();
+    m_maxParameters = m_system->getMaxParameters();
     m_waveFunctionVector              = m_system->getWaveFunctionElements();
     m_eta                             = m_system->getLearningRate();
-    m_m                               = Eigen::MatrixXd::Ones(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-    m_v                               = Eigen::MatrixXd::Ones(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-    m_theta                           = Eigen::MatrixXd::Ones(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
+    m_m                               = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+    m_v                               = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+    m_theta                           = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
 }
 
 Eigen::MatrixXd ADAM::updateParameters() {
@@ -24,8 +24,8 @@ Eigen::MatrixXd ADAM::updateParameters() {
     m_v = m_beta2 * m_v + (1 - m_beta2) * m_g.cwiseAbs2();
     m_mHat = m_m/(1 - pow(m_beta1, m_step));
     m_vHat = m_v/(1 - pow(m_beta2, m_step));
-    for(int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        for(int j=0; j<m_maxNumberOfParametersPerElement; j++) {
+    for(int i=0; i<m_numberOfElements; i++) {
+        for(int j=0; j<m_maxParameters; j++) {
             m_theta(i,j) = m_eta * m_mHat(i,j)/(sqrt(m_vHat(i,j) + m_epsilon));
         }
     }

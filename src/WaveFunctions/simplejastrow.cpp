@@ -12,8 +12,8 @@ SimpleJastrow::SimpleJastrow(System* system) :
     m_numberOfParameters                = m_numberOfParticles * m_numberOfParticles;
 }
 
-void SimpleJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void SimpleJastrow::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

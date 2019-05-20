@@ -16,7 +16,7 @@ public:
                                                  const Eigen::VectorXd radialVector, \
                                                  const Eigen::MatrixXd distanceMatrix, \
                                                  const int changedCoord);
-    void            setConstants                (const int elementNumber);
+    void            setConstants                (const unsigned int elementNumber);
     void            setArrays                   ();
     void            resetArrays                 ();
     double          evaluateRatio               ();
@@ -28,9 +28,10 @@ public:
     void            calculateProbabilityRatio(int particle);
 
 private:
-    int     m_numberOfParameters       = 1;
-    int     m_globalArrayNeed          = 1;
-    int     m_elementNumber = 1;
+    int             m_numberOfParameters    = 1;
+    int             m_globalArrayNeed       = 1;
+    unsigned int    m_elementNumber         = 0;
+
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
     Eigen::VectorXd m_positions;

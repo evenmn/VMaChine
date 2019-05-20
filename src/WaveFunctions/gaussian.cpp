@@ -9,8 +9,8 @@ Gaussian::Gaussian(System* system) :
     m_omega                             = m_system->getFrequency();
 }
 
-void Gaussian::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void Gaussian::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

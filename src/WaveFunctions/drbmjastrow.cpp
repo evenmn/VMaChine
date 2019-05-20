@@ -9,14 +9,13 @@ DRBMJastrow::DRBMJastrow(System* system, int numberOfLayers) :
     m_numberOfLayers                    = numberOfLayers;
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
     m_numberOfParameters                = m_numberOfHiddenNodes*(1 + numberOfLayers*m_numberOfFreeDimensions);
     double sigma                        = 1; //m_system->getWidth();
     m_sigmaSqrd                         = sigma*sigma;
 }
 
-void DRBMJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void DRBMJastrow::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 
@@ -25,7 +24,7 @@ void DRBMJastrow::updateGradient() {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
             m_gradientPart(k,j) = 0;
             for(int n=1; n<m_numberOfLayers+1; n++) {
-                m_gradientPart(k,j) += n*m_positionsPow(n,k)*m_W((n-1)*m_numberOfFreeDimensions+k,j) / pow(m_sigmaSqrd, n);
+                m_gradientPart(k,j) += n*m_positionsPow(n,k)*m_W((n-1)*m_numberOfFreeDimensions+k,j) / pow(m_sigmaSqrd, 2*n);
             }
         }
     }
@@ -35,8 +34,8 @@ void DRBMJastrow::updateLaplacian() {
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
             m_laplacianPart(k,j) = 0;
-            for(int n=1; n<m_numberOfLayers+1; n++) {
-                m_gradientPart(k,j) += n*(n-1)*m_positionsPow(n-1,k)*m_W((n-1)*m_numberOfFreeDimensions+k,j) / pow(m_sigmaSqrd, n);
+            for(int n=0; n<m_numberOfLayers; n++) {
+                m_gradientPart(k,j) += n*(n+1)*m_positionsPow(n,k)*m_W(n*m_numberOfFreeDimensions+k,j) / pow(m_sigmaSqrd, 2*(n+1));
             }
         }
     }
@@ -45,7 +44,7 @@ void DRBMJastrow::updateLaplacian() {
 void DRBMJastrow::updateVectors() {
     m_v = m_b;
     for(int n=0; n<m_numberOfLayers; n++) {
-        m_v += m_positionsPow.row(n+2)*m_W.block(n*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) / pow(m_sigmaSqrd, n+1);
+        m_v += m_positionsPow.row(n+2)*m_W.block(n*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) / pow(m_sigmaSqrd, 2*(n+1));
     }
     Eigen::VectorXd m_e = m_v.array().exp();
     m_p = (m_e + Eigen::VectorXd::Ones(m_numberOfHiddenNodes)).cwiseInverse();
@@ -63,7 +62,7 @@ void DRBMJastrow::updateRatio() {
 void DRBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     m_positions     = positions;
     for(int n=1; n<m_numberOfLayers+1; n++) {
-        m_positionsPow(n+1, changedCoord) = pow(m_positions(changedCoord),n+1);
+        m_positionsPow(n+1, changedCoord) = pow(m_positions(changedCoord),n);
     }
     updateVectors();
     updateRatio();
@@ -97,7 +96,7 @@ void DRBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     m_positions         = positions;
     m_positionsPow      = Eigen::MatrixXd::Zero(m_numberOfLayers+2, m_numberOfFreeDimensions);
     for(int n=0; n<m_numberOfLayers+1; n++) {
-        m_positionsPow.row(n+1) = m_positions.array().pow(n+1);
+        m_positionsPow.row(n+1) = m_positions.array().pow(n);
     }
     m_probabilityRatio  = 1;
 
@@ -119,7 +118,8 @@ void DRBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
         Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
         m_W.block(n*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = W;
     }
-    m_W.block(0, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    m_W.block(m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    m_W.block(2*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     std::cout << m_W << std::endl;
 }
 
@@ -148,7 +148,7 @@ Eigen::VectorXd DRBMJastrow::computeParameterGradient() {
         for(int m=0; m<m_numberOfFreeDimensions; m++) {
             for(int n=0; n<m_numberOfLayers; n++) {
                 int o = l * m_numberOfFreeDimensions + m + m_numberOfHiddenNodes * (1 + n*m_numberOfFreeDimensions);
-                gradients(o) = m_positionsPow(n+2,m) * m_n(l) / pow(m_sigmaSqrd, n+1);
+                gradients(o) = m_positionsPow(n+2,m) * m_n(l) / pow(m_sigmaSqrd, 2*(n+1));
             }
         }
     }

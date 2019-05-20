@@ -11,8 +11,8 @@ HydrogenLike::HydrogenLike(System* system) :
     m_Z                                 = m_system->getAtomicNumber();
 }
 
-void HydrogenLike::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+void HydrogenLike::setConstants(const unsigned int elementNumber) {
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

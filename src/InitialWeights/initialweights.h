@@ -1,5 +1,6 @@
 #pragma once
 #include <Eigen/Dense>
+#include <iostream>
 
 class InitialWeights {
 public:
@@ -10,10 +11,11 @@ public:
     virtual ~InitialWeights() = 0;
 
 protected:
-    class System* m_system = nullptr;
     int              m_numberOfDimensions    = 0;
     int              m_numberOfParticles     = 0;
-    int              m_numberOfElements      = 0;
+    unsigned long    m_numberOfElements      = 0;
     int              m_maxNumberOfParametersPerElement = 0;
     Eigen::MatrixXd  m_parameters;
+
+    class System* m_system = nullptr;
 };

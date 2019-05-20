@@ -30,6 +30,7 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 # Load internal source files
 SOURCES += main.cpp \
+    InitialWeights/automatize.cpp \
     WaveFunctions/drbmjastrow.cpp \
     system.cpp \
     sampler.cpp \
@@ -81,6 +82,7 @@ SOURCES += \
 
 # Load internal header files
 HEADERS += \
+    InitialWeights/automatize.h \
     WaveFunctions/drbmjastrow.h \
     system.h \
     sampler.h \
