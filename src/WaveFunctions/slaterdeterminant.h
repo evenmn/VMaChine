@@ -24,27 +24,48 @@ public:
     double          computeLaplacian                ();
     Eigen::VectorXd computeParameterGradient        ();
 
-    void            initializeSlaterMatrix          ();
-    void            initializeSlaterMatrixDer       ();
-    void            initializeSlaterMatrixSecDer    ();
-    void            initializeSlaterMatrixInverse   ();
+    void            initializeSlaterMatrixUp          ();
+    void            initializeSlaterMatrixDerUp       ();
+    void            initializeSlaterMatrixSecDerUp    ();
+    void            initializeSlaterMatrixInverseUp   ();
 
-    void            updateSlaterMatrixElement       (const int i, const int j);
-    void            updateSlaterMatrixRow           (const int row);
-    void            updateSlaterMatrixDerRow        (const int row);
-    void            updateSlaterMatrixSecDerRow     (const int k);
-    void            updateSlaterMatrixInverse       (int start, int end);
-    void            updateSlaterDeterminantDerivatives(int start, int end);
+    void            initializeSlaterMatrixDn          ();
+    void            initializeSlaterMatrixDerDn       ();
+    void            initializeSlaterMatrixSecDerDn    ();
+    void            initializeSlaterMatrixInverseDn   ();
+
+    void            updateSlaterMatrixElementUp         (const int i, const int j);
+    void            updateSlaterMatrixRowUp             (const int row);
+    void            updateSlaterMatrixDerRowUp          (const int row);
+    void            updateSlaterMatrixSecDerRowUp       (const int k);
+    void            updateSlaterMatrixInverseUp         (int start, int end);
+    void            updateSlaterDeterminantDerivativesUp(int start, int end);
+
+    void            updateSlaterMatrixElementDn         (const int i, const int j);
+    void            updateSlaterMatrixRowDn             (const int row);
+    void            updateSlaterMatrixDerRowDn          (const int row);
+    void            updateSlaterMatrixSecDerRowDn       (const int k);
+    void            updateSlaterMatrixInverseDn         (int start, int end);
+    void            updateSlaterDeterminantDerivativesDn(int start, int end);
+
     double          updateRatio                     ();
+
+    int             spinUp();
+    int             spinDn();
 
 private:
     int             m_numberOfParameters    = 0;
     int             m_globalArrayNeed       = 0;
-    int             m_numberOfParticlesHalf = 0;
     int             m_freeDimensionsHalf    = 0;
     int             m_particle              = 0;
     int             m_dimension             = 0;
     int             m_elementNumber         = 0;
+    int             m_numberOfSpinUp        = 0;
+    int             m_numberOfSpinDn        = 0;
+
+    double          m_numberOfParticlesHalf = 0;
+    double          m_totalSpin             = 0;
+
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_positionBlock;

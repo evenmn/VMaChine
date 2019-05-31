@@ -6,10 +6,17 @@
 
 SlaterDeterminant::SlaterDeterminant(System* system) :
         WaveFunction(system) {
-    m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
-    m_numberOfParticles                 = m_system->getNumberOfParticles();
-    m_numberOfDimensions                = m_system->getNumberOfDimensions();
-    m_numberOfParticlesHalf             = m_numberOfParticles/2;
+    m_numberOfFreeDimensions    = m_system->getNumberOfFreeDimensions();
+    m_numberOfParticles         = m_system->getNumberOfParticles();
+    m_numberOfDimensions        = m_system->getNumberOfDimensions();
+    m_totalSpin                 = m_system->getTotalSpin();
+    m_numberOfParticlesHalf     = m_numberOfParticles/2;
+    m_numberOfSpinUp            = spinUp();
+    m_numberOfSpinDn            = m_numberOfParticles - m_numberOfSpinUp;
+}
+
+int SlaterDeterminant::spinUp() {
+    return int(m_numberOfParticlesHalf + m_totalSpin);
 }
 
 void SlaterDeterminant::setConstants(const int elementNumber) {

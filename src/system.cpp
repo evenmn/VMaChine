@@ -18,22 +18,23 @@
 #include <string>
 
 void System::runIterations(const int numberOfIterations) {
+    setGradients                ();
     m_positions                 = m_initialState->getParticles();
     m_distanceMatrix            = m_initialState->getDistanceMatrix();
     m_radialVector              = m_initialState->getRadialVector();
     m_parameters                = m_initialWeights->getWeights();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles();
-    m_lastIteration = numberOfIterations - m_rangeOfDynamicSteps - 1;
+    m_lastIteration = numberOfIterations - m_rangeOfAdaptiveSteps - 1;
 
     setAllConstants();
 
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
     //for(m_iter : tqdm::range(numberOfIterations)) {
         if(m_applyDynamicSteps) {
-            m_stepsWOEqui      = m_initialStepsWOEqui * dynamicSteps();
+            m_stepsWOEqui      = m_initialStepsWOEqui * adaptiveSteps();
             m_stepsWEqui       = m_stepsWOEqui + m_equilibriationSteps;
-            m_totalStepsWOEqui = m_initialTotalStepsWOEqui * dynamicSteps();
+            m_totalStepsWOEqui = m_initialTotalStepsWOEqui * adaptiveSteps();
             m_totalStepsWEqui  = m_totalStepsWOEqui + m_totalEquilibriationSteps;
         }
         m_sampler->setNumberOfSteps(m_stepsWOEqui, m_totalStepsWOEqui, m_totalStepsWEqui);
@@ -51,7 +52,7 @@ void System::runIterations(const int numberOfIterations) {
         }
         m_sampler->printParametersToFile();
         m_sampler->printEnergyToFile();
-        if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
+        if(m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
             m_sampler->printOneBodyDensityToFile();
             m_sampler->printTwoBodyDensityToFile();
         }
@@ -74,7 +75,7 @@ void System::runMetropolisCycles() {
         m_radialVector    = m_metropolis->updateRadialVector();
         if(i >= m_equilibriationSteps) {
             m_sampler->sample(acceptedStep, i);
-            if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
+            if(m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
                 m_sampler->printInstantValuesToFile();
                 m_sampler->computeOneBodyDensity(m_positions);
                 m_sampler->computeTwoBodyDensity(m_positions);
@@ -84,7 +85,7 @@ void System::runMetropolisCycles() {
 }
 
 void System::printToTerminal(int numberOfIterations) {
-    if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
+    if(m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
         m_sampler->closeOutputFiles();
         if(m_myRank == 0) {
             m_sampler->doResampling();
@@ -109,9 +110,9 @@ void System::checkingConvergence() {
     }
 }
 
-int System::dynamicSteps() {
+int System::adaptiveSteps() {
     int stepRatio = 1;
-    if(m_iter == m_lastIteration+m_rangeOfDynamicSteps) {
+    if(m_iter == m_lastIteration+m_rangeOfAdaptiveSteps) {
         stepRatio = int(pow(2,m_additionalStepsLastIteration));
         stepRatio = int(pow(2,m_additionalStepsLastIteration));
     }
@@ -335,6 +336,12 @@ void System::setFrequency(const double omega) {
     m_omega = omega;
 }
 
+void System::setTotalSpin(const double totalSpin) {
+    double intpart;
+    assert(std::modf(m_numberOfParticles/2 - abs(totalSpin), &intpart) == 0.0);
+    m_totalSpin = totalSpin;
+}
+
 void System::setAtomicNumber(const int Z) {
     assert(Z > 0);
     m_Z = Z;
@@ -361,9 +368,9 @@ void System::setConvergenceTools(bool checkConvergence, int numberOfEnergies, do
     m_energies         = Eigen::VectorXd::Zero(numberOfEnergies);
 }
 
-void System::setDynamicStepTools(bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration) {
-    m_applyDynamicSteps = applyDynamicSteps;
-    m_rangeOfDynamicSteps = rangeOfDynamicSteps;
+void System::setAdaptiveStepTools(bool applyAdaptiveSteps, int rangeOfAdaptiveSteps, int additionalSteps, int additionalStepsLastIteration) {
+    m_applyDynamicSteps = applyAdaptiveSteps;
+    m_rangeOfAdaptiveSteps = rangeOfAdaptiveSteps;
     m_additionalSteps = additionalSteps;
     m_additionalStepsLastIteration = additionalStepsLastIteration;
 }
@@ -404,6 +411,7 @@ void System::setBasis(Basis* basis) {
 void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements) {
     m_waveFunctionElements = waveFunctionElements;
     setMaxParameters();
+    setNumberOfElements(waveFunctionElements.size());
 }
 
 void System::setInitialState(InitialState* initialState) {

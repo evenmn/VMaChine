@@ -5,7 +5,7 @@
 
 class System {
 public:
-    int  dynamicSteps               ();
+    int  adaptiveSteps              ();
     void runMetropolisCycles        ();
     void checkingConvergence        ();
     void setNumberOfFreeDimensions  ();
@@ -27,6 +27,7 @@ public:
     void setEquilibrationFraction   (const double equilibrationFraction);
     void setFrequency               (const double omega);
     void setWidth                   (const double sigma);
+    void setTotalSpin               (const double totalSpin);
     void setLearningRate            (const double eta);
     void setPath                    (const std::string path);
     void parser                     (const std::string configFile, int &numberOfIterations);
@@ -38,8 +39,8 @@ public:
     void setConvergenceTools        (const bool checkConvergence,
                                      const int numberOfEnergies,
                                      const double tolerance);
-    void setDynamicStepTools        (const bool applyDynamicSteps,
-                                     const int rangeOfDynamicSteps,
+    void setAdaptiveStepTools       (const bool applyAdaptiveSteps,
+                                     const int rangeOfAdaptiveSteps,
                                      const int additionalSteps,
                                      const int additionalStepsLastIteration);
     void setDensityTools            (const bool computeDensity,
@@ -107,6 +108,7 @@ public:
     double                          getWidth()                   { return m_sigma; }
     double                          getLearningRate()            { return m_eta; }
     double                          getStepLength()              { return m_stepLength; }
+    double                          getTotalSpin()               { return m_totalSpin; }
     bool                            getInteraction()             { return m_interaction; }
     bool                            getDensity()                 { return m_computeDensity; }
     bool                            computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
@@ -133,7 +135,7 @@ private:
     int                                 m_maxParameters             = 0;
     int                                 m_totalNumberOfParameters   = 0;
     int                                 m_Z                         = 1;
-    int                                 m_rangeOfDynamicSteps       = 10;
+    int                                 m_rangeOfAdaptiveSteps       = 10;
     int                                 m_additionalSteps           = 4;
     int                                 m_additionalStepsLastIteration = 8;
     int                                 m_lastIteration             = 1;
@@ -160,6 +162,7 @@ private:
     double                              m_tolerance                 = 1e-7;
     double                              m_maxRadius                 = 10;
     double                              m_totalTime                 = 0;
+    double                              m_totalSpin                 = 0;
 
     bool                                m_interaction               = true;
     bool                                m_checkConvergence          = true;
