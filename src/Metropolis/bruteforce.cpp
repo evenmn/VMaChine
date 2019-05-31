@@ -4,7 +4,7 @@
 #include "../system.h"
 #include "../WaveFunctions/wavefunction.h"
 #include "../RNG/rng.h"
-#include "InitialStates/initialstate.h"
+#include "../InitialStates/initialstate.h"
 
 BruteForce::BruteForce(System* system) :
         Metropolis(system) {

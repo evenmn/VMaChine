@@ -1,9 +1,9 @@
 #include "randomnormal.h"
 #include <iostream>
 #include <cassert>
-#include "RNG/rng.h"
+#include "../RNG/rng.h"
 #include "../system.h"
-#include "WaveFunctions/wavefunction.h"
+#include "../WaveFunctions/wavefunction.h"
 
 RandomNormal::RandomNormal(System*    system)  :
         InitialState(system) {

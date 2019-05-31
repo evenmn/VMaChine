@@ -3,11 +3,10 @@
 VMC is a general variational Monte-Carlo solver written in C++. It was implemented with the purpose of being flexible, such that various wave functions based on neural networks easily can added. At this point, several machine learning wave functions are already implemented, in particular based on Gaussian-binary Boltzmann machines. 
 
 ## Prerequisites
-To run this project without issues, the most recent C++ version, C++17, is recommended. In addition, a few external packages are required, that is
+To run this project without issues, the most recent C++ version, C++17, is recommended. In addition, a few external packages are required:
 - MPI
 - Eigen
 - Blocker
-- TQDM
 
 ### MPI
 MPI is used for parallel processing. On Linux, the package can be installed by the following commands
@@ -15,7 +14,7 @@ MPI is used for parallel processing. On Linux, the package can be installed by t
 sudo apt-get install libopenmpi-dev
 sudo apt-get install openmpi-bin
 ```
-MPI is also availiable on other platforms.
+MPI is also avaliable on other platforms.
 
 ### Eigen
 Eigen is a C++ template library for linear algebra operations. See 
@@ -24,36 +23,34 @@ Eigen is a C++ template library for linear algebra operations. See
 ### Blocker
 Blocker is an auto blocking package developed by Marius Jonsson, which is our preferred resampling tool. To get the package, go to [https://github.com/computative/block](https://github.com/computative/block) and clone the repository. 
 
-### TQDM
-The TQDM package provides fast and clean progress bars built in the for loops. To get the package, go to [https://github.com/tqdm/tqdm.cpp](https://github.com/tqdm/tqdm.cpp) and clone the repository. 
-
 -------------------
 
-## Build & run
-There are several ways to compile and run the code. Below, we will present two easy and rebust methods based on CMake and QMake, respectively. 
+## Build
+There are several ways to build the code, and below we will present two easy and rebust methods based on CMake and QMake, respectively. 
 
 ### CMake
 ```bash
-1. chmod +x CompileVMC
-2. ./CompileVMC
-3. mpirun -n 4 build/vmc
-4. make clean
+1. mkdir build
+2. cd build
+3. cmake ../
+4. make -j4
 ```
-for 4 parallel processes.
+or simply run ```./CompileVMC```. The executable is then found in the ```build``` folder.
 
 ### QMake (QT-creator)
 1. [Download QT-creator](https://www.qt.io/download-qt-installer?hsCtaTracking=9f6a2170-a938-42df-a8e2-a9f0b1d6cdce%7C6cb0de4f-9bb5-4778-ab02-bfb62735f3e5)
-2. Configurate the building file QMC.pro
-3. Run using ```ctrl``` + ```R```
+2. Configure the building file ```QMC.pro```
+
+The project can then be run in QT-creator using ```ctrl``` + ```R```.
 
 #### Parallel processing using QT-creator
-To run in parallel, one needs to add a run configuration that supports this. Go to Projects-> Run-> Add-> Custom Executable. Then set
+To run in parallel, one needs to add a run configuration that supports this. Go to ```Projects-> Run-> Add-> Custom Executable```. Then set
 - Executable: ```/usr/bin/mpirun```
-- Command line arguments: ```-n 4 ./build-qt/QMC```
+- Command line arguments: ```-n 4 build-qt/QMC```
 - Working directory: ```/where/the/executable/is```
 
-again for 4 parallel processes. An example implementation is showed below
-![Run settings](screenshots/qt_settings.png)
+This setup will run 4 parallel processes. The executable is dropped to ```build-qt/```. The settings window should look similar to this
+![Run settings](screenshots/run_settings.png)
 
 -------------------
 
@@ -64,7 +61,13 @@ All adjustable parameters can currently be found in ```main.cpp```, including
 - number of dimensions
 - wave function structure
 
-in addition to more technical settings. 
+in addition to more technical settings. Another option is to write a config file where you specify the various parameters. Then you need add the config file as an argument when running the code, for example like this:
+
+```bash
+mpirun -n 4 build/dotnet config
+```
+
+An example on such a config file is found as ```config```. 
 
 -------------------
 
@@ -73,7 +76,7 @@ in addition to more technical settings.
 The current energy is printed to the terminal for every iteration, together with the estimated variance, standard deviation, acceptence ratio and CPU time. _System info_ presents the settings used for the current run.
 
 For the last iteration, blocking is performed and the blocking results are printed to the terminal in the very end. The terminal will typically look like this when a run is done:
-![terminal](screenshots/terminal.png)
+![terminal](screenshots/screenshot_terminal.png)
 
 The energies for all iterations are stored in a file found in the data folder. The exact location and file name is also printed to the terminal, see image above. To plot this energy file, run 
 ```bash

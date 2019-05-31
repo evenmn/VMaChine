@@ -1,5 +1,4 @@
 #pragma once
-#include <Eigen/Dense>
 
 class RandomNumberGenerator {
 public:

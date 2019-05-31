@@ -1,8 +1,8 @@
 #include "randomuniform.h"
 #include <iostream>
 #include <cassert>
-#include "RNG/rng.h"
-#include "WaveFunctions/wavefunction.h"
+#include "../RNG/rng.h"
+#include "../WaveFunctions/wavefunction.h"
 #include "../system.h"
 
 RandomUniform::RandomUniform(System*    system)  :

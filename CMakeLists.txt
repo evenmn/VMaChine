@@ -45,6 +45,7 @@ set(SOURCES
     src/system.cpp
     src/Hamiltonians/hamiltonian.cpp
     src/Hamiltonians/harmonicoscillator.cpp
+    src/Hamiltonians/doublewell.cpp
     src/WaveFunctions/wavefunction.cpp
     src/InitialStates/initialstate.cpp
     src/InitialStates/randomuniform.cpp
@@ -67,8 +68,9 @@ set(SOURCES
     src/Optimization/gradientdescent.cpp
     src/Basis/basis.cpp
     src/Basis/hermite.cpp
-    src/Basis/hartreefockhermite.cpp
+    src/Basis/hartreefock.cpp
     src/Basis/hydrogenorbital.cpp
+    src/Basis/hermiteexpansion.cpp
     src/WaveFunctions/hydrogenlike.cpp
     src/Optimization/sgd.cpp
     src/Optimization/asgd.cpp
@@ -76,10 +78,7 @@ set(SOURCES
     src/Basis/none.cpp
     src/WaveFunctions/padejastrow.cpp
     src/WaveFunctions/simplejastrow.cpp
-    src/WaveFunctions/samsethjastrow.cpp
-    src/WaveFunctions/padejastrow2.cpp
     src/WaveFunctions/rbmgaussian.cpp
-    src/WaveFunctions/rbmgaussian2.cpp
     src/WaveFunctions/rbmjastrow.cpp
     src/WaveFunctions/rbmjastrow2.cpp
     src/WaveFunctions/rbmjastrow3.cpp

@@ -4,7 +4,7 @@
 #include "../system.h"
 #include "../WaveFunctions/wavefunction.h"
 #include "../RNG/mersennetwister.h"
-#include "InitialStates/initialstate.h"
+#include "../InitialStates/initialstate.h"
 
 using std::cout;
 using std::endl;

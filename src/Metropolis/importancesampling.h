@@ -1,6 +1,6 @@
 #pragma once
 #include "metropolis.h"
-#include <Eigen/Dense>
+#include "../Eigen/Dense"
 #include <vector>
 
 class ImportanceSampling : public Metropolis {

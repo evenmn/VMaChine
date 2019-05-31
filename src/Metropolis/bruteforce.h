@@ -1,6 +1,6 @@
 #pragma once
 #include "metropolis.h"
-#include <Eigen/Dense>
+#include "../Eigen/Dense"
 
 class BruteForce : public Metropolis {
 public:
