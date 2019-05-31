@@ -13,7 +13,7 @@ SimpleJastrow::SimpleJastrow(System* system) :
 }
 
 void SimpleJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

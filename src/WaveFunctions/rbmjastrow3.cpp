@@ -17,7 +17,7 @@ RBMJastrow3::RBMJastrow3(System* system) :
 }
 
 void RBMJastrow3::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 

@@ -17,4 +17,33 @@ int Basis::binomial(const int n, const int p) {
     return factorialDifference(n+p, n) / factorial(p);
 }
 
+std::ifstream::pos_type Basis::fileLength(std::string fileName) {
+    std::ifstream inFile(fileName.c_str());
+    return std::count(std::istreambuf_iterator<char>(inFile),
+                      std::istreambuf_iterator<char>(), '\n');
+}
+
+void Basis::writeFileContentIntoEigenMatrix(std::string fileName, Eigen::MatrixXd &matrix) {
+    std::ifstream inFile(fileName);
+    if(inFile.is_open()) {
+        std::string line;
+        double value;
+        int i = 0;
+        while(std::getline(inFile, line)) {
+            std::istringstream iss(line);
+            int j = 0;
+            while (iss >> value) {
+                matrix(i,j) = value;
+                j++;
+            }
+            i++;
+        }
+    }
+    else {
+        std::cout << "File '" << fileName << "' was not found" << std::endl;
+        MPI_Finalize();
+        exit(0);
+    }
+}
+
 Basis::~Basis() {}

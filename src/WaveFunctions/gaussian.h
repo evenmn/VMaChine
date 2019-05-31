@@ -30,6 +30,7 @@ private:
     int     m_numberOfParameters       = 1;
     int     m_globalArrayNeed          = 0;
     int     m_elementNumber            = 0;
+
     double  m_omega                    = 0;
     double  m_alpha                    = 0;
     double  m_probabilityRatio         = 0;

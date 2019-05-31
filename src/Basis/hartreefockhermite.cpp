@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-HartreeFockHermite::HartreeFockHermite(System *system)  :
+HartreeFockHermite::HartreeFockHermite(System *system, Basis *basis)  :
     Basis(system) {
     m_system                = system;
     m_numberOfParticles     = m_system->getNumberOfParticles();
@@ -12,7 +12,7 @@ HartreeFockHermite::HartreeFockHermite(System *system)  :
     m_omega                 = m_system->getFrequency();
     m_omegaSqrt             = sqrt(m_omega);
     m_path                  = m_system->getPath();
-    m_hermite               = new Hermite(system);
+    m_basis                 = basis;
     readCoefficientFile();
     numberOfOrbitals();
     generateListOfStates(m_numberOfOrbitals);
@@ -76,13 +76,13 @@ void HartreeFockHermite::numberOfOrbitals() {
 }
 
 void HartreeFockHermite::generateListOfStates(int orbitals) {
-    m_hermite->generateListOfStates(orbitals);
+    m_basis->generateListOfStates(orbitals);
 }
 
 double HartreeFockHermite::basisElement(const int n, Eigen::VectorXd positions) {
     double sum = 0;
     for(int lambda=0; lambda<m_basisSize; lambda++) {
-        sum += m_coefficients(n, lambda) * m_hermite->basisElement(lambda, positions);
+        sum += m_coefficients(n, lambda) * m_basis->basisElement(lambda, positions);
     }
     return sum;
 }
@@ -91,7 +91,7 @@ double HartreeFockHermite::basisElementDer(const int n, const int i, Eigen::Vect
     // i is the dimension we are derivating with respect to
     double sum = 0;
     for(int lambda=0; lambda<m_basisSize; lambda++) {
-        sum += m_coefficients(n, lambda) * m_hermite->basisElementDer(lambda, i, positions);
+        sum += m_coefficients(n, lambda) * m_basis->basisElementDer(lambda, i, positions);
     }
     return sum;
 }
@@ -100,7 +100,7 @@ double HartreeFockHermite::basisElementSecDer(const int n, const int i, Eigen::V
     // i is the dimension we are derivating with respect to
     double sum = 0;
     for(int lambda=0; lambda<m_basisSize; lambda++) {
-        sum += m_coefficients(n, lambda) * m_hermite->basisElementSecDer(lambda, i, positions);
+        sum += m_coefficients(n, lambda) * m_basis->basisElementSecDer(lambda, i, positions);
     }
     return sum;
 }

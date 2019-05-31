@@ -17,46 +17,46 @@ using std::endl;
 
 
 Sampler::Sampler(System* system) {
-    m_system                            = system;
-    m_numberOfProcesses                 = m_system->getNumberOfProcesses();
-    m_numberOfParticles                 = m_system->getNumberOfParticles();
-    m_numberOfDimensions                = m_system->getNumberOfDimensions();
-    m_numberOfElements                  = m_system->getNumberOfWaveFunctionElements();
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_system                    = system;
+    m_numberOfProcesses         = m_system->getNumberOfProcesses();
+    m_numberOfParticles         = m_system->getNumberOfParticles();
+    m_numberOfDimensions        = m_system->getNumberOfDimensions();
+    m_numberOfElements          = m_system->getNumberOfElements();
+    m_maxParameters             = m_system->getMaxParameters();
 
-    m_totalNumberOfStepsWOEqui          = m_system->getTotalNumberOfStepsWOEqui();
-    m_totalNumberOfStepsWEqui           = m_system->getTotalNumberOfStepsWEqui();
-    m_numberOfStepsWOEqui               = m_system->getNumberOfStepsWOEqui();
-    m_initialTotalNumberOfStepsWOEqui   = m_system->getInitialTotalNumberOfStepsWOEqui();
-    m_numberOfEquilibriationSteps       = m_system->getnumberOfEquilibriationSteps();
+    m_totalStepsWOEqui          = m_system->getTotalStepsWOEqui();
+    m_totalStepsWEqui           = m_system->getTotalStepsWEqui();
+    m_stepsWOEqui               = m_system->getStepsWOEqui();
+    m_initialTotalStepsWOEqui   = m_system->getInitialTotalStepsWOEqui();
+    m_equilibriationSteps       = m_system->getEquilibriationSteps();
 
-    m_omega                             = m_system->getFrequency();
-    m_numberOfBatches                   = m_system->getOptimization()->getNumberOfBatches();
-    m_numberOfStepsPerBatch             = int(m_numberOfStepsWOEqui/m_numberOfBatches);
-    m_interaction                       = m_system->getInteraction();
-    m_computeOneBodyDensity             = m_system->getDensity();
-    m_computeTwoBodyDensity             = m_system->computeTwoBodyDensity();
-    m_printEnergyToFile                 = m_system->getPrintEnergy();
-    m_printInstantEnergyToFile          = m_system->getPrintInstantEnergy();
-    m_printParametersToFile             = m_system->getPrintParametersToFile();
-    m_numberOfBins                      = m_system->getNumberOfBins();
-    m_maxRadius                         = m_system->getMaxRadius();
-    m_rank                              = m_system->getRank();
-    m_path                              = m_system->getPath();
-    m_waveFunction                      = m_system->getAllLabels();
-    m_radialStep                        = m_maxRadius/m_numberOfBins;
-    m_binLinSpace                       = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
-    m_particlesPerBin                   = Eigen::VectorXi::Zero(m_numberOfBins);
-    m_particlesPerBinPairwise           = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
+    m_omega                     = m_system->getFrequency();
+    m_numberOfBatches           = m_system->getOptimization()->getNumberOfBatches();
+    m_numberOfStepsPerBatch     = int(m_stepsWOEqui/m_numberOfBatches);
+    m_interaction               = m_system->getInteraction();
+    m_computeOneBodyDensity     = m_system->getDensity();
+    m_computeTwoBodyDensity     = m_system->computeTwoBodyDensity();
+    m_printEnergyToFile         = m_system->getPrintEnergy();
+    m_printInstantEnergyToFile  = m_system->getPrintInstantEnergy();
+    m_printParametersToFile     = m_system->getPrintParametersToFile();
+    m_numberOfBins              = m_system->getNumberOfBins();
+    m_maxRadius                 = m_system->getMaxRadius();
+    m_rank                      = m_system->getRank();
+    m_path                      = m_system->getPath();
+    m_trialWaveFunction         = m_system->getTrialWaveFunction();
+    m_radialStep                = m_maxRadius/m_numberOfBins;
+    m_binLinSpace               = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
+    m_particlesPerBin           = Eigen::VectorXi::Zero(m_numberOfBins);
+    m_particlesPerBinPairwise   = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
 }
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber) {
-    if (stepNumber == m_numberOfEquilibriationSteps) {
+    if (stepNumber == m_equilibriationSteps) {
         m_acceptence                = 0;
         m_cumulativeEnergy          = 0;
         m_cumulativeEnergySqrd      = 0;
-        m_cumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
-        m_cumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
+        m_cumulativeGradients       = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
+        m_cumulativeGradientsE      = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
     }
     m_instantEnergy    = m_system->getHamiltonian()->computeLocalEnergy();
     m_instantGradients = m_system->getAllInstantGradients();
@@ -70,9 +70,9 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber) {
 }
 
 void Sampler::computeTotals() {
-    int parameterSlots               = int(m_numberOfElements * m_maxNumberOfParametersPerElement);
-    m_totalCumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
-    m_totalCumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
+    int parameterSlots               = int(m_numberOfElements * m_maxParameters);
+    m_totalCumulativeGradients       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
+    m_totalCumulativeGradientsE      = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
     MPI_Reduce(&m_acceptence,           &m_totalAcceptence,           1, MPI_INT,    MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_cumulativeEnergy,     &m_totalCumulativeEnergy,     1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_cumulativeEnergySqrd, &m_totalCumulativeEnergySqrd, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -81,18 +81,18 @@ void Sampler::computeTotals() {
 }
 
 void Sampler::setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui) {
-    m_numberOfStepsWOEqui      = numberOfStepsWOEqui;
-    m_totalNumberOfStepsWOEqui = totalNumberOfStepsWOEqui;
-    m_totalNumberOfStepsWEqui  = totalNumberOfStepsWEqui;
-    m_numberOfStepsPerBatch    = int(m_totalNumberOfStepsWOEqui/m_numberOfBatches);
+    m_stepsWOEqui      = numberOfStepsWOEqui;
+    m_totalStepsWOEqui = totalNumberOfStepsWOEqui;
+    m_totalStepsWEqui  = totalNumberOfStepsWEqui;
+    m_numberOfStepsPerBatch    = int(m_totalStepsWOEqui/m_numberOfBatches);
 }
 
 void Sampler::computeAverages() {
-    m_averageEnergy         = m_totalCumulativeEnergy     / m_totalNumberOfStepsWOEqui;
-    m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / m_totalNumberOfStepsWOEqui;
+    m_averageEnergy         = m_totalCumulativeEnergy     / m_totalStepsWOEqui;
+    m_averageEnergySqrd     = m_totalCumulativeEnergySqrd / m_totalStepsWOEqui;
     m_averageGradients      = m_totalCumulativeGradients  / m_numberOfStepsPerBatch;
     m_averageGradientsE     = m_totalCumulativeGradientsE / m_numberOfStepsPerBatch;
-    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalNumberOfStepsWOEqui;
+    m_variance              = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalStepsWOEqui;
     if(std::isnan(m_averageEnergy)) {
         perror( "Energy exploded, please decrease the learning rate");
         MPI_Finalize();
@@ -102,26 +102,26 @@ void Sampler::computeAverages() {
 
 void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     m_iter += 1;
-    cout                                                                                     << endl;
-    cout << "  -- System info: " << " -- "                                                   << endl;
-    cout << " Iteration progress      : " << m_iter << "/" << maxIter                        << endl;
-    cout << " Number of particles     : " << m_numberOfParticles                             << endl;
-    cout << " Number of dimensions    : " << m_numberOfDimensions                            << endl;
-    cout << " Number of processes     : " << m_numberOfProcesses                             << endl;
-    cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters()          << endl;
-    cout << " Oscillator frequency    : " << m_omega                                         << endl;
-    cout << " Wave function           : " << m_waveFunction                                  << endl;
-    cout << " # Metropolis steps      : " << m_totalNumberOfStepsWEqui  << " ("
-                                          << m_totalNumberOfStepsWOEqui << " equilibration)" << endl;
-    cout << " Data files stored as    : " << generateFileName("{type}", ".dat")              << endl;
-    cout << " Blocking file stored as : " << m_instantEnergyFileName                         << endl;
-    cout                                                                                     << endl;
-    cout << "  -- Results -- "                                                               << endl;
-    cout << " Energy            : " << m_averageEnergy                                       << endl;
-    cout << " Variance          : " << m_variance                                            << endl;
-    cout << " STD               : " << sqrt(m_variance)                                      << endl;
-    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui  << endl;
-    cout << " CPU Time          : " << time                                                  << endl;
+    cout                                                                             << endl;
+    cout << "  -- System info: " << " -- "                                           << endl;
+    cout << " Iteration progress      : " << m_iter << "/" << maxIter                << endl;
+    cout << " Number of particles     : " << m_numberOfParticles                     << endl;
+    cout << " Number of dimensions    : " << m_numberOfDimensions                    << endl;
+    cout << " Number of processes     : " << m_numberOfProcesses                     << endl;
+    cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters()  << endl;
+    cout << " Oscillator frequency    : " << m_omega                                 << endl;
+    cout << " Wave function           : " << m_trialWaveFunction                     << endl;
+    cout << " # Metropolis steps      : " << m_totalStepsWEqui  << " ("
+                                          << m_totalStepsWOEqui << " equilibration)" << endl;
+    cout << " Data files stored as    : " << generateFileName("{type}", ".dat")      << endl;
+    cout << " Blocking file stored as : " << m_instantEnergyFileName                 << endl;
+    cout                                                                             << endl;
+    cout << "  -- Results -- "                                                       << endl;
+    cout << " Energy            : " << m_averageEnergy                               << endl;
+    cout << " Variance          : " << m_variance                                    << endl;
+    cout << " STD               : " << sqrt(m_variance)                              << endl;
+    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalStepsWOEqui  << endl;
+    cout << " CPU Time          : " << time                                          << endl;
     cout << endl;
 }
 
@@ -131,7 +131,7 @@ void Sampler::printFinalOutputToTerminal() {
     cout << " Energy            : " << m_averageEnergy << " (with MSE = " << m_mseEnergy   << ")" << endl;
     cout << " Variance          : " << m_variance      << " (with MSE = " << m_mseVariance << ")" << endl;
     cout << " STD               : " << m_stdError      << " (with MSE = " << m_mseSTD      << ")" << endl;
-    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalNumberOfStepsWOEqui << endl;
+    cout << " Acceptence Ratio  : " << double(m_totalAcceptence)/m_totalStepsWOEqui << endl;
     cout << endl;
 }
 
@@ -177,12 +177,12 @@ std::string Sampler::generateFileName(std::string name, std::string extension) {
     std::string fileName = m_path;
     fileName += "int" + std::to_string(m_interaction) + "/";
     fileName += name                                  + "/";
-    fileName += m_waveFunction                        + "/";
+    fileName += m_trialWaveFunction                   + "/";
     fileName += std::to_string(m_numberOfDimensions)  + "D/";
     fileName += std::to_string(m_numberOfParticles)   + "P/";
     fileName += std::to_string(m_omega)               + "w/";
     fileName += m_system->getOptimization()->getLabel();
-    fileName += "_MC" + std::to_string(m_initialTotalNumberOfStepsWOEqui);
+    fileName += "_MC" + std::to_string(m_initialTotalStepsWOEqui);
     fileName += extension;
     return fileName;
 }
@@ -195,12 +195,12 @@ void Sampler::openOutputFiles() {
 
     // Print average energies to file
     if(m_printEnergyToFile && m_rank == 0) {
-        m_averageEnergyFileName = generateFileName("energy", ".dat");
-        m_averageEnergyFile.open(m_averageEnergyFileName);
+        std::string averageEnergyFileName = generateFileName("energy", ".dat");
+        m_averageEnergyFile.open(averageEnergyFileName);
     }
     if(m_printParametersToFile && m_rank == 0) {
-        std::string parameterFileName = generateFileName("weights", ".dat");
-        m_parameterFile.open(parameterFileName);
+        m_parameterFileName = generateFileName("weights", ".dat");
+        m_parameterFile.open(m_parameterFileName);
     }
     if(m_computeOneBodyDensity && m_rank == 0) {
         std::string oneBodyFileName = generateFileName("onebody", ".dat");

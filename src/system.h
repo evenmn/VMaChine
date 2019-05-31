@@ -5,113 +5,132 @@
 
 class System {
 public:
-    void parser                         (std::string configFile, int &numberOfIterations);
-    void runIterations                  (const int numberOfIterations);
-    void runMetropolisCycles            ();
-    void printToTerminal                (int numberOfIterations);
-    void checkingConvergence            ();
-    int  dynamicSteps                   ();
-    void setNumberOfParticles           (const int numberOfParticles);
-    void setNumberOfDimensions          (const int numberOfDimensions);
-    void setNumberOfHiddenNodes         (const int numberOfHiddenNodes);
-    void setNumberOfFreeDimensions      ();
-    void setNumberOfMetropolisSteps     (const int steps);
-    void setMaxNumberOfParametersPerElement ();
-    void setNumberOfWaveFunctionElements (const int numberOfWaveFunctionElements);
-    void setStepLength                  (const double stepLength);
-    void setEquilibrationFraction       (const double equilibrationFraction);
-    void setFrequency                   (const double omega);
-    void setAtomicNumber                (const int Z);
-    void setWidth                       (const double sigma);
-    void setLearningRate                (const double eta);
-    void setPath                        (std::string path);
-    void setGradients                   ();
-    void setGlobalArraysToCalculate     ();
+    int  dynamicSteps               ();
+    void runMetropolisCycles        ();
+    void checkingConvergence        ();
+    void setNumberOfFreeDimensions  ();
+    void setMaxParameters           ();
+    void setGradients               ();
+    void setGlobalArraysToCalculate ();
+    void resetAllArrays             ();
+    void setAllConstants            ();
+    void collectAllLabels           ();
+    void setAtomicNumber            (const int Z);
+    void runIterations              (const int numberOfIterations);
+    void printToTerminal            (const int numberOfIterations);
+    void setNumberOfParticles       (const int numberOfParticles);
+    void setNumberOfDimensions      (const int numberOfDimensions);
+    void setNumberOfHiddenNodes     (const int numberOfHiddenNodes);
+    void setNumberOfMetropolisSteps (const int steps);
+    void setNumberOfElements        (const unsigned long numberOfElements);
+    void setStepLength              (const double stepLength);
+    void setEquilibrationFraction   (const double equilibrationFraction);
+    void setFrequency               (const double omega);
+    void setWidth                   (const double sigma);
+    void setLearningRate            (const double eta);
+    void setPath                    (const std::string path);
+    void parser                     (const std::string configFile, int &numberOfIterations);
+    void searchShortning            (const std::vector<std::string> labels,
+                                     const std::string newLabel, std::string &allLabels);
 
-    void setInteraction                 (const bool interaction);
-    void setParameterPrintingTools      (bool printParametersToFile);
-    void setConvergenceTools            (bool checkConvergence, int numberOfEnergies, double tolerance);
-    void setDynamicStepTools            (bool applyDynamicSteps, int rangeOfDynamicSteps, int additionalSteps, int additionalStepsLastIteration);
-    void setDensityTools                (bool computeDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius);
-    void setEnergyPrintingTools         (bool printEnergyFile, bool printInstantEnergyFile);
-    void setMPITools                    (int myRank, int numberOfProcesses);
+    void setInteraction             (const bool interaction);
+    void setParameterPrintingTools  (const bool printParametersToFile);
+    void setConvergenceTools        (const bool checkConvergence,
+                                     const int numberOfEnergies,
+                                     const double tolerance);
+    void setDynamicStepTools        (const bool applyDynamicSteps,
+                                     const int rangeOfDynamicSteps,
+                                     const int additionalSteps,
+                                     const int additionalStepsLastIteration);
+    void setDensityTools            (const bool computeDensity,
+                                     const bool computeTwoBodyDensity,
+                                     const int numberOfBins,
+                                     const double maxRadius);
+    void setEnergyPrintingTools     (const bool printEnergyFile,
+                                     const bool printInstantEnergyFile);
+    void setMPITools                (const int myRank, int numberOfProcesses);
 
-    void setHamiltonian                 (class Hamiltonian* hamiltonian);
-    void setBasis                       (class Basis* basis);
-    void setInitialState                (class InitialState* initialState);
-    void setInitialWeights              (class InitialWeights* initialWeights);
-    void setMetropolis                  (class Metropolis* metropolis);
-    void setOptimization                (class Optimization* optimization);
-    void setRandomNumberGenerator       (class RandomNumberGenerator* randomNumberGenerator);
-    void setWaveFunctionElements        (std::vector<class WaveFunction*> waveFunctionElements);
+    void updateAllParameters        (const Eigen::MatrixXd parameters);
+    void initializeAllArrays        (const Eigen::VectorXd positions,
+                                     const Eigen::VectorXd radialVector,
+                                     const Eigen::MatrixXd distanceMatrix);
+    void updateAllArrays            (const Eigen::VectorXd positions,
+                                     const Eigen::VectorXd radialVector,
+                                     const Eigen::MatrixXd distanceMatrix,
+                                     const int changedCoord);
 
-    class WaveFunction*                 getWaveFunction()            { return m_waveFunction; }
-    class Hamiltonian*                  getHamiltonian()             { return m_hamiltonian; }
-    class Basis*                        getBasis()                   { return m_basis; }
-    class Sampler*                      getSampler()                 { return m_sampler; }
-    class Optimization*                 getOptimization()            { return m_optimization; }
-    class InitialWeights*               getInitialWeights()          { return m_initialWeights; }
-    class InitialState*                 getInitialState()            { return m_initialState; }
-    class RandomNumberGenerator*        getRandomNumberGenerator()   { return m_randomNumberGenerator; }
-    int                                 getNumberOfProcesses()       { return m_numberOfProcesses; }
-    int                                 getNumberOfParticles()       { return m_numberOfParticles; }
-    int                                 getNumberOfDimensions()      { return m_numberOfDimensions; }
-    int                                 getNumberOfHiddenNodes()     { return m_numberOfHiddenNodes; }
-    int                                 getNumberOfFreeDimensions()  { return m_numberOfFreeDimensions; }
-    int                                 getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
-    int                                 getMaxNumberOfParametersPerElement() { return m_maxNumberOfParametersPerElement; }
-    int                                 getNumberOfWaveFunctionElements() { return m_numberOfWaveFunctionElements; }
-    int                                 getAtomicNumber()            { return m_Z; }
-    int                                 getRank()                    { return m_myRank; }
-    int                                 getNumberOfBins()            { return m_numberOfBins; }
+    double                          evaluateWaveFunctionRatio    ();
+    double                          getKineticEnergy             ();
+    Eigen::MatrixXd                 getAllInstantGradients       ();
 
-    int                                 getTotalNumberOfStepsWOEqui(){ return m_totalNumberOfStepsWOEqui; }
-    int                                 getTotalNumberOfStepsWEqui() { return m_totalNumberOfStepsWEqui; }
-    int                                 getTotalNumberOfEquilibriationSteps() { return m_totalNumberOfEquilibriationSteps; }
-    int                                 getNumberOfStepsWOEqui()     { return m_numberOfStepsWOEqui; }
-    int                                 getNumberOfStepsWEqui()      { return m_numberOfStepsWEqui; }
-    int                                 getInitialTotalNumberOfStepsWOEqui() { return m_initialTotalNumberOfStepsWOEqui; }
-    int                                 getnumberOfEquilibriationSteps() { return m_numberOfEquilibriationSteps; }
+    void setHamiltonian             (class Hamiltonian* hamiltonian);
+    void setBasis                   (class Basis* basis);
+    void setInitialState            (class InitialState* initialState);
+    void setInitialWeights          (class InitialWeights* initialWeights);
+    void setMetropolis              (class Metropolis* metropolis);
+    void setOptimization            (class Optimization* optimization);
+    void setRandomNumberGenerator   (class RandomNumberGenerator* randomNumberGenerator);
+    void setWaveFunctionElements    (std::vector<class WaveFunction*> waveFunctionElements);
 
-    double                              getMaxRadius()               { return m_maxRadius; }
-    double                              getEquilibrationFraction()   { return m_equilibrationFraction; }
-    double                              getFrequency()               { return m_omega; }
-    double                              getWidth()                   { return m_sigma; }
-    double                              getLearningRate()            { return m_eta; }
-    double                              getStepLength()              { return m_stepLength; }
-    bool                                getInteraction()             { return m_interaction; }
-    bool                                getDensity()                 { return m_computeDensity; }
-    bool                                computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
-    bool                                getPrintEnergy()             { return m_printEnergyFile; }
-    bool                                getPrintParametersToFile()   { return m_printParametersToFile; }
-    bool                                getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
-    bool                                getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
-    bool                                getCalculateRadialVector()   { return m_calculateRadialVector; }
-    Eigen::VectorXd                     getPositions()               { return m_positions; }
-    Eigen::VectorXd                     getRadialVector()            { return m_radialVector; }
-    Eigen::MatrixXd                     getDistanceMatrix()          { return m_distanceMatrix; }
-    Eigen::MatrixXd                     getWeights()                 { return m_parameters; }
-    std::string                         getPath()                    { return m_path; }
-    std::vector<class WaveFunction*>    getWaveFunctionElements()    { return m_waveFunctionElements; }
+    class WaveFunction*             getWaveFunction()            { return m_waveFunction; }
+    class Hamiltonian*              getHamiltonian()             { return m_hamiltonian; }
+    class Basis*                    getBasis()                   { return m_basis; }
+    class Sampler*                  getSampler()                 { return m_sampler; }
+    class Optimization*             getOptimization()            { return m_optimization; }
+    class InitialWeights*           getInitialWeights()          { return m_initialWeights; }
+    class InitialState*             getInitialState()            { return m_initialState; }
+    class RandomNumberGenerator*    getRandomNumberGenerator()   { return m_randomNumberGenerator; }
 
-    void                                initializeAllArrays          (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix);
-    void                                updateAllArrays              (const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord);
-    void                                resetAllArrays               ();
-    void                                setAllConstants              ();
-    void                                updateAllParameters          (const Eigen::MatrixXd parameters);
-    double                              evaluateWaveFunctionRatio    ();
-    double                              getKineticEnergy             ();
-    Eigen::MatrixXd                     getAllInstantGradients       ();
-    std::string                         getAllLabels                 ();
+    int                             getNumberOfElements()        { return m_numberOfElements; }
+    int                             getNumberOfProcesses()       { return m_numberOfProcesses; }
+    int                             getNumberOfParticles()       { return m_numberOfParticles; }
+    int                             getNumberOfDimensions()      { return m_numberOfDimensions; }
+    int                             getNumberOfHiddenNodes()     { return m_numberOfHiddenNodes; }
+    int                             getNumberOfFreeDimensions()  { return m_numberOfFreeDimensions; }
+    int                             getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
+    int                             getMaxParameters()           { return m_maxParameters; }
+    int                             getAtomicNumber()            { return m_Z; }
+    int                             getRank()                    { return m_myRank; }
+    int                             getNumberOfBins()            { return m_numberOfBins; }
+
+    int                             getTotalStepsWOEqui()        { return m_totalStepsWOEqui; }
+    int                             getTotalStepsWEqui()         { return m_totalStepsWEqui; }
+    int                             getTotalEquilibriationSteps(){ return m_totalEquilibriationSteps; }
+    int                             getStepsWOEqui()             { return m_stepsWOEqui; }
+    int                             getStepsWEqui()              { return m_stepsWEqui; }
+    int                             getInitialTotalStepsWOEqui() { return m_initialTotalStepsWOEqui; }
+    int                             getEquilibriationSteps()     { return m_equilibriationSteps; }
+
+    double                          getMaxRadius()               { return m_maxRadius; }
+    double                          getEquilibrationFraction()   { return m_equilibrationFraction; }
+    double                          getFrequency()               { return m_omega; }
+    double                          getWidth()                   { return m_sigma; }
+    double                          getLearningRate()            { return m_eta; }
+    double                          getStepLength()              { return m_stepLength; }
+    bool                            getInteraction()             { return m_interaction; }
+    bool                            getDensity()                 { return m_computeDensity; }
+    bool                            computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
+    bool                            getPrintEnergy()             { return m_printEnergyFile; }
+    bool                            getPrintParametersToFile()   { return m_printParametersToFile; }
+    bool                            getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
+    bool                            getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
+    bool                            getCalculateRadialVector()   { return m_calculateRadialVector; }
+    Eigen::VectorXd                 getPositions()               { return m_positions; }
+    Eigen::VectorXd                 getRadialVector()            { return m_radialVector; }
+    Eigen::MatrixXd                 getDistanceMatrix()          { return m_distanceMatrix; }
+    Eigen::MatrixXd                 getWeights()                 { return m_parameters; }
+    std::string                     getPath()                    { return m_path; }
+    std::string                     getTrialWaveFunction()       { return m_trialWaveFunction; }
+    std::vector<class WaveFunction*>getWaveFunctionElements()    { return m_waveFunctionElements; }
 
 
 private:
+    int                                 m_numberOfElements          = 0;
     int                                 m_numberOfHiddenNodes       = 0;
     int                                 m_numberOfParticles         = 0;
     int                                 m_numberOfDimensions        = 0;
     int                                 m_numberOfFreeDimensions    = 0;
-    int                                 m_numberOfWaveFunctionElements = 0;
-    int                                 m_maxNumberOfParametersPerElement = 0;
+    int                                 m_maxParameters             = 0;
     int                                 m_totalNumberOfParameters   = 0;
     int                                 m_Z                         = 1;
     int                                 m_rangeOfDynamicSteps       = 10;
@@ -124,14 +143,14 @@ private:
     int                                 m_myRank                    = 0;
     int                                 m_iter                      = 0;
 
-    int                                 m_totalNumberOfStepsWOEqui  = 0;
-    int                                 m_totalNumberOfStepsWEqui   = 0;
-    int                                 m_totalNumberOfEquilibriationSteps = 0;
-    int                                 m_numberOfStepsWOEqui       = 0;
-    int                                 m_numberOfStepsWEqui        = 0;
-    int                                 m_numberOfEquilibriationSteps = 0;
-    int                                 m_initialNumberOfStepsWOEqui = 0;
-    int                                 m_initialTotalNumberOfStepsWOEqui = 0;
+    int                                 m_totalStepsWOEqui          = 0;
+    int                                 m_totalStepsWEqui           = 0;
+    int                                 m_totalEquilibriationSteps  = 0;
+    int                                 m_stepsWOEqui               = 0;
+    int                                 m_stepsWEqui                = 0;
+    int                                 m_equilibriationSteps       = 0;
+    int                                 m_initialStepsWOEqui        = 0;
+    int                                 m_initialTotalStepsWOEqui   = 0;
 
     double                              m_equilibrationFraction     = 0.0;
     double                              m_stepLength                = 0.1;
@@ -142,18 +161,16 @@ private:
     double                              m_maxRadius                 = 10;
     double                              m_totalTime                 = 0;
 
-    bool                                m_interaction               = false;
-    bool                                m_checkConvergence          = false;
-    bool                                m_applyDynamicSteps         = false;
+    bool                                m_interaction               = true;
+    bool                                m_checkConvergence          = true;
+    bool                                m_applyDynamicSteps         = true;
     bool                                m_computeDensity            = true;
-    bool                                m_computeTwoBodyDensity     = false;
+    bool                                m_computeTwoBodyDensity     = true;
     bool                                m_printEnergyFile           = true;
     bool                                m_printInstantEnergyFile    = true;
     bool                                m_printParametersToFile     = true;
-    bool                                m_calculateDistanceMatrix   = false;
-    bool                                m_calculateRadialVector     = false;
-
-    std::string                         m_path                      = "../data/";
+    bool                                m_calculateDistanceMatrix   = true;
+    bool                                m_calculateRadialVector     = true;
 
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;
@@ -165,6 +182,9 @@ private:
     class Optimization*                 m_optimization              = nullptr;
     class RandomNumberGenerator*        m_randomNumberGenerator     = nullptr;
     std::vector<class WaveFunction*>    m_waveFunctionElements;
+
+    std::string                         m_path                      = "../data/";
+    std::string                         m_trialWaveFunction         = "Not defined";
 
     Eigen::VectorXd                     m_positions;
     Eigen::MatrixXd                     m_parameters;

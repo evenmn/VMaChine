@@ -3,7 +3,7 @@
 
 class HartreeFockHermite : public Basis {
 public:
-    HartreeFockHermite(System* system);
+    HartreeFockHermite(System* system, Basis *basis);
     void numberOfOrbitals();
     void generateListOfStates(int orbitals);
 
@@ -21,4 +21,5 @@ private:
     std::string m_path = "Path is not given yet";
     Eigen::MatrixXd m_coefficients;
     class Basis* m_hermite = nullptr;
+    class Basis* m_basis = nullptr;
 };

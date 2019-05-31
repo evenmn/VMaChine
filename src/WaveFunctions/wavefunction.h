@@ -29,6 +29,9 @@ public:
 
     virtual ~WaveFunction() = 0;
 
+    Eigen::Map<Eigen::VectorXd> flatten(Eigen::MatrixXd A);
+    Eigen::Map<Eigen::MatrixXd> reshape(Eigen::VectorXd A, const Eigen::Index m, const Eigen::Index n);
+
 protected:
     int     m_numberOfParticles                 = 0;
     int     m_numberOfDimensions                = 0;

@@ -52,18 +52,18 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [10]
-    newRadius = [4]
+    maxRadius = [35,35,35,35]
+    newRadius = [8,10,15,25]
     
-    methods   = ['VMC']
+    methods   = ['RBM']
     dims      = ['2']
-    particles = ['2']
-    omegas    = ['0.280000']
+    particles = ['20']
+    omegas    = ['1.000000','0.500000','0.280000','0.100000']
     
+    i=0
     for method in methods:
         for dim in dims:
             for particle in particles:
-                i = 0
                 for omega in omegas:
                     fileName = generateFileName(method, dim, particle, omega)
                     data = np.loadtxt(fileName)

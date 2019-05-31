@@ -30,36 +30,32 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 # Load internal source files
 SOURCES += main.cpp \
-    WaveFunctions/drbmjastrow.cpp \
     system.cpp \
     sampler.cpp \
     Hamiltonians/hamiltonian.cpp \
     Hamiltonians/harmonicoscillator.cpp \
     Hamiltonians/atomicnucleus.cpp \
+    Hamiltonians/doublewell.cpp \
     InitialStates/initialstate.cpp \
     InitialStates/randomuniform.cpp \
     InitialStates/randomnormal.cpp \
     InitialWeights/initialweights.cpp \
     InitialWeights/randomize.cpp \
     InitialWeights/constant.cpp \
+    InitialWeights/automatize.cpp \
     Metropolis/metropolis.cpp \
     Metropolis/bruteforce.cpp \
     Metropolis/importancesampling.cpp \
     WaveFunctions/wavefunction.cpp \
     WaveFunctions/gaussian.cpp \
-    WaveFunctions/partlyrestricted.cpp \
     WaveFunctions/slaterdeterminant.cpp \
     WaveFunctions/hydrogenlike.cpp \
     WaveFunctions/padejastrow.cpp \
-    #WaveFunctions/padejastrow2.cpp \
     WaveFunctions/simplejastrow.cpp \
-    #WaveFunctions/samsethjastrow.cpp \
     WaveFunctions/rbmgaussian.cpp \
-    #WaveFunctions/rbmgaussian2.cpp \
     WaveFunctions/rbmjastrow.cpp \
-    WaveFunctions/rbmjastrow2.cpp \
-    WaveFunctions/rbmjastrow3.cpp \
-    #WaveFunctions/rbmjastrow4.cpp \
+    WaveFunctions/drbmjastrow.cpp \
+    WaveFunctions/partlyrestricted.cpp \
     Optimization/optimization.cpp \
     Optimization/barzilaiborwein.cpp \
     Optimization/gradientdescent.cpp \
@@ -72,8 +68,8 @@ SOURCES += main.cpp \
     Basis/hermite.cpp \
     Basis/hydrogenorbital.cpp \
     Basis/none.cpp \
-    Basis/hartreefockhermite.cpp \
-    Hamiltonians/doublewell.cpp
+    Basis/hartreefock.cpp \
+    Basis/hermiteexpansion.cpp
 
 # Load external source files
 SOURCES += \
@@ -81,36 +77,32 @@ SOURCES += \
 
 # Load internal header files
 HEADERS += \
-    WaveFunctions/drbmjastrow.h \
     system.h \
     sampler.h \
     Hamiltonians/hamiltonian.h \
     Hamiltonians/harmonicoscillator.h \
     Hamiltonians/atomicnucleus.h \
+    Hamiltonians/doublewell.h \
     InitialStates/initialstate.h \
     InitialStates/randomuniform.h \
     InitialStates/randomnormal.h \
     InitialWeights/initialweights.h \
     InitialWeights/randomize.h \
     InitialWeights/constant.h \
+    InitialWeights/automatize.h \
     Metropolis/metropolis.h \
     Metropolis/bruteforce.h \
     Metropolis/importancesampling.h \
     WaveFunctions/wavefunction.h \
     WaveFunctions/gaussian.h \
-    WaveFunctions/partlyrestricted.h \
     WaveFunctions/slaterdeterminant.h \
     WaveFunctions/hydrogenlike.h \
     WaveFunctions/padejastrow.h \
-    #WaveFunctions/padejastrow2.h \
     WaveFunctions/simplejastrow.h \
-    #WaveFunctions/samsethjastrow.h \
     WaveFunctions/rbmgaussian.h \
-    #WaveFunctions/rbmgaussian2.h \
     WaveFunctions/rbmjastrow.h \
-    WaveFunctions/rbmjastrow2.h \
-    WaveFunctions/rbmjastrow3.h \
-    #WaveFunctions/rbmjastrow4.h \
+    WaveFunctions/drbmjastrow.h \
+    WaveFunctions/partlyrestricted.h \
     Optimization/optimization.h \
     Optimization/barzilaiborwein.h \
     Optimization/gradientdescent.h \
@@ -123,8 +115,8 @@ HEADERS += \
     Basis/hermite.h \
     Basis/hydrogenorbital.h \
     Basis/none.h \
-    Basis/hartreefockhermite.h \
-    Hamiltonians/doublewell.h
+    Basis/hartreefock.h \
+    Basis/hermiteexpansion.h
 
 # Load external header files
 HEADERS += \

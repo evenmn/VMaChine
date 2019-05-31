@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 
-asymptote = 846
+asymptote = 29.9779
 
-files = ["../data/int1/energy/VMC/2D/72P/0.500000w/ADAM_MC1048576.dat", 
+files = ["../data/int1/energy/RBM/2D/20P/0.100000w/ADAM_MC1048576.dat", 
          #"../data/energy_VMC_P6_D2_w0.500000_MC1048576.dat",
          #"../data/energy_VMC_P6_D2_w0.280000_MC1048576.dat",
          #"../data/energy_VMC_P6_D2_w0.100000_MC1048576.dat"
@@ -12,7 +12,7 @@ files = ["../data/int1/energy/VMC/2D/72P/0.500000w/ADAM_MC1048576.dat",
 
 label = [#"VMC, $\omega=0.5$", 
          #"VMC, $\omega=0.28$", 
-         "VMC, $\omega=1.0$"
+         "RBM, $\omega=0.10$"
          ]
 
 for i in range(len(files)):

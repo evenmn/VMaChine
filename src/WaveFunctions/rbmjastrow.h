@@ -29,12 +29,10 @@ public:
 
 private:
     int    m_numberOfParameters     = 1;
-    int     m_globalArrayNeed       = 0;
-    int    m_elementNumber          = 1;
     int    m_numberOfHiddenNodes    = 1;
+
     double m_sigmaSqrd              = 1;
     double m_sigmaQuad              = 1;
-
     double m_probabilityRatio       = 1;
     double m_probabilityRatioOld    = 1;
 
@@ -52,5 +50,8 @@ private:
     Eigen::VectorXd m_pDotN;
     Eigen::VectorXd m_pDotNOld;
 
+    // Properties of the element (DO NOT TOUCH!)
     std::string m_label = "rbmjastrow";
+    int         m_globalArrayNeed        = 0;
+    int         m_elementNumber          = 1;
 };

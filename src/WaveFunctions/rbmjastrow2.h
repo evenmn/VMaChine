@@ -30,7 +30,7 @@ public:
 private:
     int    m_numberOfParameters     = 1;
     int    m_globalArrayNeed        = 0;
-    int    m_elementNumber          = 1;
+    int    m_elementNumber          = 0;
     int    m_numberOfHiddenNodes    = 1;
     double m_sigmaSqrd              = 1;
     double m_sigmaQuad              = 1;

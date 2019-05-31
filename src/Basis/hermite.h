@@ -18,5 +18,5 @@ public:
 private:
     double m_omega = 1;
     double m_omegaSqrt = 1;
-    Eigen::MatrixXd m_listOfStates;
+    Eigen::MatrixXi m_listOfStates;
 };

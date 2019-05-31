@@ -12,10 +12,6 @@ HydrogenOrbital::HydrogenOrbital(System *system)  :
     numberOfOrbitals();
 }
 
-int fact(const int n) {
-    return (n == 1 || n == 0) ? 1 : fact(n - 1) * n;
-}
-
 double laguerre(double x, int n) {
     if(n == 0) {
         return 1;
@@ -73,13 +69,13 @@ void HydrogenOrbital::numberOfOrbitals() {
 
 double HydrogenOrbital::evaluate(double x, int n) {
     //Hydrogen-like orbitals of a given n and l=0 (S-wave)
-    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(fact(n-1)/(2 * n * fact(n)));
+    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
     return prefactor * associatedLaguerre(2*m_Z*x/n, 1, n-1) * exp(-m_Z*x/n);
 }
 
 double HydrogenOrbital::evaluateDerivative(double x, int n) {
     //First derivative of Hydrogen-like orbitals of a given n and l=0 (S-wave)
-    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(fact(n-1)/(2 * n * fact(n)));
+    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
     return - prefactor * (associatedLaguerre(2*m_Z*x/n, 2, n-2)*exp(-m_Z*x/n) + associatedLaguerre(2*m_Z*x/n, 1, n-1)*exp(-m_Z*x/n) * m_Z/n);
 }
 

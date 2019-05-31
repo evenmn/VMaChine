@@ -17,8 +17,8 @@ protected:
     Eigen::VectorXd m_positions;
     int m_numberOfFreeDimensions = 0;
     int m_numberOfStepsAfterEquilibrium = 0;
-    int m_numberOfWaveFunctionElements = 0;
-    int m_maxNumberOfParametersPerElement = 0;
+    int m_numberOfElements = 0;
+    int m_maxParameters = 0;
     double m_eta = 1;
     std::vector<class WaveFunction*> m_waveFunctionVector;
 };

@@ -27,7 +27,7 @@ public:
 private:
     int     m_numberOfParameters       = 1;
     int     m_globalArrayNeed          = 2;
-    int     m_elementNumber = 0;
+    int     m_elementNumber            = 0;
     int     m_Z = 1;
 
     double  m_alpha = 0;

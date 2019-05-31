@@ -15,15 +15,16 @@ RBMJastrow::RBMJastrow(System* system) :
 }
 
 void RBMJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxNumberOfParametersPerElement();
+    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
     m_elementNumber                     = elementNumber;
 }
 
 void RBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
-    Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
-    m_W     = W;
-    m_WSqrd = W.cwiseAbs2();
+    m_W = WaveFunction::reshape(wFlatten, m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    //Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    //m_W     = W;
+    m_WSqrd = m_W.cwiseAbs2();
     m_b     = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }
 
@@ -73,13 +74,15 @@ double RBMJastrow::computeLaplacian() {
 
 Eigen::VectorXd RBMJastrow::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::MatrixXd out = m_positions * m_n.transpose();
+    gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
     gradients.head(m_numberOfHiddenNodes) = m_n;
-    for(int l=0; l<m_numberOfHiddenNodes; l++) {
-        for(int m=0; m<m_numberOfFreeDimensions; m++) {
-            int n = l * m_numberOfFreeDimensions + m + m_numberOfHiddenNodes;
-            gradients(n) = m_positions(m) * m_n(l) / m_sigmaSqrd;
-        }
-    }
+    //for(int l=0; l<m_numberOfHiddenNodes; l++) {
+    //    for(int m=0; m<m_numberOfFreeDimensions; m++) {
+    //        int n = l * m_numberOfFreeDimensions + m + m_numberOfHiddenNodes;
+    //        gradients(n) = m_positions(m) * m_n(l) / m_sigmaSqrd;
+    //    }
+    //}
     return gradients;
 }
 

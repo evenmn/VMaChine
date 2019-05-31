@@ -15,27 +15,28 @@ public:
     void            printTwoBodyDensityToFile();
     void            closeOutputFiles();
     void            printInstantValuesToFile();
-    void            computeOneBodyDensity(const Eigen::VectorXd positions);
-    void            computeTwoBodyDensity(const Eigen::VectorXd positions);
-    void            computeAverages();
-    void            computeTotals();
-    void            doResampling();
-    void            appendInstantFiles();
-    void            mergeOneBodyFiles();
-    void            setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui);
+    void            computeOneBodyDensity   (const Eigen::VectorXd positions);
+    void            computeTwoBodyDensity   (const Eigen::VectorXd positions);
+    void            computeAverages         ();
+    void            computeTotals           ();
+    void            doResampling            ();
+    void            appendInstantFiles      ();
+    void            mergeOneBodyFiles       ();
+    void            setNumberOfSteps        (int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui);
     double          getAverageEnergy()        { return m_averageEnergy; }
     Eigen::MatrixXd getAverageGradients()     { return m_averageGradients; }
     Eigen::MatrixXd getAverageGradientsE()    { return m_averageGradientsE; }
+    std::string     getParameterFileName()    { return m_parameterFileName; }
     std::string     generateFileName(std::string name, std::string extension);
 
 private:
-    int              m_numberOfStepsWOEqui = 0;
-    int              m_totalNumberOfStepsWOEqui = 0;
-    int              m_totalNumberOfStepsWEqui = 0;
-    int              m_numberOfEquilibriationSteps = 0;
-    int              m_initialTotalNumberOfStepsWOEqui = 0;
+    int              m_stepsWOEqui = 0;
+    int              m_totalStepsWOEqui = 0;
+    int              m_totalStepsWEqui = 0;
+    int              m_equilibriationSteps = 0;
+    int              m_initialTotalStepsWOEqui = 0;
 
-    int              m_maxNumberOfParametersPerElement = 0;
+    int              m_maxParameters = 0;
     int              m_numberOfProcesses = 0;
     int              m_numberOfParticles = 0;
     int              m_numberOfDimensions = 0;
@@ -76,10 +77,10 @@ private:
     std::ofstream    m_averageEnergyFile;
     std::ofstream    m_instantEnergyFile;
     std::ofstream    m_parameterFile;
-    std::string      m_averageEnergyFileName = "Filename not generated yet";
+    std::string      m_parameterFileName     = "Filename not generated yet";
     std::string      m_instantEnergyFileName = "Filename not generated yet";
     std::string      m_path                  = "Path not specified";
-    std::string      m_waveFunction          = "Wave function not found";
+    std::string      m_trialWaveFunction     = "Wave function not found";
 
     bool             m_printEnergyToFile = true;
     bool             m_printInstantEnergyToFile = true;

@@ -40,11 +40,11 @@ public:
 private:
     int             m_numberOfParameters    = 0;
     int             m_globalArrayNeed       = 0;
-    int             m_elementNumber         = 0;
     int             m_numberOfParticlesHalf = 0;
     int             m_freeDimensionsHalf    = 0;
     int             m_particle              = 0;
     int             m_dimension             = 0;
+    int             m_elementNumber         = 0;
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_positionBlock;

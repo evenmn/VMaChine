@@ -12,8 +12,10 @@ files = [#"../data/int1/onebody/RBM/2D/30P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/20P/1.000000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBM/2D/30P/1.000000w/ADAM_MC1048576.dat",
          #"../data/int1/onebody/RBM/2D/30P/0.500000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBM/2D/2P/1.000000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/VMC/2D/2P/1.000000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/1.000000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/0.500000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/0.280000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/12P/0.100000w/ADAM_MC1048576.dat",
          #"../data/int1/onebody/RBM/2D/2P/0.100000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/12P/0.500000w/SGD_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/6P/1.000000w/SGD_MC1048576.dat",
@@ -33,15 +35,14 @@ label = [#"RBM",
          #"RBMPJ, $\omega=0.28$", 
          #"RBMPJ, $\omega=0.5$", 
          #"RBMPJ, $\omega=1.0$", 
-         #"RBM, $\omega=0.28$",
-         #"VMC, $\omega=0.1$", 
-         #"RBM, $\omega=1.0$", 
-         #"RBM, $\omega=0.5$", 
+         "RBM, $\omega=1.0$",
+         "RBM, $\omega=0.5$", 
+         "RBM, $\omega=0.28$", 
          "RBM, $\omega=0.1$",
-         "VMC, $\omega=0.1$"
+         #"VMC, $\omega=0.1$"
          ]
          
-maxRadius = [35,35,35]
+maxRadius = [30,30,30,30]
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])

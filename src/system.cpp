@@ -31,12 +31,12 @@ void System::runIterations(const int numberOfIterations) {
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
     //for(m_iter : tqdm::range(numberOfIterations)) {
         if(m_applyDynamicSteps) {
-            m_numberOfStepsWOEqui      = m_initialNumberOfStepsWOEqui * dynamicSteps();
-            m_numberOfStepsWEqui       = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
-            m_totalNumberOfStepsWOEqui = m_initialTotalNumberOfStepsWOEqui * dynamicSteps();
-            m_totalNumberOfStepsWEqui  = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
+            m_stepsWOEqui      = m_initialStepsWOEqui * dynamicSteps();
+            m_stepsWEqui       = m_stepsWOEqui + m_equilibriationSteps;
+            m_totalStepsWOEqui = m_initialTotalStepsWOEqui * dynamicSteps();
+            m_totalStepsWEqui  = m_totalStepsWOEqui + m_totalEquilibriationSteps;
         }
-        m_sampler->setNumberOfSteps(m_numberOfStepsWOEqui, m_totalNumberOfStepsWOEqui, m_totalNumberOfStepsWEqui);
+        m_sampler->setNumberOfSteps(m_stepsWOEqui, m_totalStepsWOEqui, m_totalStepsWEqui);
         double startTime = MPI_Wtime();
         runMetropolisCycles();
         double endTime = MPI_Wtime();
@@ -60,19 +60,19 @@ void System::runIterations(const int numberOfIterations) {
         if(m_checkConvergence && m_myRank == 0) {
             checkingConvergence();
         }
-        MPI_Bcast(m_parameters.data(), int(m_numberOfWaveFunctionElements*m_maxNumberOfParametersPerElement), MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        MPI_Bcast(m_parameters.data(), int(m_numberOfElements*m_maxParameters), MPI_DOUBLE, 0, MPI_COMM_WORLD);
         MPI_Barrier(MPI_COMM_WORLD);
         updateAllParameters(m_parameters);
     }
 }
 
 void System::runMetropolisCycles() {
-    for(int i=0; i < m_numberOfStepsWEqui; i++) {
+    for(int i=0; i < m_stepsWEqui; i++) {
         bool acceptedStep = m_metropolis->acceptMove();
         m_positions       = m_metropolis->updatePositions();
         m_distanceMatrix  = m_metropolis->updateDistanceMatrix();
         m_radialVector    = m_metropolis->updateRadialVector();
-        if(i >= m_numberOfEquilibriationSteps) {
+        if(i >= m_equilibriationSteps) {
             m_sampler->sample(acceptedStep, i);
             if(m_iter == m_lastIteration + m_rangeOfDynamicSteps) {
                 m_sampler->printInstantValuesToFile();
@@ -122,8 +122,7 @@ int System::dynamicSteps() {
     return stepRatio;
 }
 
-void System::parser(std::string configFile, int &numberOfIterations) {
-
+void System::parser(const std::string configFile, int &numberOfIterations) {
     std::ifstream infile;
     infile.open(configFile.c_str());
     if (!infile.is_open()) {
@@ -135,27 +134,28 @@ void System::parser(std::string configFile, int &numberOfIterations) {
         std::string key;
         if(std::getline(is_line, key, ':')) {
             std::string value;
-            if(std::getline(is_line, value))
-            if(key == "numParticles") {
-                m_numberOfParticles = std::stoi(value);
-            }
-            else if(key == "numDimensions") {
-                m_numberOfDimensions = std::stoi(value);
-            }
-            else if(key == "omega") {
-                m_omega = std::stod(value);
-            }
-            else if(key == "learningRate") {
-                m_eta = std::stod(value);
-            }
-            else if(key == "maxRadius") {
-                m_maxRadius = std::stoi(value);
-            }
-            else if(key == "numIterations") {
-                numberOfIterations = std::stoi(value);
-            }
-            else {
-                perror("Key not found, please choose a valid key");
+            if(std::getline(is_line, value)) {
+                if(key == "numParticles") {
+                    m_numberOfParticles = std::stoi(value);
+                }
+                else if(key == "numDimensions") {
+                    m_numberOfDimensions = std::stoi(value);
+                }
+                else if(key == "omega") {
+                    m_omega = std::stod(value);
+                }
+                else if(key == "learningRate") {
+                    m_eta = std::stod(value);
+                }
+                else if(key == "maxRadius") {
+                    m_maxRadius = std::stoi(value);
+                }
+                else if(key == "numIterations") {
+                    numberOfIterations = std::stoi(value);
+                }
+                else {
+                    perror("Key not found, please choose a valid key");
+                }
             }
         }
     }
@@ -166,8 +166,8 @@ void System::parser(std::string configFile, int &numberOfIterations) {
 }
 
 void System::setAllConstants() {
-    for(unsigned int i=0; i<m_numberOfWaveFunctionElements; i++) {
-        m_waveFunctionElements[i]->setConstants(i);
+    for(int i=0; i<m_numberOfElements; i++) {
+        m_waveFunctionElements[unsigned(i)]->setConstants(i);
     }
 }
 
@@ -221,9 +221,9 @@ double System::getKineticEnergy() {
 }
 
 Eigen::MatrixXd System::getAllInstantGradients() {
-    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
-    for(unsigned int i = 0; i < m_numberOfWaveFunctionElements; i++) {
-        gradients.row(i) = m_waveFunctionElements[i]->computeParameterGradient();
+    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
+    for(int i = 0; i < m_numberOfElements; i++) {
+        gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
     }
     return gradients;
 }
@@ -263,8 +263,8 @@ void System::setNumberOfParticles(const int numberOfParticles) {
 }
 
 void System::setNumberOfDimensions(const int numberOfDimensions) {
-    assert(numberOfDimensions > 0);
-    assert(m_numberOfParticles > 0);
+    assert(numberOfDimensions > 1);
+    assert(numberOfDimensions < 4);
     m_numberOfDimensions = numberOfDimensions;
     setNumberOfFreeDimensions();
 }
@@ -280,42 +280,43 @@ void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes) {
 
 void System::setNumberOfMetropolisSteps(const int steps) {
     // Calculate number of steps without equilibriation (power of 2)
-    m_totalNumberOfStepsWOEqui         = steps;
+    m_totalStepsWOEqui         = steps;
     if(m_myRank == 0) {
-        m_numberOfStepsWOEqui          = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
+        m_stepsWOEqui          = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
     }
     else {
-        m_numberOfStepsWOEqui          = steps / m_numberOfProcesses;
+        m_stepsWOEqui          = steps / m_numberOfProcesses;
     }
 
     // Store the initial steps in case adaptive step is chosen
-    m_initialNumberOfStepsWOEqui       = m_numberOfStepsWOEqui;
-    m_initialTotalNumberOfStepsWOEqui  = m_totalNumberOfStepsWOEqui;
+    m_initialStepsWOEqui       = m_stepsWOEqui;
+    m_initialTotalStepsWOEqui  = m_totalStepsWOEqui;
 
     // Calculate the number of equilibriation steps (needs to be unaffected by the number of processes)
-    m_numberOfEquilibriationSteps      = int(m_totalNumberOfStepsWOEqui * m_equilibrationFraction);
-    m_totalNumberOfEquilibriationSteps = int(m_totalNumberOfStepsWOEqui * m_equilibrationFraction * m_numberOfProcesses);
+    m_equilibriationSteps      = int(m_totalStepsWOEqui * m_equilibrationFraction);
+    m_totalEquilibriationSteps = int(m_totalStepsWOEqui * m_equilibrationFraction * m_numberOfProcesses);
 
     // Calculate the number of steps included equilibriation
-    m_totalNumberOfStepsWEqui          = m_totalNumberOfStepsWOEqui + m_totalNumberOfEquilibriationSteps;
-    m_numberOfStepsWEqui               = m_numberOfStepsWOEqui + m_numberOfEquilibriationSteps;
+    m_totalStepsWEqui          = m_totalStepsWOEqui + m_totalEquilibriationSteps;
+    m_stepsWEqui               = m_stepsWOEqui + m_equilibriationSteps;
 }
 
-void System::setNumberOfWaveFunctionElements(const int numberOfWaveFunctionElements) {
-    m_numberOfWaveFunctionElements = numberOfWaveFunctionElements;
+void System::setNumberOfElements(const unsigned long numberOfElements) {
+    m_numberOfElements = static_cast<int>(numberOfElements);
+    collectAllLabels();
 }
 
-void System::setMaxNumberOfParametersPerElement() {
-    int maxNumberOfWaveFunctionElements = 0;
+void System::setMaxParameters() {
+    int maxNumberOfElements = 0;
     int counter = 0;
     for(auto& i : m_waveFunctionElements) {
         int numberOfParameters = i->getNumberOfParameters();
-        if(numberOfParameters > maxNumberOfWaveFunctionElements) {
-            maxNumberOfWaveFunctionElements = numberOfParameters;
+        if(numberOfParameters > maxNumberOfElements) {
+            maxNumberOfElements = numberOfParameters;
         }
         counter += numberOfParameters;
     }
-    m_maxNumberOfParametersPerElement = maxNumberOfWaveFunctionElements;
+    m_maxParameters = maxNumberOfElements;
     m_totalNumberOfParameters = counter;
 }
 
@@ -388,7 +389,7 @@ void System::setMPITools(int myRank, int numberOfProcesses) {
     m_numberOfProcesses = numberOfProcesses;
 }
 
-void System::setPath(std::string path) {
+void System::setPath(const std::string path) {
     m_path = path;
 }
 
@@ -402,7 +403,7 @@ void System::setBasis(Basis* basis) {
 
 void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements) {
     m_waveFunctionElements = waveFunctionElements;
-    setMaxNumberOfParametersPerElement();
+    setMaxParameters();
 }
 
 void System::setInitialState(InitialState* initialState) {
@@ -426,68 +427,139 @@ void System::setRandomNumberGenerator(RandomNumberGenerator* randomNumberGenerat
 }
 
 void System::setGradients() {
-    m_gradients = Eigen::MatrixXd::Zero(m_numberOfWaveFunctionElements, m_maxNumberOfParametersPerElement);
+    m_gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
 }
 
-std::string System::getAllLabels() {
-    std::string total_string = "";
+void System::searchShortning(const std::vector<std::string> labels, const std::string newLabel, std::string &allLabels) {
+    if(labels.size() == 1) {
+        if(allLabels == "_" + labels.at(0)) {
+            allLabels = newLabel;
+        }
+    }
+    if(labels.size() == 2) {
+        for(auto& i : labels) {
+            for(auto& j : labels) {
+                if(i != j) {
+                    if(allLabels == "_" + i + "_" + j) {
+                        allLabels = newLabel;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else if(labels.size() == 3) {
+        for(auto& i : labels) {
+            for(auto& j : labels) {
+                for(auto& k : labels) {
+                    if(i != j || i != k || j != k) {
+                        if(allLabels == "_" + i + "_" + j + "_" + k) {
+                            allLabels = newLabel;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else if(labels.size() == 4) {
+        for(auto& i : labels) {
+            for(auto& j : labels) {
+                for(auto& k : labels) {
+                    for(auto& l : labels) {
+                        if(i != j || i != k || i != l || j != k || j != l || k != l) {
+                            if(allLabels == "_" + i + "_" + j + "_" + k + "_" + l) {
+                                allLabels = newLabel;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void System::collectAllLabels() {
+    m_trialWaveFunction = "";
     for(auto& i : m_waveFunctionElements) {
-        total_string += "_";
-        total_string += i->getLabel();
+        m_trialWaveFunction += "_";
+        m_trialWaveFunction += i->getLabel();
     }
 
-    if((total_string == "_gaussian_padejastrow") || \
-       (total_string == "_padejastrow_gaussian") || \
-       (total_string == "_gaussian_padejastrow_slaterdeterminant") || \
-       (total_string == "_gaussian_slaterdeterminant_padejastrow") || \
-       (total_string == "_padejastrow_gaussian_slaterdeterminant") || \
-       (total_string == "_padejastrow_slaterdeterminant_gaussian") || \
-       (total_string == "_slaterdeterminant_gaussian_padejastrow") || \
-       (total_string == "_slaterdeterminant_padejastrow_gaussian")) {
-        total_string = "VMC";
-    }
-    else if((total_string == "_rbmgaussian_rbmjastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian") || \
-            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant") || \
-            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant") || \
-            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian") || \
-            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow") || \
-            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian")) {
-        total_string = "RBM";
-    }
-    else if((total_string == "_rbmgaussian_rbmjastrow_padejastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian_padejastrow") || \
-            (total_string == "_padejastrow_rbmjastrow_rbmgaussian") || \
-            (total_string == "_padejastrow_rbmgaussian_rbmjastrow") || \
-            (total_string == "_rbmjastrow_padejastrow_rbmgaussian") || \
-            (total_string == "_rbmgaussian_padejastrow_rbmjastrow") || \
-            (total_string == "_rbmgaussian_rbmjastrow_slaterdeterminant_padejastrow") || \
-            (total_string == "_rbmgaussian_slaterdeterminant_rbmjastrow_padejastrow") || \
-            (total_string == "_rbmjastrow_rbmgaussian_slaterdeterminant_padejastrow") || \
-            (total_string == "_rbmjastrow_slaterdeterminant_rbmgaussian_padejastrow") || \
-            (total_string == "_slaterdeterminant_rbmgaussian_rbmjastrow_padejastrow") || \
-            (total_string == "_slaterdeterminant_rbmjastrow_rbmgaussian_padejastrow")) {
-        total_string = "RBMPJ";
-    }
-    else if((total_string == "_rbmgaussian_drbmjastrow") || \
-            (total_string == "_drbmjastrow_rbmgaussian") || \
-            (total_string == "_rbmgaussian_drbmjastrow_slaterdeterminant") || \
-            (total_string == "_rbmgaussian_slaterdeterminant_drbmjastrow") || \
-            (total_string == "_drbmjastrow_rbmgaussian_slaterdeterminant") || \
-            (total_string == "_drbmjastrow_slaterdeterminant_rbmgaussian") || \
-            (total_string == "_slaterdeterminant_rbmgaussian_drbmjastrow") || \
-            (total_string == "_slaterdeterminant_drbmjastrow_rbmgaussian")) {
-        total_string = "DRBM";
-    }
-    /*
-    std::vector<std::string> elementLabels;
-    elementLabels.push_back("_rbmgaussian");
-    elementLabels.push_back("_rbmjastrow");
-    elementLabels.push_back("_padejastrow");
-    for(auto& i : elementLabels) {
+    std::vector<std::string> testVMC1;
+    testVMC1.push_back("gaussian");
+    searchShortning(testVMC1, "VMC", m_trialWaveFunction);
 
-    }
-    */
-    return total_string;
+    std::vector<std::string> testVMC2;
+    testVMC2.push_back("gaussian");
+    testVMC2.push_back("padejastrow");
+    searchShortning(testVMC2, "VMC", m_trialWaveFunction);
+
+    std::vector<std::string> testVMC3;
+    testVMC3.push_back("gaussian");
+    testVMC3.push_back("padejastrow");
+    testVMC3.push_back("slaterdeterminant");
+    searchShortning(testVMC3, "VMC", m_trialWaveFunction);
+
+    std::vector<std::string> testRBM1;
+    testRBM1.push_back("rbmgaussian");
+    testRBM1.push_back("rbmjastrow");
+    searchShortning(testRBM1, "RBM", m_trialWaveFunction);
+
+    std::vector<std::string> testRBM2;
+    testRBM2.push_back("rbmgaussian");
+    testRBM2.push_back("rbmjastrow");
+    testRBM2.push_back("slaterdeterminant");
+    searchShortning(testRBM2, "RBM", m_trialWaveFunction);
+
+    std::vector<std::string> testRBMPJ1;
+    testRBMPJ1.push_back("rbmgaussian");
+    testRBMPJ1.push_back("rbmjastrow");
+    testRBMPJ1.push_back("padejastrow");
+    searchShortning(testRBMPJ1, "RBMPJ", m_trialWaveFunction);
+
+    std::vector<std::string> testRBMPJ2;
+    testRBMPJ2.push_back("rbmgaussian");
+    testRBMPJ2.push_back("rbmjastrow");
+    testRBMPJ2.push_back("padejastrow");
+    testRBMPJ2.push_back("slaterdeterminant");
+    searchShortning(testRBMPJ2, "RBMPJ", m_trialWaveFunction);
+
+    std::vector<std::string> testPRBM1;
+    testPRBM1.push_back("rbmgaussian");
+    testPRBM1.push_back("rbmjastrow");
+    testPRBM1.push_back("partlyrestricted");
+    searchShortning(testPRBM1, "PRBM", m_trialWaveFunction);
+
+    std::vector<std::string> testPRBM2;
+    testPRBM2.push_back("rbmgaussian");
+    testPRBM2.push_back("rbmjastrow");
+    testPRBM2.push_back("partlyrestricted");
+    testPRBM2.push_back("slaterdeterminant");
+    searchShortning(testPRBM2, "PRBM", m_trialWaveFunction);
+
+    std::vector<std::string> testDRBM1;
+    testDRBM1.push_back("rbmgaussian");
+    testDRBM1.push_back("drbmjastrow");
+    searchShortning(testDRBM1, "DRBM", m_trialWaveFunction);
+
+    std::vector<std::string> testDRBM2;
+    testDRBM2.push_back("rbmgaussian");
+    testDRBM2.push_back("drbmjastrow");
+    testDRBM2.push_back("slaterdeterminant");
+    searchShortning(testDRBM2, "DRBM", m_trialWaveFunction);
+
+    std::vector<std::string> testRBMSJ1;
+    testRBMSJ1.push_back("rbmgaussian");
+    testRBMSJ1.push_back("rbmjastrow");
+    testRBMSJ1.push_back("simplejastrow");
+    searchShortning(testRBMSJ1, "RBMSJ", m_trialWaveFunction);
+
+    std::vector<std::string> testRBMSJ2;
+    testRBMSJ2.push_back("rbmgaussian");
+    testRBMSJ2.push_back("rbmjastrow");
+    testRBMSJ2.push_back("simplejastrow");
+    testRBMSJ2.push_back("slaterdeterminant");
+    searchShortning(testRBMSJ2, "RBMSJ", m_trialWaveFunction);
 }
