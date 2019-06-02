@@ -24,10 +24,9 @@ void Hermite::numberOfOrbitals() {
             break;
         }
         else if(orb > m_numberOfParticles) {
-            std::cout << "This program supports closed-shells only. Please choose a number "
-                         "of particles such that the orbital is full" << std::endl;
-            MPI_Finalize();
-            exit(0);
+            std::cout << "Warning: An open shell is chosen" << std::endl;
+            m_numberOfOrbitals = counter+1;
+            break;
         }
         counter += 1;
     }

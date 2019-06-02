@@ -61,13 +61,13 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 4;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 1000;
-    double  totalSpin           = 0;                        // totalSpin is half-integer
-    double  learningRate        = 0.5;
-    double  omega               = 1.0;                      // Oscillator frequency
+    int     numberOfIterations  = 100;
+    double  totalSpin           = 1;                        // totalSpin is half-integer
+    double  learningRate        = 0.1;
+    double  omega               = 0.28;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -76,12 +76,12 @@ int main(int argc, char *argv[]) {
     // Switches
     bool    interaction             = true;                     // Repulsive interaction on or off
     bool    checkConvergence        = false;                    // Stops the program after it has converged
-    bool    applyAdaptiveSteps      = false;                     // Increase the number of MC-cycles for the last iterations
+    bool    applyAdaptiveSteps      = true;                     // Increase the number of MC-cycles for the last iterations
     bool    computeOneBodyDensity   = false;                     // Compute one-body density and print to file
     bool    computeTwoBodyDensity   = false;
     bool    printEnergyFile         = false;                     // Print energy for every iteration to file
     bool    printParametersToFile   = false;
-    bool    doResampling            = false;                     // Print blocking file for the last iteration and do blocking
+    bool    doResampling            = true;                     // Print blocking file for the last iteration and do blocking
 
 
     // --- ADVANCED SETTINGS ---
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
-    system->setOptimization             (new GradientDescent(system,0.0,0.0));
+    system->setOptimization             (new ADAM(system));
     system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));

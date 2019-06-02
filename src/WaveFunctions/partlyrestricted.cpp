@@ -10,8 +10,8 @@ PartlyRestricted::PartlyRestricted(System* system) :
 }
 
 void PartlyRestricted::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void PartlyRestricted::calculateProbabilityRatio(int changedCoord) {
@@ -57,7 +57,7 @@ double PartlyRestricted::computeLaplacian() {
 }
 
 Eigen::VectorXd PartlyRestricted::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     Eigen::MatrixXd out = m_positions * m_positions.transpose();
     gradients.head(out.size()) = WaveFunction::flatten(out);
     return gradients;

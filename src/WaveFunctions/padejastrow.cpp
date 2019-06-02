@@ -12,8 +12,8 @@ PadeJastrow::PadeJastrow(System* system) :
 }
 
 void PadeJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void PadeJastrow::initializeBeta() {
@@ -173,7 +173,7 @@ double PadeJastrow::computeLaplacian() {
 }
 
 Eigen::VectorXd PadeJastrow::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
 
     double derivative = 0;
     for(int i_p=0; i_p<m_numberOfParticles; i_p++) {

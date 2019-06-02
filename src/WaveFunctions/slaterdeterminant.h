@@ -24,31 +24,27 @@ public:
     double          computeLaplacian                ();
     Eigen::VectorXd computeParameterGradient        ();
 
-    void            initializeSlaterMatrixUp          ();
-    void            initializeSlaterMatrixDerUp       ();
-    void            initializeSlaterMatrixSecDerUp    ();
-    void            initializeSlaterMatrixInverseUp   ();
-
-    void            initializeSlaterMatrixDn          ();
-    void            initializeSlaterMatrixDerDn       ();
-    void            initializeSlaterMatrixSecDerDn    ();
-    void            initializeSlaterMatrixInverseDn   ();
+    void            initializeSlaterMatrix          ();
+    void            initializeSlaterMatrixDer       ();
+    void            initializeSlaterMatrixSecDer    ();
+    void            initializeSlaterMatrixInverse   ();
 
     void            updateSlaterMatrixElementUp         (const int i, const int j);
     void            updateSlaterMatrixRowUp             (const int row);
     void            updateSlaterMatrixDerRowUp          (const int row);
     void            updateSlaterMatrixSecDerRowUp       (const int k);
-    void            updateSlaterMatrixInverseUp         (int start, int end);
-    void            updateSlaterDeterminantDerivativesUp(int start, int end);
+    void            updateSlaterMatrixInverseUp         ();
+    void            updateSlaterDeterminantDerivativesUp();
 
     void            updateSlaterMatrixElementDn         (const int i, const int j);
     void            updateSlaterMatrixRowDn             (const int row);
     void            updateSlaterMatrixDerRowDn          (const int row);
     void            updateSlaterMatrixSecDerRowDn       (const int k);
-    void            updateSlaterMatrixInverseDn         (int start, int end);
-    void            updateSlaterDeterminantDerivativesDn(int start, int end);
+    void            updateSlaterMatrixInverseDn         ();
+    void            updateSlaterDeterminantDerivativesDn();
 
-    double          updateRatio                     ();
+    double          updateRatioUp                     ();
+    double          updateRatioDn                     ();
 
     int             spinUp();
     int             spinDn();
@@ -62,6 +58,8 @@ private:
     int             m_elementNumber         = 0;
     int             m_numberOfSpinUp        = 0;
     int             m_numberOfSpinDn        = 0;
+    int             m_numberOfFreeDimUp     = 0;
+    int             m_numberOfFreeDimDn     = 0;
 
     double          m_numberOfParticlesHalf = 0;
     double          m_totalSpin             = 0;
@@ -69,20 +67,32 @@ private:
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_positionBlock;
-    Eigen::MatrixXd m_slaterMatrix;
-    Eigen::MatrixXd m_slaterMatrixDer;
-    Eigen::MatrixXd m_slaterMatrixSecDer;
-    Eigen::MatrixXd m_slaterMatrixInverse;
+    Eigen::MatrixXd m_slaterMatrixUp;
+    Eigen::MatrixXd m_slaterMatrixDerUp;
+    Eigen::MatrixXd m_slaterMatrixSecDerUp;
+    Eigen::MatrixXd m_slaterMatrixInverseUp;
+
+    Eigen::MatrixXd m_slaterMatrixDn;
+    Eigen::MatrixXd m_slaterMatrixDerDn;
+    Eigen::MatrixXd m_slaterMatrixSecDerDn;
+    Eigen::MatrixXd m_slaterMatrixInverseDn;
+
     Eigen::VectorXd m_determinantDerivative;
     Eigen::VectorXd m_determinantSecondDerivative;
     double          m_probabilityRatio = 0;
 
     Eigen::VectorXd m_positionsOld;
     Eigen::MatrixXd m_positionBlockOld;
-    Eigen::MatrixXd m_slaterMatrixOld;
-    Eigen::MatrixXd m_slaterMatrixDerOld;
-    Eigen::MatrixXd m_slaterMatrixSecDerOld;
-    Eigen::MatrixXd m_slaterMatrixInverseOld;
+    Eigen::MatrixXd m_slaterMatrixUpOld;
+    Eigen::MatrixXd m_slaterMatrixDerUpOld;
+    Eigen::MatrixXd m_slaterMatrixSecDerUpOld;
+    Eigen::MatrixXd m_slaterMatrixInverseUpOld;
+
+    Eigen::MatrixXd m_slaterMatrixDnOld;
+    Eigen::MatrixXd m_slaterMatrixDerDnOld;
+    Eigen::MatrixXd m_slaterMatrixSecDerDnOld;
+    Eigen::MatrixXd m_slaterMatrixInverseDnOld;
+
     Eigen::VectorXd m_determinantDerivativeOld;
     Eigen::VectorXd m_determinantSecondDerivativeOld;
     double          m_probabilityRatioOld = 0;
