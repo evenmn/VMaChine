@@ -61,12 +61,12 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 4;
+    int     numberOfParticles   = 6;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 100;
-    double  totalSpin           = 1;                        // totalSpin is half-integer
-    double  learningRate        = 0.1;
+    int     numberOfIterations  = 500;
+    double  totalSpin           = 0;                        // totalSpin is half-integer
+    double  learningRate        = 0.01;
     double  omega               = 0.28;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution

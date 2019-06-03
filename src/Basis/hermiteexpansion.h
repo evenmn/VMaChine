@@ -18,14 +18,11 @@ public:
     std::string generateFileName();
     void readCoefficientFile();
 
-    double evaluateXDir(double positionx, int nx);
-    double evaluateXDirDerivative(double positionx, int nx);
-    double evaluateXDirSecondDerivative(double positionx, int nx);
-
 private:
     double  m_omega = 1;
     double  m_omegaSqrt = 1;
     long    m_basisSize = 1;
+    int     m_dim = 0;
     std::string m_path = "Path is not given yet";
     Eigen::MatrixXd m_coefficients;
     Eigen::MatrixXi m_listOfStates;

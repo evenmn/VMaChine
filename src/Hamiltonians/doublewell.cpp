@@ -18,7 +18,7 @@ double DoubleWell::getExternalEnergy() {
     for(int i=0; i<m_numberOfParticles; i++) {
         sumX += m_positions(i*m_numberOfDimensions);
     }
-    return 0.5 * m_omega_sqrd * (m_positions.cwiseAbs2().sum() + 0.25 * m_A * m_A - m_A * fabs(sumX));
+    return 0.5 * m_omega_sqrd * (m_positions.cwiseAbs2().sum() + 0.25 * m_b * m_b - m_b * fabs(sumX));
 }
 
 double DoubleWell::computeLocalEnergy() {

@@ -159,26 +159,29 @@ double Hermite::evaluate(double x, int n) {
     //Hermite polynomial of n'th degree
     bool hardcoded = true;
 
+    double prefactor = 1.0/sqrt(pow(2,n) * factorial(n));
+    prefactor *= pow((m_omega/M_PI),1/4.);
+
     if(hardcoded) {
         switch(n) {
-            case 0: return HH0(x);
-            case 1: return HH1(x);
-            case 2: return HH2(x);
-            case 3: return HH3(x);
-            case 4: return HH4(x);
-            case 5: return HH5(x);
-            case 6: return HH6(x);
-            case 7: return HH7(x);
-            case 8: return HH8(x);
-            case 9: return HH9(x);
-            case 10: return HH10(x);
-            case 11: return HH11(x);
-            case 12: return HH12(x);
-            case 13: return HH13(x);
-            case 14: return HH14(x);
-            case 15: return HH15(x);
-            case 16: return HH16(x);
-            case 17: return HH17(x);
+            case 0: return prefactor * HH0(x);
+            case 1: return prefactor * HH1(x);
+            case 2: return prefactor * HH2(x);
+            case 3: return prefactor * HH3(x);
+            case 4: return prefactor * HH4(x);
+            case 5: return prefactor * HH5(x);
+            case 6: return prefactor * HH6(x);
+            case 7: return prefactor * HH7(x);
+            case 8: return prefactor * HH8(x);
+            case 9: return prefactor * HH9(x);
+            case 10: return prefactor * HH10(x);
+            case 11: return prefactor * HH11(x);
+            case 12: return prefactor * HH12(x);
+            case 13: return prefactor * HH13(x);
+            case 14: return prefactor * HH14(x);
+            case 15: return prefactor * HH15(x);
+            case 16: return prefactor * HH16(x);
+            case 17: return prefactor * HH17(x);
             default: return 0;
 
             if (n > 17) {
@@ -191,40 +194,41 @@ double Hermite::evaluate(double x, int n) {
             return 1;
         }
         else if(n == 1) {
-            return 2 * m_omegaSqrt * x;
+            return 2 * prefactor * m_omegaSqrt * x;
         }
         else {
-            return 2 * (m_omegaSqrt * x * evaluate(x,n-1) - (n-1) * evaluate(x,n-2));
+            return 2 * prefactor * (m_omegaSqrt * x * evaluate(x,n-1) - (n-1) * evaluate(x,n-2));
         }
     }
-
-    //return std::hermite(unsigned(n),x);
 }
 
 double Hermite::evaluateDerivative(double x, int n) {
     //First derivative of Hermite polynomial of n'th degree
     bool hardcoded = true;
 
+    double prefactor = 1.0/sqrt(pow(2,n) * factorial(n));
+    prefactor *= pow((m_omega/M_PI),1/4.);
+
     if(hardcoded || n < 18) {
         switch(n) {
-            case 0: return DHH0(x);
-            case 1: return DHH1(x);
-            case 2: return DHH2(x);
-            case 3: return DHH3(x);
-            case 4: return DHH4(x);
-            case 5: return DHH5(x);
-            case 6: return DHH6(x);
-            case 7: return DHH7(x);
-            case 8: return DHH8(x);
-            case 9: return DHH9(x);
-            case 10: return DHH10(x);
-            case 11: return DHH11(x);
-            case 12: return DHH12(x);
-            case 13: return DHH13(x);
-            case 14: return DHH14(x);
-            case 15: return DHH15(x);
-            case 16: return DHH16(x);
-            case 17: return DHH17(x);
+            case 0: return prefactor * DHH0(x);
+            case 1: return prefactor * DHH1(x);
+            case 2: return prefactor * DHH2(x);
+            case 3: return prefactor * DHH3(x);
+            case 4: return prefactor * DHH4(x);
+            case 5: return prefactor * DHH5(x);
+            case 6: return prefactor * DHH6(x);
+            case 7: return prefactor * DHH7(x);
+            case 8: return prefactor * DHH8(x);
+            case 9: return prefactor * DHH9(x);
+            case 10: return prefactor * DHH10(x);
+            case 11: return prefactor * DHH11(x);
+            case 12: return prefactor * DHH12(x);
+            case 13: return prefactor * DHH13(x);
+            case 14: return prefactor * DHH14(x);
+            case 15: return prefactor * DHH15(x);
+            case 16: return prefactor * DHH16(x);
+            case 17: return prefactor * DHH17(x);
             default: return 0;
         }
     }
@@ -242,26 +246,29 @@ double Hermite::evaluateSecondDerivative(const double x, const int n) {
     //Second derivative of Hermite polynomial of n'th degree
     bool hardcoded = true;
 
+    double prefactor = 1.0/sqrt(pow(2,n) * factorial(n));
+    prefactor *= pow((m_omega/M_PI),1/4.);
+
     if(hardcoded || n < 18) {
         switch(n) {
-            case 0: return DDHH0(x);
-            case 1: return DDHH1(x);
-            case 2: return DDHH2(x);
-            case 3: return DDHH3(x);
-            case 4: return DDHH4(x);
-            case 5: return DDHH5(x);
-            case 6: return DDHH6(x);
-            case 7: return DDHH7(x);
-            case 8: return DDHH8(x);
-            case 9: return DDHH9(x);
-            case 10: return DDHH10(x);
-            case 11: return DDHH11(x);
-            case 12: return DDHH12(x);
-            case 13: return DDHH13(x);
-            case 14: return DDHH14(x);
-            case 15: return DDHH15(x);
-            case 16: return DDHH16(x);
-            case 17: return DDHH17(x);
+            case 0: return prefactor * DDHH0(x);
+            case 1: return prefactor * DDHH1(x);
+            case 2: return prefactor * DDHH2(x);
+            case 3: return prefactor * DDHH3(x);
+            case 4: return prefactor * DDHH4(x);
+            case 5: return prefactor * DDHH5(x);
+            case 6: return prefactor * DDHH6(x);
+            case 7: return prefactor * DDHH7(x);
+            case 8: return prefactor * DDHH8(x);
+            case 9: return prefactor * DDHH9(x);
+            case 10: return prefactor * DDHH10(x);
+            case 11: return prefactor * DDHH11(x);
+            case 12: return prefactor * DDHH12(x);
+            case 13: return prefactor * DDHH13(x);
+            case 14: return prefactor * DDHH14(x);
+            case 15: return prefactor * DDHH15(x);
+            case 16: return prefactor * DDHH16(x);
+            case 17: return prefactor * DDHH17(x);
             default: return 0;
         }
     }
