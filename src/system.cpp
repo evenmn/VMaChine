@@ -337,8 +337,8 @@ void System::setFrequency(const double omega) {
 }
 
 void System::setTotalSpin(const double totalSpin) {
-    double intpart;
-    assert(std::modf(m_numberOfParticles/2 - abs(totalSpin), &intpart) == 0.0);
+    //double intpart;
+    //assert(std::modf(m_numberOfParticles/2 - abs(totalSpin), &intpart) == 0.0);
     m_totalSpin = totalSpin;
 }
 

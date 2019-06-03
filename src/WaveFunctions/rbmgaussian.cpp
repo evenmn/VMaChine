@@ -13,8 +13,8 @@ RBMGaussian::RBMGaussian(System* system) :
 }
 
 void RBMGaussian::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters) {
@@ -58,7 +58,7 @@ double RBMGaussian::computeLaplacian() {;
 }
 
 Eigen::VectorXd RBMGaussian::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     gradients.head(m_numberOfFreeDimensions) = m_Xa/m_sigmaSqrd;
     return gradients;
 }

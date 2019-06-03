@@ -12,8 +12,8 @@ HydrogenLike::HydrogenLike(System* system) :
 }
 
 void HydrogenLike::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void HydrogenLike::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
@@ -60,7 +60,7 @@ double HydrogenLike::computeLaplacian() {
 }
 
 Eigen::VectorXd HydrogenLike::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     gradients(0) = - m_Z * m_radialVector.sum();
     return gradients;
 }

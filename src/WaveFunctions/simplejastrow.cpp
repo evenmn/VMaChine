@@ -13,8 +13,8 @@ SimpleJastrow::SimpleJastrow(System* system) :
 }
 
 void SimpleJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void SimpleJastrow::calculateG(int pRand) {
@@ -105,7 +105,7 @@ double SimpleJastrow::computeLaplacian() {
 }
 
 Eigen::VectorXd SimpleJastrow::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     Eigen::Map<Eigen::VectorXd> gradients2(m_distanceMatrix.data(), m_numberOfParticles*m_numberOfParticles);
     gradients.head(m_numberOfParticles*m_numberOfParticles) = gradients2;
     return gradients;

@@ -10,8 +10,8 @@ Gaussian::Gaussian(System* system) :
 }
 
 void Gaussian::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void Gaussian::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
@@ -41,7 +41,7 @@ void Gaussian::resetArrays() {
 }
 
 void Gaussian::updateParameters(const Eigen::MatrixXd parameters) {
-    m_alpha                             = parameters(m_elementNumber,0);
+    m_alpha = parameters(m_elementNumber,0);
 }
 
 double Gaussian::evaluateRatio() {
@@ -57,7 +57,7 @@ double Gaussian::computeLaplacian() {;
 }
 
 Eigen::VectorXd Gaussian::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     gradients(0) = - 0.5 * m_omega * m_positions.cwiseAbs2().sum();
     return gradients;
 }

@@ -19,8 +19,8 @@ template <typename T> int sgn(T val) {
 }
 
 void DRBMJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void DRBMJastrow::updateGradient() {
@@ -147,7 +147,7 @@ double DRBMJastrow::computeLaplacian() {
 }
 
 Eigen::VectorXd DRBMJastrow::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
 
     for(int l=0; l<m_numberOfHiddenNodes; l++) {
         gradients(l) = m_n(l);

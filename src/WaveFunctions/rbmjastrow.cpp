@@ -15,8 +15,8 @@ RBMJastrow::RBMJastrow(System* system) :
 }
 
 void RBMJastrow::setConstants(const int elementNumber) {
-    m_maxNumberOfParametersPerElement   = m_system->getMaxParameters();
-    m_elementNumber                     = elementNumber;
+    m_maxParameters = m_system->getMaxParameters();
+    m_elementNumber = elementNumber;
 }
 
 void RBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
@@ -73,7 +73,7 @@ double RBMJastrow::computeLaplacian() {
 }
 
 Eigen::VectorXd RBMJastrow::computeParameterGradient() {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxNumberOfParametersPerElement);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     Eigen::MatrixXd out = m_positions * m_n.transpose();
     gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
     gradients.head(m_numberOfHiddenNodes) = m_n;
