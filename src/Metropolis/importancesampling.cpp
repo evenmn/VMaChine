@@ -24,6 +24,8 @@ ImportanceSampling::ImportanceSampling(System* system) :
         m_quantumForceOld(i) = QuantumForce(i);
     }
     m_quantumForceNew        = m_quantumForceOld;
+
+    system->setGlobalArraysToCalculate();
     m_calculateDistanceMatrix = m_system->getCalculateDistanceMatrix();
     m_calculateRadialVector  = m_system->getCalculateRadialVector();
 }

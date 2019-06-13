@@ -15,6 +15,7 @@ BruteForce::BruteForce(System* system) :
     m_positions              = m_system->getInitialState()->getParticles();
     m_radialVector           = m_system->getInitialState()->getRadialVector();
     m_distanceMatrix         = m_system->getInitialState()->getDistanceMatrix();
+    system->setGlobalArraysToCalculate();
     m_calculateDistanceMatrix = m_system->getCalculateDistanceMatrix();
     m_calculateRadialVector  = m_system->getCalculateRadialVector();
 }
