@@ -4,8 +4,8 @@
 class HartreeFock : public Basis {
 public:
     HartreeFock(System* system, Basis *basis);
-    void numberOfOrbitals();
-    void generateListOfStates(int orbitals);
+    //void numberOfOrbitals();
+    //void generateListOfStates(int orbitals);
 
     double evaluate(double x, int n);
     double evaluateDerivative(double x, int n);
@@ -19,6 +19,8 @@ public:
     void readCoefficientFile();
 
 private:
+    int     m_numberOfOrbitals = 0;
+
     double  m_omega = 1;
     double  m_omegaSqrt = 1;
     long    m_basisSize = 1;

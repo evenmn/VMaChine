@@ -4,8 +4,8 @@
 class None : public Basis {
 public:
     None(System* system);
-    void numberOfOrbitals();
-    void generateListOfStates(int orbitals);
+    //void numberOfOrbitals();
+    //void generateListOfStates(int orbitals);
 
     double evaluate(double x, int n);
     double evaluateDerivative(double x, int n);

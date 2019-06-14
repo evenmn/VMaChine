@@ -1,6 +1,5 @@
 #pragma once
 #include "optimization.h"
-#include "../Eigen/Dense"
 
 class ADAM : public Optimization {
 public:

@@ -1,11 +1,11 @@
 #pragma once
 #include "../Eigen/Dense"
-#include <mpi.h>
 
 class Hamiltonian {
 public:
     Hamiltonian(class System* system);
     virtual int    getGlobalArrayNeed() = 0;
+    virtual int    getNumberOfSources() = 0;
     virtual double getExternalEnergy()  = 0;
     virtual double computeLocalEnergy() = 0;
     virtual ~Hamiltonian() = 0;

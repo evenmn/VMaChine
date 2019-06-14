@@ -1,6 +1,7 @@
 #include "basis.h"
 
 Basis::Basis(System *system) {
+    m_system = system;
 }
 
 long long Basis::factorial(const int n) {
@@ -43,6 +44,141 @@ void Basis::writeFileContentIntoEigenMatrix(std::string fileName, Eigen::MatrixX
         std::cout << "File '" << fileName << "' was not found" << std::endl;
         MPI_Finalize();
         exit(0);
+    }
+}
+
+Eigen::MatrixXi Basis::generateListOfStates(int numberOfSources) {
+    if(numberOfSources == 1) {
+        int orbitals = 0;
+        int i = 0;
+        while(true) {
+            int orb = 2 * binomial(i, m_numberOfDimensions);
+            if(orb == m_numberOfParticles) {
+                orbitals = i+1;
+                break;
+            }
+            else if(orb > m_numberOfParticles) {
+                std::cout << "Warning: An open shell is chosen" << std::endl;
+                orbitals = i+1;
+                break;
+            }
+            i++;
+        }
+
+        // Returns the index list used in Slater
+        // For instance (0,0), (1,0), (0,1) for 6P in 2D
+        //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
+        int numberOfStates = binomial(orbitals-1, m_numberOfDimensions);
+        Eigen::VectorXi listOfStates = Eigen::MatrixXi::Zero(numberOfStates, m_numberOfDimensions);
+        int counter = 0;
+        // Two dimensions
+        if (m_numberOfDimensions == 2) {
+            for(int i=0; i<orbitals; i++) {
+                for(int j=0; j<i+1; j++) {
+                    listOfStates(counter,0) = i-j;
+                    listOfStates(counter,1) = j;
+                    counter += 1;
+                }
+            }
+            return listOfStates;
+        }
+        // Three dimensions
+        else {
+            for(int i=0; i<orbitals; i++) {
+                for(int j=0; j<i+1; j++) {
+                    for(int k=0; k<i-j+1; k++) {
+                        listOfStates(counter,0) = i-j-k;
+                        listOfStates(counter,1) = j;
+                        listOfStates(counter,2) = k;
+                        counter += 1;
+                    }
+                }
+            }
+            return listOfStates;
+        }
+    }
+    else {
+        int orbitalsLHS = 0;
+        int orbitalsRHS = 0;
+        int orb1 = 0;
+        int orb2 = 0;
+        int i = 0;
+        while(true) {
+            int j = 0;
+            while(j<2) {
+                std::cout << j << std::endl;
+                std::cout << orb1 << std::endl;
+                std::cout << orb2 << std::endl;
+                if(orb1+orb2 == m_numberOfParticles) {
+                    orbitalsLHS = i;
+                    orbitalsRHS = j;
+                    std::cout << orbitalsLHS << std::endl;
+                    std::cout << orbitalsRHS << std::endl;
+                    goto endloop;
+                }
+                else if(orb1 + orb2 > m_numberOfParticles) {
+                    std::cout << "This program supports closed-shells only. Please choose a "
+                                 "number of particles such that the orbital is full" << std::endl;
+                    MPI_Finalize();
+                    exit(0);
+                }
+                orb2 = 2 * binomial(j, m_numberOfDimensions);
+                j++;
+            }
+            orb1 = 2 * binomial(i, m_numberOfDimensions);
+            i++;
+        }
+        endloop:
+        // Returns the index list used in Slater
+        // For instance (0,0), (1,0), (0,1) for 6P in 2D
+        //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
+        int numberOfStatesLHS = binomial(orbitalsLHS-1, m_numberOfDimensions);
+        int numberOfStatesRHS = binomial(orbitalsRHS-1, m_numberOfDimensions);
+        Eigen::MatrixXi listOfStates = Eigen::MatrixXi::Zero(numberOfStatesLHS+numberOfStatesRHS, m_numberOfDimensions);
+        int counter = 0;
+        // Two dimensions
+        if (m_numberOfDimensions == 2) {
+            for(int i=0; i<orbitalsLHS; i++) {
+                for(int j=0; j<i+1; j++) {
+                    listOfStates(counter,0) = i-j;
+                    listOfStates(counter,1) = j;
+                    counter += 1;
+                }
+            }
+            for(int i=0; i<orbitalsRHS; i++) {
+                for(int j=0; j<i+1; j++) {
+                    listOfStates(counter,0) = i-j;
+                    listOfStates(counter,1) = j;
+                    counter += 1;
+                }
+            }
+            return listOfStates;
+        }
+        // Three dimensions
+        else {
+            std::cout << "jj" << std::endl;
+            for(int i=0; i<orbitalsLHS; i++) {
+                for(int j=0; j<i+1; j++) {
+                    for(int k=0; k<i-j+1; k++) {
+                        listOfStates(counter,0) = i-j-k;
+                        listOfStates(counter,1) = j;
+                        listOfStates(counter,2) = k;
+                        counter += 1;
+                    }
+                }
+            }
+            for(int i=0; i<orbitalsRHS; i++) {
+                for(int j=0; j<i+1; j++) {
+                    for(int k=0; k<i-j+1; k++) {
+                        listOfStates(counter,0) = i-j-k;
+                        listOfStates(counter,1) = j;
+                        listOfStates(counter,2) = k;
+                        counter += 1;
+                    }
+                }
+            }
+            return listOfStates;
+        }
     }
 }
 

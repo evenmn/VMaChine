@@ -18,7 +18,7 @@ HartreeFock::HartreeFock(System *system, Basis *basis)  :
     m_path                  = m_system->getPath();
     m_basis                 = basis;
     readCoefficientFile();
-    numberOfOrbitals();
+    //numberOfOrbitals();
     generateListOfStates(m_numberOfOrbitals);
 }
 
@@ -54,6 +54,7 @@ void HartreeFock::readCoefficientFile() {
     }
 }
 
+/*
 void HartreeFock::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
@@ -75,6 +76,7 @@ void HartreeFock::numberOfOrbitals() {
 void HartreeFock::generateListOfStates(int orbitals) {
     m_basis->generateListOfStates(orbitals);
 }
+*/
 
 double HartreeFock::evaluate(double x, int n) {
     //Hermite polynomial of n'th degree

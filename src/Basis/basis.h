@@ -2,12 +2,12 @@
 #include "../Eigen/Dense"
 #include <mpi.h>
 #include <fstream>
+#include <iostream>
 
 class Basis {
 public:
     Basis(class System* system);
-    virtual void numberOfOrbitals() = 0;
-    virtual void generateListOfStates(int orbitals) = 0;
+    //virtual void generateListOfStates(int orbitals) = 0;
 
     virtual double evaluate(double x, int n) = 0;
     virtual double evaluateDerivative(double x, int n) = 0;
@@ -25,11 +25,16 @@ public:
     void writeFileContentIntoEigenMatrix(std::string fileName, Eigen::MatrixXd &matrix);
     std::ifstream::pos_type fileLength(std::string fileName);
 
-    int getNumberOfOrbitals() { return m_numberOfOrbitals; }
+    //void numberOfOrbitalsSourceOne(int &numberOfOrbitals);
+    //void numberOfOrbitalsSourceTwo(int &numberOfOrbitals1, int &numberOfOrbitals2);
+
+    Eigen::MatrixXi generateListOfStates(int orbitals);
+
+    //int getNumberOfOrbitals() { return m_numberOfOrbitals; }
 
 protected:
     class System* m_system = nullptr;
     int m_numberOfParticles = 0;
     int m_numberOfDimensions = 0;
-    int m_numberOfOrbitals = 0;
+    int m_numberOfSources = 0;
 };

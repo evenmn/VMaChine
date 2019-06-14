@@ -3,13 +3,14 @@
 #include "../system.h"
 #include "../WaveFunctions/wavefunction.h"
 
-DoubleWell::DoubleWell(System* system) :
+DoubleWell::DoubleWell(System* system, double b) :
         Hamiltonian(system) {
     m_omega                 = m_system->getFrequency();
     m_omega_sqrd            = m_omega * m_omega;
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     m_interaction           = m_system->getInteraction();
+    m_b                     = b;
 }
 
 double DoubleWell::getExternalEnergy() {

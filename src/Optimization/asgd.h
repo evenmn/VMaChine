@@ -1,6 +1,5 @@
 #pragma once
 #include "optimization.h"
-#include "../Eigen/Dense"
 
 class ASGD : public Optimization {
 public:

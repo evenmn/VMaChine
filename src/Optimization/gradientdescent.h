@@ -1,6 +1,5 @@
 #pragma once
 #include "optimization.h"
-#include "../Eigen/Dense"
 
 class GradientDescent : public Optimization {
 public:

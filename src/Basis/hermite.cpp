@@ -1,6 +1,7 @@
 //#define __STDCPP_WANT_MATH_SPEC_FUNCS__ 1
 #include "hermite.h"
 #include "../system.h"
+#include "../Hamiltonians/hamiltonian.h"
 #include <iostream>
 
 Hermite::Hermite(System *system)  :
@@ -8,27 +9,29 @@ Hermite::Hermite(System *system)  :
     m_system                = system;
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
+    m_numberOfSources       = 2; //m_system->getHamiltonian()->getNumberOfSources();
     m_omega                 = m_system->getFrequency();
     m_omegaSqrt             = sqrt(m_omega);
-    numberOfOrbitals();
-    generateListOfStates(m_numberOfOrbitals);
+    //numberOfOrbitals();
+    m_listOfStates = Basis::generateListOfStates(m_numberOfSources);
 }
 
+/*
 void Hermite::numberOfOrbitals() {
     //Number of closed-shell orbitals
-    int counter = 0;
+    int i = 0;
     while(true) {
-        int orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
+        int orb = 2 * Basis::binomial(i, m_numberOfDimensions);
         if(orb == m_numberOfParticles) {
-            m_numberOfOrbitals = counter+1;
+            m_numberOfOrbitals = i+1;
             break;
         }
         else if(orb > m_numberOfParticles) {
             std::cout << "Warning: An open shell is chosen" << std::endl;
-            m_numberOfOrbitals = counter+1;
+            m_numberOfOrbitals = i+1;
             break;
         }
-        counter += 1;
+        i++;
     }
 }
 
@@ -67,6 +70,7 @@ void Hermite::generateListOfStates(int orbitals) {
         exit(0);
     }
 }
+*/
 
 double Hermite::basisElement(const int n, Eigen::VectorXd positions) {
     double prod = 1;
