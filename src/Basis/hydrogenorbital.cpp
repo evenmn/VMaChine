@@ -9,7 +9,6 @@ HydrogenOrbital::HydrogenOrbital(System *system)  :
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     assert(m_numberOfDimensions == 3);
-    //numberOfOrbitals();
 }
 
 double laguerre(double x, int n) {

@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 4;
+    int     numberOfParticles   = 7;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 2000;
@@ -128,6 +128,7 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2) system->parser        (argv[1], numberOfIterations);
 
+    system->setHamiltonian              (new DoubleWell(system, 2));
     system->setBasis                    (new Hermite(system));
 
     std::vector<class WaveFunction*> waveFunctionElements;
@@ -142,9 +143,8 @@ int main(int argc, char *argv[]) {
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Randomize(system, 0.1));
+    system->setInitialWeights           (new Randomize(system, 0.01));
     system->setInitialState             (new RandomNormal(system));
-    system->setHamiltonian              (new DoubleWell(system, 2));
     system->setMetropolis               (new ImportanceSampling(system));
     system->runIterations               (numberOfIterations);
 

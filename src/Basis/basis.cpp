@@ -58,7 +58,7 @@ Eigen::MatrixXi Basis::generateListOfStates(int numberOfSources) {
                 break;
             }
             else if(orb > m_numberOfParticles) {
-                std::cout << "Warning: An open shell is chosen" << std::endl;
+                std::cout << "Warning: An open shell configuration is chosen" << std::endl;
                 orbitals = i+1;
                 break;
             }
@@ -104,16 +104,23 @@ Eigen::MatrixXi Basis::generateListOfStates(int numberOfSources) {
         int orb2 = 0;
         int i = 0;
         while(true) {
+            if(i==0) {
+                orb1 = 0;
+            }
+            else {
+                orb1 = 2 * binomial(i-1, m_numberOfDimensions);
+            }
             int j = 0;
             while(j<2) {
-                std::cout << j << std::endl;
-                std::cout << orb1 << std::endl;
-                std::cout << orb2 << std::endl;
+                if(i==0) {
+                    orb2 = 0;
+                }
+                else {
+                    orb2 = 2 * binomial(j-1, m_numberOfDimensions);
+                }
                 if(orb1+orb2 == m_numberOfParticles) {
                     orbitalsLHS = i;
                     orbitalsRHS = j;
-                    std::cout << orbitalsLHS << std::endl;
-                    std::cout << orbitalsRHS << std::endl;
                     goto endloop;
                 }
                 else if(orb1 + orb2 > m_numberOfParticles) {
@@ -122,10 +129,8 @@ Eigen::MatrixXi Basis::generateListOfStates(int numberOfSources) {
                     MPI_Finalize();
                     exit(0);
                 }
-                orb2 = 2 * binomial(j, m_numberOfDimensions);
                 j++;
             }
-            orb1 = 2 * binomial(i, m_numberOfDimensions);
             i++;
         }
         endloop:
@@ -156,7 +161,7 @@ Eigen::MatrixXi Basis::generateListOfStates(int numberOfSources) {
         }
         // Three dimensions
         else {
-            std::cout << "jj" << std::endl;
+            //std::cout << "jj" << std::endl;
             for(int i=0; i<orbitalsLHS; i++) {
                 for(int j=0; j<i+1; j++) {
                     for(int k=0; k<i-j+1; k++) {
