@@ -8,7 +8,6 @@
 #include "Metropolis/metropolis.h"
 #include "Optimization/optimization.h"
 #include "RNG/rng.h"
-//#include "tqdm/tqdm.h"
 
 #include <mpi.h>
 #include <iostream>
@@ -22,7 +21,7 @@ void System::runIterations(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_distanceMatrix            = m_initialState->getDistanceMatrix();
     m_radialVector              = m_initialState->getRadialVector();
-    m_parameters                = m_initialWeights->getWeights();
+    m_parameters                = m_initialWeights->getParameters();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles();
     m_lastIteration = numberOfIterations - m_rangeOfAdaptiveSteps - 1;
@@ -30,7 +29,6 @@ void System::runIterations(const int numberOfIterations) {
     setAllConstants();
 
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
-    //for(m_iter : tqdm::range(numberOfIterations)) {
         if(m_applyDynamicSteps) {
             m_stepsWOEqui      = m_initialStepsWOEqui * adaptiveSteps();
             m_stepsWEqui       = m_stepsWOEqui + m_equilibriationSteps;

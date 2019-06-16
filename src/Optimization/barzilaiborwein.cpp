@@ -8,14 +8,14 @@
 
 BarzilaiBorwein::BarzilaiBorwein(System* system) :
         Optimization(system) {
-    m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
-    m_numberOfElements    = m_system->getNumberOfElements();
-    m_maxParameters = m_system->getMaxParameters();
-    m_waveFunctionVector              = m_system->getWaveFunctionElements();
-    m_eta                             = m_system->getLearningRate();
-    m_parameters                      = m_system->getInitialWeights()->getWeights();
-    m_gradients                       = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
-    m_oldParameters                   = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
+    m_numberOfFreeDimensions    = m_system->getNumberOfFreeDimensions();
+    m_numberOfElements          = m_system->getNumberOfElements();
+    m_maxParameters             = m_system->getMaxParameters();
+    m_waveFunctionVector        = m_system->getWaveFunctionElements();
+    m_eta                       = m_system->getLearningRate();
+    m_parameters                = m_system->getInitialWeights()->getParameters();
+    m_gradients                 = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
+    m_oldParameters             = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
 }
 
 Eigen::MatrixXd BarzilaiBorwein::updateParameters() {

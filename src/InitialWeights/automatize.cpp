@@ -6,13 +6,14 @@
 #include "../Optimization/optimization.h"
 #include "../system.h"
 
-Automatize::Automatize(System* system)  :  InitialWeights(system) {
+Automatize::Automatize(System* system) :
+    InitialWeights(system) {
     m_system             = system;
     m_path               = m_system->getPath();
     m_numberOfParticles  = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_numberOfElements                = m_system->getNumberOfElements();
-    m_maxNumberOfParametersPerElement = m_system->getMaxParameters();
+    m_numberOfElements   = m_system->getNumberOfElements();
+    m_maxParameters      = m_system->getMaxParameters();
     m_interaction        = m_system->getInteraction();
     m_omega              = m_system->getFrequency();
     m_initialTotalStepsWOEqui = m_system->getInitialTotalStepsWOEqui();
@@ -29,7 +30,7 @@ std::string Automatize::generateFileName(std::string name, std::string extension
     fileName += std::to_string(m_numberOfParticles)   + "P/";
     fileName += std::to_string(m_omega)               + "w/";
     fileName += m_system->getOptimization()->getLabel();
-    fileName += "_MC" + std::to_string(1048575);
+    fileName += "_MC" + std::to_string(m_initialTotalStepsWOEqui);
     fileName += extension;
     return fileName;
 }
@@ -54,7 +55,7 @@ void writeFileContentIntoEigenMatrix(std::ifstream infile, Eigen::MatrixXd &matr
 void Automatize::setupInitialWeights() {
     std::ifstream infile(generateFileName("weights", ".dat"));
     if(infile.is_open()) {
-        m_parameters = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxNumberOfParametersPerElement);
+        m_parameters = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
         std::string line;
         double value;
         char delimiter;
@@ -69,27 +70,31 @@ void Automatize::setupInitialWeights() {
             }
             i++;
         }
-        m_system->updateAllParameters(m_parameters);
     }
     else {
         if(m_trialWaveFunction == "VMC") {
-            Constant(m_system, 1.0);
+            m_method = new Constant(m_system, 1.0);
         }
         else if(m_trialWaveFunction == "RBM") {
-            Randomize(m_system, 0.5);
-            //m_parameters = Randomize::getParameters();
+            m_method = new Randomize(m_system, 0.5);
+        }
+        else if(m_trialWaveFunction == "RBMSJ") {
+            m_method = new Randomize(m_system, 0.1);
         }
         else if(m_trialWaveFunction == "RBMPJ") {
-            Randomize(m_system, 0.1);
+            m_method = new Randomize(m_system, 0.1);
         }
         else if(m_trialWaveFunction == "PRBM") {
-            Constant(m_system, 0.0);
-        }
-        else if(m_trialWaveFunction == "DRBM") {
-            Constant(m_system, 0.0);
+            m_method = new Constant(m_system, 0.0);
         }
         else {
-            Randomize(m_system, 0.01);
+            m_method = new Randomize(m_system, 0.01);
         }
+        m_parameters = m_method->getParameters();
     }
+    m_system->updateAllParameters(m_parameters);
+}
+
+Eigen::MatrixXd Automatize::getParameters() {
+    return m_parameters;
 }

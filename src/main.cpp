@@ -61,13 +61,13 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 6;
+    int     numberOfParticles   = 30;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfSteps       = int(pow(2,15));
     int     numberOfIterations  = 2000;
     double  totalSpin           = 0;                        // totalSpin is half-integer
     double  learningRate        = 0.01;
-    double  omega               = 0.01;                      // Oscillator frequency
+    double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
     double  stepLength          = 0.1;                      // Metropolis step length
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Constant(system, 1.0));
+    system->setInitialWeights           (new Automatize(system));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
