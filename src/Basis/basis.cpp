@@ -69,7 +69,7 @@ Eigen::MatrixXi Basis::generateListOfStates(int numberOfSources) {
         // For instance (0,0), (1,0), (0,1) for 6P in 2D
         //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
         int numberOfStates = binomial(orbitals-1, m_numberOfDimensions);
-        Eigen::VectorXi listOfStates = Eigen::MatrixXi::Zero(numberOfStates, m_numberOfDimensions);
+        Eigen::MatrixXi listOfStates = Eigen::MatrixXi::Zero(numberOfStates, m_numberOfDimensions);
         int counter = 0;
         // Two dimensions
         if (m_numberOfDimensions == 2) {

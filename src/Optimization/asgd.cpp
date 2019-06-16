@@ -7,13 +7,13 @@
 
 ASGD::ASGD(System* system, const double gamma) :
         Optimization(system) {
-    m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
-    m_numberOfElements    = m_system->getNumberOfElements();
-    m_maxParameters = m_system->getMaxParameters();
-    m_waveFunctionVector              = m_system->getWaveFunctionElements();
-    m_eta                             = m_system->getLearningRate();
-    m_v                               = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
-    m_gamma                           = gamma;
+    m_numberOfFreeDimensions    = m_system->getNumberOfFreeDimensions();
+    m_numberOfElements          = m_system->getNumberOfElements();
+    m_maxParameters             = m_system->getMaxParameters();
+    m_waveFunctionVector        = m_system->getWaveFunctionElements();
+    m_eta                       = m_system->getLearningRate();
+    m_v                         = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+    m_gamma                     = gamma;
 }
 
 Eigen::MatrixXd ASGD::updateParameters() {

@@ -22,7 +22,7 @@ void System::runIterations(const int numberOfIterations) {
     m_positions                 = m_initialState->getParticles();
     m_distanceMatrix            = m_initialState->getDistanceMatrix();
     m_radialVector              = m_initialState->getRadialVector();
-    m_parameters                = m_initialWeights->getWeights();
+    m_parameters                = m_initialWeights->getParameters();
     m_sampler                   = new Sampler(this);
     m_sampler->openOutputFiles();
     m_lastIteration = numberOfIterations - m_rangeOfAdaptiveSteps - 1;

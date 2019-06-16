@@ -7,14 +7,14 @@
 
 ADAM::ADAM(System* system) :
         Optimization(system) {
-    m_numberOfFreeDimensions          = m_system->getNumberOfFreeDimensions();
-    m_numberOfElements    = m_system->getNumberOfElements();
-    m_maxParameters = m_system->getMaxParameters();
-    m_waveFunctionVector              = m_system->getWaveFunctionElements();
-    m_eta                             = m_system->getLearningRate();
-    m_m                               = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
-    m_v                               = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
-    m_theta                           = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+    m_numberOfFreeDimensions    = m_system->getNumberOfFreeDimensions();
+    m_numberOfElements          = m_system->getNumberOfElements();
+    m_maxParameters             = m_system->getMaxParameters();
+    m_waveFunctionVector        = m_system->getWaveFunctionElements();
+    m_eta                       = m_system->getLearningRate();
+    m_m                         = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+    m_v                         = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+    m_theta                     = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
 }
 
 Eigen::MatrixXd ADAM::updateParameters() {
