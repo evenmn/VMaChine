@@ -1,0 +1,47 @@
+#include "system.h"
+#include "sampler.h"
+
+#include "WaveFunctions/wavefunction.h"
+#include "WaveFunctions/gaussian.h"
+#include "WaveFunctions/padejastrow.h"
+#include "WaveFunctions/slaterdeterminant.h"
+#include "WaveFunctions/rbmgaussian.h"
+#include "WaveFunctions/rbmjastrow.h"
+#include "WaveFunctions/drbmjastrow.h"
+#include "WaveFunctions/simplejastrow.h"
+#include "WaveFunctions/partlyrestricted.h"
+
+#include "Hamiltonians/hamiltonian.h"
+#include "Hamiltonians/harmonicoscillator.h"
+#include "Hamiltonians/atomicnucleus.h"
+#include "Hamiltonians/doublewell.h"
+
+#include "Basis/basis.h"
+#include "Basis/none.h"
+#include "Basis/hermite.h"
+#include "Basis/hermitespin.h"
+#include "Basis/hydrogenorbital.h"
+#include "Basis/hartreefock.h"
+#include "Basis/hermiteexpansion.h"
+
+#include "InitialStates/initialstate.h"
+#include "InitialStates/randomuniform.h"
+#include "InitialStates/randomnormal.h"
+
+#include "InitialWeights/initialweights.h"
+#include "InitialWeights/constant.h"
+#include "InitialWeights/randomize.h"
+#include "InitialWeights/automatize.h"
+
+#include "Metropolis/metropolis.h"
+#include "Metropolis/bruteforce.h"
+#include "Metropolis/importancesampling.h"
+
+#include "Optimization/optimization.h"
+#include "Optimization/gradientdescent.h"
+#include "Optimization/barzilaiborwein.h"
+#include "Optimization/sgd.h"
+#include "Optimization/adam.h"
+
+#include "RNG/rng.h"
+#include "RNG/mersennetwister.h"

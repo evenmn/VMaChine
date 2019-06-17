@@ -1,55 +1,6 @@
 #include <mpi.h>
-#include "system.h"
 #include <string>
-
-#include "WaveFunctions/wavefunction.h"
-#include "WaveFunctions/gaussian.h"
-#include "WaveFunctions/padejastrow.h"
-#include "WaveFunctions/slaterdeterminant.h"
-#include "WaveFunctions/rbmgaussian.h"
-#include "WaveFunctions/rbmjastrow.h"
-#include "WaveFunctions/drbmjastrow.h"
-#include "WaveFunctions/simplejastrow.h"
-#include "WaveFunctions/partlyrestricted.h"
-
-#include "Hamiltonians/hamiltonian.h"
-#include "Hamiltonians/harmonicoscillator.h"
-#include "Hamiltonians/atomicnucleus.h"
-#include "Hamiltonians/doublewell.h"
-
-#include "Basis/basis.h"
-#include "Basis/none.h"
-#include "Basis/hermite.h"
-#include "Basis/hermitespin.h"
-#include "Basis/hydrogenorbital.h"
-#include "Basis/hartreefock.h"
-#include "Basis/hermiteexpansion.h"
-
-#include "InitialStates/initialstate.h"
-#include "InitialStates/randomuniform.h"
-#include "InitialStates/randomnormal.h"
-
-#include "InitialWeights/initialweights.h"
-#include "InitialWeights/constant.h"
-#include "InitialWeights/randomize.h"
-#include "InitialWeights/automatize.h"
-
-#include "Metropolis/metropolis.h"
-#include "Metropolis/bruteforce.h"
-#include "Metropolis/importancesampling.h"
-
-#include "Optimization/optimization.h"
-#include "Optimization/gradientdescent.h"
-#include "Optimization/barzilaiborwein.h"
-#include "Optimization/sgd.h"
-#include "Optimization/adam.h"
-
-#include "RNG/rng.h"
-#include "RNG/mersennetwister.h"
-
-/* TODO:
-    - call setGlobalArraysToCalculate from another function
-*/
+#include "allheaders.h"
 
 int main(int argc, char *argv[]) {
     // MPI initializations
@@ -61,12 +12,12 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 30;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,15));
-    int     numberOfIterations  = 2000;
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 100;
     double  totalSpin           = 0;                        // totalSpin is half-integer
-    double  learningRate        = 0.01;
+    double  learningRate        = 0.001;
     double  omega               = 1.0;                      // Oscillator frequency
     int     Z                   = numberOfParticles;        // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);            // Width of probability distribution
@@ -130,10 +81,10 @@ int main(int argc, char *argv[]) {
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> waveFunctionElements;
-    waveFunctionElements.push_back      (new class Gaussian          (system));
+    //waveFunctionElements.push_back      (new class Gaussian          (system));
     waveFunctionElements.push_back      (new class SlaterDeterminant (system));
-    //waveFunctionElements.push_back      (new class RBMGaussian       (system));
-    //waveFunctionElements.push_back      (new class RBMJastrow        (system));
+    waveFunctionElements.push_back      (new class RBMGaussian       (system));
+    waveFunctionElements.push_back      (new class RBMJastrow        (system));
     //waveFunctionElements.push_back      (new class SimpleJastrow     (system));
     waveFunctionElements.push_back      (new class PadeJastrow       (system));
     //waveFunctionElements.push_back      (new class PartlyRestricted  (system));
@@ -145,6 +96,7 @@ int main(int argc, char *argv[]) {
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));
+
     system->runIterations               (numberOfIterations);
 
     return 0;

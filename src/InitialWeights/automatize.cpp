@@ -54,7 +54,7 @@ void writeFileContentIntoEigenMatrix(std::ifstream infile, Eigen::MatrixXd &matr
 
 void Automatize::setupInitialWeights() {
     std::ifstream infile(generateFileName("weights", ".dat"));
-    if(infile.is_open()) {
+    if(infile.is_open() && m_initialTotalStepsWOEqui==100) {
         m_parameters = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
         std::string line;
         double value;

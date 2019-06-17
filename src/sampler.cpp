@@ -34,11 +34,11 @@ Sampler::Sampler(System* system) {
     m_numberOfBatches           = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch     = int(m_stepsWOEqui/m_numberOfBatches);
     m_interaction               = m_system->getInteraction();
-    m_computeOneBodyDensity     = m_system->getDensity();
+    m_computeOneBodyDensity     = m_system->computeOneBodyDensity();
     m_computeTwoBodyDensity     = m_system->computeTwoBodyDensity();
-    m_printEnergyToFile         = m_system->getPrintEnergy();
-    m_printInstantEnergyToFile  = m_system->getPrintInstantEnergy();
-    m_printParametersToFile     = m_system->getPrintParametersToFile();
+    m_printEnergyToFile         = m_system->printEnergyToFile();
+    m_printInstantEnergyToFile  = m_system->doResampling();
+    m_printParametersToFile     = m_system->printParametersToFile();
     m_numberOfBins              = m_system->getNumberOfBins();
     m_maxRadius                 = m_system->getMaxRadius();
     m_rank                      = m_system->getRank();
@@ -180,7 +180,7 @@ void Sampler::doResampling() {
         m_mseSTD        = block.mse_stdErr;
         m_mseVariance   = m_mseSTD * m_mseSTD;
         if(remove(m_instantEnergyFileName.c_str()) != 0)
-            perror( " Could not remove blocking file" );
+            perror( "Could not remove blocking file" );
     }
 }
 

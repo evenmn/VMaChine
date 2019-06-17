@@ -1,20 +1,10 @@
-#include "system.h"
-#include "sampler.h"
-#include "WaveFunctions/wavefunction.h"
-#include "Hamiltonians/hamiltonian.h"
-#include "Basis/basis.h"
-#include "InitialStates/initialstate.h"
-#include "InitialWeights/initialweights.h"
-#include "Metropolis/metropolis.h"
-#include "Optimization/optimization.h"
-#include "RNG/rng.h"
-
 #include <mpi.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <ctime>
 #include <string>
+#include "allheaders.h"
 
 void System::runIterations(const int numberOfIterations) {
     setGradients                ();
@@ -29,7 +19,7 @@ void System::runIterations(const int numberOfIterations) {
     setAllConstants();
 
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
-        if(m_applyDynamicSteps) {
+        if(m_applyAdaptiveSteps) {
             m_stepsWOEqui      = m_initialStepsWOEqui * adaptiveSteps();
             m_stepsWEqui       = m_stepsWOEqui + m_equilibriationSteps;
             m_totalStepsWOEqui = m_initialTotalStepsWOEqui * adaptiveSteps();
@@ -111,57 +101,12 @@ void System::checkingConvergence() {
 int System::adaptiveSteps() {
     int stepRatio = 1;
     if(m_iter == m_lastIteration+m_rangeOfAdaptiveSteps) {
-        stepRatio = int(pow(2,m_additionalStepsLastIteration));
-        stepRatio = int(pow(2,m_additionalStepsLastIteration));
+        stepRatio = int(pow(2,m_additionalStepsLastIter));
     }
     else if(m_iter >= m_lastIteration) {
         stepRatio = int(pow(2,m_additionalSteps));
-        stepRatio = int(pow(2,m_additionalSteps));
     }
     return stepRatio;
-}
-
-void System::parser(const std::string configFile, int &numberOfIterations) {
-    std::ifstream infile;
-    infile.open(configFile.c_str());
-    if (!infile.is_open()) {
-        perror("File not found");
-    }
-    std::string line;
-    while(std::getline(infile,line)) {
-        std::istringstream is_line(line);
-        std::string key;
-        if(std::getline(is_line, key, ':')) {
-            std::string value;
-            if(std::getline(is_line, value)) {
-                if(key == "numParticles") {
-                    m_numberOfParticles = std::stoi(value);
-                }
-                else if(key == "numDimensions") {
-                    m_numberOfDimensions = std::stoi(value);
-                }
-                else if(key == "omega") {
-                    m_omega = std::stod(value);
-                }
-                else if(key == "learningRate") {
-                    m_eta = std::stod(value);
-                }
-                else if(key == "maxRadius") {
-                    m_maxRadius = std::stoi(value);
-                }
-                else if(key == "numIterations") {
-                    numberOfIterations = std::stoi(value);
-                }
-                else {
-                    perror("Key not found, please choose a valid key");
-                }
-            }
-        }
-    }
-    m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
-    m_numberOfHiddenNodes    = m_numberOfParticles;
-    m_sigma                  = 1/sqrt(m_omega);
-    m_Z                      = m_numberOfParticles;
 }
 
 void System::setAllConstants() {
@@ -367,22 +312,22 @@ void System::setConvergenceTools(bool checkConvergence, int numberOfEnergies, do
 }
 
 void System::setAdaptiveStepTools(bool applyAdaptiveSteps, int rangeOfAdaptiveSteps, int additionalSteps, int additionalStepsLastIteration) {
-    m_applyDynamicSteps = applyAdaptiveSteps;
-    m_rangeOfAdaptiveSteps = rangeOfAdaptiveSteps;
-    m_additionalSteps = additionalSteps;
-    m_additionalStepsLastIteration = additionalStepsLastIteration;
+    m_applyAdaptiveSteps      = applyAdaptiveSteps;
+    m_rangeOfAdaptiveSteps    = rangeOfAdaptiveSteps;
+    m_additionalSteps         = additionalSteps;
+    m_additionalStepsLastIter = additionalStepsLastIteration;
 }
 
 void System::setDensityTools(bool computeDensity, bool computeTwoBodyDensity, int numberOfBins, double maxRadius) {
-    m_computeDensity        = computeDensity;
+    m_computeOneBodyDensity = computeDensity;
     m_computeTwoBodyDensity = computeTwoBodyDensity;
     m_numberOfBins          = numberOfBins;
     m_maxRadius             = maxRadius;
 }
 
 void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnergyFile) {
-    m_printEnergyFile        = printEnergyFile;
-    m_printInstantEnergyFile = printInstantEnergyFile;
+    m_printEnergyToFile = printEnergyFile;
+    m_doResampling      = printInstantEnergyFile;
 }
 
 void System::setParameterPrintingTools(bool printParametersToFile) {
@@ -434,6 +379,232 @@ void System::setRandomNumberGenerator(RandomNumberGenerator* randomNumberGenerat
 
 void System::setGradients() {
     m_gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
+}
+
+void System::parser(const std::string configFile, int &numberOfIterations) {
+    std::ifstream infile;
+    infile.open(configFile.c_str());
+    if (!infile.is_open()) {
+        perror("File not found");
+    }
+    std::string line;
+    while(std::getline(infile,line)) {
+        std::istringstream is_line(line);
+        std::string key;
+        if(std::getline(is_line, key, ':')) {
+            key.erase(remove_if(key.begin(), key.end(), isspace), key.end());
+            std::string value;
+            if(std::getline(is_line, value)) {
+                value.erase(remove_if(value.begin(), value.end(), isspace), value.end());
+                if(key == "numParticles") {
+                    m_numberOfParticles = std::stoi(value);
+                }
+                else if(key == "numDimensions") {
+                    m_numberOfDimensions = std::stoi(value);
+                }
+                else if(key == "omega") {
+                    m_omega = std::stod(value);
+                }
+                else if(key == "learningRate") {
+                    m_eta = std::stod(value);
+                }
+                else if(key == "maxRadius") {
+                    m_maxRadius = std::stod(value);
+                }
+                else if(key == "numIterations") {
+                    numberOfIterations = std::stoi(value);
+                }
+                else if(key == "numSteps") {
+                    m_initialTotalStepsWOEqui = std::stoi(value);
+                }
+                else if(key == "numHiddenNodes") {
+                    m_numberOfHiddenNodes = std::stoi(value);
+                }
+                else if(key == "totalSpin") {
+                    m_totalSpin = std::stod(value);
+                }
+                else if(key == "stepLength") {
+                    m_stepLength = std::stod(value);
+                }
+                else if(key == "equilibriation") {
+                    m_equilibrationFraction = std::stod(value);
+                }
+                else if(key == "interaction") {
+                    m_interaction = std::stoi(value);
+                }
+                else if(key == "checkConvergence") {
+                    m_checkConvergence = std::stoi(value);
+                }
+                else if(key == "applyAdaptiveSteps") {
+                    m_applyAdaptiveSteps = std::stoi(value);
+                }
+                else if(key == "computeOneBodyDensity") {
+                    m_computeOneBodyDensity = std::stoi(value);
+                }
+                else if(key == "computeTwoBodyDensity") {
+                    m_computeTwoBodyDensity = std::stoi(value);
+                }
+                else if(key == "printEnergyToFile") {
+                    m_printEnergyToFile = std::stoi(value);
+                }
+                else if(key == "printParametersToFile") {
+                    m_printParametersToFile = std::stoi(value);
+                }
+                else if(key == "doResampling") {
+                    m_doResampling = std::stoi(value);
+                }
+                else if(key == "path") {
+                    m_path = value;
+                }
+                else if(key == "numberOfEnergies") {
+                    m_numberOfEnergies = std::stoi(value);
+                }
+                else if(key == "tolerance") {
+                    m_tolerance = std::stod(value);
+                }
+                else if(key == "rangeOfAdaptiveSteps") {
+                    m_rangeOfAdaptiveSteps = std::stoi(value);
+                }
+                else if(key == "additionalSteps") {
+                    m_additionalSteps = std::stoi(value);
+                }
+                else if(key == "additionalStepsLastIter") {
+                    m_additionalStepsLastIter = std::stoi(value);
+                }
+                else if(key == "numberOfBins") {
+                    m_numberOfBins = std::stoi(value);
+                }
+                else if(key == "waveFunction") {
+                    std::vector<class WaveFunction*> waveFunctionElements;
+                    if(value == "VMC") {
+                        waveFunctionElements.push_back      (new class Gaussian          (this));
+                        waveFunctionElements.push_back      (new class SlaterDeterminant (this));
+                        waveFunctionElements.push_back      (new class PadeJastrow       (this));
+                    }
+                    else if(value == "RBM") {
+                        waveFunctionElements.push_back      (new class SlaterDeterminant (this));
+                        waveFunctionElements.push_back      (new class RBMGaussian       (this));
+                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                    }
+                    else if(value == "RBMPJ") {
+                        waveFunctionElements.push_back      (new class SlaterDeterminant (this));
+                        waveFunctionElements.push_back      (new class RBMGaussian       (this));
+                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                        waveFunctionElements.push_back      (new class PadeJastrow       (this));
+                    }
+                    else if(value == "RBMSJ") {
+                        waveFunctionElements.push_back      (new class SlaterDeterminant (this));
+                        waveFunctionElements.push_back      (new class RBMGaussian       (this));
+                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                        waveFunctionElements.push_back      (new class SimpleJastrow     (this));
+                    }
+                    else if(value == "PRBM") {
+                        waveFunctionElements.push_back      (new class SlaterDeterminant (this));
+                        waveFunctionElements.push_back      (new class RBMGaussian       (this));
+                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                        waveFunctionElements.push_back      (new class PartlyRestricted  (this));
+                    }
+                    else {
+                        std::cout << value << " is not a known wave function configuration" << std::endl;
+                        MPI_Finalize();
+                        exit(0);
+                    }
+                    setWaveFunctionElements(waveFunctionElements);
+                }
+                else if(key == "basis") {
+                    if(value == "hermite") {
+                        setBasis(new Hermite(this));
+                    }
+                    else if(value == "hermiteExpansion") {
+                        setBasis(new HermiteExpansion(this));
+                    }
+                    else {
+                        std::cout << value << " is not a known basis" << std::endl;
+                        MPI_Finalize();
+                        exit(0);
+                    }
+                }
+                else if(key == "hamiltonian") {
+                    if(value == "harmonicOscillator") {
+                        setHamiltonian(new HarmonicOscillator(this));
+                    }
+                    else if(value == "doubleWell") {
+                        setHamiltonian(new DoubleWell(this));
+                    }
+                    else {
+                        std::cout << value << " is not a known Hamiltonian" << std::endl;
+                        MPI_Finalize();
+                        exit(0);
+                    }
+                }
+                else if(key == "optimization") {
+                    if(value == "adam") {
+                        setOptimization(new ADAM(this));
+                    }
+                    else if(value == "gd") {
+                        setOptimization(new GradientDescent(this,0.0,0.0));
+                    }
+                    else if(value == "sgd") {
+                        setOptimization(new SGD(this,0.0,0.0));
+                    }
+                    else {
+                        std::cout << value << " is not a known optimization tool" << std::endl;
+                        MPI_Finalize();
+                        exit(0);
+                    }
+                }
+                else if(key == "initialWeights") {
+                    if(value == "automatize") {
+                        setInitialWeights(new Automatize(this));
+                    }
+                    else if(value == "randomize") {
+                        setInitialWeights(new Randomize(this, 0.1));
+                    }
+                    else if(value == "constant") {
+                        setInitialWeights(new Constant(this,1.0));
+                    }
+                    else {
+                        std::cout << value << " is not a known initial weight configuration" << std::endl;
+                        MPI_Finalize();
+                        exit(0);
+                    }
+                }
+                else if(key == "initialState") {
+                    if(value == "randomNormal") {
+                        setInitialState(new RandomNormal(this));
+                    }
+                    else if(value == "randomUniform") {
+                        setInitialState(new RandomUniform(this));
+                    }
+                    else {
+                        std::cout << value << " is not a known initial state configuration" << std::endl;
+                        MPI_Finalize();
+                        exit(0);
+                    }
+                }
+                else if(key == "sampling") {
+                    if(value == "importanceSampling") {
+                        setMetropolis(new ImportanceSampling(this));
+                    }
+                    else if(value == "bruteForce") {
+                        setMetropolis(new BruteForce(this));
+                    }
+                    else {
+                        std::cout << value << " is not a known sampling tool" << std::endl;
+                        MPI_Finalize();
+                        exit(0);
+                    }
+                }
+                else {
+                    perror("Key not found, please choose a valid key");
+                }
+            }
+        }
+    }
+    m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
+    m_numberOfHiddenNodes    = m_numberOfParticles;
+    m_sigma                  = 1/sqrt(m_omega);
+    m_Z                      = m_numberOfParticles;
 }
 
 void System::searchShortning(const std::vector<std::string> labels, const std::string newLabel, std::string &allLabels) {

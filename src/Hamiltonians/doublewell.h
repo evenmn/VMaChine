@@ -1,6 +1,5 @@
 #pragma once
 #include "hamiltonian.h"
-#include "../Eigen/Dense"
 
 class DoubleWell : public Hamiltonian {
 public:

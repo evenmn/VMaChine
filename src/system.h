@@ -110,11 +110,11 @@ public:
     double                          getStepLength()              { return m_stepLength; }
     double                          getTotalSpin()               { return m_totalSpin; }
     bool                            getInteraction()             { return m_interaction; }
-    bool                            getDensity()                 { return m_computeDensity; }
+    bool                            computeOneBodyDensity()      { return m_computeOneBodyDensity; }
     bool                            computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
-    bool                            getPrintEnergy()             { return m_printEnergyFile; }
-    bool                            getPrintParametersToFile()   { return m_printParametersToFile; }
-    bool                            getPrintInstantEnergy()      { return m_printInstantEnergyFile; }
+    bool                            printEnergyToFile()          { return m_printEnergyToFile; }
+    bool                            printParametersToFile()      { return m_printParametersToFile; }
+    bool                            doResampling()               { return m_doResampling; }
     bool                            getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
     bool                            getCalculateRadialVector()   { return m_calculateRadialVector; }
     Eigen::VectorXd                 getPositions()               { return m_positions; }
@@ -135,9 +135,9 @@ private:
     int                                 m_maxParameters             = 0;
     int                                 m_totalNumberOfParameters   = 0;
     int                                 m_Z                         = 1;
-    int                                 m_rangeOfAdaptiveSteps       = 10;
+    int                                 m_rangeOfAdaptiveSteps      = 10;
     int                                 m_additionalSteps           = 4;
-    int                                 m_additionalStepsLastIteration = 8;
+    int                                 m_additionalStepsLastIter   = 8;
     int                                 m_lastIteration             = 1;
     int                                 m_numberOfEnergies          = 0;
     int                                 m_numberOfBins              = 1;
@@ -166,11 +166,11 @@ private:
 
     bool                                m_interaction               = true;
     bool                                m_checkConvergence          = true;
-    bool                                m_applyDynamicSteps         = true;
-    bool                                m_computeDensity            = true;
+    bool                                m_applyAdaptiveSteps        = true;
+    bool                                m_computeOneBodyDensity     = true;
     bool                                m_computeTwoBodyDensity     = true;
-    bool                                m_printEnergyFile           = true;
-    bool                                m_printInstantEnergyFile    = true;
+    bool                                m_printEnergyToFile         = true;
+    bool                                m_doResampling              = true;
     bool                                m_printParametersToFile     = true;
     bool                                m_calculateDistanceMatrix   = true;
     bool                                m_calculateRadialVector     = true;

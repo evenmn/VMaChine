@@ -2,6 +2,7 @@
 #include "../Eigen/Dense"
 #include <mpi.h>
 #include <fstream>
+#include <iostream>
 
 class Basis {
 public:
