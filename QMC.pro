@@ -57,7 +57,6 @@ SOURCES += src/main.cpp \
     src/WaveFunctions/drbmjastrow.cpp \
     src/WaveFunctions/partlyrestricted.cpp \
     src/Optimization/optimization.cpp \
-    src/Optimization/barzilaiborwein.cpp \
     src/Optimization/gradientdescent.cpp \
     src/Optimization/sgd.cpp \
     src/Optimization/asgd.cpp \
@@ -105,7 +104,6 @@ HEADERS += \
     src/WaveFunctions/drbmjastrow.h \
     src/WaveFunctions/partlyrestricted.h \
     src/Optimization/optimization.h \
-    src/Optimization/barzilaiborwein.h \
     src/Optimization/gradientdescent.h \
     src/Optimization/sgd.h \
     src/Optimization/asgd.h \
