@@ -77,6 +77,7 @@ SOURCES += \
 
 # Load internal header files
 HEADERS += \
+    src/allheaders.h \
     src/system.h \
     src/sampler.h \
     src/Hamiltonians/hamiltonian.h \
@@ -121,4 +122,3 @@ HEADERS += \
 # Load external header files
 HEADERS += \
     src/block/c++/blocker.h \
-    src/tqdm/tqdm.h
