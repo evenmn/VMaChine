@@ -79,12 +79,12 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [45]
-    newRadius = [6,6,6,6,6,6,6,6,6,6,6,6]
+    maxRadius = [40]
+    newRadius = [6]
 
-    methods   = ['RBM']
+    methods   = ['RBMPJ']
     dims      = ['2']
-    particles = ['56']
+    particles = ['42']
     omegas    = ['1.000000'] #'1.000000','0.500000','0.280000','0.100000']      
 
     i=0

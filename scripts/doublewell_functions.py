@@ -55,7 +55,7 @@ if __name__ == '__main__':
     alpha = 2
     w = 1.0
     d = 1
-    n_ho = 12 # number of harmonic oscillator basis functions
+    n_ho = 1 # number of harmonic oscillator basis functions
 
     print_C_to_file(n_ho,w,d,alpha)
     plot_DW_function(0,x,n_ho,w,d,alpha)
