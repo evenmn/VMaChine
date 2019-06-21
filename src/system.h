@@ -31,6 +31,8 @@ public:
     void setLearningRate            (const double eta);
     void setPath                    (const std::string path);
     void parser                     (const std::string configFile, int &numberOfIterations);
+    void parserConstants            (const std::string configFile, int &numberOfIterations);
+    void parserObjects              (const std::string configFile);
     void searchShortning            (const std::vector<std::string> labels,
                                      const std::string newLabel, std::string &allLabels);
 

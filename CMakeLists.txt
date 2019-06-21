@@ -54,6 +54,7 @@ set(SOURCES
     src/Hamiltonians/atomicnucleus.cpp
     src/InitialWeights/initialweights.cpp
     src/InitialWeights/randomize.cpp
+    src/InitialWeights/automatize.cpp
     src/Metropolis/metropolis.cpp
     src/Metropolis/bruteforce.cpp
     src/Metropolis/importancesampling.cpp
@@ -80,8 +81,6 @@ set(SOURCES
     src/WaveFunctions/simplejastrow.cpp
     src/WaveFunctions/rbmgaussian.cpp
     src/WaveFunctions/rbmjastrow.cpp
-    src/WaveFunctions/rbmjastrow2.cpp
-    src/WaveFunctions/rbmjastrow3.cpp
     src/block/c++/blocker.cpp
 )
 
