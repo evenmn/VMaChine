@@ -18,8 +18,8 @@ HartreeFock::HartreeFock(System *system, Basis *basis)  :
     m_path                  = m_system->getPath();
     m_basis                 = basis;
     readCoefficientFile();
-    numberOfOrbitals();
-    generateListOfStates(m_numberOfOrbitals);
+    Basis::numberOfOrbitals();
+    Basis::generateListOfStates();
 }
 
 std::string HartreeFock::generateFileName() {
@@ -53,7 +53,7 @@ void HartreeFock::readCoefficientFile() {
         }
     }
 }
-
+/*
 void HartreeFock::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
@@ -73,46 +73,95 @@ void HartreeFock::numberOfOrbitals() {
 }
 
 void HartreeFock::generateListOfStates(int orbitals) {
-    m_basis->generateListOfStates(orbitals);
+    // Returns the index list used in Slater
+    // For instance (0,0), (1,0), (0,1) for 6P in 2D
+    //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
+    int numberOfStates = Basis::binomial(orbitals-1, m_numberOfDimensions);
+    m_listOfStates = Eigen::MatrixXi::Zero(numberOfStates, m_numberOfDimensions);
+    int counter = 0;
+    // Two dimensions
+    if (m_numberOfDimensions == 2) {
+        for(int i=0; i<orbitals; i++) {
+            for(int j=0; j<i+1; j++) {
+                m_listOfStates(counter,0) = i-j;
+                m_listOfStates(counter,1) = j;
+                counter += 1;
+            }
+        }
+    }
+    // Three dimensions
+    else if (m_numberOfDimensions == 3) {
+        for(int i=0; i<orbitals; i++) {
+            for(int j=0; j<i+1; j++) {
+                for(int k=0; k<i-j+1; k++) {
+                    m_listOfStates(counter,0) = i-j-k;
+                    m_listOfStates(counter,1) = j;
+                    m_listOfStates(counter,2) = k;
+                    counter += 1;
+                }
+            }
+        }
+    }
+    else {
+        std::cout << "Number of dimensions should be either 2 or 3" << std::endl;
+        exit(0);
+    }
 }
+*/
 
 double HartreeFock::evaluate(double x, int n) {
     //Hermite polynomial of n'th degree
-    return m_basis->evaluate(x, n);
+    double sum = 0;
+    for(int lambda=0; lambda<m_basisSize; lambda++) {
+        sum += m_coefficients(n, lambda) * m_basis->evaluate(x, lambda);
+    }
+    return sum;
 }
 
 double HartreeFock::evaluateDerivative(double x, int n) {
     //First derivative of Hermite polynomial of n'th degree
-    return m_basis->evaluateDerivative(x, n);
+    double sum = 0;
+    for(int lambda=0; lambda<m_basisSize; lambda++) {
+        sum += m_coefficients(n, lambda) * m_basis->evaluateDerivative(x, lambda);
+    }
+    return sum;
 }
 
 double HartreeFock::evaluateSecondDerivative(const double x, const int n) {
     //Second derivative of Hermite polynomial of n'th degree
-    return m_basis->evaluateSecondDerivative(x, n);
+    double sum = 0;
+    for(int lambda=0; lambda<m_basisSize; lambda++) {
+        sum += m_coefficients(n, lambda) * m_basis->evaluateSecondDerivative(x, lambda);
+    }
+    return sum;
 }
 
 double HartreeFock::basisElement(const int n, Eigen::VectorXd positions) {
-    double sum = 0;
-    for(int lambda=0; lambda<m_basisSize; lambda++) {
-        sum += m_coefficients(n, lambda) * m_basis->basisElement(lambda, positions);
+    double prod = 1;
+    for(int i=0; i<m_numberOfDimensions; i++) {
+        prod *= evaluate(positions(i), int(m_listOfStates(n, i)));
     }
-    return sum;
+    return prod;
 }
 
 double HartreeFock::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
-    double sum = 0;
-    for(int lambda=0; lambda<m_basisSize; lambda++) {
-        sum += m_coefficients(n, lambda) * m_basis->basisElementDer(lambda, i, positions);
+    double prod = evaluateDerivative(positions(i), m_listOfStates(n, i));
+    for(int j=0; j<m_numberOfDimensions; j++) {
+        if(i != j) {
+            prod *= evaluate(positions(j), m_listOfStates(n, j));
+        }
     }
-    return sum;
+    return prod;
 }
 
 double HartreeFock::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
-    double sum = 0;
-    for(int lambda=0; lambda<m_basisSize; lambda++) {
-        sum += m_coefficients(n, lambda) * m_basis->basisElementSecDer(lambda, i, positions);
+    double prod = evaluateSecondDerivative(positions(i), m_listOfStates(n, i));
+    for(int j=0; j<m_numberOfDimensions; j++) {
+        if(i != j) {
+            prod *= evaluate(positions(j), m_listOfStates(n, j));
+        }
     }
-    return sum;
+    return prod;
 }

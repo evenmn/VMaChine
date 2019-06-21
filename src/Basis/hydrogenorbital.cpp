@@ -44,7 +44,7 @@ int maxElectrons(int i) {
         return 4 + maxElectrons(i-1);
     }
 }
-
+/*
 void HydrogenOrbital::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int i = 0;
@@ -66,7 +66,7 @@ void HydrogenOrbital::numberOfOrbitals() {
         i++;
     }
 }
-
+*/
 double HydrogenOrbital::evaluate(double x, int n) {
     //Hydrogen-like orbitals of a given n and l=0 (S-wave)
     double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
@@ -92,7 +92,7 @@ double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::Vect
     // i is the dimension we are derivating with respect to
     return 0;
 }
-
+/*
 void HydrogenOrbital::generateListOfStates() {
     Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
     int counter = 0;
@@ -109,3 +109,4 @@ void HydrogenOrbital::generateListOfStates() {
         }
     }
 }
+*/

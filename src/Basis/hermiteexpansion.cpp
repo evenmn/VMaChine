@@ -13,8 +13,8 @@ HermiteExpansion::HermiteExpansion(System *system)  :
     m_path                  = m_system->getPath();
     m_basis                 = new Hermite(system);
     readCoefficientFile();
-    numberOfOrbitals();
-    generateListOfStates(m_numberOfOrbitals);
+    Basis::numberOfOrbitals();
+    Basis::generateListOfStates();
 
     /*
     int Ngrid = 1000;
@@ -45,7 +45,7 @@ void HermiteExpansion::readCoefficientFile() {
     m_coefficients  = Eigen::MatrixXd::Zero(m_basisSize, m_basisSize);
     Basis::writeFileContentIntoEigenMatrix(fileName, m_coefficients);
 }
-
+/*
 void HermiteExpansion::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
@@ -101,7 +101,7 @@ void HermiteExpansion::generateListOfStates(int orbitals) {
         exit(0);
     }
 }
-
+*/
 double HermiteExpansion::evaluate(double x, int n) {
     //Hermite polynomial of n'th degree
     if(m_dim == 0) {

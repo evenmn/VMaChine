@@ -7,10 +7,11 @@ None::None(System *system)  :
     m_system                = system;
     numberOfOrbitals();
 }
-
+/*
 void None::numberOfOrbitals() {
     m_numberOfOrbitals = 1;
 }
+*/
 
 double None::evaluate(double x, int n) {
     return 1;
@@ -37,6 +38,7 @@ double None::basisElementSecDer(const int n, const int i, Eigen::VectorXd positi
     // i is the dimension we are derivating with respect to
     return 0;
 }
-
+/*
 void None::generateListOfStates(int orbitals) {
 }
+*/

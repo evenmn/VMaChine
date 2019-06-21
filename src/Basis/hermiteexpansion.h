@@ -4,8 +4,8 @@
 class HermiteExpansion : public Basis {
 public:
     HermiteExpansion(System* system);
-    void numberOfOrbitals();
-    void generateListOfStates(int orbitals);
+    //void numberOfOrbitals();
+    //void generateListOfStates(int orbitals);
 
     double evaluate(double x, int n);
     double evaluateDerivative(double x, int n);
@@ -25,6 +25,6 @@ private:
     int     m_dim = 0;
     std::string m_path = "Path is not given yet";
     Eigen::MatrixXd m_coefficients;
-    Eigen::MatrixXi m_listOfStates;
+    //Eigen::MatrixXi m_listOfStates;
     class Basis* m_basis = nullptr;
 };

@@ -10,10 +10,10 @@ Hermite::Hermite(System *system)  :
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     m_omega                 = m_system->getFrequency();
     m_omegaSqrt             = sqrt(m_omega);
-    numberOfOrbitals();
-    generateListOfStates(m_numberOfOrbitals);
+    Basis::numberOfOrbitals();
+    Basis::generateListOfStates();
 }
-
+/*
 void Hermite::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
@@ -67,7 +67,7 @@ void Hermite::generateListOfStates(int orbitals) {
         exit(0);
     }
 }
-
+*/
 double Hermite::basisElement(const int n, Eigen::VectorXd positions) {
     double prod = 1;
     for(int i=0; i<m_numberOfDimensions; i++) {

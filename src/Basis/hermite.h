@@ -4,8 +4,8 @@
 class Hermite : public Basis {
 public:
     Hermite(System* system);
-    void numberOfOrbitals();
-    void generateListOfStates(int orbitals);
+    //void numberOfOrbitals();
+    //void generateListOfStates(int orbitals);
 
     double evaluate(double x, int n);
     double evaluateDerivative(double x, int n);
@@ -18,5 +18,5 @@ public:
 private:
     double m_omega = 1;
     double m_omegaSqrt = 1;
-    Eigen::MatrixXi m_listOfStates;
+    //Eigen::MatrixXi m_listOfStates;
 };
