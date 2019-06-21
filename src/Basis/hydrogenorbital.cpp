@@ -9,7 +9,7 @@ HydrogenOrbital::HydrogenOrbital(System *system)  :
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     assert(m_numberOfDimensions == 3);
-    numberOfOrbitals();
+    Basis::generateListOfStates();
 }
 
 double laguerre(double x, int n) {
@@ -44,29 +44,7 @@ int maxElectrons(int i) {
         return 4 + maxElectrons(i-1);
     }
 }
-/*
-void HydrogenOrbital::numberOfOrbitals() {
-    //Number of closed-shell orbitals
-    int i = 0;
-    int orbital = 0;
-    int numberOfElectrons = 0;
-    while(true) {
-        for(int j=0; j<i; j++) {
-            numberOfElectrons += maxElectrons(j);
-            if(numberOfElectrons == m_numberOfParticles) {
-                m_numberOfOrbitals = orbital+1;
-                break;
-            }
-            else if(numberOfElectrons > m_numberOfParticles){
-                std::cout << "This program supports closed-shells only. Please choose a P such that the orbital is full" << std::endl;
-                exit(0);
-            }
-            orbital++;
-        }
-        i++;
-    }
-}
-*/
+
 double HydrogenOrbital::evaluate(double x, int n) {
     //Hydrogen-like orbitals of a given n and l=0 (S-wave)
     double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
@@ -92,21 +70,3 @@ double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::Vect
     // i is the dimension we are derivating with respect to
     return 0;
 }
-/*
-void HydrogenOrbital::generateListOfStates() {
-    Eigen::MatrixXd listOfStates = Eigen::MatrixXd::Zero(m_numberOfParticles/2, m_numberOfDimensions);
-    int counter = 0;
-    // Three dimensions
-    for(int i=0; i<m_numberOfOrbitals; i++) {
-        for(int j=0; j<m_numberOfOrbitals; j++) {
-            for(int s=i+j; s<m_numberOfOrbitals; s++) {
-                int k = s - i - j;
-                listOfStates(counter,0) = i;
-                listOfStates(counter,1) = j;
-                listOfStates(counter,2) = k;
-                counter += 1;
-            }
-        }
-    }
-}
-*/

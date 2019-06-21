@@ -50,15 +50,15 @@ void Basis::numberOfOrbitals() {
     //Number of closed-shell orbitals
     int counter = 0;
     while(true) {
-        int orb = Basis::binomial(counter, m_numberOfDimensions);
+        int orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
         if(orb == m_numberOfParticles) {
             m_numberOfOrbitals = counter+1;
             break;
         }
         else if(orb > m_numberOfParticles) {
-            std::cout << "Basis size must correspond to a closed shell..." << std::endl;
-            MPI_Finalize();
-            exit(0);
+            std::cout << "Warning: An open shell is chosen" << std::endl;
+            m_numberOfOrbitals = counter+1;
+            break;
         }
         counter += 1;
     }
@@ -68,6 +68,7 @@ void Basis::generateListOfStates() {
     // Returns the index list used in Slater
     // For instance (0,0), (1,0), (0,1) for 6P in 2D
     //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
+    numberOfOrbitals();
     int numberOfStates = Basis::binomial(m_numberOfOrbitals-1, m_numberOfDimensions);
     m_listOfStates = Eigen::MatrixXi::Zero(numberOfStates, m_numberOfDimensions);
     int counter = 0;
