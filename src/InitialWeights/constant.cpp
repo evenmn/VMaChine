@@ -3,7 +3,7 @@
 #include <cassert>
 #include "../system.h"
 
-Constant::Constant(System* system, const double factor) :
+Constant::Constant(System* system, const double factor = 1) :
     InitialWeights(system) {
     m_system                = system;
     m_numberOfDimensions    = m_system->getNumberOfDimensions();

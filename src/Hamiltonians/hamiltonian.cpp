@@ -11,7 +11,12 @@ double Hamiltonian::getInteractionEnergy() {
     if(m_interaction) {
         for(int i=0; i<m_numberOfParticles; i++) {
             for(int j=i+1; j<m_numberOfParticles; j++) {
-                interactionEnergy += 1/m_distanceMatrix(i,j);
+                if(m_distanceMatrix(i,j) < m_dsl) {
+                    interactionEnergy += 1/m_distanceMatrix(i,j);
+                }
+                else {
+                    interactionEnergy += exp(-m_distanceMatrix(i,j)/m_screeningStrength)/m_distanceMatrix(i,j);
+                }
             }
         }
     }

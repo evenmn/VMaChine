@@ -30,7 +30,6 @@ public:
     void setTotalSpin               (const double totalSpin);
     void setLearningRate            (const double eta);
     void setPath                    (const std::string path);
-    void parser                     (const std::string configFile, int &numberOfIterations);
     void parserConstants            (const std::string configFile, int &numberOfIterations);
     void parserObjects              (const std::string configFile);
     void searchShortning            (const std::vector<std::string> labels,
@@ -49,6 +48,8 @@ public:
                                      const bool computeTwoBodyDensity,
                                      const int numberOfBins,
                                      const double maxRadius);
+    void setScreeningTools          (const double screeningStrength,
+                                     const double dsl);
     void setEnergyPrintingTools     (const bool printEnergyFile,
                                      const bool printInstantEnergyFile);
     void setMPITools                (const int myRank, int numberOfProcesses);
@@ -111,6 +112,8 @@ public:
     double                          getLearningRate()            { return m_eta; }
     double                          getStepLength()              { return m_stepLength; }
     double                          getTotalSpin()               { return m_totalSpin; }
+    double                          getScreeningStrength()       { return m_screeningStrength; }
+    double                          getDSL()                     { return m_dsl; }
     bool                            getInteraction()             { return m_interaction; }
     bool                            computeOneBodyDensity()      { return m_computeOneBodyDensity; }
     bool                            computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
@@ -165,6 +168,8 @@ private:
     double                              m_maxRadius                 = 10;
     double                              m_totalTime                 = 0;
     double                              m_totalSpin                 = 0;
+    double                              m_screeningStrength         = 100;
+    double                              m_dsl                       = 100;
 
     bool                                m_interaction               = true;
     bool                                m_checkConvergence          = true;

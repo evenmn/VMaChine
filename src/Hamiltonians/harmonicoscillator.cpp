@@ -6,11 +6,12 @@
 HarmonicOscillator::HarmonicOscillator(System* system) :
         Hamiltonian(system) {
     m_omega                 = m_system->getFrequency();
-    m_omegaSqrd            = m_omega * m_omega;
-    assert(m_omega > 0);
+    m_omegaSqrd             = m_omega * m_omega;
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     m_interaction           = m_system->getInteraction();
+    m_screeningStrength     = m_system->getScreeningStrength();
+    m_dsl                   = m_system->getDSL();
 }
 
 double HarmonicOscillator::getExternalEnergy() {

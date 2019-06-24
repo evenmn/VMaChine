@@ -1,6 +1,5 @@
 #pragma once
 #include "../Eigen/Dense"
-#include <mpi.h>
 
 class Hamiltonian {
 public:
@@ -13,13 +12,18 @@ public:
     double getInteractionEnergy();
 
 protected:
-    class System* m_system = nullptr;
+    int m_numberOfParticles = 0;
+    int m_numberOfDimensions = 0;
+    int m_interaction = false;
+
+    double m_screeningStrength = 100;
+    double m_dsl = 100;
+
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_radialVector;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_parameters;
-    int m_numberOfParticles = 0;
-    int m_numberOfDimensions = 0;
-    int m_interaction = false;
+
+    class System* m_system = nullptr;
 };
 

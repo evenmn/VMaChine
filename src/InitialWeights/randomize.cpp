@@ -3,7 +3,7 @@
 #include <cassert>
 #include "../system.h"
 
-Randomize::Randomize(System* system, const double factor) :
+Randomize::Randomize(System* system, const double factor = 1) :
     InitialWeights(system) {
     m_system                = system;
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
