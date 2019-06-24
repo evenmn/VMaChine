@@ -11,14 +11,14 @@ int main(int argc, char *argv[]) {
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 6;
+    int     numberOfDimensions  = 3;
+    int     numberOfParticles   = 1;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 2000;
+    int     numberOfIterations  = 200;
     double  totalSpin           = 0;                    // totalSpin is half-integer
     double  learningRate        = 0.001;
-    double  omega               = 0.01;                 // Oscillator frequency
+    double  omega               = 1.0;                 // Oscillator frequency
     int     Z                   = numberOfParticles;    // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);        // Width of probability distribution
     double  stepLength          = 0.1;                  // Metropolis step length
@@ -88,18 +88,19 @@ int main(int argc, char *argv[]) {
     std::vector<class WaveFunction*> waveFunctionElements;
     //waveFunctionElements.push_back      (new class Gaussian          (system));
     //waveFunctionElements.push_back      (new class SlaterDeterminant (system));
-    waveFunctionElements.push_back      (new class RBMGaussian       (system));
-    waveFunctionElements.push_back      (new class RBMJastrow        (system));
+    //waveFunctionElements.push_back      (new class RBMGaussian       (system));
+    //waveFunctionElements.push_back      (new class RBMJastrow        (system));
     //waveFunctionElements.push_back      (new class SimpleJastrow     (system));
     //waveFunctionElements.push_back      (new class PadeJastrow       (system));
     //waveFunctionElements.push_back      (new class PartlyRestricted  (system));
+    waveFunctionElements.push_back      (new class HydrogenLike(system));
 
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Automatize(system));
+    system->setInitialWeights           (new Constant(system, 1));
     system->setInitialState             (new RandomNormal(system));
-    system->setHamiltonian              (new HarmonicOscillator(system));
+    system->setHamiltonian              (new AtomicNucleus(system));
     system->setMetropolis               (new ImportanceSampling(system));
 
     if(argc == 2) system->parserObjects (argv[1]);

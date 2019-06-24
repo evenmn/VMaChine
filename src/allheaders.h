@@ -10,6 +10,7 @@
 #include "WaveFunctions/drbmjastrow.h"
 #include "WaveFunctions/simplejastrow.h"
 #include "WaveFunctions/partlyrestricted.h"
+#include "WaveFunctions/hydrogenlike.h"
 
 #include "Hamiltonians/hamiltonian.h"
 #include "Hamiltonians/harmonicoscillator.h"
