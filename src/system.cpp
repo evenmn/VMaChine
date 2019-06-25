@@ -154,13 +154,16 @@ double System::getKineticEnergy() {
     for(auto& i : m_waveFunctionElements) {
         kineticEnergy += i->computeLaplacian();
     }
+    double sum = 0;
     for(int k = 0; k < m_numberOfFreeDimensions; k++) {
         double nablaLnPsi = 0;
         for(auto& i : m_waveFunctionElements) {
             nablaLnPsi += i->computeGradient(k);
         }
         kineticEnergy += nablaLnPsi * nablaLnPsi;
+        sum += nablaLnPsi * nablaLnPsi;
     }
+    //std::cout << sum << std::endl;
     return - 0.5 * kineticEnergy;
 }
 
@@ -187,7 +190,7 @@ void System::setGlobalArraysToCalculate() {
             m_calculateRadialVector   = true;
         }
     }
-    // Check if the Hemiltonian needs distance matrix or radial distance vector
+    // Check if the Hamiltonian needs distance matrix or radial distance vector
     int need = m_hamiltonian->getGlobalArrayNeed();
     if(need == 1) {
         m_calculateDistanceMatrix = true;

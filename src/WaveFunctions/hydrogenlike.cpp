@@ -56,10 +56,10 @@ double HydrogenLike::computeGradient(const int k) {
 
 double HydrogenLike::computeLaplacian() {
     double sum = 0;
-    for(int i=0; i<m_numberOfFreeDimensions; i++) {
-        sum += ((m_positions(i) * m_positions(i))/(m_radialVector(int(i/m_numberOfDimensions))*m_radialVector(int(i/m_numberOfDimensions))) - 1)/m_radialVector(int(i/m_numberOfDimensions));
+    for(int i=0; i<m_numberOfParticles; i++) {
+        sum -= 2/m_radialVector(i);
     }
-    return sum;
+    return m_alpha * m_Z * sum;
 }
 
 Eigen::VectorXd HydrogenLike::computeParameterGradient() {

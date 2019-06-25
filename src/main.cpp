@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 3;
-    int     numberOfParticles   = 1;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
     int     numberOfIterations  = 200;
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     double  equilibration       = 0.001;                // Amount of the total steps used
 
     // Switches
-    bool    interaction             = true;     // Repulsive interaction on or off
+    bool    interaction             = false;     // Repulsive interaction on or off
     bool    checkConvergence        = false;    // Stops the program after it has converged
     bool    applyAdaptiveSteps      = true;     // Increase the number of MC-cycles for the last iterations
     bool    computeOneBodyDensity   = true;     // Compute one-body density and print to file

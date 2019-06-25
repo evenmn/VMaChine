@@ -23,13 +23,13 @@ void Metropolis::calculateDistanceMatrixCross(const int particle) {
     }
 }
 
-double Metropolis::calculateRadialVectorElement(const int particle) {
-    double sqrtElementWise = 0;
-    int part = particle*m_numberOfDimensions;
-    for(int d=0; d<m_numberOfDimensions; d++) {
-        sqrtElementWise += m_positions(part + d) * m_positions(part + d);
+void Metropolis::calculateRadialVectorElement(const int particle) {
+    double sqrdElementWise = 0;
+    int initPartCoord = particle * m_numberOfDimensions;
+    for(int i=initPartCoord; i<initPartCoord+m_numberOfDimensions; i++) {
+        sqrdElementWise += m_positions(i) * m_positions(i);
     }
-    return sqrt(sqrtElementWise);
+    m_radialVector(particle) = sqrt(sqrdElementWise);
 }
 
 Metropolis::~Metropolis() {}

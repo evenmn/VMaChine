@@ -68,6 +68,7 @@ bool ImportanceSampling::acceptMove() {
     if(m_calculateRadialVector) {
         Metropolis::calculateRadialVectorElement(int(changedCoord/m_numberOfDimensions));
     }
+
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, changedCoord);
     m_quantumForceNew(changedCoord) = QuantumForce(changedCoord);
 

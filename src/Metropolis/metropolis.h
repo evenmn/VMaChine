@@ -16,7 +16,7 @@ public:
 
     double calculateDistanceMatrixElement   (const int i, const int j);
     void   calculateDistanceMatrixCross     (const int particle);
-    double calculateRadialVectorElement     (const int particle);
+    void   calculateRadialVectorElement     (const int particle);
 
 protected:
     class System*   m_system = nullptr;
