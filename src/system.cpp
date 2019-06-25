@@ -1,10 +1,4 @@
-#include <mpi.h>
-#include <iostream>
-#include <fstream>
-#include <cassert>
-#include <ctime>
-#include <string>
-#include "allheaders.h"
+#include "system.h"
 
 void System::runIterations(const int numberOfIterations) {
     setGradients                ();
@@ -36,7 +30,8 @@ void System::runIterations(const int numberOfIterations) {
 
         if(m_myRank == 0) {
             m_sampler->computeAverages();
-            //m_parameters -= m_optimization->updateParameters();
+            m_parameters -= m_optimization->updateParameters();
+            std::cout << m_parameters << std::endl;
         }
         m_sampler->printParametersToFile();
         m_sampler->printEnergyToFile();
@@ -163,7 +158,6 @@ double System::getKineticEnergy() {
         kineticEnergy += nablaLnPsi * nablaLnPsi;
         sum += nablaLnPsi * nablaLnPsi;
     }
-    //std::cout << sum << std::endl;
     return - 0.5 * kineticEnergy;
 }
 
@@ -830,4 +824,22 @@ void System::collectAllLabels() {
     testRBMSJ2.push_back("simplejastrow");
     testRBMSJ2.push_back("slaterdeterminant");
     searchShortning(testRBMSJ2, "RBMSJ", m_trialWaveFunction);
+
+    std::vector<std::string> testVMC4;
+    testVMC4.push_back("hydrogenlike");
+    searchShortning(testVMC4, "VMC", m_trialWaveFunction);
+
+    std::vector<std::string> testVMC5;
+    testVMC5.push_back("slaterdeterminant");
+    searchShortning(testVMC5, "VMC", m_trialWaveFunction);
+
+    std::vector<std::string> testVMC6;
+    testVMC6.push_back("hydrogenlike");
+    testVMC6.push_back("padejastrow");
+    searchShortning(testVMC6, "VMC", m_trialWaveFunction);
+
+    std::vector<std::string> testVMC7;
+    testVMC7.push_back("slaterdeterminant");
+    testVMC7.push_back("padejastrow");
+    searchShortning(testVMC7, "VMC", m_trialWaveFunction);
 }

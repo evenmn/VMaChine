@@ -61,7 +61,6 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber) {
         m_cumulativeGradients       = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
         m_cumulativeGradientsE      = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
     }
-    //m_instantEnergy    = m_system->getHamiltonian()->computeLocalEnergy();
     m_kineticEnergy     = m_system->getKineticEnergy();
     m_externalEnergy    = m_system->getHamiltonian()->getExternalEnergy();
     m_interactionEnergy = m_system->getHamiltonian()->getInteractionEnergy();

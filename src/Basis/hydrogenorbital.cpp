@@ -12,18 +12,6 @@ HydrogenOrbital::HydrogenOrbital(System *system)  :
     Basis::generateListOfStates();
 }
 
-double laguerre(double x, int n) {
-    if(n == 0) {
-        return 1;
-    }
-    else if(n == 1) {
-        return 1 - x;
-    }
-    else {
-        return ((2*n+1-x)*laguerre(x, n-1) - (n-1) * laguerre(x, n-2))/n;
-    }
-}
-
 double associatedLaguerre(double x, int p, int q) {
     if(q == 0) {
         return 1;
@@ -36,6 +24,24 @@ double associatedLaguerre(double x, int p, int q) {
     }
 }
 
+double associatedLaguerreDer(double x, int p, int q, int k) {
+    if(k <= q) {
+        return pow(-1,k)*associatedLaguerre(x, p+k, q-k);
+    }
+    else {
+        return 0;
+    }
+}
+
+double HydrogenOrbital::radial(double r, int n) {
+    double prefactor = 1;// (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
+    return prefactor * associatedLaguerre(2*m_Z*r/n, 1, n-1) * exp(-m_Z*r/n);
+}
+
+double HydrogenOrbital::angular(double theta, double phi, int l, int m) {
+    return theta + phi + l + m;
+}
+
 int maxElectrons(int i) {
     if(i==0) {
         return 2;
@@ -45,28 +51,33 @@ int maxElectrons(int i) {
     }
 }
 
-double HydrogenOrbital::evaluate(double x, int n) {
+double HydrogenOrbital::evaluate(double r, int n) {
     //Hydrogen-like orbitals of a given n and l=0 (S-wave)
-    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
-    return prefactor * associatedLaguerre(2*m_Z*x/n, 1, n-1) * exp(-m_Z*x/n);
+    return radial(r, n);
 }
 
-double HydrogenOrbital::evaluateDerivative(double x, int n) {
-    //First derivative of Hydrogen-like orbitals of a given n and l=0 (S-wave)
-    double prefactor = (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
-    return - prefactor * (associatedLaguerre(2*m_Z*x/n, 2, n-2)*exp(-m_Z*x/n) + associatedLaguerre(2*m_Z*x/n, 1, n-1)*exp(-m_Z*x/n) * m_Z/n);
+double HydrogenOrbital::evaluateDerivative(double r, int n) {
+    //First derivative of Hydrogen-like orbitals of a given n and l=0 (the S-wave)
+    double prefactor = -m_Z/n;
+    return prefactor * radial(r, n) + exp(-m_Z*r/n)*associatedLaguerreDer(2*m_Z*r/n, 1, n-1, 1);
+}
+
+double HydrogenOrbital::evaluateSecondDerivative(double r, int n) {
+    //Second derivative of Hydrogen-like orbitals of a given n and l=0 (the S-wave)
+    double prefactor = m_Z * m_Z/(n * n);
+    return prefactor * radial(r, n) + exp(-m_Z*r/n)*associatedLaguerreDer(2*m_Z*r/n, 1, n-1, 2);
 }
 
 double HydrogenOrbital::basisElement(const int n, Eigen::VectorXd positions) {
-    return 1;
+    return evaluate(positions.norm(), n+1);
 }
 
 double HydrogenOrbital::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
-    // i is the dimension we are derivating with respect to
-    return 0;
+    double r = positions.norm();
+    return (positions(i)/r)*evaluateDerivative(r, n+1);
 }
 
 double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
-    // i is the dimension we are derivating with respect to
-    return 0;
+    double r = positions.norm();
+    return (1/r-(positions(i)*positions(i))/(r*r*r))*evaluateSecondDerivative(r,n+1);
 }

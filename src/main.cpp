@@ -15,9 +15,9 @@ int main(int argc, char *argv[]) {
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,18));
-    int     numberOfIterations  = 200;
+    int     numberOfIterations  = 1000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
-    double  learningRate        = 0.001;
+    double  learningRate        = 0.1;
     double  omega               = 1.0;                 // Oscillator frequency
     int     Z                   = numberOfParticles;    // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);        // Width of probability distribution
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2) system->parserConstants(argv[1], numberOfIterations);
 
-    system->setBasis                    (new Hermite(system));
+    system->setBasis                    (new HydrogenOrbital(system));
     std::vector<class WaveFunction*> waveFunctionElements;
     //waveFunctionElements.push_back      (new class Gaussian          (system));
     //waveFunctionElements.push_back      (new class SlaterDeterminant (system));
@@ -93,12 +93,12 @@ int main(int argc, char *argv[]) {
     //waveFunctionElements.push_back      (new class SimpleJastrow     (system));
     //waveFunctionElements.push_back      (new class PadeJastrow       (system));
     //waveFunctionElements.push_back      (new class PartlyRestricted  (system));
-    waveFunctionElements.push_back      (new class HydrogenLike(system));
+    waveFunctionElements.push_back      (new HydrogenLike      (system));
 
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Constant(system, 1));
+    system->setInitialWeights           (new Automatize(system));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new AtomicNucleus(system));
     system->setMetropolis               (new ImportanceSampling(system));

@@ -1,7 +1,14 @@
 #pragma once
-#include "Eigen/Dense"
+#include <mpi.h>
 #include <vector>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <cassert>
+#include <ctime>
+
+#include "Eigen/Dense"
+#include "allheaders.h"
 
 class System {
 public:
@@ -133,9 +140,9 @@ public:
 
 private:
     int                                 m_numberOfElements          = 0;
-    int                                 m_numberOfHiddenNodes       = 0;
+    int                                 m_numberOfHiddenNodes       = m_numberOfParticles;
     int                                 m_numberOfParticles         = 0;
-    int                                 m_numberOfDimensions        = 0;
+    int                                 m_numberOfDimensions        = 3;
     int                                 m_numberOfFreeDimensions    = 0;
     int                                 m_maxParameters             = 0;
     int                                 m_totalNumberOfParameters   = 0;
@@ -159,7 +166,7 @@ private:
     int                                 m_initialStepsWOEqui        = 0;
     int                                 m_initialTotalStepsWOEqui   = 0;
 
-    double                              m_equilibrationFraction     = 0.0;
+    double                              m_equilibrationFraction     = 0.001;
     double                              m_stepLength                = 0.1;
     double                              m_omega                     = 1.0;
     double                              m_sigma                     = 1.0;
@@ -172,7 +179,7 @@ private:
     double                              m_dsl                       = 100;
 
     bool                                m_interaction               = true;
-    bool                                m_checkConvergence          = true;
+    bool                                m_checkConvergence          = false;
     bool                                m_applyAdaptiveSteps        = true;
     bool                                m_computeOneBodyDensity     = true;
     bool                                m_computeTwoBodyDensity     = true;
@@ -190,7 +197,7 @@ private:
     class Sampler*                      m_sampler                   = nullptr;
     class Metropolis*                   m_metropolis                = nullptr;
     class Optimization*                 m_optimization              = nullptr;
-    class RandomNumberGenerator*        m_randomNumberGenerator     = nullptr;
+    class RandomNumberGenerator*        m_randomNumberGenerator     = new MersenneTwister();
     std::vector<class WaveFunction*>    m_waveFunctionElements;
 
     std::string                         m_path                      = "../data/";

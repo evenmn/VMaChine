@@ -50,7 +50,7 @@ public:
     int             spinDn();
 
 private:
-    int             m_numberOfParameters    = 0;
+    int             m_numberOfParameters    = 1;
     int             m_globalArrayNeed       = 0;
     int             m_freeDimensionsHalf    = 0;
     int             m_particle              = 0;
