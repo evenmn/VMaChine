@@ -13,9 +13,6 @@ public:
     double basisElementDer(const int n, const int i, Eigen::VectorXd positions);
     double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
 
-    double radial(double r, int n);
-    double angular(double theta, double phi, int l, int m);
-
 private:
     int m_Z = 1;
 };

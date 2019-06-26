@@ -12,12 +12,12 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 3;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 4;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,18));
+    int     numberOfSteps       = int(pow(2,20));
     int     numberOfIterations  = 1000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
-    double  learningRate        = 0.1;
+    double  learningRate        = 0.01;
     double  omega               = 1.0;                 // Oscillator frequency
     int     Z                   = numberOfParticles;    // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);        // Width of probability distribution
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     double  equilibration       = 0.001;                // Amount of the total steps used
 
     // Switches
-    bool    interaction             = false;     // Repulsive interaction on or off
+    bool    interaction             = true;     // Repulsive interaction on or off
     bool    checkConvergence        = false;    // Stops the program after it has converged
     bool    applyAdaptiveSteps      = true;     // Increase the number of MC-cycles for the last iterations
     bool    computeOneBodyDensity   = true;     // Compute one-body density and print to file
@@ -87,18 +87,18 @@ int main(int argc, char *argv[]) {
     system->setBasis                    (new HydrogenOrbital(system));
     std::vector<class WaveFunction*> waveFunctionElements;
     //waveFunctionElements.push_back      (new class Gaussian          (system));
-    //waveFunctionElements.push_back      (new class SlaterDeterminant (system));
+    waveFunctionElements.push_back      (new class SlaterDeterminant (system));
     //waveFunctionElements.push_back      (new class RBMGaussian       (system));
     //waveFunctionElements.push_back      (new class RBMJastrow        (system));
     //waveFunctionElements.push_back      (new class SimpleJastrow     (system));
-    //waveFunctionElements.push_back      (new class PadeJastrow       (system));
+    waveFunctionElements.push_back      (new class PadeJastrow       (system));
     //waveFunctionElements.push_back      (new class PartlyRestricted  (system));
-    waveFunctionElements.push_back      (new HydrogenLike      (system));
+    //waveFunctionElements.push_back      (new HydrogenLike      (system));
 
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Automatize(system));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new AtomicNucleus(system));
     system->setMetropolis               (new ImportanceSampling(system));

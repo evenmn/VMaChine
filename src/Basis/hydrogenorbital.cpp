@@ -33,15 +33,6 @@ double associatedLaguerreDer(double x, int p, int q, int k) {
     }
 }
 
-double HydrogenOrbital::radial(double r, int n) {
-    double prefactor = 1;// (2*m_Z/n) * sqrt(2*m_Z/n) * sqrt(Basis::factorial(n-1)/(2 * n * Basis::factorial(n)));
-    return prefactor * associatedLaguerre(2*m_Z*r/n, 1, n-1) * exp(-m_Z*r/n);
-}
-
-double HydrogenOrbital::angular(double theta, double phi, int l, int m) {
-    return theta + phi + l + m;
-}
-
 int maxElectrons(int i) {
     if(i==0) {
         return 2;
@@ -53,31 +44,39 @@ int maxElectrons(int i) {
 
 double HydrogenOrbital::evaluate(double r, int n) {
     //Hydrogen-like orbitals of a given n and l=0 (S-wave)
-    return radial(r, n);
+    return r+n; //exp(-m_Z*r/n) * associatedLaguerre(2*m_Z*r/n, 1, n-1);
 }
 
 double HydrogenOrbital::evaluateDerivative(double r, int n) {
     //First derivative of Hydrogen-like orbitals of a given n and l=0 (the S-wave)
-    double prefactor = -m_Z/n;
-    return prefactor * radial(r, n) + exp(-m_Z*r/n)*associatedLaguerreDer(2*m_Z*r/n, 1, n-1, 1);
+    return r+n; //exp(-m_Z*r/n) * (associatedLaguerreDer(2*m_Z*r/n, 1, n-1, 1) - (m_Z/n) * associatedLaguerre(2*m_Z*r/n, 1, n-1));
 }
 
 double HydrogenOrbital::evaluateSecondDerivative(double r, int n) {
     //Second derivative of Hydrogen-like orbitals of a given n and l=0 (the S-wave)
-    double prefactor = m_Z * m_Z/(n * n);
-    return prefactor * radial(r, n) + exp(-m_Z*r/n)*associatedLaguerreDer(2*m_Z*r/n, 1, n-1, 2);
+    //double prefactor = m_Z/n;
+    return r+n; //prefactor * radial(r, n) + exp(-m_Z*r/n)*associatedLaguerreDer(2*m_Z*r/n, 1, n-1, 2);
 }
 
-double HydrogenOrbital::basisElement(const int n, Eigen::VectorXd positions) {
-    return evaluate(positions.norm(), n+1);
+double HydrogenOrbital::basisElement(const int n, Eigen::VectorXd position) {
+    double p = m_Z*position.norm()/(n+1);
+    return exp(-p) * associatedLaguerre(2*p, 1, n);
 }
 
-double HydrogenOrbital::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
-    double r = positions.norm();
-    return (positions(i)/r)*evaluateDerivative(r, n+1);
+double HydrogenOrbital::basisElementDer(const int n, const int i, Eigen::VectorXd position) {
+    double r = position.norm();
+    double p = m_Z*r/(n+1);
+    double q = m_Z * position(i) / ((n+1) * r);
+    //return exp(-p) * (associatedLaguerreDer(2*p, 1, n, 1) - 2*p * (position(i)/(r*r)) * associatedLaguerre(2*p, 1, n));
+    return q * exp(-p) * (2 * associatedLaguerreDer(2*p, 1, n, 1) - associatedLaguerre(2*p, 1, n));
 }
 
-double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
-    double r = positions.norm();
-    return (1/r-(positions(i)*positions(i))/(r*r*r))*evaluateSecondDerivative(r,n+1);
+double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::VectorXd position) {
+    double r = position.norm();
+    double p = m_Z*r/(n+1);
+    double q = m_Z / ((n+1) * r);
+    return q * exp(-p) * (2 * associatedLaguerreDer(2*p, 1, n, 1) * (1 - 2*q*position(i)*position(i) - position(i)*position(i)/(r*r)) + associatedLaguerre(2*p, 1, n)*(position(i)*position(i)/(r*r)+m_Z*position(i)*position(i)/((n+1)*r)-1) + 4 * q * position(i) * position(i) * associatedLaguerreDer(2*p, 1, n, 2));
+    //double q = position(i)*position(i)/(r*r);
+    //double s = 1 - q*(1+p);
+    //return exp(-p) * (s*(2*associatedLaguerreDer(2*p,1,n,1) - associatedLaguerre(2*p,1,n)) + 4*p*q*associatedLaguerreDer(2*p,1,n,2))*m_Z/((n+1)*r);
 }

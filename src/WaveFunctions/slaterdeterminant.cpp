@@ -55,6 +55,9 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const Eige
         updateSlaterMatrixInverseDn();
         updateSlaterDeterminantDerivativesDn();
     }
+    //std::cout << m_slaterMatrixUp << std::endl;
+    //std::cout << m_slaterMatrixDn << std::endl;
+    //std::cout << std::endl;
 }
 
 void SlaterDeterminant::setArrays() {
