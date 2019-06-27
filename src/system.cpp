@@ -31,7 +31,6 @@ void System::runIterations(const int numberOfIterations) {
         if(m_myRank == 0) {
             m_sampler->computeAverages();
             m_parameters -= m_optimization->updateParameters();
-            std::cout << m_parameters << std::endl;
         }
         m_sampler->printParametersToFile();
         m_sampler->printEnergyToFile();
