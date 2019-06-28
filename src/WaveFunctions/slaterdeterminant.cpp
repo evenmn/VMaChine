@@ -55,9 +55,6 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions, const Eige
         updateSlaterMatrixInverseDn();
         updateSlaterDeterminantDerivativesDn();
     }
-    //std::cout << m_slaterMatrixUp << std::endl;
-    //std::cout << m_slaterMatrixDn << std::endl;
-    //std::cout << std::endl;
 }
 
 void SlaterDeterminant::setArrays() {
@@ -65,7 +62,7 @@ void SlaterDeterminant::setArrays() {
     m_positionBlockOld                  = m_positionBlock;
     m_determinantDerivativeOld          = m_determinantDerivative;
     m_determinantSecondDerivativeOld    = m_determinantSecondDerivative;
-    m_probabilityRatioOld               = m_probabilityRatio;
+    m_ratioOld                          = m_ratio;
     m_slaterMatrixUpOld                 = m_slaterMatrixUp;
     m_slaterMatrixInverseUpOld          = m_slaterMatrixInverseUp;
     m_slaterMatrixDerUpOld              = m_slaterMatrixDerUp;
@@ -81,7 +78,7 @@ void SlaterDeterminant::resetArrays() {
     m_positionBlock                     = m_positionBlockOld;
     m_determinantDerivative             = m_determinantDerivativeOld;
     m_determinantSecondDerivative       = m_determinantSecondDerivativeOld;
-    m_probabilityRatio                  = m_probabilityRatioOld;
+    m_ratio                             = m_ratioOld;
     m_slaterMatrixUp                    = m_slaterMatrixUpOld;
     m_slaterMatrixInverseUp             = m_slaterMatrixInverseUpOld;
     m_slaterMatrixDerUp                 = m_slaterMatrixDerUpOld;
@@ -94,7 +91,7 @@ void SlaterDeterminant::resetArrays() {
 
 void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions                 = positions;
-    m_probabilityRatio          = 1;
+    m_ratio                     = 1;
     Eigen::Map<Eigen::MatrixXd> positionBlock(m_positions.data(), m_numberOfDimensions, m_numberOfParticles);
     m_positionBlock = positionBlock;
     initializeSlaterMatrix();
@@ -191,78 +188,54 @@ void SlaterDeterminant::updateSlaterMatrixSecDerRowDn(const int row) {
     }
 }
 
-double SlaterDeterminant::updateRatioUp() {
-    double R = 0;
-    for(int j=0; j<m_numberOfSpinUp; j++) {
-        R += m_slaterMatrixUp(m_particle, j) * m_slaterMatrixInverseUp(j, m_particle);
-    }
-    m_probabilityRatio = R*R;
-    return R;
+void SlaterDeterminant::updateRatioUp() {
+    m_ratio = m_slaterMatrixUp.row(m_particle) * m_slaterMatrixInverseUp.col(m_particle);
 }
 
-double SlaterDeterminant::updateRatioDn() {
-    double R = 0;
-    for(int j=0; j<m_numberOfSpinDn; j++) {
-        R += m_slaterMatrixDn(m_particle, j) * m_slaterMatrixInverseDn(j, m_particle);
-    }
-    m_probabilityRatio = R*R;
-    return R;
+void SlaterDeterminant::updateRatioDn() {
+    m_ratio = m_slaterMatrixDn.row(m_particle) * m_slaterMatrixInverseDn.col(m_particle);
 }
 
 void SlaterDeterminant::updateSlaterDeterminantDerivativesUp() {
     for(int i=0; i<m_numberOfFreeDimUp; i++) {
-        m_determinantDerivative(i) = 0;
-        m_determinantSecondDerivative(i) = 0;
         int particle = int(i/m_numberOfDimensions);
-        for(int j=0; j<m_numberOfSpinUp; j++) {
-            m_determinantDerivative(i)       += m_slaterMatrixDerUp(i,j)    * m_slaterMatrixInverseUp(j,particle);
-            m_determinantSecondDerivative(i) += m_slaterMatrixSecDerUp(i,j) * m_slaterMatrixInverseUp(j,particle);
-        }
+        m_determinantDerivative(i) = m_slaterMatrixDerUp.row(i) * m_slaterMatrixInverseUp.col(particle);
+        m_determinantSecondDerivative(i) = m_slaterMatrixSecDerUp.row(i) * m_slaterMatrixInverseUp.col(particle);
     }
 }
 
 void SlaterDeterminant::updateSlaterDeterminantDerivativesDn() {
     for(int i=m_numberOfFreeDimUp; i<m_numberOfFreeDimensions; i++) {
-        m_determinantDerivative(i) = 0;
-        m_determinantSecondDerivative(i) = 0;
         int particle = int(i/m_numberOfDimensions) - m_numberOfSpinUp;
-        for(int j=0; j<m_numberOfSpinDn; j++) {
-            m_determinantDerivative(i)       += m_slaterMatrixDerDn(i-m_numberOfFreeDimUp,j)    * m_slaterMatrixInverseDn(j,particle);
-            m_determinantSecondDerivative(i) += m_slaterMatrixSecDerDn(i-m_numberOfFreeDimUp,j) * m_slaterMatrixInverseDn(j,particle);
-        }
+        m_determinantDerivative(i) = m_slaterMatrixDerDn.row(i-m_numberOfFreeDimUp) * m_slaterMatrixInverseDn.col(particle);
+        m_determinantSecondDerivative(i) = m_slaterMatrixSecDerDn.row(i-m_numberOfFreeDimUp) * m_slaterMatrixInverseDn.col(particle);
     }
 }
 
 void SlaterDeterminant::updateSlaterMatrixInverseUp() {
-    double R = updateRatioUp();
+    updateRatioUp();
     for(int j=0; j<m_numberOfSpinUp; j++) {
-        double S = 0;
-        for(int l=0; l<m_numberOfSpinUp; l++) {
-            S += m_slaterMatrixUp(m_particle, l) * m_slaterMatrixInverseUp(l,j);
-        }
         if(j != m_particle) {
-            m_slaterMatrixInverseUp.col(j) -= S * m_slaterMatrixInverseUp.col(m_particle) / R;
+            double S = m_slaterMatrixUp.row(m_particle) * m_slaterMatrixInverseUp.col(j);
+            m_slaterMatrixInverseUp.col(j) -= S * m_slaterMatrixInverseUp.col(m_particle) / m_ratio;
         }
     }
-    m_slaterMatrixInverseUp.col(m_particle) /= R;
+    m_slaterMatrixInverseUp.col(m_particle) /= m_ratio;
 }
 
 void SlaterDeterminant::updateSlaterMatrixInverseDn() {
-    double R = updateRatioDn();
+    updateRatioDn();
     for(int j=0; j<m_numberOfSpinDn; j++) {
-        double S = 0;
-        for(int l=0; l<m_numberOfSpinDn; l++) {
-            S += m_slaterMatrixDn(m_particle, l) * m_slaterMatrixInverseDn(l,j);
-        }
         if(j != m_particle) {
-            m_slaterMatrixInverseDn.col(j) -= S * m_slaterMatrixInverseDn.col(m_particle) / R;
+            double S = m_slaterMatrixDn.row(m_particle) * m_slaterMatrixInverseDn.col(j);
+            m_slaterMatrixInverseDn.col(j) -= S * m_slaterMatrixInverseDn.col(m_particle) / m_ratio;
         }
     }
-    m_slaterMatrixInverseDn.col(m_particle) /= R;
+    m_slaterMatrixInverseDn.col(m_particle) /= m_ratio;
 }
 
 double SlaterDeterminant::evaluateRatio() {
-    return m_probabilityRatio;
+    return m_ratio * m_ratio;
 }
 
 double SlaterDeterminant::computeGradient(const int k) {

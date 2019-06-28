@@ -43,8 +43,8 @@ public:
     void            updateSlaterMatrixInverseDn         ();
     void            updateSlaterDeterminantDerivativesDn();
 
-    double          updateRatioUp                     ();
-    double          updateRatioDn                     ();
+    void            updateRatioUp                       ();
+    void            updateRatioDn                       ();
 
     int             spinUp();
     int             spinDn();
@@ -63,6 +63,8 @@ private:
 
     double          m_numberOfParticlesHalf = 0;
     double          m_totalSpin             = 0;
+    double          m_ratio                 = 1;
+    double          m_ratioOld              = 1;
 
 
     Eigen::VectorXd m_positions;
@@ -79,7 +81,6 @@ private:
 
     Eigen::VectorXd m_determinantDerivative;
     Eigen::VectorXd m_determinantSecondDerivative;
-    double          m_probabilityRatio = 0;
 
     Eigen::VectorXd m_positionsOld;
     Eigen::MatrixXd m_positionBlockOld;
@@ -95,7 +96,6 @@ private:
 
     Eigen::VectorXd m_determinantDerivativeOld;
     Eigen::VectorXd m_determinantSecondDerivativeOld;
-    double          m_probabilityRatioOld = 0;
 
     std::string     m_label = "slaterdeterminant";
 };

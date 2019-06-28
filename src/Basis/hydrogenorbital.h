@@ -17,7 +17,15 @@ public:
     double evaluateCartDerivative(Eigen::VectorXd position, int i, int n, int l, int m);
     double evaluateCartSecondDerivative(Eigen::VectorXd position, int i, int n, int l, int m);
 
+    void generateLOS();
+    void numberOfOrbitalss();
+
 private:
     int m_Z = 1;
+    int m_numberOfOrbitalss = 1;
+    int m_numberOfShells = 1;
     double m_alpha = 1;
+
+
+    Eigen::MatrixX3i m_LOS;
 };

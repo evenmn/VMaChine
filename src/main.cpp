@@ -11,21 +11,21 @@ int main(int argc, char *argv[]) {
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 30;
+    int     numberOfDimensions  = 3;
+    int     numberOfParticles   = 10;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,15));
-    int     numberOfIterations  = 10000;
+    int     numberOfSteps       = int(pow(2,16));
+    int     numberOfIterations  = 5000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
     double  learningRate        = 0.001;
-    double  omega               = 1.0;                 // Oscillator frequency
+    double  omega               = 0.01;                 // Oscillator frequency
     int     Z                   = numberOfParticles;    // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);        // Width of probability distribution
     double  stepLength          = 0.1;                  // Metropolis step length
-    double  equilibration       = 0.00;                // Amount of the total steps used
+    double  equilibration       = 0.0;                  // Amount of the total steps used
 
     // Switches
-    bool    interaction             = true;     // Repulsive interaction on or off
+    bool    interaction             = false;     // Repulsive interaction on or off
     bool    checkConvergence        = false;    // Stops the program after it has converged
     bool    applyAdaptiveSteps      = true;     // Increase the number of MC-cycles for the last iterations
     bool    computeOneBodyDensity   = true;     // Compute one-body density and print to file
@@ -43,13 +43,13 @@ int main(int argc, char *argv[]) {
     int     numberOfEnergies        = 5;        // Check this number of energies for convergence
     double  tolerance               = 1e-7;     // Convergence tolerance
 
-    // Dynamic step toolssimply
-    int     rangeOfAdaptiveSteps    = 10;       // For how many iterations should we increase # MC-cycles?
-    int     additionalSteps         = 4;        // How much should we increase it? (as a power of 2)
-    int     additionalStepsLastIter = 8;        // How much should we increase the very last? (as a power of 2)
+    // Dynamic step tools
+    int     rangeOfAdaptiveSteps    = 50;       // For how many iterations should we increase # MC-cycles?
+    int     additionalSteps         = 8;        // How much should we increase it? (as a power of 2)
+    int     additionalStepsLastIter = 12;        // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius               = 15;       // Max radius of one-body density plots
+    double  maxRadius               = 40;       // Max radius of one-body density plots
     int     numberOfBins            = 3000;     // 100 bins per radius unit
 
     // Screening tools
@@ -84,23 +84,23 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2) system->parserConstants(argv[1], numberOfIterations);
 
-    system->setBasis                    (new Hermite(system));
+    system->setBasis                    (new HydrogenOrbital(system));
     std::vector<class WaveFunction*> waveFunctionElements;
     //waveFunctionElements.push_back      (new class Gaussian          (system));
     waveFunctionElements.push_back      (new class SlaterDeterminant (system));
-    waveFunctionElements.push_back      (new class RBMGaussian       (system));
-    waveFunctionElements.push_back      (new class RBMJastrow        (system));
+    //waveFunctionElements.push_back      (new class RBMGaussian       (system));
+    //waveFunctionElements.push_back      (new class RBMJastrow        (system));
     //waveFunctionElements.push_back      (new class SimpleJastrow     (system));
-    waveFunctionElements.push_back      (new class PadeJastrow       (system));
+    //waveFunctionElements.push_back      (new class PadeJastrow       (system));
     //waveFunctionElements.push_back      (new class PartlyRestricted  (system));
     //waveFunctionElements.push_back      (new HydrogenLike      (system));
 
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Randomize(system, 0.1));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
-    system->setHamiltonian              (new HarmonicOscillator(system));
+    system->setHamiltonian              (new AtomicNucleus(system));
     system->setMetropolis               (new ImportanceSampling(system));
 
     if(argc == 2) system->parserObjects (argv[1]);
