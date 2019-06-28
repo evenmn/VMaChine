@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     double  equilibration       = 0.0;                  // Amount of the total steps used
 
     // Switches
-    bool    interaction             = false;     // Repulsive interaction on or off
+    bool    interaction             = true;     // Repulsive interaction on or off
     bool    checkConvergence        = false;    // Stops the program after it has converged
     bool    applyAdaptiveSteps      = true;     // Increase the number of MC-cycles for the last iterations
     bool    computeOneBodyDensity   = true;     // Compute one-body density and print to file
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
     //waveFunctionElements.push_back      (new class RBMGaussian       (system));
     //waveFunctionElements.push_back      (new class RBMJastrow        (system));
     //waveFunctionElements.push_back      (new class SimpleJastrow     (system));
-    //waveFunctionElements.push_back      (new class PadeJastrow       (system));
+    waveFunctionElements.push_back      (new class PadeJastrow       (system));
     //waveFunctionElements.push_back      (new class PartlyRestricted  (system));
     //waveFunctionElements.push_back      (new HydrogenLike      (system));
 

@@ -15,23 +15,22 @@ HydrogenOrbital::HydrogenOrbital(System *system)  :
 
 void HydrogenOrbital::numberOfOrbitalss() {
     int number = 1;
-    int number2 = 2;
+    int number2 = 0;
     int maxNumber = 0;
     int counter = 1;
     m_numberOfShells = 1;
     while(true) {
-        std::cout << number2 << std::endl;
+        number2 += 2*number;
         if(m_numberOfParticles==number2) {
             m_numberOfOrbitalss = counter;
             break;
         }
-        else if(m_numberOfParticles<2*number2) {
-            std::cout << "What u tryna do?" << std::endl;
+        else if(m_numberOfParticles<number2) {
+            std::cout << "Only closed shell atoms are accepted: He, Be, Ne, Mg, Ar, Zn, Kr" << std::endl;
             MPI_Finalize();
             exit(0);
         }
         else {
-            number2 += 2*number;
             if(number > maxNumber) {
                 m_numberOfShells += 1;
                 maxNumber = number;
@@ -46,10 +45,14 @@ void HydrogenOrbital::numberOfOrbitalss() {
 }
 
 void HydrogenOrbital::generateLOS() {
-    m_LOS = Eigen::MatrixX3i::Zero(m_numberOfParticles/2,3);
+    int sum = 0;
+    for(int i=1; i<m_numberOfShells+1; i++) {
+        sum += i*i;
+    }
+    m_LOS = Eigen::MatrixX3i::Zero(sum,3);
     int i=0;
     for(int n=1; n<m_numberOfShells+1; n++) {
-        for(int l=0; i<n; l++) {
+        for(int l=0; l<n; l++) {
             for(int m=-l; m<l+1; m++) {
                 m_LOS.row(i) << n, l, m;
                 i++;
@@ -71,7 +74,7 @@ double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::Vect
 }
 
 double HydrogenOrbital::evaluateCart(Eigen::VectorXd position, int n, int l, int m) {
-    //Hard coded Hydrogen orbitals taken from Jorgen Hogberget
+    //Hard coded Hydrogen orbitals taken from Jorgen Hogberget    
     double r = position.norm();
     double x = position(0);
     double y = position(1);
@@ -155,261 +158,218 @@ double HydrogenOrbital::evaluateCartDerivative(Eigen::VectorXd position, int i, 
     double x = position(0);
     double y = position(1);
     double z = position(2);
+    double t = position(i);
     double k = m_alpha*m_Z;
     double result = 0;
     if(n==1) {
-        result = -k*position(i)/r;
+        result = -k*t;
     }
     else if(n==2) {
         if(l==0) {
-            result = -k*position(i)*(4-k*r)/(2*r);
+            result = -k*t*(4-k*r);
         }
         else if(l==1) {
             if(m==0) {
-                if(i==0) {
-                    result = -k*x*z/(2*r);
-                }
-                else if(i==1) {
-                    result = -k*y*z/(2*r);
-                }
-                else if(i==2) {
-                    result = -k*z*z/(2*r) + 1;
+                result = -k*t*z;
+                if(i==2) {
+                    result += 2*r;
                 }
             }
             else if(m==1) {
+                result = -k*t*x;
                 if(i==0) {
-                    result = -k*x*x/(2*r) + 1;
-                }
-                else if(i==1) {
-                    result = -k*y*x/(2*r);
-                }
-                else if(i==2) {
-                    result = -k*z*x/(2*r);
+                    result += 2*r;
                 }
             }
             else if(m==-1) {
-                if(i==0) {
-                    result = -k*x*y/(2*r);
-                }
-                else if(i==1) {
-                    result = -k*y*y/(2*r) + 1;
-                }
-                else if(i==2) {
-                    result = -k*z*y/(2*r);
+                result = -k*t*y;
+                if(i==1) {
+                    result += 2*r;
                 }
             }
         }
     }
     else if(n==3) {
         if(l==0) {
-            result = -k*position(i)*(2*k*k*r*r - 30*k*r + 81)/(3*r);
+            result = -k*t*(2*k*k*r*r - 30*k*r + 81);
         }
         else if(l==1) {
             if(m==0) {
                 if(i==0) {
-                    result = -k*x*z*(k*r-9)/(3*r);
+                    result = -k*t*z*(k*r-9);
                 }
                 else if(i==1) {
-                    result = -k*y*z*(k*r-9)/(3*r);
+                    result = -k*t*z*(k*r-9);
                 }
                 else if(i==2) {
-                    result = -k*z*z*(k*r-9)/(3*r) - 6 + k*r;
+                    result = -k*t*z*(k*r-9) - 18*r + 3*k*r*r;
                 }
             }
             else if(m==1) {
                 if(i==0) {
-                    result = -k*x*z*(k*r-9)/(3*r) - 6 + k*r;
+                    result = -k*t*x*(k*r-9) - 18*r + 3*k*r*r;
                 }
                 else if(i==1) {
-                    result = -k*y*z*(k*r-9)/(3*r);
+                    result = -k*t*x*(k*r-9);
                 }
                 else if(i==2) {
-                    result = -k*z*z*(k*r-9)/(3*r);
+                    result = -k*t*x*(k*r-9);
                 }
             }
             else if(m==-1) {
                 if(i==0) {
-                    result = -k*x*z*(k*r-9)/(3*r);
+                    result = -k*t*y*(k*r-9);
                 }
                 else if(i==1) {
-                    result = -k*y*z*(k*r-9)/(3*r) - 6 + k*r;
+                    result = -k*t*y*(k*r-9) - 18*r + 3*k*r*r;
                 }
                 else if(i==2) {
-                    result = -k*z*z*(k*r-9)/(3*r);
+                    result = -k*t*y*(k*r-9);
                 }
             }
         }
         else if(l==2) {
             if(m==0) {
                 if(i==0) {
-                    result = -x*(k*(-r*r+3*z*z)+6*r)/(3*r);
+                    result = -t*(k*(-r*r+3*z*z)+6*r);
                 }
                 else if(i==1) {
-                    result = -y*(k*(-r*r+3*z*z)+6*r)/(3*r);
+                    result = -t*(k*(-r*r+3*z*z)+6*r);
                 }
                 else if(i==2) {
-                    result = -z*(k*(-r*r+3*z*z)-12*r)/(3*r);
+                    result = -t*(k*(-r*r+3*z*z)-12*r);
                 }
             }
             else if(m==1) {
                 if(i==0) {
-                    result = -z*(k*x*x-3*r)/(3*r);
+                    result = -z*(k*x*x-3*r);
                 }
                 else if(i==1) {
-                    result = -k*x*y*z/(3*r);
+                    result = -y*(k*x*y);
                 }
                 else if(i==2) {
-                    result = -x*(k*z*z-3*r)/(3*r);
+                    result = -x*(k*z*z-3*r);
                 }
             }
             else if(m==-1) {
                 if(i==0) {
-                    result = -k*x*y*z/(3*r);
+                    result = -k*x*y*z;
                 }
                 else if(i==1) {
-                    result = -z*(k*y*y-3*r)/(3*r);
+                    result = -z*(k*y*y-3*r);
                 }
                 else if(i==2) {
-                    result = -y*(k*z*z-3*r)/(3*r);
+                    result = -y*(k*z*z-3*r);
                 }
             }
             else if(m==2) {
                 if(i==0) {
-                    result = -x*(k*(x*x-y*y)-6*r)/(3*r);
+                    result = -x*(k*(x*x-y*y)-6*r);
                 }
                 else if(i==1) {
-                    result = -y*(k*(x*x-y*y)+6*r)/(3*r);
+                    result = -y*(k*(x*x-y*y)+6*r);
                 }
                 else if(i==2) {
-                    result = -k*z*(x*x-y*y)/(3*r);
+                    result = -k*z*(x*x-y*y);
                 }
             }
             else if(m==-2) {
                 if(i==0) {
-                    result = -y*(k*x*x-3*r)/(3*r);
+                    result = -y*(k*x*x-3*r);
                 }
                 else if(i==1) {
-                    result = -x*(k*y*y-3*r)/(3*r);
+                    result = -x*(k*y*y-3*r);
                 }
                 else if(i==2) {
-                    result = -k*x*y*z/(3*r);
+                    result = -k*x*y*z;
                 }
             }
         }
     }
     else if(n==4) {
         if(l==0) {
-            result = -k*position(i)*(k*k*k*r*r*r-36*k*k*r*r+336*k*r-768)/(4*r);
+            result = -k*t*(k*k*k*r*r*r-36*k*k*r*r+336*k*r-768);
         }
         else if(l==1) {
             if(m==0) {
                 if(i==0) {
-                    result = -k*x*z*(k*r-20)*(k*r-8)/(4*r);
+                    result = -k*t*z*(k*r-20)*(k*r-8);
                 }
                 else if(i==1) {
-                    result = -k*y*z*(k*r-20)*(k*r-8)/(4*r);
+                    result = -k*t*z*(k*r-20)*(k*r-8);
                 }
                 else if(i==2) {
-                    result = -k*z*z*(k*r-20)*(k*r-8)/(4*r)+320-80*k*r+4*k*k*r*r;
+                    result = -k*t*z*(k*r-20)*(k*r-8)+320*r-80*k*r*r+4*k*k*r*r*r;
                 }
             }
             else if(m==1) {
                 if(i==0) {
-                    result = -k*x*x*(k*r-20)*(k*r-8)/(4*r)+320-80*k*r+4*k*k*r*r;
+                    result = -k*t*x*(k*r-20)*(k*r-8)+320*r-80*k*r*r+4*k*k*r*r*r;
                 }
                 else if(i==1) {
-                    result = -k*x*y*(k*r-20)*(k*r-8)/(4*r);
+                    result = -k*t*x*(k*r-20)*(k*r-8);
                 }
                 else if(i==2) {
-                    result = -k*x*z*(k*r-20)*(k*r-8)/(4*r);
+                    result = -k*t*x*(k*r-20)*(k*r-8);
                 }
             }
             else if(m==-1) {
                 if(i==0) {
-                    result = -k*x*y*(k*r-20)*(k*r-8)/(4*r);
+                    result = -k*t*y*(k*r-20)*(k*r-8);
                 }
                 else if(i==1) {
-                    result = -k*y*y*(k*r-20)*(k*r-8)/(4*r)+320-80*k*r+4*k*k*r*r;
+                    result = -k*t*y*(k*r-20)*(k*r-8)+320*r-80*k*r*r+4*k*k*r*r*r;
                 }
                 else if(i==2) {
-                    result = -k*y*z*(k*r-20)*(k*r-8)/(4*r);
+                    result = -k*t*y*(k*r-20)*(k*r-8);
                 }
             }
         }
     }
-    return result * exp(-k*r/n);
+    return result * exp(-k*r/n)/(n*r);
 }
 
 double HydrogenOrbital::evaluateCartSecondDerivative(Eigen::VectorXd position, int i, int n, int l, int m) {
-    //Hard coded Laplacian of Hydrogen orbitals taken from Jorgen Hogberget
+    //Hard coded Laplacian of Hydrogen orbitals
     double r = position.norm();
     double x = position(0);
     double y = position(1);
     double z = position(2);
+    double t = position(i);
     double k = m_alpha*m_Z;
+
     double result = 0;
     if(n==1) {
-        if(i==0){
-            result = k*(x*x*(k*r+1)-r*r)/(r*r*r);
-        }
-        else if(i==1){
-            result = k*(y*y*(k*r+1)-r*r)/(r*r*r);
-        }
-        else if(i==2){
-            result = k*(z*z*(k*r+1)-r*r)/(r*r*r);
-        }
+        result = k*(t*t*(k*r+1)-r*r);
     }
     else if(n==2) {
         if(l==0) {
-            if(i==0) {
-                result = -k*(k*r*(x*x*(k*r-4)-2*r*r)+8*(y*y+z*z))/(4*r*r*r);
-            }
-            else if(i==1) {
-                result = -k*(k*r*(y*y*(k*r-4)-2*r*r)+8*(x*x+z*z))/(4*r*r*r);
-            }
-            else if(i==2) {
-                result = -k*(k*r*(z*z*(k*r-4)-2*r*r)+8*(x*x+y*y))/(4*r*r*r);
-            }
+            result = -k*(t*t*(k*r*(k*r-4)-8)-2*r*r*(k*r-4));
         }
         else if(l==1) {
             if(m==-1) {
-                if(i==0) {
-                    result = k*y*(-k*r*x*x+2*y*y+2*z*z)/(4*r*r*r);
-                }
-                else if(i==1) {
-                    result = k*y*(-k*r*y*y+4*y*y+6*x*x+6*z*z)/(4*r*r*r);
-                }
-                else if(i==2) {
-                    result = k*y*(-k*r*z*z+2*x*x+2*y*y)/(4*r*r*r);
+                result = -k*y*(-t*t*(k*r+2) + 2*r*r);
+                if(i==1) {
+                    result -= 4*k*y*r*r;
                 }
             }
             else if(m==0) {
-                if(i==0) {
-                    result = k*z*(-k*r*x*x+2*y*y+2*z*z)/(4*r*r*r);
-                }
-                else if(i==1) {
-                    result = k*z*(-k*r*y*y+2*x*x+2*z*z)/(4*r*r*r);
-                }
-                else if(i==2) {
-                    result = k*z*(-k*r*z*z+4*z*z+6*x*x+6*y*y)/(4*r*r*r);
+                result = -k*z*(-t*t*(k*r+2) + 2*r*r);
+                if(i==2) {
+                    result -= 4*k*z*r*r;
                 }
             }
             else if(m==1) {
+                result = -k*x*(-t*t*(k*r+2) + 2*r*r);
                 if(i==0) {
-                    result = k*x*(-k*r*x*x+4*x*x+6*y*y+6*z*z)/(4*r*r*r);
-                }
-                else if(i==1) {
-                    result = k*x*(-k*r*y*y+2*x*x+2*z*z)/(4*r*r*r);
-                }
-                else if(i==2) {
-                    result = k*x*(-k*r*z*z+2*x*x+2*y*y)/(4*r*r*r);
+                    result -= 4*k*x*r*r;
                 }
             }
         }
     }
     else if(n==3) {
         if(l==0) {
-            result = k*(k*r-18)*(2*k*k*r*r-18*k*r+27)/(9*r);
+            result = -k*((2/9.)*(k*k*r*r*(t*t*(5+k*r) - 3*r*r)) + 27*(t*t-r*r)+k*r*(10*r*r+9*t*t));
         }
         else if(l==1) {
             if(m==0) {
@@ -456,7 +416,7 @@ double HydrogenOrbital::evaluateCartSecondDerivative(Eigen::VectorXd position, i
             }
         }
     }
-    return result * exp(-k*r/n);
+    return result * exp(-k*r/n) / (n*n*r*r*r);
 }
 
 double HydrogenOrbital::evaluate(double x, int n) {
