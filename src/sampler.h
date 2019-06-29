@@ -20,7 +20,7 @@ public:
     void            computeAverages         ();
     void            computeTotals           ();
     void            doResampling            ();
-    void            appendInstantFiles      ();
+    void            appendInstantFiles      (const std::string extension);
     void            mergeOneBodyFiles       ();
     void            setNumberOfSteps        (int numberOfStepsWOEqui, int totalNumberOfStepsWOEqui, int totalNumberOfStepsWEqui);
     double          getAverageEnergy()        { return m_averageEnergy; }
@@ -49,14 +49,29 @@ private:
     int              m_rank = 0;
     int              m_instantNumber = 0;
     bool             m_interaction = 0;
-    double           m_variance = 0;
     double           m_equilibrationFraction = 0;
     double           m_omega = 0;
 
+    double           m_variance                  = 0;
     double           m_stdError                  = 0;
     double           m_mseEnergy                 = 0;
     double           m_mseSTD                    = 0;
     double           m_mseVariance               = 0;
+    double           m_varianceKinetic                  = 0;
+    double           m_stdErrorKinetic                  = 0;
+    double           m_mseEnergyKinetic                 = 0;
+    double           m_mseSTDKinetic                    = 0;
+    double           m_mseVarianceKinetic               = 0;
+    double           m_varianceExternal                  = 0;
+    double           m_stdErrorExternal                  = 0;
+    double           m_mseEnergyExternal                 = 0;
+    double           m_mseSTDExternal                    = 0;
+    double           m_mseVarianceExternal               = 0;
+    double           m_varianceInteraction                  = 0;
+    double           m_stdErrorInteraction                  = 0;
+    double           m_mseEnergyInteraction                 = 0;
+    double           m_mseSTDInteraction                    = 0;
+    double           m_mseVarianceInteraction               = 0;
     double           m_averageKineticEnergy = 0;
     double           m_averageExternalEnergy = 0;
     double           m_averageInteractionEnergy = 0;
@@ -87,10 +102,19 @@ private:
     Eigen::MatrixXd  m_instantGradients;
 
     std::ofstream    m_averageEnergyFile;
+    std::ofstream    m_averageKineticEnergyFile;
+    std::ofstream    m_averageExternalEnergyFile;
+    std::ofstream    m_averageInteractionEnergyFile;
     std::ofstream    m_instantEnergyFile;
+    std::ofstream    m_instantKineticEnergyFile;
+    std::ofstream    m_instantExternalEnergyFile;
+    std::ofstream    m_instantInteractionEnergyFile;
     std::ofstream    m_parameterFile;
     std::string      m_parameterFileName     = "Filename not generated yet";
     std::string      m_instantEnergyFileName = "Filename not generated yet";
+    std::string      m_instantKineticEnergyFileName = "Filename not generated yet";
+    std::string      m_instantExternalEnergyFileName = "Filename not generated yet";
+    std::string      m_instantInteractionEnergyFileName = "Filename not generated yet";
     std::string      m_path                  = "Path not specified";
     std::string      m_trialWaveFunction     = "Wave function not found";
 

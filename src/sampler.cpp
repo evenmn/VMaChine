@@ -150,12 +150,9 @@ void Sampler::printFinalOutputToTerminal() {
     cout << endl;
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy                : " << m_averageEnergy << " (with MSE = " << m_mseEnergy   << ")" << endl;
-    cout << " Kinetic energy        : " << m_averageKineticEnergy             << endl;
-    cout << " External energy       : " << m_averageExternalEnergy            << endl;
-    cout << " Interaction energy    : " << m_averageInteractionEnergy         << endl;
-    cout << " Gas parameter         : " << (m_averageExternalEnergy +
-                                           m_averageInteractionEnergy) /
-                                           m_averageKineticEnergy             << endl;
+    cout << " Kinetic energy        : " << m_averageKineticEnergy << "(with MSE = " << m_mseEnergyKinetic << ")"             << endl;
+    cout << " External energy       : " << m_averageExternalEnergy << "(with MSE = " << m_mseEnergyExternal << ")"             << endl;
+    cout << " Interaction energy    : " << m_averageInteractionEnergy << "(with MSE = " << m_mseEnergyInteraction << ")"             << endl;
     cout << " Variance              : " << m_variance      << " (with MSE = " << m_mseVariance << ")" << endl;
     cout << " STD                   : " << m_stdError      << " (with MSE = " << m_mseSTD      << ")" << endl;
     cout << " Acceptence Ratio      : " << double(m_totalAcceptence)/m_totalStepsWOEqui << endl;
@@ -164,7 +161,16 @@ void Sampler::printFinalOutputToTerminal() {
 
 void Sampler::doResampling() {
     if(m_printInstantEnergyToFile) {
-        appendInstantFiles();
+        appendInstantFiles(".dat");
+        appendInstantFiles("_kin.dat");
+        appendInstantFiles("_ext.dat");
+        appendInstantFiles("_int.dat");
+        std::vector<std::string> files;
+        files.push_back(m_instantEnergyFileName);
+        files.push_back(m_instantKineticEnergyFileName);
+        files.push_back(m_instantExternalEnergyFileName);
+        files.push_back(m_instantInteractionEnergyFileName);
+
         std::ifstream infile(m_instantEnergyFileName.c_str());
         std::vector<double> instantEnergies;
         std::string line;
@@ -178,15 +184,67 @@ void Sampler::doResampling() {
         m_mseEnergy     = block.mse_mean;
         m_mseSTD        = block.mse_stdErr;
         m_mseVariance   = m_mseSTD * m_mseSTD;
-        if(remove(m_instantEnergyFileName.c_str()) != 0)
+        if(remove(m_instantEnergyFileName.c_str()) != 0) {
             perror( "Could not remove blocking file" );
+        }
+
+        std::ifstream infile2(m_instantKineticEnergyFileName.c_str());
+        std::vector<double> instantEnergies2;
+        std::string line2;
+        while(std::getline(infile2,line2)) {
+            instantEnergies2.push_back(strtod(line2.c_str(), nullptr));
+        }
+        Blocker block2(instantEnergies2);
+        m_averageKineticEnergy = block2.mean;
+        m_stdErrorKinetic      = block2.stdErr;
+        m_varianceKinetic      = m_stdErrorKinetic * m_stdErrorKinetic;
+        m_mseEnergyKinetic     = block2.mse_mean;
+        m_mseSTDKinetic        = block2.mse_stdErr;
+        m_mseVarianceKinetic   = m_mseSTDKinetic * m_mseSTDKinetic;
+        if(remove(m_instantKineticEnergyFileName.c_str()) != 0) {
+            perror( "Could not remove blocking file" );
+        }
+
+        std::ifstream infile3(m_instantExternalEnergyFileName.c_str());
+        std::vector<double> instantEnergies3;
+        std::string line3;
+        while(std::getline(infile3,line3)) {
+            instantEnergies3.push_back(strtod(line3.c_str(), nullptr));
+        }
+        Blocker block3(instantEnergies3);
+        m_averageExternalEnergy = block3.mean;
+        m_stdErrorExternal      = block3.stdErr;
+        m_varianceExternal      = m_stdErrorExternal * m_stdErrorExternal;
+        m_mseEnergyExternal     = block3.mse_mean;
+        m_mseSTDExternal        = block3.mse_stdErr;
+        m_mseVarianceExternal   = m_mseSTDExternal * m_mseSTDExternal;
+        if(remove(m_instantExternalEnergyFileName.c_str()) != 0) {
+            perror( "Could not remove blocking file" );
+        }
+
+        std::ifstream infile4(m_instantInteractionEnergyFileName.c_str());
+        std::vector<double> instantEnergies4;
+        std::string line4;
+        while(std::getline(infile4,line4)) {
+            instantEnergies4.push_back(strtod(line4.c_str(), nullptr));
+        }
+        Blocker block4(instantEnergies4);
+        m_averageInteractionEnergy = block4.mean;
+        m_stdErrorInteraction      = block4.stdErr;
+        m_varianceInteraction      = m_stdErrorInteraction * m_stdErrorInteraction;
+        m_mseEnergyInteraction     = block4.mse_mean;
+        m_mseSTDInteraction        = block4.mse_stdErr;
+        m_mseVarianceInteraction   = m_mseSTDInteraction * m_mseSTDInteraction;
+        if(remove(m_instantInteractionEnergyFileName.c_str()) != 0) {
+            perror( "Could not remove blocking file" );
+        }
     }
 }
 
-void Sampler::appendInstantFiles() {
+void Sampler::appendInstantFiles(const std::string extension) {
     std::ofstream outfile(m_instantEnergyFileName.c_str(), std::ios::out | std::ios::app);
     for(int i=1; i<m_numberOfProcesses; i++) {
-        std::string name = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(i) + ".dat";
+        std::string name = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(i) + extension;
         std::ifstream infile(name.c_str(), std::ios::in);
         if (!infile.is_open()) {
             perror ( "File not found" );
@@ -223,7 +281,13 @@ void Sampler::openOutputFiles() {
     // Print average energies to file
     if(m_printEnergyToFile && m_rank == 0) {
         std::string averageEnergyFileName = generateFileName("energy", ".dat");
+        //std::string averageKineticEnergyFileName = generateFileName("energy", "_kin.dat");
+        //std::string averageExternalEnergyFileName = generateFileName("energy", "_ext.dat");
+        //std::string averageInteractionEnergyFileName = generateFileName("energy", "_int.dat");
         m_averageEnergyFile.open(averageEnergyFileName);
+        //m_averageKineticEnergyFile.open(averageKineticEnergyFileName);
+        //m_averageExternalEnergyFile.open(averageExternalEnergyFileName);
+        //m_averageInteractionEnergyFile.open(averageInteractionEnergyFileName);
     }
     if(m_printParametersToFile && m_rank == 0) {
         m_parameterFileName = generateFileName("weights", ".dat");
@@ -243,13 +307,22 @@ void Sampler::openOutputFiles() {
         }
         MPI_Bcast(&m_instantNumber, 1, MPI_INT, 0, MPI_COMM_WORLD);
         m_instantEnergyFileName = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + ".dat";
+        m_instantKineticEnergyFileName = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + "_kin.dat";
+        m_instantExternalEnergyFileName = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + "_ext.dat";
+        m_instantInteractionEnergyFileName = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + "_int.dat";
         m_instantEnergyFile.open(m_instantEnergyFileName);
+        m_instantKineticEnergyFile.open(m_instantKineticEnergyFileName);
+        m_instantExternalEnergyFile.open(m_instantExternalEnergyFileName);
+        m_instantInteractionEnergyFile.open(m_instantInteractionEnergyFileName);
     }
 }
 
 void Sampler::printEnergyToFile() {
     if(m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFile << m_averageEnergy << endl;
+        m_averageKineticEnergyFile << m_averageKineticEnergy << endl;
+        m_averageExternalEnergyFile << m_averageExternalEnergy << endl;
+        m_averageInteractionEnergyFile << m_averageInteractionEnergy << endl;
     }
 }
 
@@ -284,6 +357,9 @@ void Sampler::printTwoBodyDensityToFile() {
 
 void Sampler::closeOutputFiles() {
     if(m_averageEnergyFile.is_open())      { m_averageEnergyFile.close(); }
+    if(m_averageKineticEnergyFile.is_open())      { m_averageKineticEnergyFile.close(); }
+    if(m_averageExternalEnergyFile.is_open())      { m_averageExternalEnergyFile.close(); }
+    if(m_averageInteractionEnergyFile.is_open())      { m_averageInteractionEnergyFile.close(); }
     if(m_oneBodyFile.is_open())            { m_oneBodyFile.close(); }
     if(m_twoBodyFile.is_open())            { m_twoBodyFile.close(); }
     if(m_instantEnergyFile.is_open())      { m_instantEnergyFile.close(); }
@@ -293,6 +369,9 @@ void Sampler::closeOutputFiles() {
 void Sampler::printInstantValuesToFile() {
     if(m_printInstantEnergyToFile) {
         m_instantEnergyFile << m_instantEnergy << endl;
+        m_instantKineticEnergyFile << m_kineticEnergy << endl;
+        m_instantExternalEnergyFile << m_externalEnergy << endl;
+        m_instantInteractionEnergyFile << m_interactionEnergy << endl;
     }
 }
 
