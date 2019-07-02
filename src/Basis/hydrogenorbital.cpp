@@ -77,9 +77,14 @@ double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::Vect
     return evaluateCartSecondDerivative(position, i, m_LOS(n,0), m_LOS(n,1), m_LOS(n,2));
 }
 
-double HydrogenOrbital::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
-    double r = positionBlock.rowwise().norm().sum();
-    return m_Z*r*exp(-m_Z*r*m_alpha/n)/n;
+double HydrogenOrbital::basisElementPar(const int n, Eigen::VectorXd position) {
+    double r = position.norm();
+    if(n==0) {
+        return -m_Z*r;
+    }
+    else if(n==1) {
+        return m_Z*r*(2-m_alpha*m_Z*r/2);
+    }
 }
 
 double HydrogenOrbital::evaluateCart(Eigen::VectorXd position, int n, int l, int m) {

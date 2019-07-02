@@ -1,6 +1,7 @@
 #include <mpi.h>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <cmath>
 #include <cstdio>
 #include <string>
@@ -145,11 +146,13 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
 
 void Sampler::printFinalOutputToTerminal() {
     cout << endl;
+    std::cout << std::fixed;
+    std::cout << std::setprecision(10);
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy                : " << m_averageEnergy << " (with MSE = " << m_mseEnergy   << ")" << endl;
-    cout << " Kinetic energy        : " << m_averageKineticEnergy << "(with MSE = " << m_mseEnergyKinetic << ")"             << endl;
-    cout << " External energy       : " << m_averageExternalEnergy << "(with MSE = " << m_mseEnergyExternal << ")"             << endl;
-    cout << " Interaction energy    : " << m_averageInteractionEnergy << "(with MSE = " << m_mseEnergyInteraction << ")"             << endl;
+    cout << " Kinetic energy        : " << m_averageKineticEnergy << " (with MSE = " << m_mseEnergyKinetic << ")"             << endl;
+    cout << " External energy       : " << m_averageExternalEnergy << " (with MSE = " << m_mseEnergyExternal << ")"             << endl;
+    cout << " Interaction energy    : " << m_averageInteractionEnergy << " (with MSE = " << m_mseEnergyInteraction << ")"             << endl;
     cout << " Variance              : " << m_variance      << " (with MSE = " << m_mseVariance << ")" << endl;
     cout << " STD                   : " << m_stdError      << " (with MSE = " << m_mseSTD      << ")" << endl;
     cout << " Acceptence Ratio      : " << double(m_totalAcceptence)/m_totalStepsWOEqui << endl;
@@ -181,9 +184,9 @@ void Sampler::doResampling() {
         m_mseEnergy     = block.mse_mean;
         m_mseSTD        = block.mse_stdErr;
         m_mseVariance   = m_mseSTD * m_mseSTD;
-        if(remove(m_instantEnergyFileName.c_str()) != 0) {
-            perror( "Could not remove blocking file" );
-        }
+        //if(remove(m_instantEnergyFileName.c_str()) != 0) {
+        //    perror( "Could not remove blocking file" );
+        //}
 
         std::ifstream infile2(m_instantKineticEnergyFileName.c_str());
         std::vector<double> instantEnergies2;
@@ -239,7 +242,8 @@ void Sampler::doResampling() {
 }
 
 void Sampler::appendInstantFiles(const std::string extension) {
-    std::ofstream outfile(m_instantEnergyFileName.c_str(), std::ios::out | std::ios::app);
+    std::string outfileName = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(m_rank) + extension;
+    std::ofstream outfile(outfileName.c_str(), std::ios::out | std::ios::app);
     for(int i=1; i<m_numberOfProcesses; i++) {
         std::string name = m_path + std::to_string(m_instantNumber) + "_" + std::to_string(i) + extension;
         std::ifstream infile(name.c_str(), std::ios::in);
@@ -317,9 +321,9 @@ void Sampler::openOutputFiles() {
 void Sampler::printEnergyToFile() {
     if(m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFile << m_averageEnergy << endl;
-        m_averageKineticEnergyFile << m_averageKineticEnergy << endl;
-        m_averageExternalEnergyFile << m_averageExternalEnergy << endl;
-        m_averageInteractionEnergyFile << m_averageInteractionEnergy << endl;
+        //m_averageKineticEnergyFile << m_averageKineticEnergy << endl;
+        //m_averageExternalEnergyFile << m_averageExternalEnergy << endl;
+        //m_averageInteractionEnergyFile << m_averageInteractionEnergy << endl;
     }
 }
 

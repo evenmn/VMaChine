@@ -123,6 +123,6 @@ double HermiteExpansion::basisElementSecDer(const int n, const int i, Eigen::Vec
     return prod;
 }
 
-double HermiteExpansion::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+double HermiteExpansion::basisElementPar(const int n, Eigen::VectorXd position) {
     return 0;
 }

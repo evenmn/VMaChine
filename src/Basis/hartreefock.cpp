@@ -113,6 +113,6 @@ double HartreeFock::basisElementSecDer(const int n, const int i, Eigen::VectorXd
     return prod;
 }
 
-double HartreeFock::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+double HartreeFock::basisElementPar(const int n, Eigen::VectorXd position) {
     return 0;
 }

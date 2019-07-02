@@ -61,15 +61,18 @@ void SlaterDeterminant::setArrays() {
     m_positionsOld                      = m_positions;
     m_positionBlockOld                  = m_positionBlock;
     m_determinantDerivativeOld          = m_determinantDerivative;
+    m_determinantParameterOld           = m_determinantParameter;
     m_determinantSecondDerivativeOld    = m_determinantSecondDerivative;
     m_ratioOld                          = m_ratio;
     m_slaterMatrixUpOld                 = m_slaterMatrixUp;
     m_slaterMatrixInverseUpOld          = m_slaterMatrixInverseUp;
     m_slaterMatrixDerUpOld              = m_slaterMatrixDerUp;
+    m_slaterMatrixParUpOld              = m_slaterMatrixParUp;
     m_slaterMatrixSecDerUpOld           = m_slaterMatrixSecDerUp;
     m_slaterMatrixDnOld                 = m_slaterMatrixDn;
     m_slaterMatrixInverseDnOld          = m_slaterMatrixInverseDn;
     m_slaterMatrixDerDnOld              = m_slaterMatrixDerDn;
+    m_slaterMatrixParDnOld              = m_slaterMatrixParDn;
     m_slaterMatrixSecDerDnOld           = m_slaterMatrixSecDerDn;
 }
 
@@ -77,15 +80,18 @@ void SlaterDeterminant::resetArrays() {
     m_positions                         = m_positionsOld;
     m_positionBlock                     = m_positionBlockOld;
     m_determinantDerivative             = m_determinantDerivativeOld;
+    m_determinantParameter              = m_determinantParameterOld;
     m_determinantSecondDerivative       = m_determinantSecondDerivativeOld;
     m_ratio                             = m_ratioOld;
     m_slaterMatrixUp                    = m_slaterMatrixUpOld;
     m_slaterMatrixInverseUp             = m_slaterMatrixInverseUpOld;
     m_slaterMatrixDerUp                 = m_slaterMatrixDerUpOld;
+    m_slaterMatrixParUp                 = m_slaterMatrixParUpOld;
     m_slaterMatrixSecDerUp              = m_slaterMatrixSecDerUpOld;
     m_slaterMatrixDn                    = m_slaterMatrixDnOld;
     m_slaterMatrixInverseDn             = m_slaterMatrixInverseDnOld;
     m_slaterMatrixDerDn                 = m_slaterMatrixDerDnOld;
+    m_slaterMatrixParDn                 = m_slaterMatrixParDnOld;
     m_slaterMatrixSecDerDn              = m_slaterMatrixSecDerDnOld;
 }
 
@@ -96,9 +102,11 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions, const 
     m_positionBlock = positionBlock;
     initializeSlaterMatrix();
     initializeSlaterMatrixDer();
+    initializeSlaterMatrixPar();
     initializeSlaterMatrixSecDer();
     initializeSlaterMatrixInverse();
     m_determinantDerivative         = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
+    m_determinantParameter          = Eigen::VectorXd::Zero(m_numberOfParticles);
     m_determinantSecondDerivative   = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
     updateSlaterDeterminantDerivativesUp();
     updateSlaterDeterminantDerivativesDn();
@@ -127,6 +135,17 @@ void SlaterDeterminant::initializeSlaterMatrixDer() {
     }
     for(int row=0; row<m_numberOfFreeDimDn; row++) {
         updateSlaterMatrixDerRowDn(row);
+    }
+}
+
+void SlaterDeterminant::initializeSlaterMatrixPar() {
+    m_slaterMatrixParUp = Eigen::MatrixXd::Zero(m_numberOfSpinUp, m_numberOfSpinUp);
+    m_slaterMatrixParDn = Eigen::MatrixXd::Zero(m_numberOfSpinDn, m_numberOfSpinDn);
+    for(int row=0; row<m_numberOfSpinUp; row++) {
+        updateSlaterMatrixParRowUp(row);
+    }
+    for(int row=0; row<m_numberOfSpinDn; row++) {
+        updateSlaterMatrixParRowDn(row);
     }
 }
 
@@ -190,6 +209,21 @@ void SlaterDeterminant::updateSlaterMatrixSecDerRowDn(const int row) {
     }
 }
 
+
+void SlaterDeterminant::updateSlaterMatrixParRowUp(const int row) {
+    int particle  = int(row/m_numberOfDimensions);
+    for(int col=0; col<m_numberOfSpinUp; col++) {
+        m_slaterMatrixParUp(row,col) = m_system->getBasis()->basisElementPar(col, m_positionBlock.col(particle));
+    }
+}
+
+void SlaterDeterminant::updateSlaterMatrixParRowDn(const int row) {
+    int particle  = int(row/m_numberOfDimensions) + m_numberOfSpinUp;
+    for(int col=0; col<m_numberOfSpinDn; col++) {
+        m_slaterMatrixParDn(row,col) = m_system->getBasis()->basisElementPar(col, m_positionBlock.col(particle));
+    }
+}
+
 void SlaterDeterminant::updateRatioUp() {
     m_ratio = m_slaterMatrixUp.row(m_particle) * m_slaterMatrixInverseUp.col(m_particle);
 }
@@ -202,6 +236,7 @@ void SlaterDeterminant::updateSlaterDeterminantDerivativesUp() {
     for(int i=0; i<m_numberOfFreeDimUp; i++) {
         int particle = int(i/m_numberOfDimensions);
         m_determinantDerivative(i) = m_slaterMatrixDerUp.row(i) * m_slaterMatrixInverseUp.col(particle);
+        m_determinantParameter(particle) = m_slaterMatrixParUp.row(particle) * m_slaterMatrixInverseUp.col(particle);
         m_determinantSecondDerivative(i) = m_slaterMatrixSecDerUp.row(i) * m_slaterMatrixInverseUp.col(particle);
     }
 }
@@ -210,6 +245,7 @@ void SlaterDeterminant::updateSlaterDeterminantDerivativesDn() {
     for(int i=m_numberOfFreeDimUp; i<m_numberOfFreeDimensions; i++) {
         int particle = int(i/m_numberOfDimensions) - m_numberOfSpinUp;
         m_determinantDerivative(i) = m_slaterMatrixDerDn.row(i-m_numberOfFreeDimUp) * m_slaterMatrixInverseDn.col(particle);
+        m_determinantParameter(particle+m_numberOfSpinUp) = m_slaterMatrixParUp.row(particle) * m_slaterMatrixInverseUp.col(particle);
         m_determinantSecondDerivative(i) = m_slaterMatrixSecDerDn.row(i-m_numberOfFreeDimUp) * m_slaterMatrixInverseDn.col(particle);
     }
 }
@@ -250,6 +286,6 @@ double SlaterDeterminant::computeLaplacian() {
 
 Eigen::VectorXd SlaterDeterminant::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
-    gradients(0) = m_system->getBasis()->basisElementPar(1,m_positionBlock);
+    gradients(0) = 0; //m_determinantParameter.sum();
     return gradients;
 }

@@ -26,12 +26,14 @@ public:
 
     void            initializeSlaterMatrix          ();
     void            initializeSlaterMatrixDer       ();
+    void            initializeSlaterMatrixPar       ();
     void            initializeSlaterMatrixSecDer    ();
     void            initializeSlaterMatrixInverse   ();
 
     void            updateSlaterMatrixElementUp         (const int i, const int j);
     void            updateSlaterMatrixRowUp             (const int row);
     void            updateSlaterMatrixDerRowUp          (const int row);
+    void            updateSlaterMatrixParRowUp          (const int row);
     void            updateSlaterMatrixSecDerRowUp       (const int k);
     void            updateSlaterMatrixInverseUp         ();
     void            updateSlaterDeterminantDerivativesUp();
@@ -39,6 +41,7 @@ public:
     void            updateSlaterMatrixElementDn         (const int i, const int j);
     void            updateSlaterMatrixRowDn             (const int row);
     void            updateSlaterMatrixDerRowDn          (const int row);
+    void            updateSlaterMatrixParRowDn          (const int row);
     void            updateSlaterMatrixSecDerRowDn       (const int k);
     void            updateSlaterMatrixInverseDn         ();
     void            updateSlaterDeterminantDerivativesDn();
@@ -67,16 +70,20 @@ private:
     double          m_ratioOld              = 1;
     double          m_alpha                 = 1;
 
+    Eigen::VectorXd m_determinantParameter;
+    Eigen::VectorXd m_determinantParameterOld;
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_positionBlock;
     Eigen::MatrixXd m_slaterMatrixUp;
     Eigen::MatrixXd m_slaterMatrixDerUp;
+    Eigen::MatrixXd m_slaterMatrixParUp;
     Eigen::MatrixXd m_slaterMatrixSecDerUp;
     Eigen::MatrixXd m_slaterMatrixInverseUp;
 
     Eigen::MatrixXd m_slaterMatrixDn;
     Eigen::MatrixXd m_slaterMatrixDerDn;
+    Eigen::MatrixXd m_slaterMatrixParDn;
     Eigen::MatrixXd m_slaterMatrixSecDerDn;
     Eigen::MatrixXd m_slaterMatrixInverseDn;
 
@@ -87,11 +94,13 @@ private:
     Eigen::MatrixXd m_positionBlockOld;
     Eigen::MatrixXd m_slaterMatrixUpOld;
     Eigen::MatrixXd m_slaterMatrixDerUpOld;
+    Eigen::MatrixXd m_slaterMatrixParUpOld;
     Eigen::MatrixXd m_slaterMatrixSecDerUpOld;
     Eigen::MatrixXd m_slaterMatrixInverseUpOld;
 
     Eigen::MatrixXd m_slaterMatrixDnOld;
     Eigen::MatrixXd m_slaterMatrixDerDnOld;
+    Eigen::MatrixXd m_slaterMatrixParDnOld;
     Eigen::MatrixXd m_slaterMatrixSecDerDnOld;
     Eigen::MatrixXd m_slaterMatrixInverseDnOld;
 

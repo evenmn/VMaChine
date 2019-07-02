@@ -41,7 +41,7 @@ double None::basisElementSecDer(const int n, const int i, Eigen::VectorXd positi
     return 0;
 }
 
-double None::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+double None::basisElementPar(const int n, Eigen::VectorXd position) {
     return 0;
 }
 /*

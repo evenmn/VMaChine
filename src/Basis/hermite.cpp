@@ -46,7 +46,7 @@ double Hermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd pos
     return prod;
 }
 
-double Hermite::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+double Hermite::basisElementPar(const int n, Eigen::VectorXd position) {
     return 0;
 }
 

@@ -14,7 +14,7 @@ public:
     double basisElement(const int n, Eigen::VectorXd position);
     double basisElementDer(const int n, const int i, Eigen::VectorXd position);
     double basisElementSecDer(const int n, const int i, Eigen::VectorXd position);
-    double basisElementPar(const int n, Eigen::MatrixXd positionBlock);
+    double basisElementPar(const int n, Eigen::VectorXd position);
 
     double evaluateCart(Eigen::VectorXd position, int n, int l, int m);
     double evaluateCartDerivative(Eigen::VectorXd position, int i, int n, int l, int m);

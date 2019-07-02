@@ -19,7 +19,7 @@ public:
     virtual double basisElement(const int n, Eigen::VectorXd positions) = 0;
     virtual double basisElementDer(const int n, const int i, Eigen::VectorXd positions) = 0;
     virtual double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) = 0;
-    virtual double basisElementPar(const int n, Eigen::MatrixXd positionBlock) = 0;
+    virtual double basisElementPar(const int n, Eigen::VectorXd position) = 0;
 
     virtual ~Basis() = 0;
 

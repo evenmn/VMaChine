@@ -16,5 +16,5 @@ public:
     double basisElement(const int n, Eigen::VectorXd positions);
     double basisElementDer(const int n, const int i, Eigen::VectorXd positions);
     double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
-    double basisElementPar(const int n, Eigen::MatrixXd positionBlock);
+    double basisElementPar(const int n, Eigen::VectorXd position);
 };
