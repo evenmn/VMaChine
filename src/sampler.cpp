@@ -150,9 +150,9 @@ void Sampler::printFinalOutputToTerminal() {
     std::cout << std::setprecision(10);
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy                : " << m_averageEnergy << " (with MSE = " << m_mseEnergy   << ")" << endl;
-    cout << " Kinetic energy        : " << m_averageKineticEnergy << " (with MSE = " << m_mseEnergyKinetic << ")"             << endl;
-    cout << " External energy       : " << m_averageExternalEnergy << " (with MSE = " << m_mseEnergyExternal << ")"             << endl;
-    cout << " Interaction energy    : " << m_averageInteractionEnergy << " (with MSE = " << m_mseEnergyInteraction << ")"             << endl;
+    cout << " Kinetic energy        : " << m_averageKineticEnergy << " (with STD = " << m_stdErrorKinetic << ")"             << endl;
+    cout << " External energy       : " << m_averageExternalEnergy << " (with STD = " << m_stdErrorExternal << ")"             << endl;
+    cout << " Interaction energy    : " << m_averageInteractionEnergy << " (with STD = " << m_stdErrorInteraction << ")"             << endl;
     cout << " Variance              : " << m_variance      << " (with MSE = " << m_mseVariance << ")" << endl;
     cout << " STD                   : " << m_stdError      << " (with MSE = " << m_mseSTD      << ")" << endl;
     cout << " Acceptence Ratio      : " << double(m_totalAcceptence)/m_totalStepsWOEqui << endl;

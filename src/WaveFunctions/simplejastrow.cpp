@@ -97,7 +97,7 @@ double SimpleJastrow::computeLaplacian() {
         for(int j_p=0; j_p<m_numberOfParticles; j_p++) {
             int j = j_p * m_numberOfDimensions + i_d;
             if(j_p!=i_p) {
-                derivative += m_beta(i_p,j_p) * (1-m_g(i,j)*m_g(i,j)) / m_distanceMatrix(i_p,j_p);
+                derivative += m_beta(i_p,j_p) * (1-m_g(i,j)*m_g(i,j)/(m_distanceMatrix(i_p,j_p)*m_distanceMatrix(i_p,j_p))) / m_distanceMatrix(i_p,j_p);
             }
         }
     }

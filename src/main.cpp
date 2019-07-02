@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,20));
-    int     numberOfIterations  = 10000;
+    int     numberOfIterations  = 1000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
     double  learningRate        = 0.5;
     double  omega               = 1.0;                 // Oscillator frequency
