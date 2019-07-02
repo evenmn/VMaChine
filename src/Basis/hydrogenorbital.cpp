@@ -13,6 +13,10 @@ HydrogenOrbital::HydrogenOrbital(System *system)  :
     generateLOS();
 }
 
+void HydrogenOrbital::setParameters(Eigen::VectorXd parameters) {
+    m_alpha = parameters(0);
+}
+
 void HydrogenOrbital::numberOfOrbitalss() {
     int number = 1;
     int number2 = 0;
@@ -71,6 +75,11 @@ double HydrogenOrbital::basisElementDer(const int n, const int i, Eigen::VectorX
 
 double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::VectorXd position) {
     return evaluateCartSecondDerivative(position, i, m_LOS(n,0), m_LOS(n,1), m_LOS(n,2));
+}
+
+double HydrogenOrbital::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+    double r = positionBlock.rowwise().norm().sum();
+    return m_Z*r*exp(-m_Z*r*m_alpha/n)/n;
 }
 
 double HydrogenOrbital::evaluateCart(Eigen::VectorXd position, int n, int l, int m) {
@@ -369,7 +378,7 @@ double HydrogenOrbital::evaluateCartSecondDerivative(Eigen::VectorXd position, i
     }
     else if(n==3) {
         if(l==0) {
-            result = -k*((2/9.)*(k*k*r*r*(t*t*(5+k*r) - 3*r*r)) + 27*(t*t-r*r)+k*r*(10*r*r+9*t*t));
+            result = k*(r*r*(2*k*r*(5-3*k*r)-27)+t*t*(k*r*(2*k*r*(k*r-18)+9)+27))/9;
         }
         else if(l==1) {
             if(m==0) {

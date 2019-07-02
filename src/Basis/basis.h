@@ -10,6 +10,8 @@ public:
     void numberOfOrbitals();
     void generateListOfStates();
 
+    virtual void setParameters(Eigen::VectorXd parameters) = 0;
+
     virtual double evaluate(double x, int n) = 0;
     virtual double evaluateDerivative(double x, int n) = 0;
     virtual double evaluateSecondDerivative(double x, int n) = 0;
@@ -17,6 +19,7 @@ public:
     virtual double basisElement(const int n, Eigen::VectorXd positions) = 0;
     virtual double basisElementDer(const int n, const int i, Eigen::VectorXd positions) = 0;
     virtual double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) = 0;
+    virtual double basisElementPar(const int n, Eigen::MatrixXd positionBlock) = 0;
 
     virtual ~Basis() = 0;
 

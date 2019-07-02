@@ -13,6 +13,8 @@ void None::numberOfOrbitals() {
 }
 */
 
+void None::setParameters(Eigen::VectorXd parameters) {}
+
 double None::evaluate(double x, int n) {
     return 1;
 }
@@ -36,6 +38,10 @@ double None::basisElementDer(const int n, const int i, Eigen::VectorXd positions
 
 double None::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
+    return 0;
+}
+
+double None::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
     return 0;
 }
 /*

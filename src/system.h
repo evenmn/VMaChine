@@ -55,7 +55,8 @@ public:
                                      const bool computeTwoBodyDensity,
                                      const int numberOfBins,
                                      const double maxRadius);
-    void setScreeningTools          (const double screeningStrength,
+    void setScreeningTools          (const bool screening,
+                                     const double screeningStrength,
                                      const double dsl);
     void setEnergyPrintingTools     (const bool printEnergyFile,
                                      const bool printInstantEnergyFile);
@@ -121,6 +122,7 @@ public:
     double                          getTotalSpin()               { return m_totalSpin; }
     double                          getScreeningStrength()       { return m_screeningStrength; }
     double                          getDSL()                     { return m_dsl; }
+    bool                            getScreening()               { return m_screening; }
     bool                            getInteraction()             { return m_interaction; }
     bool                            computeOneBodyDensity()      { return m_computeOneBodyDensity; }
     bool                            computeTwoBodyDensity()      { return m_computeTwoBodyDensity; }
@@ -188,6 +190,7 @@ private:
     bool                                m_printParametersToFile     = true;
     bool                                m_calculateDistanceMatrix   = true;
     bool                                m_calculateRadialVector     = true;
+    bool                                m_screening                 = true;
 
     class WaveFunction*                 m_waveFunction              = nullptr;
     class Hamiltonian*                  m_hamiltonian               = nullptr;

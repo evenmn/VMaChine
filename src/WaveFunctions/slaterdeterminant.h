@@ -65,6 +65,7 @@ private:
     double          m_totalSpin             = 0;
     double          m_ratio                 = 1;
     double          m_ratioOld              = 1;
+    double          m_alpha                 = 1;
 
 
     Eigen::VectorXd m_positions;

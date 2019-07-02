@@ -14,7 +14,8 @@ public:
 protected:
     int m_numberOfParticles = 0;
     int m_numberOfDimensions = 0;
-    int m_interaction = false;
+    bool m_interaction = false;
+    bool m_screening = false;
 
     double m_screeningStrength = 100;
     double m_dsl = 100;

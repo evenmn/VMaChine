@@ -9,9 +9,12 @@ public:
     double evaluateDerivative(double x, int n);
     double evaluateSecondDerivative(double x, int n);
 
-    double basisElement(const int n, Eigen::VectorXd positions);
-    double basisElementDer(const int n, const int i, Eigen::VectorXd positions);
-    double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
+    void setParameters(Eigen::VectorXd parameters);
+
+    double basisElement(const int n, Eigen::VectorXd position);
+    double basisElementDer(const int n, const int i, Eigen::VectorXd position);
+    double basisElementSecDer(const int n, const int i, Eigen::VectorXd position);
+    double basisElementPar(const int n, Eigen::MatrixXd positionBlock);
 
     double evaluateCart(Eigen::VectorXd position, int n, int l, int m);
     double evaluateCartDerivative(Eigen::VectorXd position, int i, int n, int l, int m);

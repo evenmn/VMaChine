@@ -275,9 +275,10 @@ void System::setFrequency(const double omega) {
     m_omega = omega;
 }
 
-void System::setScreeningTools(const double screeningStrength, const double dsl) {
+void System::setScreeningTools(const bool screening, const double screeningStrength, const double dsl) {
     assert(screeningStrength >= 1);
     assert(dsl > 0);
+    m_screening = screening;
     m_screeningStrength = screeningStrength;
     m_dsl = dsl;
 }

@@ -104,7 +104,9 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions, const 
     updateSlaterDeterminantDerivativesDn();
 }
 
-void SlaterDeterminant::updateParameters(Eigen::MatrixXd parameters) {}
+void SlaterDeterminant::updateParameters(Eigen::MatrixXd parameters) {
+    m_system->getBasis()->setParameters(parameters.row(m_elementNumber));
+}
 
 void SlaterDeterminant::initializeSlaterMatrix() {
     m_slaterMatrixUp = Eigen::MatrixXd::Zero(m_numberOfSpinUp, m_numberOfSpinUp);
@@ -247,5 +249,7 @@ double SlaterDeterminant::computeLaplacian() {
 }
 
 Eigen::VectorXd SlaterDeterminant::computeParameterGradient() {
-    return Eigen::VectorXd::Zero(m_maxParameters);
+    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
+    gradients(0) = m_system->getBasis()->basisElementPar(1,m_positionBlock);
+    return gradients;
 }

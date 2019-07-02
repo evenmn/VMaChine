@@ -54,6 +54,8 @@ void HartreeFock::readCoefficientFile() {
     }
 }
 
+void HartreeFock::setParameters(Eigen::VectorXd parameters) {}
+
 double HartreeFock::evaluate(double x, int n) {
     //Hermite polynomial of n'th degree
     double sum = 0;
@@ -109,4 +111,8 @@ double HartreeFock::basisElementSecDer(const int n, const int i, Eigen::VectorXd
         }
     }
     return prod;
+}
+
+double HartreeFock::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+    return 0;
 }

@@ -30,6 +30,8 @@ HermiteExpansion::HermiteExpansion(System *system)  :
     */
 }
 
+void HermiteExpansion::setParameters(Eigen::VectorXd parameters) {}
+
 std::string HermiteExpansion::generateFileName() {
     std::string fileName = m_path;
     fileName += "int1/";
@@ -119,4 +121,8 @@ double HermiteExpansion::basisElementSecDer(const int n, const int i, Eigen::Vec
         }
     }
     return prod;
+}
+
+double HermiteExpansion::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+    return 0;
 }

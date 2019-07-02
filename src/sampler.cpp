@@ -136,9 +136,6 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time) {
     cout << " Kinetic energy        : " << m_averageKineticEnergy                        << endl;
     cout << " External energy       : " << m_averageExternalEnergy                       << endl;
     cout << " Interaction energy    : " << m_averageInteractionEnergy                    << endl;
-    cout << " Gas parameter         : " << (m_averageExternalEnergy +
-                                           m_averageInteractionEnergy) /
-                                           m_averageKineticEnergy                        << endl;
     cout << " Variance              : " << m_variance                                    << endl;
     cout << " STD                   : " << sqrt(m_variance)                              << endl;
     cout << " Acceptence Ratio      : " << double(m_totalAcceptence)/m_totalStepsWOEqui  << endl;

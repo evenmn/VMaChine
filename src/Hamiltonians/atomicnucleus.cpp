@@ -8,6 +8,7 @@ AtomicNucleus::AtomicNucleus(System* system) :
     m_numberOfParticles     = m_system->getNumberOfParticles();
     m_numberOfDimensions    = m_system->getNumberOfDimensions();
     m_interaction           = m_system->getInteraction();
+    m_screening             = m_system->getScreening();
     m_screeningStrength     = m_system->getScreeningStrength();
     m_dsl                   = m_system->getDSL();
 }

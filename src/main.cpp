@@ -12,27 +12,28 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 3;
-    int     numberOfParticles   = 10;
+    int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,16));
-    int     numberOfIterations  = 5000;
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 1000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
-    double  learningRate        = 0.001;
-    double  omega               = 0.01;                 // Oscillator frequency
+    double  learningRate        = 0.01;
+    double  omega               = 1.0;                 // Oscillator frequency
     int     Z                   = numberOfParticles;    // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);        // Width of probability distribution
     double  stepLength          = 0.1;                  // Metropolis step length
-    double  equilibration       = 0.0;                  // Amount of the total steps used
+    double  equilibration       = 0.01;                  // Amount of the total steps used
 
     // Switches
     bool    interaction             = true;     // Repulsive interaction on or off
     bool    checkConvergence        = false;    // Stops the program after it has converged
     bool    applyAdaptiveSteps      = true;     // Increase the number of MC-cycles for the last iterations
-    bool    computeOneBodyDensity   = true;     // Compute one-body density and print to file
-    bool    computeTwoBodyDensity   = true;
-    bool    printEnergyFile         = true;     // Print energy for every iteration to file
-    bool    printParametersToFile   = true;
+    bool    computeOneBodyDensity   = false;     // Compute one-body density and print to file
+    bool    computeTwoBodyDensity   = false;
+    bool    printEnergyFile         = false;     // Print energy for every iteration to file
+    bool    printParametersToFile   = false;
     bool    doResampling            = true;     // Print blocking file for the last iteration and do blocking
+    bool    screening               = false;
 
 
     // --- ADVANCED SETTINGS ---
@@ -44,12 +45,12 @@ int main(int argc, char *argv[]) {
     double  tolerance               = 1e-7;     // Convergence tolerance
 
     // Dynamic step tools
-    int     rangeOfAdaptiveSteps    = 50;       // For how many iterations should we increase # MC-cycles?
-    int     additionalSteps         = 8;        // How much should we increase it? (as a power of 2)
-    int     additionalStepsLastIter = 12;        // How much should we increase the very last? (as a power of 2)
+    int     rangeOfAdaptiveSteps    = 10;       // For how many iterations should we increase # MC-cycles?
+    int     additionalSteps         = 4;        // How much should we increase it? (as a power of 2)
+    int     additionalStepsLastIter = 8;        // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius               = 40;       // Max radius of one-body density plots
+    double  maxRadius               = 50;       // Max radius of one-body density plots
     int     numberOfBins            = 3000;     // 100 bins per radius unit
 
     // Screening tools
@@ -80,7 +81,7 @@ int main(int argc, char *argv[]) {
     system->setAdaptiveStepTools        (applyAdaptiveSteps, rangeOfAdaptiveSteps, additionalSteps, additionalStepsLastIter);
     system->setDensityTools             (computeOneBodyDensity, computeTwoBodyDensity, numberOfBins, maxRadius);
     system->setEnergyPrintingTools      (printEnergyFile, doResampling);
-    system->setScreeningTools           (screeningStrength, dsl);
+    system->setScreeningTools           (screening, screeningStrength, dsl);
 
     if(argc == 2) system->parserConstants(argv[1], numberOfIterations);
 

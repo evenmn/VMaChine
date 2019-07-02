@@ -14,6 +14,8 @@ Hermite::Hermite(System *system)  :
     Basis::generateListOfStates();
 }
 
+void Hermite::setParameters(Eigen::VectorXd parameters) {}
+
 double Hermite::basisElement(const int n, Eigen::VectorXd positions) {
     double prod = 1;
     for(int i=0; i<m_numberOfDimensions; i++) {
@@ -42,6 +44,10 @@ double Hermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd pos
         }
     }
     return prod;
+}
+
+double Hermite::basisElementPar(const int n, Eigen::MatrixXd positionBlock) {
+    return 0;
 }
 
 double HH0(const double x) {return 1;}
