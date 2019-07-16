@@ -13,4 +13,9 @@ Eigen::Map<Eigen::MatrixXd> WaveFunction::reshape(Eigen::VectorXd A, const Eigen
     return Eigen::Map<Eigen::MatrixXd>(A.data(), m, n);
 }
 
+Eigen::Map<Eigen::MatrixXd> WaveFunction::square(Eigen::VectorXd A) {
+    Eigen::Index size = A.size();
+    return Eigen::Map<Eigen::MatrixXd>(A.data(), Eigen::Index(sqrt(size)), Eigen::Index(sqrt(size)));
+}
+
 WaveFunction::~WaveFunction() {}

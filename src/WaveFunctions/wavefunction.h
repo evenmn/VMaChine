@@ -31,6 +31,7 @@ public:
 
     Eigen::Map<Eigen::VectorXd> flatten(Eigen::MatrixXd A);
     Eigen::Map<Eigen::MatrixXd> reshape(Eigen::VectorXd A, const Eigen::Index m, const Eigen::Index n);
+    Eigen::Map<Eigen::MatrixXd> square(Eigen::VectorXd A);
 
 protected:
     int     m_numberOfParticles         = 0;

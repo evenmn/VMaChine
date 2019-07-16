@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 #sns.set()
 
-numberOfDimensions = 3
+numberOfDimensions = 2
 
 def radial(size):
     n = np.arange(size)
@@ -19,21 +19,32 @@ def exact(r1, w):
     '''Exact solution without interaction for given w'''
     return (2*r1+1)*np.exp(- w * r1**2)
 
-files = ["../data/int1/onebody/VMC/3D/2P/1.000000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBM/3D/2P/1.000000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBMSJ/3D/2P/1.000000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBMPJ/3D/2P/1.000000w/ADAM_MC1048576.dat",
+files = ["../data/int1/onebody/VMC/2D/2P/0.010000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBM/2D/2P/0.010000w/ADAM_MC1048576.dat",
+         #"../data/int1/onebody/RBMSJ/2D/6P/0.100000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBMPJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
          ]
          
 label = ["VMC",
          "RBM",
-         "RBM+SJ",
+         #"RBM+SJ",
          "RBM+PJ"
          ]
          
-line_style = ["-","--", "-.", ":"]
+line_style = ["-",
+              "--", 
+              #"-.", 
+              ":"]
          
-maxRadius = [10,10,15,10]
+maxRadius = [50,
+             50,
+             #50,
+             50]
+
+limit = [0.000025, 
+         0.000025, 
+         #0.00018, 
+         0.00002]
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])
@@ -42,7 +53,7 @@ for i in range(len(files)):
     data /= maxRadius[i]
     data *= int(len(data)/1000)
     r = np.linspace(0,maxRadius[i],len(data))
-    data[:np.argmax(data)] = np.where(data[:np.argmax(data)] < 0.0009, 0, data[:np.argmax(data)])
+    data[:np.argmax(data)] = np.where(data[:np.argmax(data)] < limit[i], 0, data[:np.argmax(data)])
     indices = np.where(data == 0)[0]
     data = np.delete(data, indices)
     r = np.delete(r, indices)

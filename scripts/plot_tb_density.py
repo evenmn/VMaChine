@@ -79,12 +79,12 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [40]
-    newRadius = [6]
+    maxRadius = [50]
+    newRadius = [50]
 
-    methods   = ['RBMPJ']
+    methods   = ['VMC']
     dims      = ['2']
-    particles = ['42']
+    particles = ['2']
     omegas    = ['1.000000'] #'1.000000','0.500000','0.280000','0.100000']      
 
     i=0
@@ -98,7 +98,7 @@ def main():
                     data = norm(data, int(dim))
                     data = rotate(data)
                     plot(data, newRadius[i])
-                    saveFigure(method, dim, particle, omega)
+                    #saveFigure(method, dim, particle, omega)
                     i += 1
     plt.show()
 

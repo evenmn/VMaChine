@@ -66,9 +66,8 @@ void SimpleJastrow::resetArrays() {
 }
 
 void SimpleJastrow::updateParameters(const Eigen::MatrixXd parameters) {
-    Eigen::VectorXd betaFlatten = parameters.row(m_elementNumber).head(m_numberOfFreeDimensions*m_numberOfFreeDimensions);
-    Eigen::Map<Eigen::MatrixXd> beta(betaFlatten.data(), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
-    m_beta     = beta;
+    Eigen::VectorXd betaFlatten = parameters.row(m_elementNumber).head(m_numberOfParticles*m_numberOfParticles);
+    m_beta = WaveFunction::square(betaFlatten);
 }
 
 double SimpleJastrow::evaluateRatio() {
@@ -106,7 +105,6 @@ double SimpleJastrow::computeLaplacian() {
 
 Eigen::VectorXd SimpleJastrow::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
-    Eigen::Map<Eigen::VectorXd> gradients2(m_distanceMatrix.data(), m_numberOfParticles*m_numberOfParticles);
-    gradients.head(m_numberOfParticles*m_numberOfParticles) = gradients2;
+    gradients.head(m_numberOfParticles*m_numberOfParticles) = WaveFunction::flatten(m_distanceMatrix);
     return gradients;
 }
