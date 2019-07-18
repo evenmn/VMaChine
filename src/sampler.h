@@ -1,6 +1,19 @@
 #pragma once
 #include "Eigen/Dense"
 #include <fstream>
+#include <mpi.h>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cmath>
+#include <cstdio>
+#include <string>
+#include "system.h"
+#include "RNG/rng.h"
+#include "Hamiltonians/hamiltonian.h"
+#include "WaveFunctions/wavefunction.h"
+#include "Optimization/optimization.h"
+#include "block/c++/blocker.h"
 
 class Sampler {
 public:

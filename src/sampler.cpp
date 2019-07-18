@@ -1,17 +1,4 @@
-#include <mpi.h>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <cmath>
-#include <cstdio>
-#include <string>
 #include "sampler.h"
-#include "system.h"
-#include "RNG/rng.h"
-#include "Hamiltonians/hamiltonian.h"
-#include "WaveFunctions/wavefunction.h"
-#include "Optimization/optimization.h"
-#include "block/c++/blocker.h"
 
 using std::cout;
 using std::endl;

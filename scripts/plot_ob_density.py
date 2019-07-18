@@ -21,29 +21,29 @@ def exact(r1, w):
 
 files = ["../data/int1/onebody/VMC/2D/2P/0.010000w/ADAM_MC1048576.dat",
          "../data/int1/onebody/RBM/2D/2P/0.010000w/ADAM_MC1048576.dat",
-         #"../data/int1/onebody/RBMSJ/2D/6P/0.100000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBMSJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
          "../data/int1/onebody/RBMPJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
          ]
          
 label = ["VMC",
          "RBM",
-         #"RBM+SJ",
+         "RBM+SJ",
          "RBM+PJ"
          ]
          
 line_style = ["-",
               "--", 
-              #"-.", 
+              "-.", 
               ":"]
          
 maxRadius = [50,
              50,
-             #50,
+             50,
              50]
 
 limit = [0.000025, 
-         0.000025, 
-         #0.00018, 
+         0.000027, 
+         0.000028, 
          0.00002]
 
 for i in range(len(files)):

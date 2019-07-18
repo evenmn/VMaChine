@@ -14,11 +14,11 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,15));
-    int     numberOfIterations  = 1000;
+    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfIterations  = 2000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
-    double  learningRate        = 0.5;
-    double  omega               = 1.0;                 // Oscillator frequency
+    double  learningRate        = 0.01;
+    double  omega               = 0.01;                 // Oscillator frequency
     int     Z                   = numberOfParticles;    // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);        // Width of probability distribution
     double  stepLength          = 0.1;                  // Metropolis step length
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     int     additionalStepsLastIter = 8;        // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius               = 10;       // Max radius of one-body density plots
+    double  maxRadius               = 50;       // Max radius of one-body density plots
     int     numberOfBins            = 3000;     // 100 bins per radius unit
 
     // Screening tools
@@ -85,21 +85,21 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2) system->parserConstants(argv[1], numberOfIterations);
 
-    system->setBasis                    (new HartreeFock(system, new Hermite(system)));
+    system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> waveFunctionElements;
-    //waveFunctionElements.push_back      (new class Gaussian          (system));
-    waveFunctionElements.push_back      (new class SlaterDeterminant (system));
-    //waveFunctionElements.push_back      (new class RBMGaussian       (system));
-    //waveFunctionElements.push_back      (new class RBMJastrow        (system));
-    //waveFunctionElements.push_back      (new class SimpleJastrow     (system));
-    waveFunctionElements.push_back      (new class PadeJastrow       (system));
-    //waveFunctionElements.push_back      (new class PartlyRestricted  (system));
+    //waveFunctionElements.push_back      (new Gaussian          (system));
+    //waveFunctionElements.push_back      (new SlaterDeterminant (system));
+    waveFunctionElements.push_back      (new RBMGaussian       (system));
+    waveFunctionElements.push_back      (new RBMJastrow        (system));
+    //waveFunctionElements.push_back      (new SimpleJastrow     (system));
+    //waveFunctionElements.push_back      (new PadeJastrow       (system));
+    //waveFunctionElements.push_back      (new PartlyRestricted  (system));
     //waveFunctionElements.push_back      (new HydrogenLike      (system));
 
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Constant(system, 1.0));
+    system->setInitialWeights           (new Randomize(system, 0.5));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));

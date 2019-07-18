@@ -261,7 +261,7 @@ void System::setMaxParameters() {
 }
 
 void System::setStepLength(const double stepLength) {
-    assert(stepLength >= 0);
+    assert(stepLength > 0);
     m_stepLength = stepLength;
 }
 
@@ -284,8 +284,8 @@ void System::setScreeningTools(const bool screening, const double screeningStren
 }
 
 void System::setTotalSpin(const double totalSpin) {
-    //double intpart;
-    //assert(std::modf(m_numberOfParticles/2 - abs(totalSpin), &intpart) == 0.0);
+    double intpart;
+    assert(std::modf(m_numberOfParticles/2 - abs(totalSpin), &intpart) == 0.0);
     m_totalSpin = totalSpin;
 }
 
