@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     int     numberOfDimensions  = 2;
     int     numberOfParticles   = 2;
     int     numberOfHiddenNodes = numberOfParticles;
-    int     numberOfSteps       = int(pow(2,20));
+    int     numberOfSteps       = int(pow(2,15));
     int     numberOfIterations  = 1000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
     double  learningRate        = 0.5;
@@ -85,9 +85,9 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2) system->parserConstants(argv[1], numberOfIterations);
 
-    system->setBasis                    (new Hermite(system));
+    system->setBasis                    (new HartreeFock(system, new Hermite(system)));
     std::vector<class WaveFunction*> waveFunctionElements;
-    waveFunctionElements.push_back      (new class Gaussian          (system));
+    //waveFunctionElements.push_back      (new class Gaussian          (system));
     waveFunctionElements.push_back      (new class SlaterDeterminant (system));
     //waveFunctionElements.push_back      (new class RBMGaussian       (system));
     //waveFunctionElements.push_back      (new class RBMJastrow        (system));

@@ -41,7 +41,6 @@ void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions, const E
 
 void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters) {
     m_c = WaveFunction::reshape(parameters.row(m_elementNumber).head(m_numberOfFreeDimensions*m_numberOfFreeDimensions), m_numberOfFreeDimensions, m_numberOfFreeDimensions);
-    //m_c = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
 }
 
 double PartlyRestricted::evaluateRatio() {
