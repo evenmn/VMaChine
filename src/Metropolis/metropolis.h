@@ -29,6 +29,7 @@ protected:
     int             m_numberOfFreeDimensions = 0;
     int             m_numberOfDimensions = 0;
     int             m_numberOfParticles = 0;
+    int             m_changedCoord = 0;
     double          m_stepLength = 0;
     double          m_diff = 0.5;
 

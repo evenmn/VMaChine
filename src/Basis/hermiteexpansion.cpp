@@ -16,18 +16,16 @@ HermiteExpansion::HermiteExpansion(System *system)  :
     Basis::numberOfOrbitals();
     Basis::generateListOfStates();
 
-    /*
     int Ngrid = 1000;
     Eigen::VectorXd x = Eigen::VectorXd::LinSpaced(Ngrid,-10,10);
     m_dim = 0;
     Eigen::VectorXd y = Eigen::VectorXd::Zero(Ngrid);
     for(int i=0; i<Ngrid; i++) {
-        y(i) = evaluate(x(i), 1) * exp(-0.5*x(i)*x(i));
+        y(i) = evaluate(x(i), 2) * exp(-0.5*x(i)*x(i));
     }
     std::ofstream file;
     file.open(m_path + "test.dat");
     file << y << std::endl;
-    */
 }
 
 void HermiteExpansion::setParameters(Eigen::VectorXd parameters) {}
@@ -44,6 +42,7 @@ std::string HermiteExpansion::generateFileName() {
 void HermiteExpansion::readCoefficientFile() {
     std::string fileName = generateFileName();
     m_basisSize     = Basis::fileLength(fileName);
+    std::cout << m_basisSize << std::endl;
     m_coefficients  = Eigen::MatrixXd::Zero(m_basisSize, m_basisSize);
     Basis::writeFileContentIntoEigenMatrix(fileName, m_coefficients);
 }
@@ -54,6 +53,7 @@ double HermiteExpansion::evaluate(double x, int n) {
         double sum = 0;
         for(int lambda=0; lambda<m_basisSize; lambda++) {
             sum += m_coefficients(lambda, n) * m_basis->evaluate(x, lambda);
+            //std::cout << m_coefficients(lambda, n) << std::endl;
         }
         return sum;
     }
@@ -92,9 +92,8 @@ double HermiteExpansion::evaluateSecondDerivative(const double x, const int n) {
 
 double HermiteExpansion::basisElement(const int n, Eigen::VectorXd positions) {
     double prod = 1;
-    for(int i=0; i<m_numberOfDimensions; i++) {
-        m_dim = i;
-        prod *= evaluate(positions(i), m_listOfStates(n, i));
+    for(m_dim=0; m_dim<m_numberOfDimensions; m_dim++) {
+        prod *= evaluate(positions(m_dim), m_listOfStates(n, m_dim));
     }
     return prod;
 }
@@ -102,10 +101,9 @@ double HermiteExpansion::basisElement(const int n, Eigen::VectorXd positions) {
 double HermiteExpansion::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     double prod = evaluateDerivative(positions(i), m_listOfStates(n, i));
-    for(int j=0; j<m_numberOfDimensions; j++) {
-        if(i != j) {
-            m_dim = j;
-            prod *= evaluate(positions(j), m_listOfStates(n, j));
+    for(m_dim=0; m_dim<m_numberOfDimensions; m_dim++) {
+        if(i != m_dim) {
+            prod *= evaluate(positions(m_dim), m_listOfStates(n, m_dim));
         }
     }
     return prod;
@@ -114,10 +112,9 @@ double HermiteExpansion::basisElementDer(const int n, const int i, Eigen::Vector
 double HermiteExpansion::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
     // i is the dimension we are derivating with respect to
     double prod = evaluateSecondDerivative(positions(i), m_listOfStates(n, i));
-    for(int j=0; j<m_numberOfDimensions; j++) {
-        if(i != j) {
-            m_dim = j;
-            prod *= evaluate(positions(j), m_listOfStates(n, j));
+    for(m_dim=0; m_dim<m_numberOfDimensions; m_dim++) {
+        if(i != m_dim) {
+            prod *= evaluate(positions(m_dim), m_listOfStates(n, m_dim));
         }
     }
     return prod;

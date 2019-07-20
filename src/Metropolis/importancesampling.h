@@ -13,4 +13,7 @@ private:
     Eigen::VectorXd m_quantumForceOld;
     Eigen::VectorXd m_quantumForceNew;
     std::vector<class WaveFunction*>    m_waveFunctionVector;
+
+    double m_dtD = 1;
+    double m_sqrtStep = 0;
 };

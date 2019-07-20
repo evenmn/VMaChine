@@ -28,6 +28,8 @@ ImportanceSampling::ImportanceSampling(System* system) :
     system->setGlobalArraysToCalculate();
     m_calculateDistanceMatrix = m_system->getCalculateDistanceMatrix();
     m_calculateRadialVector  = m_system->getCalculateRadialVector();
+    m_dtD = m_stepLength * m_diff;
+    m_sqrtStep = sqrt(m_stepLength);
 }
 
 double ImportanceSampling::QuantumForce(const int i) {
@@ -39,38 +41,42 @@ double ImportanceSampling::QuantumForce(const int i) {
 }
 
 double ImportanceSampling::GreenFuncSum() {
-    double GreenSum  = 0;
+    //double GreenFunc = (m_quantumForceOld(m_changedCoord) - m_quantumForceNew(m_changedCoord)) * (m_positions(m_changedCoord)-m_positionsOld(m_changedCoord));
+    //return exp(0.5 * GreenFunc);
+
+    double GreenSum = 0;
     for(int i=0; i<m_numberOfParticles; i++) {
         double GreenFunc = 0;
         for(int j=0; j<m_numberOfDimensions; j++) {
             int l = m_numberOfDimensions*i+j;
-            double QForceOld = m_quantumForceOld(l);
-            double QForceNew = m_quantumForceNew(l);
-            GreenFunc += 0.5 * (QForceOld + QForceNew) * (0.5 * m_diff*m_stepLength*(QForceOld - QForceNew) - m_positions(l)+m_positionsOld(l));
+            //double QForceOld = m_quantumForceOld(l);
+            //double QForceNew = m_quantumForceNew(l);
+            //GreenFunc += (QForceOld + QForceNew) * (0.5 * m_dtD*(QForceOld - QForceNew) - m_positions(l)+m_positionsOld(l));
+            GreenFunc += (m_quantumForceOld(l) - m_quantumForceNew(l)) * (m_positions(l)-m_positionsOld(l));
         }
-        GreenSum += exp(GreenFunc);
+        GreenSum += exp(0.5 * GreenFunc);
     }
     return GreenSum;
 }
 
 bool ImportanceSampling::acceptMove() {
-    int changedCoord  = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
+    m_changedCoord  = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
 
     m_quantumForceOld = m_quantumForceNew;
     m_positionsOld    = m_positions;
     m_radialVectorOld = m_radialVector;
     m_distanceMatrixOld = m_distanceMatrix;
 
-    m_positions(changedCoord) += m_diff * QuantumForce(changedCoord) * m_stepLength + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * sqrt(m_stepLength);
+    m_positions(m_changedCoord) += m_dtD * QuantumForce(m_changedCoord) + m_system->getRandomNumberGenerator()->nextGaussian(0,1) * m_sqrtStep;
     if(m_calculateDistanceMatrix) {
-        Metropolis::calculateDistanceMatrixCross(int(changedCoord/m_numberOfDimensions));
+        Metropolis::calculateDistanceMatrixCross(int(m_changedCoord/m_numberOfDimensions));
     }
     if(m_calculateRadialVector) {
-        Metropolis::calculateRadialVectorElement(int(changedCoord/m_numberOfDimensions));
+        Metropolis::calculateRadialVectorElement(int(m_changedCoord/m_numberOfDimensions));
     }
 
-    m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, changedCoord);
-    m_quantumForceNew(changedCoord) = QuantumForce(changedCoord);
+    m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, m_changedCoord);
+    m_quantumForceNew(m_changedCoord) = QuantumForce(m_changedCoord);
 
     double ratio = m_system->evaluateWaveFunctionRatio();
     double w = GreenFuncSum() * ratio;
