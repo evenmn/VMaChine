@@ -30,6 +30,8 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 # Load internal source files
 SOURCES += src/main.cpp \
+    src/WaveFunctions/drbmproduct.cpp \
+    src/WaveFunctions/rbmproduct.cpp \
     src/system.cpp \
     src/sampler.cpp \
     src/Hamiltonians/hamiltonian.cpp \
@@ -53,8 +55,6 @@ SOURCES += src/main.cpp \
     src/WaveFunctions/padejastrow.cpp \
     src/WaveFunctions/simplejastrow.cpp \
     src/WaveFunctions/rbmgaussian.cpp \
-    src/WaveFunctions/rbmjastrow.cpp \
-    src/WaveFunctions/drbmjastrow.cpp \
     src/WaveFunctions/partlyrestricted.cpp \
     src/Optimization/optimization.cpp \
     src/Optimization/gradientdescent.cpp \
@@ -76,6 +76,8 @@ SOURCES += \
 
 # Load internal header files
 HEADERS += \
+    src/WaveFunctions/drbmproduct.h \
+    src/WaveFunctions/rbmproduct.h \
     src/allheaders.h \
     src/system.h \
     src/sampler.h \
@@ -100,8 +102,6 @@ HEADERS += \
     src/WaveFunctions/padejastrow.h \
     src/WaveFunctions/simplejastrow.h \
     src/WaveFunctions/rbmgaussian.h \
-    src/WaveFunctions/rbmjastrow.h \
-    src/WaveFunctions/drbmjastrow.h \
     src/WaveFunctions/partlyrestricted.h \
     src/Optimization/optimization.h \
     src/Optimization/gradientdescent.h \

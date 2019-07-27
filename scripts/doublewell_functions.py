@@ -46,7 +46,7 @@ def DW_function(k,x,n,w,d,alpha):
     
 def plot_DW_function(k,x,n,w,d,alpha):
     plt.figure(k)
-    plt.plot(x,DW_function(k,x,n_ho,w,d,alpha))
+    plt.plot(x,np.power(DW_function(k,x,n_ho,w,d,alpha),2))
     plt.title("%d"%k)
     plt.xlabel("x")
     plt.ylabel("$\psi(x)$")
@@ -60,10 +60,10 @@ if __name__ == '__main__':
     alpha = 2
     w = 1.0
     d = 1
-    n_ho = 6 # number of harmonic oscillator basis functions
+    n_ho = 12 # number of harmonic oscillator basis functions
 
     print_C_to_file(n_ho,w,d,alpha)
-    plot_DW_function(2,x,n_ho,w,d,alpha)
+    plot_DW_function(0,x,n_ho,w,d,alpha)
     #for i in range(n_ho):
     #    plot_DW_function(i,x,n_ho,w,d,alpha)
     

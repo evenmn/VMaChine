@@ -80,7 +80,7 @@ set(SOURCES
     src/WaveFunctions/padejastrow.cpp
     src/WaveFunctions/simplejastrow.cpp
     src/WaveFunctions/rbmgaussian.cpp
-    src/WaveFunctions/rbmjastrow.cpp
+    src/WaveFunctions/rbmproduct.cpp
     src/block/c++/blocker.cpp
 )
 
