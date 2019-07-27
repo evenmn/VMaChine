@@ -1,10 +1,10 @@
-#include "rbmjastrow.h"
+#include "rbmproduct.h"
 #include <cassert>
 #include "wavefunction.h"
 #include "../system.h"
 #include <iostream>
 
-RBMJastrow::RBMJastrow(System* system) :
+RBMProduct::RBMProduct(System* system) :
         WaveFunction(system) {
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
     m_numberOfFreeDimensions            = m_system->getNumberOfFreeDimensions();
@@ -14,12 +14,12 @@ RBMJastrow::RBMJastrow(System* system) :
     m_sigmaQuad                         = m_sigmaSqrd*m_sigmaSqrd;
 }
 
-void RBMJastrow::setConstants(const int elementNumber) {
+void RBMProduct::setConstants(const int elementNumber) {
     m_maxParameters = m_system->getMaxParameters();
     m_elementNumber = elementNumber;
 }
 
-void RBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
+void RBMProduct::updateParameters(Eigen::MatrixXd parameters) {
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber).segment(m_numberOfHiddenNodes, m_numberOfFreeDimensions*m_numberOfHiddenNodes);
     m_W = WaveFunction::reshape(wFlatten, m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     //Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
@@ -28,7 +28,7 @@ void RBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
     m_b     = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }
 
-void RBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
+void RBMProduct::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_probabilityRatio  = 1;
     m_n  = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
@@ -36,13 +36,13 @@ void RBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::
     updateVectors();
 }
 
-void RBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+void RBMProduct::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     m_positions = positions;
     updateVectors();
     updateRatio();
 }
 
-void RBMJastrow::setArrays() {
+void RBMProduct::setArrays() {
     m_positionsOld          = m_positions;
     m_vOld                  = m_v;
     m_nOld                  = m_n;
@@ -51,7 +51,7 @@ void RBMJastrow::setArrays() {
     m_probabilityRatioOld   = m_probabilityRatio;
 }
 
-void RBMJastrow::resetArrays() {
+void RBMProduct::resetArrays() {
     m_positions             = m_positionsOld;
     m_v                     = m_vOld;
     m_n                     = m_nOld;
@@ -60,19 +60,19 @@ void RBMJastrow::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-double RBMJastrow::evaluateRatio() {
+double RBMProduct::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double RBMJastrow::computeGradient(const int k) {
+double RBMProduct::computeGradient(const int k) {
     return double(m_W.row(k) * m_n) / m_sigmaSqrd;
 }
 
-double RBMJastrow::computeLaplacian() {
+double RBMProduct::computeLaplacian() {
     return (m_WSqrd * m_pDotN).sum() / m_sigmaQuad;
 }
 
-Eigen::VectorXd RBMJastrow::computeParameterGradient() {
+Eigen::VectorXd RBMProduct::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     Eigen::MatrixXd out = m_positions * m_n.transpose();
     gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
@@ -86,7 +86,7 @@ Eigen::VectorXd RBMJastrow::computeParameterGradient() {
     return gradients;
 }
 
-void RBMJastrow::updateVectors() {
+void RBMProduct::updateVectors() {
     m_v                 = m_b + m_W.transpose() * m_positions;
     Eigen::VectorXd m_e = m_v.array().exp();
     m_p                 = (m_e + Eigen::VectorXd::Ones(m_numberOfHiddenNodes)).cwiseInverse();
@@ -94,7 +94,7 @@ void RBMJastrow::updateVectors() {
     m_pDotN             = m_p.cwiseProduct(m_n);
 }
 
-void RBMJastrow::updateRatio() {
+void RBMProduct::updateRatio() {
     double prod =  m_pOld.prod() / m_p.prod();
     m_probabilityRatio  = prod * prod;
 }

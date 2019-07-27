@@ -1,9 +1,9 @@
 #pragma once
 #include "wavefunction.h"
 
-class DRBMJastrow : public WaveFunction {
+class DRBMProduct : public WaveFunction {
 public:
-    DRBMJastrow(class System* system, int numberOfLayers);
+    DRBMProduct(class System* system, int numberOfLayers);
     int             getNumberOfParameters       ()      { return m_numberOfParameters; }
     int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
     std::string     getLabel                    ()      { return m_label; }
@@ -58,6 +58,6 @@ private:
     Eigen::VectorXd m_pOld;
     Eigen::VectorXd m_p;
 
-    std::string m_label = "drbmjastrow";
+    std::string m_label = "DRBMProduct";
 };
 

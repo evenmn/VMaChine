@@ -12,12 +12,12 @@ int main(int argc, char *argv[]) {
     // --- SYSTEM SETTINGS ---
     // Parameters
     int     numberOfDimensions  = 2;
-    int     numberOfParticles   = 2;
+    int     numberOfParticles   = 20;
     int     numberOfHiddenNodes = numberOfParticles;
     int     numberOfSteps       = int(pow(2,20));
     int     numberOfIterations  = 2000;
     double  totalSpin           = 0;                    // totalSpin is half-integer
-    double  learningRate        = 0.01;
+    double  learningRate        = 0.001;
     double  omega               = 0.01;                 // Oscillator frequency
     int     Z                   = numberOfParticles;    // Atomic number (nucleus charge)
     double  sigma               = 1/sqrt(omega);        // Width of probability distribution
@@ -27,12 +27,12 @@ int main(int argc, char *argv[]) {
     // Switches
     bool    interaction             = true;     // Repulsive interaction on or off
     bool    checkConvergence        = false;    // Stops the program after it has converged
-    bool    applyAdaptiveSteps      = true;     // Increase the number of MC-cycles for the last iterations
-    bool    computeOneBodyDensity   = true;     // Compute one-body density and print to file
-    bool    computeTwoBodyDensity   = true;
-    bool    printEnergyFile         = true;     // Print energy for every iteration to file
-    bool    printParametersToFile   = true;
-    bool    doResampling            = true;     // Print blocking file for the last iteration and do blocking
+    bool    applyAdaptiveSteps      = false;     // Increase the number of MC-cycles for the last iterations
+    bool    computeOneBodyDensity   = false;     // Compute one-body density and print to file
+    bool    computeTwoBodyDensity   = false;
+    bool    printEnergyFile         = false;     // Print energy for every iteration to file
+    bool    printParametersToFile   = false;
+    bool    doResampling            = false;     // Print blocking file for the last iteration and do blocking
     bool    screening               = false;
 
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     int     additionalStepsLastIter = 8;        // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double  maxRadius               = 50;       // Max radius of one-body density plots
+    double  maxRadius               = 75;       // Max radius of one-body density plots
     int     numberOfBins            = 3000;     // 100 bins per radius unit
 
     // Screening tools
@@ -87,19 +87,19 @@ int main(int argc, char *argv[]) {
 
     system->setBasis                    (new Hermite(system));
     std::vector<class WaveFunction*> waveFunctionElements;
-    //waveFunctionElements.push_back      (new Gaussian          (system));
-    //waveFunctionElements.push_back      (new SlaterDeterminant (system));
-    waveFunctionElements.push_back      (new RBMGaussian       (system));
-    waveFunctionElements.push_back      (new RBMJastrow        (system));
+    waveFunctionElements.push_back      (new Gaussian          (system));
+    waveFunctionElements.push_back      (new SlaterDeterminant (system));
+    //waveFunctionElements.push_back      (new RBMGaussian       (system));
+    //waveFunctionElements.push_back      (new RBMProduct        (system));
     //waveFunctionElements.push_back      (new SimpleJastrow     (system));
-    //waveFunctionElements.push_back      (new PadeJastrow       (system));
+    waveFunctionElements.push_back      (new PadeJastrow       (system));
     //waveFunctionElements.push_back      (new PartlyRestricted  (system));
     //waveFunctionElements.push_back      (new HydrogenLike      (system));
 
     system->setWaveFunctionElements     (waveFunctionElements);
     system->setRandomNumberGenerator    (new MersenneTwister());
     system->setOptimization             (new ADAM(system));
-    system->setInitialWeights           (new Randomize(system, 0.5));
+    system->setInitialWeights           (new Constant(system, 1.0));
     system->setInitialState             (new RandomNormal(system));
     system->setHamiltonian              (new HarmonicOscillator(system));
     system->setMetropolis               (new ImportanceSampling(system));

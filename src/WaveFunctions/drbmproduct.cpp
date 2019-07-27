@@ -1,10 +1,10 @@
-#include "drbmjastrow.h"
+#include "drbmproduct.h"
 #include <cassert>
 #include "wavefunction.h"
 #include "../system.h"
 #include <iostream>
 
-DRBMJastrow::DRBMJastrow(System* system, int numberOfLayers) :
+DRBMProduct::DRBMProduct(System* system, int numberOfLayers) :
         WaveFunction(system) {
     m_numberOfLayers                    = numberOfLayers;
     m_numberOfHiddenNodes               = m_system->getNumberOfHiddenNodes();
@@ -18,12 +18,12 @@ template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
-void DRBMJastrow::setConstants(const int elementNumber) {
+void DRBMProduct::setConstants(const int elementNumber) {
     m_maxParameters = m_system->getMaxParameters();
     m_elementNumber = elementNumber;
 }
 
-void DRBMJastrow::updateGradient() {
+void DRBMProduct::updateGradient() {
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
             m_gradientPart(k,j) = 0;
@@ -34,7 +34,7 @@ void DRBMJastrow::updateGradient() {
     }
 }
 
-void DRBMJastrow::updateLaplacian() {
+void DRBMProduct::updateLaplacian() {
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
             m_laplacianPart(k,j) = 0;
@@ -45,7 +45,7 @@ void DRBMJastrow::updateLaplacian() {
     }
 }
 
-void DRBMJastrow::updateVectors() {
+void DRBMProduct::updateVectors() {
     m_v = m_b;
     for(int n=0; n<m_numberOfLayers; n++) {
         m_v += m_positionsPow.row(n+2)*m_W.block(n*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) / pow(m_sigmaSqrd, 2*(n+1));
@@ -55,7 +55,7 @@ void DRBMJastrow::updateVectors() {
     m_n = m_e.cwiseProduct(m_p);
 }
 
-void DRBMJastrow::updateRatio() {
+void DRBMProduct::updateRatio() {
     double Prod = 1;
     for(int j=0; j<m_numberOfHiddenNodes; j++) {
         Prod *= m_pOld(j)/m_p(j);
@@ -63,7 +63,7 @@ void DRBMJastrow::updateRatio() {
     m_probabilityRatio  = Prod * Prod;
 }
 
-void DRBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
+void DRBMProduct::updateArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix, const int changedCoord) {
     m_positions     = positions;
     for(int n=1; n<m_numberOfLayers+1; n++) {
         m_positionsPow(n+1, changedCoord) = pow(m_positions(changedCoord),n);
@@ -74,7 +74,7 @@ void DRBMJastrow::updateArrays(const Eigen::VectorXd positions, const Eigen::Vec
     updateLaplacian();
 }
 
-void DRBMJastrow::setArrays() {
+void DRBMProduct::setArrays() {
     m_positionsOld          = m_positions;
     m_positionsPowOld       = m_positionsPow;
     m_gradientPartOld       = m_gradientPart;
@@ -85,7 +85,7 @@ void DRBMJastrow::setArrays() {
     m_probabilityRatioOld   = m_probabilityRatio;
 }
 
-void DRBMJastrow::resetArrays() {
+void DRBMProduct::resetArrays() {
     m_positions             = m_positionsOld;
     m_positionsPow          = m_positionsPowOld;
     m_gradientPart          = m_gradientPartOld;
@@ -96,7 +96,7 @@ void DRBMJastrow::resetArrays() {
     m_probabilityRatio      = m_probabilityRatioOld;
 }
 
-void DRBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
+void DRBMProduct::initializeArrays(const Eigen::VectorXd positions, const Eigen::VectorXd radialVector, const Eigen::MatrixXd distanceMatrix) {
     m_positions         = positions;
     m_positionsPow      = Eigen::MatrixXd::Zero(m_numberOfLayers+2, m_numberOfFreeDimensions);
     for(int n=0; n<m_numberOfLayers+1; n++) {
@@ -114,7 +114,7 @@ void DRBMJastrow::initializeArrays(const Eigen::VectorXd positions, const Eigen:
     updateLaplacian();
 }
 
-void DRBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
+void DRBMProduct::updateParameters(Eigen::MatrixXd parameters) {
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
     m_W = Eigen::MatrixXd::Zero(m_numberOfLayers*m_numberOfFreeDimensions, m_numberOfHiddenNodes);
     for(int n=0; n<m_numberOfLayers; n++) {
@@ -128,15 +128,15 @@ void DRBMJastrow::updateParameters(Eigen::MatrixXd parameters) {
     //std::cout << m_W << std::endl;
 }
 
-double DRBMJastrow::evaluateRatio() {
+double DRBMProduct::evaluateRatio() {
     return m_probabilityRatio;
 }
 
-double DRBMJastrow::computeGradient(const int k) {
+double DRBMProduct::computeGradient(const int k) {
     return m_gradientPart.row(k) * m_n;
 }
 
-double DRBMJastrow::computeLaplacian() {
+double DRBMProduct::computeLaplacian() {
     double sum = 0;
     for(int k=0; k<m_numberOfFreeDimensions; k++) {
         for(int j=0; j<m_numberOfHiddenNodes; j++) {
@@ -146,7 +146,7 @@ double DRBMJastrow::computeLaplacian() {
     return sum;
 }
 
-Eigen::VectorXd DRBMJastrow::computeParameterGradient() {
+Eigen::VectorXd DRBMProduct::computeParameterGradient() {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
 
     for(int l=0; l<m_numberOfHiddenNodes; l++) {

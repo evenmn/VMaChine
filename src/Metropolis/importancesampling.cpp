@@ -49,8 +49,8 @@ double ImportanceSampling::GreenFuncSum() {
         double GreenFunc = 0;
         for(int j=0; j<m_numberOfDimensions; j++) {
             int l = m_numberOfDimensions*i+j;
-            //double QForceOld = m_quantumForceOld(l);
-            //double QForceNew = m_quantumForceNew(l);
+            double QForceOld = m_quantumForceOld(l);
+            double QForceNew = m_quantumForceNew(l);
             //GreenFunc += (QForceOld + QForceNew) * (0.5 * m_dtD*(QForceOld - QForceNew) - m_positions(l)+m_positionsOld(l));
             GreenFunc += (m_quantumForceOld(l) - m_quantumForceNew(l)) * (m_positions(l)-m_positionsOld(l));
         }

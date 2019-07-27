@@ -1,9 +1,9 @@
 #pragma once
 #include "wavefunction.h"
 
-class RBMJastrow : public WaveFunction {
+class RBMProduct : public WaveFunction {
 public:
-    RBMJastrow(class System* system);
+    RBMProduct(class System* system);
     int             getNumberOfParameters       ()      { return m_numberOfParameters; }
     int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
     std::string     getLabel                    ()      { return m_label; }
@@ -51,7 +51,7 @@ private:
     Eigen::VectorXd m_pDotNOld;
 
     // Properties of the element (DO NOT TOUCH!)
-    std::string m_label = "rbmjastrow";
+    std::string m_label = "rbmproduct";
     int         m_globalArrayNeed        = 0;
     int         m_elementNumber          = 1;
 };

@@ -534,24 +534,24 @@ void System::parserObjects(const std::string configFile) {
                     else if(value == "RBM") {
                         waveFunctionElements.push_back      (new class SlaterDeterminant (this));
                         waveFunctionElements.push_back      (new class RBMGaussian       (this));
-                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                        waveFunctionElements.push_back      (new class RBMProduct        (this));
                     }
                     else if(value == "RBMPJ") {
                         waveFunctionElements.push_back      (new class SlaterDeterminant (this));
                         waveFunctionElements.push_back      (new class RBMGaussian       (this));
-                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                        waveFunctionElements.push_back      (new class RBMProduct        (this));
                         waveFunctionElements.push_back      (new class PadeJastrow       (this));
                     }
                     else if(value == "RBMSJ") {
                         waveFunctionElements.push_back      (new class SlaterDeterminant (this));
                         waveFunctionElements.push_back      (new class RBMGaussian       (this));
-                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                        waveFunctionElements.push_back      (new class RBMProduct        (this));
                         waveFunctionElements.push_back      (new class SimpleJastrow     (this));
                     }
                     else if(value == "PRBM") {
                         waveFunctionElements.push_back      (new class SlaterDeterminant (this));
                         waveFunctionElements.push_back      (new class RBMGaussian       (this));
-                        waveFunctionElements.push_back      (new class RBMJastrow        (this));
+                        waveFunctionElements.push_back      (new class RBMProduct        (this));
                         waveFunctionElements.push_back      (new class PartlyRestricted  (this));
                     }
                     else {
@@ -766,61 +766,61 @@ void System::collectAllLabels() {
 
     std::vector<std::string> testRBM1;
     testRBM1.push_back("rbmgaussian");
-    testRBM1.push_back("rbmjastrow");
+    testRBM1.push_back("rbmproduct");
     searchShortning(testRBM1, "RBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBM2;
     testRBM2.push_back("rbmgaussian");
-    testRBM2.push_back("rbmjastrow");
+    testRBM2.push_back("rbmproduct");
     testRBM2.push_back("slaterdeterminant");
     searchShortning(testRBM2, "RBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBMPJ1;
     testRBMPJ1.push_back("rbmgaussian");
-    testRBMPJ1.push_back("rbmjastrow");
+    testRBMPJ1.push_back("rbmproduct");
     testRBMPJ1.push_back("padejastrow");
     searchShortning(testRBMPJ1, "RBMPJ", m_trialWaveFunction);
 
     std::vector<std::string> testRBMPJ2;
     testRBMPJ2.push_back("rbmgaussian");
-    testRBMPJ2.push_back("rbmjastrow");
+    testRBMPJ2.push_back("rbmproduct");
     testRBMPJ2.push_back("padejastrow");
     testRBMPJ2.push_back("slaterdeterminant");
     searchShortning(testRBMPJ2, "RBMPJ", m_trialWaveFunction);
 
     std::vector<std::string> testPRBM1;
     testPRBM1.push_back("rbmgaussian");
-    testPRBM1.push_back("rbmjastrow");
+    testPRBM1.push_back("rbmproduct");
     testPRBM1.push_back("partlyrestricted");
     searchShortning(testPRBM1, "PRBM", m_trialWaveFunction);
 
     std::vector<std::string> testPRBM2;
     testPRBM2.push_back("rbmgaussian");
-    testPRBM2.push_back("rbmjastrow");
+    testPRBM2.push_back("rbmproduct");
     testPRBM2.push_back("partlyrestricted");
     testPRBM2.push_back("slaterdeterminant");
     searchShortning(testPRBM2, "PRBM", m_trialWaveFunction);
 
     std::vector<std::string> testDRBM1;
     testDRBM1.push_back("rbmgaussian");
-    testDRBM1.push_back("drbmjastrow");
+    testDRBM1.push_back("drbmproduct");
     searchShortning(testDRBM1, "DRBM", m_trialWaveFunction);
 
     std::vector<std::string> testDRBM2;
     testDRBM2.push_back("rbmgaussian");
-    testDRBM2.push_back("drbmjastrow");
+    testDRBM2.push_back("drbmproduct");
     testDRBM2.push_back("slaterdeterminant");
     searchShortning(testDRBM2, "DRBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBMSJ1;
     testRBMSJ1.push_back("rbmgaussian");
-    testRBMSJ1.push_back("rbmjastrow");
+    testRBMSJ1.push_back("rbmproduct");
     testRBMSJ1.push_back("simplejastrow");
     searchShortning(testRBMSJ1, "RBMSJ", m_trialWaveFunction);
 
     std::vector<std::string> testRBMSJ2;
     testRBMSJ2.push_back("rbmgaussian");
-    testRBMSJ2.push_back("rbmjastrow");
+    testRBMSJ2.push_back("rbmproduct");
     testRBMSJ2.push_back("simplejastrow");
     testRBMSJ2.push_back("slaterdeterminant");
     searchShortning(testRBMSJ2, "RBMSJ", m_trialWaveFunction);
