@@ -84,7 +84,7 @@ void Sampler::setNumberOfSteps(int numberOfStepsWOEqui, int totalNumberOfStepsWO
     m_stepsWOEqui      = numberOfStepsWOEqui;
     m_totalStepsWOEqui = totalNumberOfStepsWOEqui;
     m_totalStepsWEqui  = totalNumberOfStepsWEqui;
-    m_numberOfStepsPerBatch    = int(m_totalStepsWOEqui/m_numberOfBatches);
+    m_numberOfStepsPerBatch = int(m_totalStepsWOEqui/m_numberOfBatches);
 }
 
 void Sampler::computeAverages() {
@@ -99,6 +99,8 @@ void Sampler::computeAverages() {
     if(std::isnan(m_averageEnergy)) {
         perror( "Energy exploded, please decrease the learning rate");
         MPI_Finalize();
+        MPI_Finalize();
+        //int MPI_Abort(MPI_Comm comm, int errorcode)
         exit(0);
     }
 }

@@ -53,8 +53,9 @@ void writeFileContentIntoEigenMatrix(std::ifstream infile, Eigen::MatrixXd &matr
 }
 
 void Automatize::setupInitialWeights() {
+    bool searchForWeights = false;
     std::ifstream infile(generateFileName("weights", ".dat"));
-    if(infile.is_open() && m_initialTotalStepsWOEqui==100) {
+    if(infile.is_open() && searchForWeights) {
         m_parameters = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
         std::string line;
         double value;
@@ -82,7 +83,7 @@ void Automatize::setupInitialWeights() {
             m_method = new Randomize(m_system, 0.1);
         }
         else if(m_trialWaveFunction == "RBMPJ") {
-            m_method = new Randomize(m_system, 0.1);
+            m_method = new Constant(m_system, 0.0);
         }
         else if(m_trialWaveFunction == "PRBM") {
             m_method = new Constant(m_system, 0.0);

@@ -78,7 +78,7 @@ void PadeJastrow::calculateH(int particle) {
 }
 
 void PadeJastrow::calculateProbabilityRatio(int particle) {
-    //double ratio = (m_beta.row(particle).transpose() * (m_h.row(particle) - m_hOld.row(particle))).sum();
+    //double ratio = double(m_beta.row(particle).transpose() * (m_h.row(particle) - m_hOld.row(particle)));
 
     double ratio = 0;
     for(int i=particle; i<m_numberOfParticles; i++) {

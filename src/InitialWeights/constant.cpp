@@ -16,6 +16,14 @@ Constant::Constant(System* system, const double factor = 1) :
 
 void Constant::setupInitialWeights() {
     m_parameters = m_factor * Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+    int i = 0;
+    for(auto& element : m_system->getWaveFunctionElements()) {
+        std::string label = element->getLabel();
+        if(label == "padejastrow") {
+            m_parameters(i,0) = 1;
+        }
+        i++;
+    }
     m_system->updateAllParameters(m_parameters);
 }
 

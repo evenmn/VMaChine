@@ -10,8 +10,6 @@ void System::runIterations(const int numberOfIterations) {
     m_sampler->openOutputFiles();
     m_lastIteration = numberOfIterations - m_rangeOfAdaptiveSteps - 1;
 
-    setAllConstants();
-
     for(m_iter = 0; m_iter < numberOfIterations; m_iter++) {
         if(m_applyAdaptiveSteps) {
             m_stepsWOEqui      = m_initialStepsWOEqui * adaptiveSteps();
@@ -359,6 +357,7 @@ void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunct
     m_waveFunctionElements = waveFunctionElements;
     setMaxParameters();
     setNumberOfElements(waveFunctionElements.size());
+    setAllConstants();
 }
 
 void System::setInitialState(InitialState* initialState) {
