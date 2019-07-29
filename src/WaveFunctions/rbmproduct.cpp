@@ -27,8 +27,6 @@ void RBMProduct::updateParameters(Eigen::MatrixXd parameters)
                                    .segment(m_numberOfHiddenNodes,
                                             m_numberOfFreeDimensions * m_numberOfHiddenNodes);
     m_W = WaveFunction::reshape(wFlatten, m_numberOfFreeDimensions, m_numberOfHiddenNodes);
-    //Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_numberOfFreeDimensions, m_numberOfHiddenNodes);
-    //m_W     = W;
     m_WSqrd = m_W.cwiseAbs2();
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }
@@ -95,12 +93,6 @@ Eigen::VectorXd RBMProduct::computeParameterGradient()
     Eigen::MatrixXd out = m_positions * m_n.transpose();
     gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
     gradients.head(m_numberOfHiddenNodes) = m_n;
-    //for(int l=0; l<m_numberOfHiddenNodes; l++) {
-    //    for(int m=0; m<m_numberOfFreeDimensions; m++) {
-    //        int n = l * m_numberOfFreeDimensions + m + m_numberOfHiddenNodes;
-    //        gradients(n) = m_positions(m) * m_n(l) / m_sigmaSqrd;
-    //    }
-    //}
     return gradients;
 }
 

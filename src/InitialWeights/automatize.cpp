@@ -79,7 +79,7 @@ void Automatize::setupInitialWeights()
         if (m_trialWaveFunction == "VMC") {
             m_method = new Constant(m_system, 1.0);
         } else if (m_trialWaveFunction == "RBM") {
-            m_method = new Randomize(m_system, 0.5);
+            m_method = new Constant(m_system, 0.0);
         } else if (m_trialWaveFunction == "RBMSJ") {
             m_method = new Randomize(m_system, 0.1);
         } else if (m_trialWaveFunction == "RBMPJ") {
