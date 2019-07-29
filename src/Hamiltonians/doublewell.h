@@ -1,16 +1,17 @@
 #pragma once
 #include "hamiltonian.h"
 
-class DoubleWell : public Hamiltonian {
+class DoubleWell : public Hamiltonian
+{
 public:
-    DoubleWell(System* system, double displacement);
+    DoubleWell(System *system, double displacement);
     double computeLocalEnergy();
     double getExternalEnergy();
-    int    getGlobalArrayNeed()  { return m_globalArrayNeed; }
+    int getGlobalArrayNeed() { return m_globalArrayNeed; }
 
 private:
     double m_omega = 0;
     double m_omega_sqrd = 0;
-    int    m_globalArrayNeed = 1;
+    int m_globalArrayNeed = 1;
     double m_b = 2;
 };

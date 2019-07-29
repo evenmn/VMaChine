@@ -1,9 +1,10 @@
 #pragma once
 #include "basis.h"
 
-class HydrogenOrbital : public Basis {
+class HydrogenOrbital : public Basis
+{
 public:
-    HydrogenOrbital(System* system);
+    HydrogenOrbital(System *system);
 
     double evaluate(double x, int n);
     double evaluateDerivative(double x, int n);
@@ -28,7 +29,6 @@ private:
     int m_numberOfOrbitalss = 1;
     int m_numberOfShells = 1;
     double m_alpha = 1;
-
 
     Eigen::MatrixX3i m_LOS;
 };

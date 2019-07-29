@@ -1,12 +1,13 @@
 #pragma once
 #include "hamiltonian.h"
 
-class AtomicNucleus : public Hamiltonian {
+class AtomicNucleus : public Hamiltonian
+{
 public:
-    AtomicNucleus(System* system);
+    AtomicNucleus(System *system);
     double computeLocalEnergy();
     double getExternalEnergy();
-    int    getGlobalArrayNeed()  { return m_globalArrayNeed; }
+    int getGlobalArrayNeed() { return m_globalArrayNeed; }
 
 private:
     int m_Z = 1;

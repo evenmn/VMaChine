@@ -1,9 +1,10 @@
 #pragma once
 #include "basis.h"
 
-class None : public Basis {
+class None : public Basis
+{
 public:
-    None(System* system);
+    None(System *system);
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 

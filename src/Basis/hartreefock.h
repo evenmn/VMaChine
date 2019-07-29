@@ -1,9 +1,10 @@
 #pragma once
 #include "basis.h"
 
-class HartreeFock : public Basis {
+class HartreeFock : public Basis
+{
 public:
-    HartreeFock(System* system, Basis *basis);
+    HartreeFock(System *system, Basis *basis);
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 
@@ -22,11 +23,11 @@ public:
     void readCoefficientFile();
 
 private:
-    double  m_omega = 1;
-    double  m_omegaSqrt = 1;
-    long    m_basisSize = 1;
+    double m_omega = 1;
+    double m_omegaSqrt = 1;
+    long m_basisSize = 1;
     std::string m_path = "Path is not given yet";
     Eigen::MatrixXd m_coefficients;
     //Eigen::MatrixXi m_listOfStates;
-    class Basis* m_basis = nullptr;
+    class Basis *m_basis = nullptr;
 };

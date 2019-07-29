@@ -1,40 +1,40 @@
 #pragma once
 #include "wavefunction.h"
 
-class PadeJastrow : public WaveFunction {
+class PadeJastrow : public WaveFunction
+{
 public:
-    PadeJastrow(class System* system);
-    int             getNumberOfParameters       ()      { return m_numberOfParameters; }
-    int             getGlobalArrayNeed          ()      { return m_globalArrayNeed; }
-    std::string     getLabel                    ()      { return m_label; }
+    PadeJastrow(class System *system);
+    int getNumberOfParameters() { return m_numberOfParameters; }
+    int getGlobalArrayNeed() { return m_globalArrayNeed; }
+    std::string getLabel() { return m_label; }
 
-    void            updateParameters            (const Eigen::MatrixXd parameters);
-    void            initializeArrays            (const Eigen::VectorXd positions, \
-                                                 const Eigen::VectorXd radialVector, \
-                                                 const Eigen::MatrixXd distanceMatrix);
-    void            updateArrays                (const Eigen::VectorXd positions, \
-                                                 const Eigen::VectorXd radialVector, \
-                                                 const Eigen::MatrixXd distanceMatrix, \
-                                                 const int changedCoord);
-    void            setConstants                (const int elementNumber);
-    void            setArrays                   ();
-    void            resetArrays                 ();
-    double          evaluateRatio               ();
-    double          computeGradient             (const int k);
-    double          computeLaplacian            ();
-    Eigen::VectorXd computeParameterGradient    ();
+    void updateParameters(const Eigen::MatrixXd parameters);
+    void initializeArrays(const Eigen::VectorXd positions,
+                          const Eigen::VectorXd radialVector,
+                          const Eigen::MatrixXd distanceMatrix);
+    void updateArrays(const Eigen::VectorXd positions,
+                      const Eigen::VectorXd radialVector,
+                      const Eigen::MatrixXd distanceMatrix,
+                      const int changedCoord);
+    void setConstants(const int elementNumber);
+    void setArrays();
+    void resetArrays();
+    double evaluateRatio();
+    double computeGradient(const int k);
+    double computeLaplacian();
+    Eigen::VectorXd computeParameterGradient();
 
-
-    void            calculateF(int particle);
-    void            calculateG(int pRand);
-    void            calculateH(int particle);
-    void            calculateProbabilityRatio(int particle);
-    void            initializeBeta();
+    void calculateF(int particle);
+    void calculateG(int pRand);
+    void calculateH(int particle);
+    void calculateProbabilityRatio(int particle);
+    void initializeBeta();
 
 private:
-    int m_numberOfParameters       = 1;
-    int m_globalArrayNeed          = 1;
-    int m_elementNumber            = 0;
+    int m_numberOfParameters = 1;
+    int m_globalArrayNeed = 1;
+    int m_elementNumber = 0;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
     Eigen::MatrixXd m_distanceMatrixSqrd;

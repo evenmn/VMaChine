@@ -1,8 +1,9 @@
 #pragma once
 #include "metropolis.h"
 
-class BruteForce : public Metropolis {
+class BruteForce : public Metropolis
+{
 public:
-    BruteForce(System* system);
+    BruteForce(System *system);
     bool acceptMove();
 };

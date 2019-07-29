@@ -1,12 +1,13 @@
 #pragma once
 #include "../Eigen/Dense"
-#include <mpi.h>
 #include <fstream>
 #include <iostream>
+#include <mpi.h>
 
-class Basis {
+class Basis
+{
 public:
-    Basis(class System* system);
+    Basis(class System *system);
     void numberOfOrbitals();
     void generateListOfStates();
 
@@ -36,5 +37,5 @@ protected:
 
     Eigen::MatrixXi m_listOfStates;
 
-    class System* m_system = nullptr;
+    class System *m_system = nullptr;
 };

@@ -1,9 +1,10 @@
 #pragma once
 #include "basis.h"
 
-class Hermite : public Basis {
+class Hermite : public Basis
+{
 public:
-    Hermite(System* system);
+    Hermite(System *system);
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 

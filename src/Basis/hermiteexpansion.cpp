@@ -1,27 +1,28 @@
 #include "hermiteexpansion.h"
-#include "hermite.h"
 #include "../system.h"
-#include <iostream>
+#include "hermite.h"
 #include <fstream>
+#include <iostream>
 
-HermiteExpansion::HermiteExpansion(System *system)  :
-    Basis(system) {
-    m_system                = system;
-    m_numberOfParticles     = m_system->getNumberOfParticles();
-    m_numberOfDimensions    = m_system->getNumberOfDimensions();
-    m_omega                 = m_system->getFrequency();
-    m_path                  = m_system->getPath();
-    m_basis                 = new Hermite(system);
+HermiteExpansion::HermiteExpansion(System *system)
+    : Basis(system)
+{
+    m_system = system;
+    m_numberOfParticles = m_system->getNumberOfParticles();
+    m_numberOfDimensions = m_system->getNumberOfDimensions();
+    m_omega = m_system->getFrequency();
+    m_path = m_system->getPath();
+    m_basis = new Hermite(system);
     readCoefficientFile();
     Basis::numberOfOrbitals();
     Basis::generateListOfStates();
 
     int Ngrid = 1000;
-    Eigen::VectorXd x = Eigen::VectorXd::LinSpaced(Ngrid,-10,10);
+    Eigen::VectorXd x = Eigen::VectorXd::LinSpaced(Ngrid, -10, 10);
     m_dim = 0;
     Eigen::VectorXd y = Eigen::VectorXd::Zero(Ngrid);
-    for(int i=0; i<Ngrid; i++) {
-        y(i) = evaluate(x(i), 2) * exp(-0.5*x(i)*x(i));
+    for (int i = 0; i < Ngrid; i++) {
+        y(i) = evaluate(x(i), 2) * exp(-0.5 * x(i) * x(i));
     }
     std::ofstream file;
     file.open(m_path + "test.dat");
@@ -30,7 +31,8 @@ HermiteExpansion::HermiteExpansion(System *system)  :
 
 void HermiteExpansion::setParameters(Eigen::VectorXd parameters) {}
 
-std::string HermiteExpansion::generateFileName() {
+std::string HermiteExpansion::generateFileName()
+{
     std::string fileName = m_path;
     fileName += "int1/";
     fileName += "doublewell/";
@@ -39,87 +41,92 @@ std::string HermiteExpansion::generateFileName() {
     return fileName;
 }
 
-void HermiteExpansion::readCoefficientFile() {
+void HermiteExpansion::readCoefficientFile()
+{
     std::string fileName = generateFileName();
-    m_basisSize     = Basis::fileLength(fileName);
+    m_basisSize = Basis::fileLength(fileName);
     std::cout << m_basisSize << std::endl;
-    m_coefficients  = Eigen::MatrixXd::Zero(m_basisSize, m_basisSize);
+    m_coefficients = Eigen::MatrixXd::Zero(m_basisSize, m_basisSize);
     Basis::writeFileContentIntoEigenMatrix(fileName, m_coefficients);
 }
 
-double HermiteExpansion::evaluate(double x, int n) {
+double HermiteExpansion::evaluate(double x, int n)
+{
     //Hermite polynomial of n'th degree
-    if(m_dim == 0) {
+    if (m_dim == 0) {
         double sum = 0;
-        for(int lambda=0; lambda<m_basisSize; lambda++) {
+        for (int lambda = 0; lambda < m_basisSize; lambda++) {
             sum += m_coefficients(lambda, n) * m_basis->evaluate(x, lambda);
             //std::cout << m_coefficients(lambda, n) << std::endl;
         }
         return sum;
-    }
-    else {
+    } else {
         return m_basis->evaluate(x, n);
     }
 }
 
-double HermiteExpansion::evaluateDerivative(double x, int n) {
+double HermiteExpansion::evaluateDerivative(double x, int n)
+{
     //First derivative of Hermite polynomial of n'th degree
-    if(m_dim == 0) {
+    if (m_dim == 0) {
         double sum = 0;
-        for(int lambda=0; lambda<m_basisSize; lambda++) {
+        for (int lambda = 0; lambda < m_basisSize; lambda++) {
             sum += m_coefficients(lambda, n) * m_basis->evaluateDerivative(x, lambda);
         }
         return sum;
-    }
-    else {
+    } else {
         return m_basis->evaluateDerivative(x, n);
     }
 }
 
-double HermiteExpansion::evaluateSecondDerivative(const double x, const int n) {
+double HermiteExpansion::evaluateSecondDerivative(const double x, const int n)
+{
     //Second derivative of Hermite polynomial of n'th degree
-    if(m_dim == 0) {
+    if (m_dim == 0) {
         double sum = 0;
-        for(int lambda=0; lambda<m_basisSize; lambda++) {
+        for (int lambda = 0; lambda < m_basisSize; lambda++) {
             sum += m_coefficients(lambda, n) * m_basis->evaluateSecondDerivative(x, lambda);
         }
         return sum;
-    }
-    else {
+    } else {
         return m_basis->evaluateSecondDerivative(x, n);
     }
 }
 
-double HermiteExpansion::basisElement(const int n, Eigen::VectorXd positions) {
+double HermiteExpansion::basisElement(const int n, Eigen::VectorXd positions)
+{
     double prod = 1;
-    for(m_dim=0; m_dim<m_numberOfDimensions; m_dim++) {
+    for (m_dim = 0; m_dim < m_numberOfDimensions; m_dim++) {
         prod *= evaluate(positions(m_dim), m_listOfStates(n, m_dim));
     }
     return prod;
 }
 
-double HermiteExpansion::basisElementDer(const int n, const int i, Eigen::VectorXd positions) {
+double HermiteExpansion::basisElementDer(const int n, const int i, Eigen::VectorXd positions)
+{
     // i is the dimension we are derivating with respect to
     double prod = evaluateDerivative(positions(i), m_listOfStates(n, i));
-    for(m_dim=0; m_dim<m_numberOfDimensions; m_dim++) {
-        if(i != m_dim) {
+    for (m_dim = 0; m_dim < m_numberOfDimensions; m_dim++) {
+        if (i != m_dim) {
             prod *= evaluate(positions(m_dim), m_listOfStates(n, m_dim));
         }
     }
     return prod;
 }
 
-double HermiteExpansion::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) {
+double HermiteExpansion::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions)
+{
     // i is the dimension we are derivating with respect to
     double prod = evaluateSecondDerivative(positions(i), m_listOfStates(n, i));
-    for(m_dim=0; m_dim<m_numberOfDimensions; m_dim++) {
-        if(i != m_dim) {
+    for (m_dim = 0; m_dim < m_numberOfDimensions; m_dim++) {
+        if (i != m_dim) {
             prod *= evaluate(positions(m_dim), m_listOfStates(n, m_dim));
         }
     }
     return prod;
 }
 
-double HermiteExpansion::basisElementPar(const int n, Eigen::VectorXd position) {
+double HermiteExpansion::basisElementPar(const int n, Eigen::VectorXd position)
+{
     return 0;
 }

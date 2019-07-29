@@ -1,9 +1,10 @@
 #pragma once
 #include "initialweights.h"
 
-class Constant : public InitialWeights {
+class Constant : public InitialWeights
+{
 public:
-    Constant(System* system, const double factor);
+    Constant(System *system, const double factor);
     void setupInitialWeights();
 
     Eigen::MatrixXd getParameters();
