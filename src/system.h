@@ -177,6 +177,7 @@ private:
     double m_totalSpin = 0;
     double m_screeningStrength = 100;
     double m_dsl = 100;
+    double m_globalTime = 0;
 
     bool m_interaction = true;
     bool m_checkConvergence = false;

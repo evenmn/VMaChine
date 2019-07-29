@@ -25,6 +25,9 @@ void System::runIterations(const int numberOfIterations)
         double time = endTime - startTime;
 
         MPI_Reduce(&time, &m_totalTime, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+        if (m_iter < m_lastIteration) {
+            m_globalTime += m_totalTime;
+        }
         m_sampler->computeTotals();
 
         if (m_myRank == 0) {
@@ -77,7 +80,11 @@ void System::printToTerminal(int numberOfIterations)
         if (m_myRank == 0) {
             m_sampler->doResampling();
             m_sampler->printFinalOutputToTerminal();
+            std::cout << std::endl;
+            std::cout << "Average CPU time: " << m_globalTime / m_lastIteration << std::endl;
+            std::cout << "Finalized successfully" << std::endl;
         }
+
         MPI_Finalize();
         exit(0);
     } else {
@@ -362,9 +369,15 @@ void System::setAdaptiveStepTools(bool applyAdaptiveSteps,
                                   int additionalStepsLastIteration)
 {
     m_applyAdaptiveSteps = applyAdaptiveSteps;
-    m_rangeOfAdaptiveSteps = rangeOfAdaptiveSteps;
-    m_additionalSteps = additionalSteps;
-    m_additionalStepsLastIter = additionalStepsLastIteration;
+    if (m_applyAdaptiveSteps) {
+        m_rangeOfAdaptiveSteps = rangeOfAdaptiveSteps;
+        m_additionalSteps = additionalSteps;
+        m_additionalStepsLastIter = additionalStepsLastIteration;
+    } else {
+        m_rangeOfAdaptiveSteps = 0;
+        m_additionalSteps = 0;
+        m_additionalStepsLastIter = 0;
+    }
 }
 
 void System::setDensityTools(bool computeDensity,

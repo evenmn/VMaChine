@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     int numberOfDimensions = 3;
     int numberOfParticles = 8;
     int numberOfHiddenNodes = numberOfParticles;
-    int numberOfSteps = int(pow(2, 18));
-    int numberOfIterations = 3000;
+    int numberOfSteps = int(pow(2, 16));
+    int numberOfIterations = 100;
     double totalSpin = 0; // totalSpin is half-integer
     double learningRate = 0.01;
     double omega = 0.1;             // Oscillator frequency
@@ -26,14 +26,14 @@ int main(int argc, char *argv[])
     double equilibration = 0.01;    // Amount of the total steps used
 
     // Switches
-    bool interaction = true;           // Repulsive interaction on or off
-    bool checkConvergence = false;     // Stops the program after it has converged
-    bool applyAdaptiveSteps = true;    // Increase the number of MC-cycles for the last iterations
-    bool computeOneBodyDensity = true; // Compute one-body density and print to file
-    bool computeTwoBodyDensity = true;
-    bool printEnergyFile = true; // Print energy for every iteration to file
-    bool printParametersToFile = true;
-    bool doResampling = true; // Print blocking file for the last iteration and do blocking
+    bool interaction = true;            // Repulsive interaction on or off
+    bool checkConvergence = false;      // Stops the program after it has converged
+    bool applyAdaptiveSteps = true;     // Increase the number of MC-cycles for the last iterations
+    bool computeOneBodyDensity = false; // Compute one-body density and print to file
+    bool computeTwoBodyDensity = false;
+    bool printEnergyFile = false; // Print energy for every iteration to file
+    bool printParametersToFile = false;
+    bool doResampling = false; // Print blocking file for the last iteration and do blocking
     bool screening = false;
 
     // --- ADVANCED SETTINGS ---
@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 
     // Dynamic step tools
     int rangeOfAdaptiveSteps = 10;   // For how many iterations should we increase # MC-cycles?
-    int additionalSteps = 4;         // How much should we increase it? (as a power of 2)
-    int additionalStepsLastIter = 8; // How much should we increase the very last? (as a power of 2)
+    int additionalSteps = 2;         // How much should we increase it? (as a power of 2)
+    int additionalStepsLastIter = 4; // How much should we increase the very last? (as a power of 2)
 
     // Density tools
     double maxRadius = 75;   // Max radius of one-body density plots
