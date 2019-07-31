@@ -8,8 +8,8 @@ RBMProduct::RBMProduct(System *system)
     : WaveFunction(system)
 {
     m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
-    m_numberOfParameters = m_numberOfHiddenNodes * m_numberOfFreeDimensions + m_numberOfHiddenNodes;
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_numberOfParameters = m_numberOfHiddenNodes * m_degreesOfFreedom + m_numberOfHiddenNodes;
     double sigma = 1; //m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
     m_sigmaQuad = m_sigmaSqrd * m_sigmaSqrd;
@@ -25,8 +25,8 @@ void RBMProduct::updateParameters(Eigen::MatrixXd parameters)
 {
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber)
                                    .segment(m_numberOfHiddenNodes,
-                                            m_numberOfFreeDimensions * m_numberOfHiddenNodes);
-    m_W = WaveFunction::reshape(wFlatten, m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+                                            m_degreesOfFreedom * m_numberOfHiddenNodes);
+    m_W = WaveFunction::reshape(wFlatten, m_degreesOfFreedom, m_numberOfHiddenNodes);
     m_WSqrd = m_W.cwiseAbs2();
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }

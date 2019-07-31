@@ -9,8 +9,8 @@ DRBMProduct::DRBMProduct(System *system, int numberOfLayers)
 {
     m_numberOfLayers = numberOfLayers;
     m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
-    m_numberOfParameters = m_numberOfHiddenNodes * (1 + numberOfLayers * m_numberOfFreeDimensions);
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_numberOfParameters = m_numberOfHiddenNodes * (1 + numberOfLayers * m_degreesOfFreedom);
     double sigma = 1; //m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
 }
@@ -29,12 +29,12 @@ void DRBMProduct::setConstants(const int elementNumber)
 
 void DRBMProduct::updateGradient()
 {
-    for (int k = 0; k < m_numberOfFreeDimensions; k++) {
+    for (int k = 0; k < m_degreesOfFreedom; k++) {
         for (int j = 0; j < m_numberOfHiddenNodes; j++) {
             m_gradientPart(k, j) = 0;
             for (int n = 1; n < m_numberOfLayers + 1; n++) {
                 m_gradientPart(k, j) += n * m_positionsPow(n, k)
-                                        * m_W((n - 1) * m_numberOfFreeDimensions + k, j)
+                                        * m_W((n - 1) * m_degreesOfFreedom + k, j)
                                         / pow(m_sigmaSqrd, 2 * n);
             }
         }
@@ -43,12 +43,12 @@ void DRBMProduct::updateGradient()
 
 void DRBMProduct::updateLaplacian()
 {
-    for (int k = 0; k < m_numberOfFreeDimensions; k++) {
+    for (int k = 0; k < m_degreesOfFreedom; k++) {
         for (int j = 0; j < m_numberOfHiddenNodes; j++) {
             m_laplacianPart(k, j) = 0;
             for (int n = 0; n < m_numberOfLayers; n++) {
                 m_gradientPart(k, j) += n * (n + 1) * m_positionsPow(n, k)
-                                        * m_W(n * m_numberOfFreeDimensions + k, j)
+                                        * m_W(n * m_degreesOfFreedom + k, j)
                                         / pow(m_sigmaSqrd, 2 * (n + 1));
             }
         }
@@ -60,10 +60,7 @@ void DRBMProduct::updateVectors()
     m_v = m_b;
     for (int n = 0; n < m_numberOfLayers; n++) {
         m_v += m_positionsPow.row(n + 2)
-               * m_W.block(n * m_numberOfFreeDimensions,
-                           0,
-                           m_numberOfFreeDimensions,
-                           m_numberOfHiddenNodes)
+               * m_W.block(n * m_degreesOfFreedom, 0, m_degreesOfFreedom, m_numberOfHiddenNodes)
                / pow(m_sigmaSqrd, 2 * (n + 1));
     }
     Eigen::VectorXd m_e = m_v.array().exp();
@@ -124,7 +121,7 @@ void DRBMProduct::initializeArrays(const Eigen::VectorXd positions,
                                    const Eigen::MatrixXd distanceMatrix)
 {
     m_positions = positions;
-    m_positionsPow = Eigen::MatrixXd::Zero(m_numberOfLayers + 2, m_numberOfFreeDimensions);
+    m_positionsPow = Eigen::MatrixXd::Zero(m_numberOfLayers + 2, m_degreesOfFreedom);
     for (int n = 0; n < m_numberOfLayers + 1; n++) {
         m_positionsPow.row(n + 1) = m_positions.array().pow(n);
     }
@@ -132,8 +129,8 @@ void DRBMProduct::initializeArrays(const Eigen::VectorXd positions,
 
     m_n = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     m_p = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
-    m_gradientPart = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
-    m_laplacianPart = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    m_gradientPart = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_numberOfHiddenNodes);
+    m_laplacianPart = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_numberOfHiddenNodes);
 
     updateVectors();
     updateGradient();
@@ -143,21 +140,17 @@ void DRBMProduct::initializeArrays(const Eigen::VectorXd positions,
 void DRBMProduct::updateParameters(Eigen::MatrixXd parameters)
 {
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
-    m_W = Eigen::MatrixXd::Zero(m_numberOfLayers * m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    m_W = Eigen::MatrixXd::Zero(m_numberOfLayers * m_degreesOfFreedom, m_numberOfHiddenNodes);
     for (int n = 0; n < m_numberOfLayers; n++) {
         Eigen::VectorXd wFlatten = parameters.row(m_elementNumber)
-                                       .segment(m_numberOfHiddenNodes
-                                                    * (1 + n * m_numberOfFreeDimensions),
-                                                m_numberOfFreeDimensions * m_numberOfHiddenNodes);
-        Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(),
-                                      m_numberOfFreeDimensions,
-                                      m_numberOfHiddenNodes);
-        m_W.block(n * m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes)
-            = W;
-        //m_W.block(n*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = WaveFunction::reshape(wFlatten, m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+                                       .segment(m_numberOfHiddenNodes * (1 + n * m_degreesOfFreedom),
+                                                m_degreesOfFreedom * m_numberOfHiddenNodes);
+        Eigen::Map<Eigen::MatrixXd> W(wFlatten.data(), m_degreesOfFreedom, m_numberOfHiddenNodes);
+        m_W.block(n * m_degreesOfFreedom, 0, m_degreesOfFreedom, m_numberOfHiddenNodes) = W;
+        //m_W.block(n*m_degreesOfFreedom, 0, m_degreesOfFreedom, m_numberOfHiddenNodes) = WaveFunction::reshape(wFlatten, m_degreesOfFreedom, m_numberOfHiddenNodes);
     }
-    //m_W.block(m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
-    //m_W.block(2*m_numberOfFreeDimensions, 0, m_numberOfFreeDimensions, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfHiddenNodes);
+    //m_W.block(m_degreesOfFreedom, 0, m_degreesOfFreedom, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_numberOfHiddenNodes);
+    //m_W.block(2*m_degreesOfFreedom, 0, m_degreesOfFreedom, m_numberOfHiddenNodes) = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_numberOfHiddenNodes);
     //std::cout << m_W << std::endl;
 }
 
@@ -174,7 +167,7 @@ double DRBMProduct::computeGradient(const int k)
 double DRBMProduct::computeLaplacian()
 {
     double sum = 0;
-    for (int k = 0; k < m_numberOfFreeDimensions; k++) {
+    for (int k = 0; k < m_degreesOfFreedom; k++) {
         for (int j = 0; j < m_numberOfHiddenNodes; j++) {
             sum += m_n(j)
                    * (m_laplacianPart(k, j) + m_p(j) * m_gradientPart(k, j) * m_gradientPart(k, j));
@@ -189,10 +182,10 @@ Eigen::VectorXd DRBMProduct::computeParameterGradient()
 
     for (int l = 0; l < m_numberOfHiddenNodes; l++) {
         gradients(l) = m_n(l);
-        for (int m = 0; m < m_numberOfFreeDimensions; m++) {
+        for (int m = 0; m < m_degreesOfFreedom; m++) {
             for (int n = 0; n < m_numberOfLayers; n++) {
-                int o = l * m_numberOfFreeDimensions + m
-                        + m_numberOfHiddenNodes * (1 + n * m_numberOfFreeDimensions);
+                int o = l * m_degreesOfFreedom + m
+                        + m_numberOfHiddenNodes * (1 + n * m_degreesOfFreedom);
                 gradients(o) = m_positionsPow(n + 2, m) * m_n(l) / pow(m_sigmaSqrd, 2 * (n + 1));
             }
         }
@@ -202,7 +195,7 @@ Eigen::VectorXd DRBMProduct::computeParameterGradient()
     gradients.head(m_numberOfHiddenNodes) = m_n;
     for(int n=0; n<m_numberOfLayers; n++) {
         Eigen::MatrixXd out = m_positionsPow.row(n+2) * m_n.transpose();
-        gradients.segment(m_numberOfHiddenNodes, m_numberOfHiddenNodes*m_numberOfFreeDimensions) = WaveFunction::flatten(out) / pow(m_sigmaSqrd, 2*(n+1));
+        gradients.segment(m_numberOfHiddenNodes, m_numberOfHiddenNodes*m_degreesOfFreedom) = WaveFunction::flatten(out) / pow(m_sigmaSqrd, 2*(n+1));
     }
     */
     return gradients;

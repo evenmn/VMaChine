@@ -11,7 +11,7 @@ BruteForce::BruteForce(System *system)
 {
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticles = m_system->getNumberOfParticles();
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_stepLength = m_system->getStepLength();
     m_positions = m_system->getInitialState()->getParticles();
     m_radialVector = m_system->getInitialState()->getRadialVector();
@@ -23,7 +23,7 @@ BruteForce::BruteForce(System *system)
 
 bool BruteForce::acceptMove()
 {
-    int pRand = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
+    int pRand = m_system->getRandomNumberGenerator()->nextInt(m_degreesOfFreedom);
 
     m_positionsOld = m_positions;
     m_radialVectorOld = m_radialVector;
@@ -40,7 +40,7 @@ bool BruteForce::acceptMove()
     }
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, pRand);
 
-    double ratio = m_system->evaluateWaveFunctionRatio();
+    double ratio = m_system->evaluateProbabilityRatio();
     double r = m_system->getRandomNumberGenerator()->nextDouble();
     if (ratio < r) {
         m_positions(pRand) = m_positionsOld(pRand);

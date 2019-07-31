@@ -70,9 +70,9 @@ public:
                          const Eigen::MatrixXd distanceMatrix,
                          const int changedCoord);
 
-    double evaluateWaveFunctionRatio();
+    double evaluateProbabilityRatio();
     double getKineticEnergy();
-    Eigen::MatrixXd getAllInstantGradients();
+    Eigen::MatrixXd getAllParameterGradients();
 
     void setHamiltonian(class Hamiltonian *hamiltonian);
     void setBasis(class Basis *basis);
@@ -97,7 +97,7 @@ public:
     int getNumberOfParticles() { return m_numberOfParticles; }
     int getNumberOfDimensions() { return m_numberOfDimensions; }
     int getNumberOfHiddenNodes() { return m_numberOfHiddenNodes; }
-    int getNumberOfFreeDimensions() { return m_numberOfFreeDimensions; }
+    int getNumberOfFreeDimensions() { return m_degreesOfFreedom; }
     int getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
     int getMaxParameters() { return m_maxParameters; }
     int getAtomicNumber() { return m_Z; }
@@ -143,7 +143,7 @@ private:
     int m_numberOfHiddenNodes = m_numberOfParticles;
     int m_numberOfParticles = 0;
     int m_numberOfDimensions = 3;
-    int m_numberOfFreeDimensions = 0;
+    int m_degreesOfFreedom = 0;
     int m_maxParameters = 0;
     int m_totalNumberOfParameters = 0;
     int m_Z = 1;

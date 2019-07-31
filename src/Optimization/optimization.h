@@ -16,7 +16,6 @@ public:
 protected:
     class System *m_system = nullptr;
     Eigen::VectorXd m_positions;
-    int m_numberOfFreeDimensions = 0;
     int m_numberOfStepsAfterEquilibrium = 0;
     int m_numberOfElements = 0;
     int m_maxParameters = 0;

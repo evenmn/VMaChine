@@ -8,7 +8,6 @@
 ADAM::ADAM(System *system)
     : Optimization(system)
 {
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
     m_numberOfElements = m_system->getNumberOfElements();
     m_maxParameters = m_system->getMaxParameters();
     m_waveFunctionVector = m_system->getWaveFunctionElements();

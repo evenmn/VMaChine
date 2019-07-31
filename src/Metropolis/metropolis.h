@@ -27,7 +27,7 @@ protected:
     Eigen::VectorXd m_radialVectorOld;
     Eigen::MatrixXd m_distanceMatrix;
     Eigen::MatrixXd m_distanceMatrixOld;
-    int m_numberOfFreeDimensions = 0;
+    int m_degreesOfFreedom = 0;
     int m_numberOfDimensions = 0;
     int m_numberOfParticles = 0;
     int m_changedCoord = 0;

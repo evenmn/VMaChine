@@ -12,13 +12,13 @@ int main(int argc, char *argv[])
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int numberOfDimensions = 3;
-    int numberOfParticles = 8;
+    int numberOfDimensions = 2;
+    int numberOfParticles = 2;
     int numberOfHiddenNodes = numberOfParticles;
-    int numberOfSteps = int(pow(2, 18));
-    int numberOfIterations = 1000;
+    int numberOfSteps = int(pow(2, 20));
+    int numberOfIterations = 3000;
     double totalSpin = 0; // totalSpin is half-integer
-    double learningRate = 0.01;
+    double learningRate = 0.1;
     double omega = 0.1;             // Oscillator frequency
     int Z = numberOfParticles;      // Atomic number (nucleus charge)
     double sigma = 1 / sqrt(omega); // Width of probability distribution
@@ -95,13 +95,13 @@ int main(int argc, char *argv[])
     waveFunctionElements.push_back(new RBMGaussian(system));
     waveFunctionElements.push_back(new RBMProduct(system));
     //waveFunctionElements.push_back(new SimpleJastrow(system));
-    //waveFunctionElements.push_back(new PadeJastrow(system));
-    waveFunctionElements.push_back(new PartlyRestricted(system));
+    waveFunctionElements.push_back(new PadeJastrow(system));
+    //waveFunctionElements.push_back(new PartlyRestricted(system));
     //waveFunctionElements.push_back(new HydrogenLike(system));
 
     system->setWaveFunctionElements(waveFunctionElements);
     system->setRandomNumberGenerator(new MersenneTwister());
-    system->setOptimization(new GradientDescent(system, 0.0, 0.0));
+    system->setOptimization(new ADAM(system));
     system->setInitialWeights(new Automatize(system));
     system->setInitialState(new RandomNormal(system));
     system->setHamiltonian(new HarmonicOscillator(system));

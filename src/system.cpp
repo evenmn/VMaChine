@@ -158,7 +158,7 @@ void System::updateAllParameters(const Eigen::MatrixXd parameters)
     }
 }
 
-double System::evaluateWaveFunctionRatio()
+double System::evaluateProbabilityRatio()
 {
     double ratio = 1;
     for (auto &i : m_waveFunctionElements) {
@@ -173,19 +173,17 @@ double System::getKineticEnergy()
     for (auto &i : m_waveFunctionElements) {
         kineticEnergy += i->computeLaplacian();
     }
-    double sum = 0;
-    for (int k = 0; k < m_numberOfFreeDimensions; k++) {
+    for (int k = 0; k < m_degreesOfFreedom; k++) {
         double nablaLnPsi = 0;
         for (auto &i : m_waveFunctionElements) {
             nablaLnPsi += i->computeGradient(k);
         }
         kineticEnergy += nablaLnPsi * nablaLnPsi;
-        sum += nablaLnPsi * nablaLnPsi;
     }
     return -0.5 * kineticEnergy;
 }
 
-Eigen::MatrixXd System::getAllInstantGradients()
+Eigen::MatrixXd System::getAllParameterGradients()
 {
     Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements),
                                                       m_maxParameters);
@@ -198,8 +196,8 @@ Eigen::MatrixXd System::getAllInstantGradients()
 void System::setGlobalArraysToCalculate()
 {
     // Check if the elements need distance matrix or radial distance vector
-    for (auto &i : m_waveFunctionElements) {
-        int need = i->getGlobalArrayNeed();
+    for (auto &p : m_waveFunctionElements) {
+        int need = p->getGlobalArrayNeed();
         if (need == 1) {
             m_calculateDistanceMatrix = true;
         }
@@ -242,7 +240,7 @@ void System::setNumberOfDimensions(const int numberOfDimensions)
 
 void System::setNumberOfFreeDimensions()
 {
-    m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
+    m_degreesOfFreedom = m_numberOfParticles * m_numberOfDimensions;
 }
 
 void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes)
@@ -532,7 +530,7 @@ void System::parserConstants(const std::string configFile, int &numberOfIteratio
             }
         }
     }
-    m_numberOfFreeDimensions = m_numberOfParticles * m_numberOfDimensions;
+    m_degreesOfFreedom = m_numberOfParticles * m_numberOfDimensions;
     m_sigma = 1 / sqrt(m_omega);
     m_Z = m_numberOfParticles;
 }

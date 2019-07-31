@@ -10,7 +10,7 @@ RandomUniform::RandomUniform(System *system)
 {
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     setupInitialState();
 }
 
@@ -57,8 +57,8 @@ void RandomUniform::calculateRadialVector()
 
 void RandomUniform::setupInitialState()
 {
-    m_positions = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
-    for (int i = 0; i < m_numberOfFreeDimensions; i++) {
+    m_positions = Eigen::VectorXd::Zero(m_degreesOfFreedom);
+    for (int i = 0; i < m_degreesOfFreedom; i++) {
         m_positions(i) = m_system->getRandomNumberGenerator()->nextDouble();
     }
     InitialState::calculateDistanceMatrix();

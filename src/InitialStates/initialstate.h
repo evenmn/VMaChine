@@ -19,7 +19,7 @@ public:
 
 protected:
     class System *m_system = nullptr;
-    int m_numberOfFreeDimensions = 0;
+    int m_degreesOfFreedom = 0;
     int m_numberOfDimensions = 0;
     int m_numberOfParticles = 0;
 

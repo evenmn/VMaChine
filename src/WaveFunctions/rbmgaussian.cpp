@@ -6,8 +6,8 @@
 RBMGaussian::RBMGaussian(System *system)
     : WaveFunction(system)
 {
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
-    m_numberOfParameters = m_numberOfFreeDimensions;
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_numberOfParameters = m_degreesOfFreedom;
     m_omega = m_system->getFrequency();
     double sigma = m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
@@ -21,7 +21,7 @@ void RBMGaussian::setConstants(const int elementNumber)
 
 void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters)
 {
-    m_a = (parameters.row(m_elementNumber)).head(m_numberOfFreeDimensions);
+    m_a = (parameters.row(m_elementNumber)).head(m_degreesOfFreedom);
 }
 
 void RBMGaussian::initializeArrays(const Eigen::VectorXd positions,
@@ -72,12 +72,12 @@ double RBMGaussian::computeGradient(const int k)
 double RBMGaussian::computeLaplacian()
 {
     ;
-    return -m_numberOfFreeDimensions / m_sigmaSqrd;
+    return -m_degreesOfFreedom / m_sigmaSqrd;
 }
 
 Eigen::VectorXd RBMGaussian::computeParameterGradient()
 {
     Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
-    gradients.head(m_numberOfFreeDimensions) = m_Xa / m_sigmaSqrd;
+    gradients.head(m_degreesOfFreedom) = m_Xa / m_sigmaSqrd;
     return gradients;
 }

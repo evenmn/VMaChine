@@ -8,7 +8,7 @@ HydrogenLike::HydrogenLike(System *system)
 {
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_Z = m_system->getAtomicNumber();
 }
 

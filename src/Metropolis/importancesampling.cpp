@@ -14,14 +14,14 @@ ImportanceSampling::ImportanceSampling(System *system)
 {
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_stepLength = m_system->getStepLength();
     m_waveFunctionVector = m_system->getWaveFunctionElements();
     m_positions = m_system->getInitialState()->getParticles();
     m_radialVector = m_system->getInitialState()->getRadialVector();
     m_distanceMatrix = m_system->getInitialState()->getDistanceMatrix();
-    m_quantumForceOld = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
-    for (int i = 0; i < m_numberOfFreeDimensions; i++) {
+    m_quantumForceOld = Eigen::VectorXd::Zero(m_degreesOfFreedom);
+    for (int i = 0; i < m_degreesOfFreedom; i++) {
         m_quantumForceOld(i) = QuantumForce(i);
     }
     m_quantumForceNew = m_quantumForceOld;
@@ -52,11 +52,13 @@ double ImportanceSampling::GreenFuncSum()
         double GreenFunc = 0;
         for (int j = 0; j < m_numberOfDimensions; j++) {
             int l = m_numberOfDimensions * i + j;
-            //double QForceOld = m_quantumForceOld(l);
-            //double QForceNew = m_quantumForceNew(l);
-            //GreenFunc += (QForceOld + QForceNew) * (0.5 * m_dtD*(QForceOld - QForceNew) - m_positions(l)+m_positionsOld(l));
-            GreenFunc += (m_quantumForceOld(l) - m_quantumForceNew(l))
-                         * (m_positions(l) - m_positionsOld(l));
+            double QForceOld = m_quantumForceOld(l);
+            double QForceNew = m_quantumForceNew(l);
+            GreenFunc += (QForceOld + QForceNew)
+                         * (0.5 * m_dtD * (QForceOld - QForceNew) - m_positions(l)
+                            + m_positionsOld(l));
+            //GreenFunc += (m_quantumForceOld(l) - m_quantumForceNew(l))
+            //             * (m_positions(l) - m_positionsOld(l));
         }
         GreenSum += exp(0.5 * GreenFunc);
     }
@@ -65,7 +67,7 @@ double ImportanceSampling::GreenFuncSum()
 
 bool ImportanceSampling::acceptMove()
 {
-    m_changedCoord = m_system->getRandomNumberGenerator()->nextInt(m_numberOfFreeDimensions);
+    m_changedCoord = m_system->getRandomNumberGenerator()->nextInt(m_degreesOfFreedom);
 
     m_quantumForceOld = m_quantumForceNew;
     m_positionsOld = m_positions;
@@ -85,7 +87,7 @@ bool ImportanceSampling::acceptMove()
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, m_changedCoord);
     m_quantumForceNew(m_changedCoord) = QuantumForce(m_changedCoord);
 
-    double ratio = m_system->evaluateWaveFunctionRatio();
+    double ratio = m_system->evaluateProbabilityRatio();
     double w = GreenFuncSum() * ratio;
     double r = m_system->getRandomNumberGenerator()->nextDouble();
 

@@ -40,7 +40,7 @@ public:
 protected:
     int m_numberOfParticles = 0;
     int m_numberOfDimensions = 0;
-    int m_numberOfFreeDimensions = 0;
+    int m_degreesOfFreedom = 0;
     int m_maxParameters = 0;
     class System *m_system = nullptr;
 };

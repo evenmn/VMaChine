@@ -7,7 +7,7 @@
 SlaterDeterminant::SlaterDeterminant(System *system)
     : WaveFunction(system)
 {
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticlesHalf = m_numberOfParticles / 2;
@@ -84,8 +84,8 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions,
     initializeSlaterMatrixDer();
     initializeSlaterMatrixSecDer();
     initializeSlaterMatrixInverse();
-    m_determinantDerivative = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
-    m_determinantSecondDerivative = Eigen::VectorXd::Zero(m_numberOfFreeDimensions);
+    m_determinantDerivative = Eigen::VectorXd::Zero(m_degreesOfFreedom);
+    m_determinantSecondDerivative = Eigen::VectorXd::Zero(m_degreesOfFreedom);
     updateSlaterDeterminantDerivatives(0, m_numberOfParticles);
 }
 
@@ -101,16 +101,16 @@ void SlaterDeterminant::initializeSlaterMatrix()
 
 void SlaterDeterminant::initializeSlaterMatrixDer()
 {
-    m_slaterMatrixDer = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfParticlesHalf);
-    for (int row = 0; row < m_numberOfFreeDimensions; row++) {
+    m_slaterMatrixDer = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_numberOfParticlesHalf);
+    for (int row = 0; row < m_degreesOfFreedom; row++) {
         updateSlaterMatrixDerRow(row);
     }
 }
 
 void SlaterDeterminant::initializeSlaterMatrixSecDer()
 {
-    m_slaterMatrixSecDer = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfParticlesHalf);
-    for (int row = 0; row < m_numberOfFreeDimensions; row++) {
+    m_slaterMatrixSecDer = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_numberOfParticlesHalf);
+    for (int row = 0; row < m_degreesOfFreedom; row++) {
         updateSlaterMatrixSecDerRow(row);
     }
 }

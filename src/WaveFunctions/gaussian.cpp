@@ -6,7 +6,7 @@
 Gaussian::Gaussian(System *system)
     : WaveFunction(system)
 {
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_omega = m_system->getFrequency();
 }
 
@@ -70,7 +70,7 @@ double Gaussian::computeGradient(const int k)
 double Gaussian::computeLaplacian()
 {
     ;
-    return -m_omega * m_alpha * m_numberOfFreeDimensions;
+    return -m_omega * m_alpha * m_degreesOfFreedom;
 }
 
 Eigen::VectorXd Gaussian::computeParameterGradient()

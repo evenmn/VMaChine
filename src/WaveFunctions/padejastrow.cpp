@@ -9,7 +9,7 @@ PadeJastrow::PadeJastrow(System *system)
 {
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
 }
 
 void PadeJastrow::setConstants(const int elementNumber)
@@ -63,7 +63,7 @@ void PadeJastrow::calculateF(int particle)
 
 void PadeJastrow::calculateG(int pRand)
 {
-    for (int i = 0; i < m_numberOfFreeDimensions; i++) {
+    for (int i = 0; i < m_degreesOfFreedom; i++) {
         m_g(pRand, i) = m_positions(pRand) - m_positions(i);
         m_g(i, pRand) = -m_g(pRand, i);
     }
@@ -100,9 +100,9 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions,
     m_f = (Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticles)
            + m_gamma * m_distanceMatrix)
               .cwiseInverse();
-    m_g = Eigen::MatrixXd::Zero(m_numberOfFreeDimensions, m_numberOfFreeDimensions);
-    for (int i = 0; i < m_numberOfFreeDimensions; i++) {
-        for (int j = i; j < m_numberOfFreeDimensions; j++) {
+    m_g = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_degreesOfFreedom);
+    for (int i = 0; i < m_degreesOfFreedom; i++) {
+        for (int j = i; j < m_degreesOfFreedom; j++) {
             m_g(i, j) = m_positions(i) - m_positions(j);
             m_g(j, i) = -m_g(i, j);
         }
@@ -180,7 +180,7 @@ double PadeJastrow::computeGradient(const int k)
 double PadeJastrow::computeLaplacian()
 {
     double derivative = 0;
-    for (int i = 0; i < m_numberOfFreeDimensions; i++) {
+    for (int i = 0; i < m_degreesOfFreedom; i++) {
         int i_p = int(i / m_numberOfDimensions); //Particle associated with k
         int i_d = i % m_numberOfDimensions;      //Dimension associated with k
         for (int j_p = i_p + 1; j_p < m_numberOfParticles; j_p++) {

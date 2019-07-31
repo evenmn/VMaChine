@@ -6,8 +6,8 @@
 PartlyRestricted::PartlyRestricted(System *system)
     : WaveFunction(system)
 {
-    m_numberOfFreeDimensions = m_system->getNumberOfFreeDimensions();
-    m_numberOfParameters = m_numberOfFreeDimensions * m_numberOfFreeDimensions;
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_numberOfParameters = m_degreesOfFreedom * m_degreesOfFreedom;
 }
 
 void PartlyRestricted::setConstants(const int elementNumber)
@@ -54,9 +54,9 @@ void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions,
 void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters)
 {
     m_c = WaveFunction::reshape(parameters.row(m_elementNumber)
-                                    .head(m_numberOfFreeDimensions * m_numberOfFreeDimensions),
-                                m_numberOfFreeDimensions,
-                                m_numberOfFreeDimensions);
+                                    .head(m_degreesOfFreedom * m_degreesOfFreedom),
+                                m_degreesOfFreedom,
+                                m_degreesOfFreedom);
 }
 
 double PartlyRestricted::evaluateRatio()
