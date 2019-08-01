@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int numberOfDimensions = 2;
-    int numberOfParticles = 2;
+    int numberOfDimensions = 3;
+    int numberOfParticles = 20;
     int numberOfHiddenNodes = numberOfParticles;
-    int numberOfSteps = int(pow(2, 20));
+    int numberOfSteps = int(pow(2, 16));
     int numberOfIterations = 3000;
     double totalSpin = 0; // totalSpin is half-integer
     double learningRate = 0.1;
@@ -89,17 +89,10 @@ int main(int argc, char *argv[])
         system->parserConstants(argv[1], numberOfIterations);
 
     system->setBasis(new Hermite(system));
-    std::vector<class WaveFunction *> waveFunctionElements;
-    //waveFunctionElements.push_back(new Gaussian(system));
-    waveFunctionElements.push_back(new SlaterDeterminant(system));
-    waveFunctionElements.push_back(new RBMGaussian(system));
-    waveFunctionElements.push_back(new RBMProduct(system));
-    //waveFunctionElements.push_back(new SimpleJastrow(system));
-    waveFunctionElements.push_back(new PadeJastrow(system));
-    //waveFunctionElements.push_back(new PartlyRestricted(system));
-    //waveFunctionElements.push_back(new HydrogenLike(system));
+    system->setWaveFunctionElement(new Gaussian(system));
+    system->setWaveFunctionElement(new SlaterDeterminant(system));
+    system->setWaveFunctionElement(new PadeJastrow(system));
 
-    system->setWaveFunctionElements(waveFunctionElements);
     system->setRandomNumberGenerator(new MersenneTwister());
     system->setOptimization(new ADAM(system));
     system->setInitialWeights(new Automatize(system));

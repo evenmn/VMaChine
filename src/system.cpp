@@ -185,12 +185,10 @@ double System::getKineticEnergy()
 
 Eigen::MatrixXd System::getAllParameterGradients()
 {
-    Eigen::MatrixXd gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements),
-                                                      m_maxParameters);
     for (int i = 0; i < m_numberOfElements; i++) {
-        gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
+        m_gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
     }
-    return gradients;
+    return m_gradients;
 }
 
 void System::setGlobalArraysToCalculate()
@@ -429,6 +427,14 @@ void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunct
     setAllConstants();
 }
 
+void System::setWaveFunctionElement(WaveFunction *waveFunction)
+{
+    m_waveFunctionElements.push_back(waveFunction);
+    setMaxParameters();
+    setNumberOfElements(m_waveFunctionElements.size());
+    setAllConstants();
+}
+
 void System::setInitialState(InitialState *initialState)
 {
     m_initialState = initialState;
@@ -456,7 +462,7 @@ void System::setRandomNumberGenerator(RandomNumberGenerator *randomNumberGenerat
 
 void System::setGradients()
 {
-    m_gradients = Eigen::MatrixXd::Zero(Eigen::Index(m_numberOfElements), m_maxParameters);
+    m_gradients = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
 }
 
 void System::parserConstants(const std::string configFile, int &numberOfIterations)

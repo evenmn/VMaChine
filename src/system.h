@@ -82,6 +82,7 @@ public:
     void setOptimization(class Optimization *optimization);
     void setRandomNumberGenerator(class RandomNumberGenerator *randomNumberGenerator);
     void setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements);
+    void setWaveFunctionElement(WaveFunction *waveFunction);
 
     class WaveFunction *getWaveFunction() { return m_waveFunction; }
     class Hamiltonian *getHamiltonian() { return m_hamiltonian; }

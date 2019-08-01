@@ -151,6 +151,9 @@ void Sampler::computeAverages()
     m_variance = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalStepsWOEqui;
     if (std::isnan(m_averageEnergy)) {
         perror("Energy exploded, please decrease the learning rate");
+        cout << " Kinetic energy        : " << m_averageKineticEnergy << endl;
+        cout << " External energy       : " << m_averageExternalEnergy << endl;
+        cout << " Interaction energy    : " << m_averageInteractionEnergy << endl;
         MPI_Abort(MPI_COMM_WORLD, 143);
     }
 }

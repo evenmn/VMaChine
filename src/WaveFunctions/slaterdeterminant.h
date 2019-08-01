@@ -50,8 +50,7 @@ private:
     double m_ratio = 1;
     double m_ratioOld = 1;
 
-    Eigen::VectorXd m_positions;
-    Eigen::MatrixXd m_positionBlock;
+    Eigen::MatrixXd m_positions;
     Eigen::MatrixXd m_slaterMatrix;
     Eigen::MatrixXd m_slaterMatrixDer;
     Eigen::MatrixXd m_slaterMatrixSecDer;
@@ -60,8 +59,7 @@ private:
     Eigen::VectorXd m_determinantSecondDerivative;
     double m_probabilityRatio = 0;
 
-    Eigen::VectorXd m_positionsOld;
-    Eigen::MatrixXd m_positionBlockOld;
+    Eigen::MatrixXd m_positionsOld;
     Eigen::MatrixXd m_slaterMatrixOld;
     Eigen::MatrixXd m_slaterMatrixDerOld;
     Eigen::MatrixXd m_slaterMatrixSecDerOld;
@@ -71,4 +69,6 @@ private:
     double m_probabilityRatioOld = 0;
 
     std::string m_label = "slaterdeterminant";
+
+    class Basis *m_basis = nullptr;
 };

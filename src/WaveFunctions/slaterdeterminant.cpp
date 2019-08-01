@@ -11,6 +11,7 @@ SlaterDeterminant::SlaterDeterminant(System *system)
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticlesHalf = m_numberOfParticles / 2;
+    m_basis = m_system->getBasis();
 }
 
 void SlaterDeterminant::setConstants(const int elementNumber)
@@ -127,7 +128,7 @@ void SlaterDeterminant::initializeSlaterMatrixInverse()
 void SlaterDeterminant::updateSlaterMatrixRow(const int row)
 {
     for (int col = 0; col < m_numberOfParticlesHalf; col++) {
-        m_slaterMatrix(row, col) = m_system->getBasis()->basisElement(col, m_positionBlock.col(row));
+        m_slaterMatrix(row, col) = m_basis->basisElement(col, m_positionBlock.col(row));
     }
 }
 
@@ -136,8 +137,9 @@ void SlaterDeterminant::updateSlaterMatrixDerRow(const int row)
     int particle = int(row / m_numberOfDimensions);
     int dimension = row % m_numberOfDimensions;
     for (int col = 0; col < m_numberOfParticlesHalf; col++) {
-        m_slaterMatrixDer(row, col)
-            = m_system->getBasis()->basisElementDer(col, dimension, m_positionBlock.col(particle));
+        m_slaterMatrixDer(row, col) = m_basis->basisElementDer(col,
+                                                               dimension,
+                                                               m_positionBlock.col(particle));
     }
 }
 
@@ -146,10 +148,9 @@ void SlaterDeterminant::updateSlaterMatrixSecDerRow(const int row)
     int particle = int(row / m_numberOfDimensions);
     int dimension = row % m_numberOfDimensions;
     for (int col = 0; col < m_numberOfParticlesHalf; col++) {
-        m_slaterMatrixSecDer(row, col) = m_system->getBasis()
-                                             ->basisElementSecDer(col,
-                                                                  dimension,
-                                                                  m_positionBlock.col(particle));
+        m_slaterMatrixSecDer(row, col) = m_basis->basisElementSecDer(col,
+                                                                     dimension,
+                                                                     m_positionBlock.col(particle));
     }
 }
 
