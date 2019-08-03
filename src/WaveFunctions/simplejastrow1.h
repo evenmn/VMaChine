@@ -1,10 +1,10 @@
 #pragma once
 #include "wavefunction.h"
 
-class Gaussian : public WaveFunction
+class SimpleJastrow : public WaveFunction
 {
 public:
-    Gaussian(class System *system);
+    SimpleJastrow(class System *system);
     int getNumberOfParameters() { return m_numberOfParameters; }
     int getGlobalArrayNeed() { return m_globalArrayNeed; }
     std::string getLabel() { return m_label; }
@@ -25,21 +25,28 @@ public:
     double computeLaplacian();
     Eigen::VectorXd computeParameterGradient();
 
-    void updateProbabilityRatio(int changedCoord);
+    void initializePrincipalDistance();
+    void updatePrincipalDistance(int i);
+    void calculateProbabilityRatio(int particle);
 
 private:
     int m_numberOfParameters = 1;
-    int m_globalArrayNeed = 0;
+    int m_globalArrayNeed = 1;
     int m_elementNumber = 0;
+    int m_particle = 0;
 
-    double m_omega = 0;
-    double m_alpha = 0;
-    double m_probabilityRatio = 0;
-    double m_probabilityRatioOld = 0;
+    double m_gamma;
+    double m_probabilityRatioOld;
+    double m_probabilityRatio;
+
+    Eigen::MatrixXd m_beta;
+    Eigen::VectorXd m_gradients;
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
+    Eigen::MatrixXd m_distanceMatrix;
+    Eigen::MatrixXd m_distanceMatrixOld;
+    Eigen::MatrixXd m_principalDistance;
+    Eigen::MatrixXd m_principalDistanceOld;
 
-    Eigen::VectorXd m_gradients;
-
-    std::string m_label = "gaussian";
+    std::string m_label = "simplejastrow";
 };

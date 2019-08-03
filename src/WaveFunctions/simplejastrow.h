@@ -25,7 +25,8 @@ public:
     double computeLaplacian();
     Eigen::VectorXd computeParameterGradient();
 
-    void calculateG(int pRand);
+    void initializePrincipalDistance();
+    void updatePrincipalDistance(int i, int i_p);
     void calculateProbabilityRatio(int particle);
 
 private:
@@ -33,15 +34,20 @@ private:
     int m_globalArrayNeed = 1;
     int m_elementNumber = 0;
 
-    Eigen::MatrixXd m_distanceMatrix;
-    Eigen::MatrixXd m_distanceMatrixOld;
-    Eigen::VectorXd m_positions;
-    Eigen::VectorXd m_positionsOld;
-    Eigen::MatrixXd m_beta;
-    Eigen::MatrixXd m_g;
     double m_gamma;
     double m_probabilityRatioOld;
     double m_probabilityRatio;
 
+    Eigen::VectorXd m_gradients;
+    Eigen::VectorXd m_positions;
+    Eigen::VectorXd m_positionsOld;
+
+    Eigen::MatrixXd m_beta;
+    Eigen::MatrixXd m_distanceMatrix;
+    Eigen::MatrixXd m_distanceMatrixOld;
+    Eigen::MatrixXd m_principalDistance;
+    Eigen::MatrixXd m_principalDistanceOld;
+
     std::string m_label = "simplejastrow";
 };
+

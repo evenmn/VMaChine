@@ -23,8 +23,8 @@ int sgn(T val)
 
 void DRBMProduct::setConstants(const int elementNumber)
 {
-    m_maxParameters = m_system->getMaxParameters();
     m_elementNumber = elementNumber;
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void DRBMProduct::updateGradient()
@@ -178,15 +178,13 @@ double DRBMProduct::computeLaplacian()
 
 Eigen::VectorXd DRBMProduct::computeParameterGradient()
 {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
-
     for (int l = 0; l < m_numberOfHiddenNodes; l++) {
-        gradients(l) = m_n(l);
+        m_gradients(l) = m_n(l);
         for (int m = 0; m < m_degreesOfFreedom; m++) {
             for (int n = 0; n < m_numberOfLayers; n++) {
                 int o = l * m_degreesOfFreedom + m
                         + m_numberOfHiddenNodes * (1 + n * m_degreesOfFreedom);
-                gradients(o) = m_positionsPow(n + 2, m) * m_n(l) / pow(m_sigmaSqrd, 2 * (n + 1));
+                m_gradients(o) = m_positionsPow(n + 2, m) * m_n(l) / pow(m_sigmaSqrd, 2 * (n + 1));
             }
         }
     }
@@ -198,5 +196,5 @@ Eigen::VectorXd DRBMProduct::computeParameterGradient()
         gradients.segment(m_numberOfHiddenNodes, m_numberOfHiddenNodes*m_degreesOfFreedom) = WaveFunction::flatten(out) / pow(m_sigmaSqrd, 2*(n+1));
     }
     */
-    return gradients;
+    return m_gradients;
 }

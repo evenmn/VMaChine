@@ -39,6 +39,7 @@ private:
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
     Eigen::MatrixXd m_c;
+    Eigen::VectorXd m_gradients;
 
     std::string m_label = "partlyrestricted";
 };

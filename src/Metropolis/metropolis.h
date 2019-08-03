@@ -10,9 +10,6 @@ public:
     virtual Eigen::MatrixXd updateDistanceMatrix() { return m_distanceMatrix; }
 
     virtual bool acceptMove() = 0;
-    //virtual double calculateDistanceMatrixElement(int i, int j) = 0;
-    //virtual void   calculateDistanceMatrixCross(int particle) = 0;
-    //virtual double calculateRadialVectorElement(int particle) = 0;
     virtual ~Metropolis() = 0;
 
     double calculateDistanceMatrixElement(const int i, const int j);
@@ -30,10 +27,11 @@ protected:
     int m_degreesOfFreedom = 0;
     int m_numberOfDimensions = 0;
     int m_numberOfParticles = 0;
-    int m_changedCoord = 0;
     double m_stepLength = 0;
     double m_diff = 0.5;
 
     bool m_calculateDistanceMatrix = false;
     bool m_calculateRadialVector = false;
+
+    class RandomNumberGenerator *m_RNG = nullptr;
 };

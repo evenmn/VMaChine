@@ -25,39 +25,40 @@ public:
     double computeLaplacian();
     Eigen::VectorXd computeParameterGradient();
 
-    void calculateF(int particle);
+    void updateMatrices(int particle);
     void calculateG(int pRand);
-    void calculateH(int particle);
     void calculateProbabilityRatio(int particle);
     void initializeBeta();
+    void initializeMatrices();
+    void initializePrincipalDistance();
+    void updatePrincipalDistance(int i, int i_p);
 
 private:
     int m_numberOfParameters = 1;
     int m_globalArrayNeed = 1;
     int m_elementNumber = 0;
-    Eigen::MatrixXd m_distanceMatrix;
-    Eigen::MatrixXd m_distanceMatrixOld;
-    Eigen::MatrixXd m_distanceMatrixSqrd;
-    Eigen::MatrixXd m_distanceMatrixSqrdOld;
+
+    double m_gamma;
+    double m_probabilityRatio;
+    double m_probabilityRatioOld;
+
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
+
+    Eigen::MatrixXd m_distanceMatrix;
+    Eigen::MatrixXd m_distanceMatrixOld;
     Eigen::MatrixXd m_beta;
     Eigen::MatrixXd m_f;
     Eigen::MatrixXd m_fOld;
-    Eigen::MatrixXd m_fSqrd;
-    Eigen::MatrixXd m_fSqrdOld;
-    Eigen::MatrixXd m_fCube;
-    Eigen::MatrixXd m_fCubeOld;
     Eigen::MatrixXd m_g;
     Eigen::MatrixXd m_gOld;
-    Eigen::MatrixXd m_gSqrd;
-    Eigen::MatrixXd m_gSqrdOld;
     Eigen::MatrixXd m_h;
     Eigen::MatrixXd m_hOld;
     Eigen::MatrixXd m_hOldOld;
-    double m_gamma;
-    double m_probabilityRatioOld;
-    double m_probabilityRatio;
+    Eigen::MatrixXd m_gradients;
+    Eigen::MatrixXd m_principalDistance;
+    Eigen::MatrixXd m_principalDistanceOld;
 
     std::string m_label = "padejastrow";
 };
+

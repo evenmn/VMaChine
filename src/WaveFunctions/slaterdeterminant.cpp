@@ -16,8 +16,8 @@ SlaterDeterminant::SlaterDeterminant(System *system)
 
 void SlaterDeterminant::setConstants(const int elementNumber)
 {
-    m_maxParameters = m_system->getMaxParameters();
     m_elementNumber = elementNumber;
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions,
@@ -27,8 +27,7 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions,
 {
     m_particle = int(changedCoord / m_numberOfDimensions);
     m_dimension = changedCoord % m_numberOfDimensions;
-    m_positions = positions;
-    m_positionBlock(m_dimension, m_particle) = m_positions(changedCoord);
+    m_positions(m_dimension, m_particle) = positions(changedCoord);
     updateSlaterMatrixRow(m_particle);
     for (int d = (changedCoord - m_dimension);
          d < (changedCoord + m_numberOfDimensions - m_dimension);
@@ -48,7 +47,6 @@ void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions,
 void SlaterDeterminant::setArrays()
 {
     m_positionsOld = m_positions;
-    m_positionBlockOld = m_positionBlock;
     m_determinantDerivativeOld = m_determinantDerivative;
     m_determinantSecondDerivativeOld = m_determinantSecondDerivative;
     m_ratioOld = m_ratio;
@@ -61,7 +59,6 @@ void SlaterDeterminant::setArrays()
 void SlaterDeterminant::resetArrays()
 {
     m_positions = m_positionsOld;
-    m_positionBlock = m_positionBlockOld;
     m_determinantDerivative = m_determinantDerivativeOld;
     m_determinantSecondDerivative = m_determinantSecondDerivativeOld;
     m_ratio = m_ratioOld;
@@ -75,12 +72,12 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions,
                                          const Eigen::VectorXd radialVector,
                                          const Eigen::MatrixXd distanceMatrix)
 {
-    m_positions = positions;
+    Eigen::VectorXd Positions = positions;
     m_ratio = 1;
-    Eigen::Map<Eigen::MatrixXd> positionBlock(m_positions.data(),
+    Eigen::Map<Eigen::MatrixXd> positionBlock(Positions.data(),
                                               m_numberOfDimensions,
                                               m_numberOfParticles);
-    m_positionBlock = positionBlock;
+    m_positions = positionBlock;
     initializeSlaterMatrix();
     initializeSlaterMatrixDer();
     initializeSlaterMatrixSecDer();
@@ -128,7 +125,7 @@ void SlaterDeterminant::initializeSlaterMatrixInverse()
 void SlaterDeterminant::updateSlaterMatrixRow(const int row)
 {
     for (int col = 0; col < m_numberOfParticlesHalf; col++) {
-        m_slaterMatrix(row, col) = m_basis->basisElement(col, m_positionBlock.col(row));
+        m_slaterMatrix(row, col) = m_basis->basisElement(col, m_positions.col(row));
     }
 }
 
@@ -139,7 +136,7 @@ void SlaterDeterminant::updateSlaterMatrixDerRow(const int row)
     for (int col = 0; col < m_numberOfParticlesHalf; col++) {
         m_slaterMatrixDer(row, col) = m_basis->basisElementDer(col,
                                                                dimension,
-                                                               m_positionBlock.col(particle));
+                                                               m_positions.col(particle));
     }
 }
 
@@ -150,7 +147,7 @@ void SlaterDeterminant::updateSlaterMatrixSecDerRow(const int row)
     for (int col = 0; col < m_numberOfParticlesHalf; col++) {
         m_slaterMatrixSecDer(row, col) = m_basis->basisElementSecDer(col,
                                                                      dimension,
-                                                                     m_positionBlock.col(particle));
+                                                                     m_positions.col(particle));
     }
 }
 
@@ -199,5 +196,5 @@ double SlaterDeterminant::computeLaplacian()
 
 Eigen::VectorXd SlaterDeterminant::computeParameterGradient()
 {
-    return Eigen::VectorXd::Zero(m_maxParameters);
+    return m_gradients;
 }

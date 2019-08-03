@@ -12,18 +12,18 @@ int main(int argc, char *argv[])
 
     // --- SYSTEM SETTINGS ---
     // Parameters
-    int numberOfDimensions = 3;
+    int numberOfDimensions = 2;
     int numberOfParticles = 20;
     int numberOfHiddenNodes = numberOfParticles;
-    int numberOfSteps = int(pow(2, 16));
+    int numberOfSteps = int(pow(2, 18));
     int numberOfIterations = 3000;
-    double totalSpin = 0; // totalSpin is half-integer
-    double learningRate = 0.1;
-    double omega = 0.1;             // Oscillator frequency
+    double totalSpin = 0;           // TotalSpin is half-integer
+    double learningRate = 0.001;    // Learning rate
+    double omega = 1.0;             // Oscillator frequency
     int Z = numberOfParticles;      // Atomic number (nucleus charge)
     double sigma = 1 / sqrt(omega); // Width of probability distribution
     double stepLength = 0.1;        // Metropolis step length
-    double equilibration = 0.01;    // Amount of the total steps used
+    double equilibration = 0.0;     // Amount of the total steps used
 
     // Switches
     bool interaction = true;           // Repulsive interaction on or off
@@ -89,8 +89,10 @@ int main(int argc, char *argv[])
         system->parserConstants(argv[1], numberOfIterations);
 
     system->setBasis(new Hermite(system));
-    system->setWaveFunctionElement(new Gaussian(system));
+    //system->setWaveFunctionElement(new Gaussian(system));
     system->setWaveFunctionElement(new SlaterDeterminant(system));
+    system->setWaveFunctionElement(new RBMGaussian(system));
+    system->setWaveFunctionElement(new RBMProduct(system));
     system->setWaveFunctionElement(new PadeJastrow(system));
 
     system->setRandomNumberGenerator(new MersenneTwister());

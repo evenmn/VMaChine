@@ -68,6 +68,7 @@ private:
     Eigen::VectorXd m_determinantSecondDerivativeOld;
     double m_probabilityRatioOld = 0;
 
+    Eigen::VectorXd m_gradients;
     std::string m_label = "slaterdeterminant";
 
     class Basis *m_basis = nullptr;

@@ -12,8 +12,8 @@ Gaussian::Gaussian(System *system)
 
 void Gaussian::setConstants(const int elementNumber)
 {
-    m_maxParameters = m_system->getMaxParameters();
     m_elementNumber = elementNumber;
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void Gaussian::initializeArrays(const Eigen::VectorXd positions,
@@ -75,7 +75,6 @@ double Gaussian::computeLaplacian()
 
 Eigen::VectorXd Gaussian::computeParameterGradient()
 {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
-    gradients(0) = -0.5 * m_omega * m_positions.cwiseAbs2().sum();
-    return gradients;
+    m_gradients(0) = -0.5 * m_omega * m_positions.cwiseAbs2().sum();
+    return m_gradients;
 }

@@ -27,7 +27,7 @@ Eigen::MatrixXd ADAM::updateParameters()
     m_vHat = m_v / (1 - pow(m_beta2, m_step));
     for (int i = 0; i < m_numberOfElements; i++) {
         for (int j = 0; j < m_maxParameters; j++) {
-            m_theta(i, j) = m_eta * m_mHat(i, j) / (sqrt(m_vHat(i, j) + m_epsilon));
+            m_theta(i, j) = m_eta * m_mHat(i, j) / (sqrt(m_vHat(i, j)) + m_epsilon);
         }
     }
     return m_theta;

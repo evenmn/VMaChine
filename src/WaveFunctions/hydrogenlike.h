@@ -37,6 +37,7 @@ private:
     Eigen::VectorXd m_positionsOld;
     Eigen::VectorXd m_radialVector;
     Eigen::VectorXd m_radialVectorOld;
+    Eigen::VectorXd m_gradients;
 
     double m_probabilityRatio;
     double m_probabilityRatioOld;

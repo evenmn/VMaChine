@@ -42,5 +42,7 @@ private:
     Eigen::VectorXd m_radialVector;
     Eigen::VectorXd m_radialVectorOld;
 
+    Eigen::VectorXd m_gradients;
+
     std::string m_label = "gaussianspherical";
 };

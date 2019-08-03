@@ -58,6 +58,7 @@ private:
     Eigen::VectorXd m_n;
     Eigen::VectorXd m_pOld;
     Eigen::VectorXd m_p;
+    Eigen::VectorXd m_gradients;
 
     std::string m_label = "DRBMProduct";
 };

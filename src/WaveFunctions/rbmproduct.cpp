@@ -17,8 +17,8 @@ RBMProduct::RBMProduct(System *system)
 
 void RBMProduct::setConstants(const int elementNumber)
 {
-    m_maxParameters = m_system->getMaxParameters();
     m_elementNumber = elementNumber;
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void RBMProduct::updateParameters(Eigen::MatrixXd parameters)
@@ -37,6 +37,7 @@ void RBMProduct::initializeArrays(const Eigen::VectorXd positions,
 {
     m_positions = positions;
     m_probabilityRatio = 1;
+
     m_n = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     m_p = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
     updateVectors();
@@ -89,11 +90,10 @@ double RBMProduct::computeLaplacian()
 
 Eigen::VectorXd RBMProduct::computeParameterGradient()
 {
-    Eigen::VectorXd gradients = Eigen::VectorXd::Zero(m_maxParameters);
     Eigen::MatrixXd out = m_positions * m_n.transpose();
-    gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
-    gradients.head(m_numberOfHiddenNodes) = m_n;
-    return gradients;
+    m_gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
+    m_gradients.head(m_numberOfHiddenNodes) = m_n;
+    return m_gradients;
 }
 
 void RBMProduct::updateVectors()
