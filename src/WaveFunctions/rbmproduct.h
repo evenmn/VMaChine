@@ -48,8 +48,6 @@ private:
     Eigen::VectorXd m_n;
     Eigen::VectorXd m_pOld;
     Eigen::VectorXd m_p;
-    Eigen::VectorXd m_pDotN;
-    Eigen::VectorXd m_pDotNOld;
     Eigen::VectorXd m_gradients;
 
     // Properties of the element (DO NOT TOUCH!)

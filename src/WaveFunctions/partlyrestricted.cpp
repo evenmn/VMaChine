@@ -16,10 +16,12 @@ void PartlyRestricted::setConstants(const int elementNumber)
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
-void PartlyRestricted::calculateProbabilityRatio(int changedCoord)
+void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions,
+                                        const Eigen::VectorXd radialVector,
+                                        const Eigen::MatrixXd distanceMatrix)
 {
-    double ratio = m_c.row(changedCoord) * m_positions;
-    m_probabilityRatio = exp(2 * ratio * (m_positions(changedCoord) - m_positionsOld(changedCoord)));
+    m_positions = positions;
+    m_probabilityRatio = 1;
 }
 
 void PartlyRestricted::updateArrays(const Eigen::VectorXd positions,
@@ -43,20 +45,10 @@ void PartlyRestricted::resetArrays()
     m_probabilityRatio = m_probabilityRatioOld;
 }
 
-void PartlyRestricted::initializeArrays(const Eigen::VectorXd positions,
-                                        const Eigen::VectorXd radialVector,
-                                        const Eigen::MatrixXd distanceMatrix)
-{
-    m_positions = positions;
-    m_probabilityRatio = 1;
-}
-
 void PartlyRestricted::updateParameters(Eigen::MatrixXd parameters)
 {
-    m_c = WaveFunction::reshape(parameters.row(m_elementNumber)
-                                    .head(m_degreesOfFreedom * m_degreesOfFreedom),
-                                m_degreesOfFreedom,
-                                m_degreesOfFreedom);
+    m_c = WaveFunction::square(parameters.row(m_elementNumber)
+                                    .head(m_numberOfParameters));
 }
 
 double PartlyRestricted::evaluateRatio()
@@ -79,4 +71,10 @@ Eigen::VectorXd PartlyRestricted::computeParameterGradient()
     Eigen::MatrixXd out = m_positions * m_positions.transpose();
     m_gradients.head(out.size()) = WaveFunction::flatten(out);
     return m_gradients;
+}
+
+void PartlyRestricted::calculateProbabilityRatio(int i)
+{
+    double ratio = m_c.row(i) * m_positions;
+    m_probabilityRatio = exp(2 * ratio * (m_positions(i) - m_positionsOld(i)));
 }
