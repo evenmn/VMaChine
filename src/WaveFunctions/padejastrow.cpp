@@ -25,7 +25,7 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions,
     m_positions = positions;
     m_distanceMatrix = distanceMatrix;
     m_probabilityRatio = 1;
-    initializePrincipalDistance();
+    //initializePrincipalDistance();
     initializeBeta();
     initializeMatrices();
 }
@@ -41,7 +41,7 @@ void PadeJastrow::updateArrays(const Eigen::VectorXd positions,
     m_distanceMatrix = distanceMatrix;
     updateMatrices(particle);
     calculateG(changedCoord);
-    updatePrincipalDistance(changedCoord, particle);
+    //updatePrincipalDistance(changedCoord, particle);
     calculateProbabilityRatio(particle);
 
     /*
@@ -61,6 +61,7 @@ void PadeJastrow::setArrays()
     m_hOld = m_h;
     m_fOld = m_f;
     m_gOld = m_g;
+    //m_principalDistanceOld = m_principalDistance;
     m_probabilityRatioOld = m_probabilityRatio;
 }
 
@@ -72,6 +73,7 @@ void PadeJastrow::resetArrays()
     m_g = m_gOld;
     m_h = m_hOld;
     m_hOld = m_hOldOld;
+    //m_principalDistance = m_principalDistanceOld;
     m_probabilityRatio = m_probabilityRatioOld;
 }
 
