@@ -59,7 +59,6 @@ void RBMProduct::setArrays()
     m_vOld = m_v;
     m_nOld = m_n;
     m_pOld = m_p;
-    m_pDotNOld = m_pDotN;
     m_probabilityRatioOld = m_probabilityRatio;
 }
 
@@ -69,7 +68,6 @@ void RBMProduct::resetArrays()
     m_v = m_vOld;
     m_n = m_nOld;
     m_p = m_pOld;
-    m_pDotN = m_pDotNOld;
     m_probabilityRatio = m_probabilityRatioOld;
 }
 
@@ -85,7 +83,7 @@ double RBMProduct::computeGradient(const int k)
 
 double RBMProduct::computeLaplacian()
 {
-    return (m_WSqrd * m_pDotN).sum() / m_sigmaQuad;
+    return (m_WSqrd * m_p.cwiseProduct(m_n)).sum() / m_sigmaQuad;
 }
 
 Eigen::VectorXd RBMProduct::computeParameterGradient()
@@ -102,7 +100,6 @@ void RBMProduct::updateVectors()
     Eigen::VectorXd m_e = m_v.array().exp();
     m_p = (m_e + Eigen::VectorXd::Ones(m_numberOfHiddenNodes)).cwiseInverse();
     m_n = m_e.cwiseProduct(m_p);
-    m_pDotN = m_p.cwiseProduct(m_n);
 }
 
 void RBMProduct::updateRatio()

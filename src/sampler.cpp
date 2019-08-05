@@ -149,7 +149,7 @@ void Sampler::computeAverages()
     m_averageGradients = m_totalCumulativeGradients / m_numberOfStepsPerBatch;
     m_averageGradientsE = m_totalCumulativeGradientsE / m_numberOfStepsPerBatch;
     m_variance = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalStepsWOEqui;
-    if (std::isnan(m_averageEnergy)) {
+    if (std::isnan(m_averageKineticEnergy)) {
         perror("Energy exploded, please decrease the learning rate");
         cout << " Kinetic energy        : " << m_averageKineticEnergy << endl;
         cout << " External energy       : " << m_averageExternalEnergy << endl;
