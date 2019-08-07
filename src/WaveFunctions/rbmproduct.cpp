@@ -27,6 +27,11 @@ void RBMProduct::updateParameters(Eigen::MatrixXd parameters)
                                    .segment(m_numberOfHiddenNodes,
                                             m_degreesOfFreedom * m_numberOfHiddenNodes);
     m_W = WaveFunction::reshape(wFlatten, m_degreesOfFreedom, m_numberOfHiddenNodes);
+
+    std::cout << wFlatten << std::endl;
+    std::cout << m_W << std::endl;
+    std::cout << std::endl;
+
     m_WSqrd = m_W.cwiseAbs2();
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
 }

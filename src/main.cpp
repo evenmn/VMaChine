@@ -13,22 +13,22 @@ int main(int argc, char *argv[])
     // --- SYSTEM SETTINGS ---
     // Parameters
     int numberOfDimensions = 2;
-    int numberOfParticles = 56;
+    int numberOfParticles = 2;
     int numberOfHiddenNodes = numberOfParticles;
-    int numberOfSteps = int(pow(2, 18));
-    int numberOfIterations = 3000;
+    int numberOfSteps = int(pow(2, 19));
+    int numberOfIterations = 12;
     double totalSpin = 0;           // TotalSpin is half-integer
-    double learningRate = 0.0001;   // Learning rate
-    double omega = 0.1;             // Oscillator frequency
+    double learningRate = 0.5;      // Learning rate
+    double omega = 1.0;             // Oscillator frequency
     int Z = numberOfParticles;      // Atomic number (nucleus charge)
     double sigma = 1 / sqrt(omega); // Width of probability distribution
     double stepLength = 0.1;        // Metropolis step length
     double equilibration = 0.0;     // Amount of the total steps used
 
     // Switches
-    bool interaction = true;           // Repulsive interaction on or off
+    bool interaction = false;          // Repulsive interaction on or off
     bool checkConvergence = false;     // Stops the program after it has converged
-    bool applyAdaptiveSteps = true;    // Increase the number of MC-cycles for the last iterations
+    bool applyAdaptiveSteps = false;   // Increase the number of MC-cycles for the last iterations
     bool computeOneBodyDensity = true; // Compute one-body density and print to file
     bool computeTwoBodyDensity = true; // Compute one-body density and print to file
     bool printEnergyFile = true;       // Print energy for every iteration to file
@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
     int additionalStepsLastIter = 8; // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double maxRadius = 75;   // Max radius of one-body density plots
-    int numberOfBins = 3000; // 100 bins per radius unit
+    double maxRadius = 5;    // Max radius of one-body density plots
+    int numberOfBins = 1000; // 100 bins per radius unit
 
     // Screening tools
     double screeningStrength = 1; // Screening parameter
@@ -89,14 +89,14 @@ int main(int argc, char *argv[])
         system->parserConstants(argv[1], numberOfIterations);
 
     system->setBasis(new Hermite(system));
-    //system->setWaveFunctionElement(new Gaussian(system));
-    system->setWaveFunctionElement(new SlaterDeterminant(system));
-    system->setWaveFunctionElement(new RBMGaussian(system));
-    system->setWaveFunctionElement(new RBMProduct(system));
-    //system->setWaveFunctionElement(new PadeJastrow(system));
+    system->setWaveFunctionElement(new Gaussian(system));
+    //system->setWaveFunctionElement(new SlaterDeterminant(system));
+    //system->setWaveFunctionElement(new RBMGaussian(system));
+    //system->setWaveFunctionElement(new RBMProduct(system));
+    //system->setWaveFunctionElement(new SimpleJastrow(system));
 
     system->setRandomNumberGenerator(new MersenneTwister());
-    system->setOptimization(new ADAM(system));
+    system->setOptimization(new GradientDescent(system, 0.0, 0.0));
     system->setInitialWeights(new Automatize(system));
     system->setInitialState(new RandomNormal(system));
     system->setHamiltonian(new HarmonicOscillator(system));

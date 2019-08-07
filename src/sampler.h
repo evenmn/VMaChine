@@ -28,8 +28,8 @@ public:
     void printTwoBodyDensityToFile();
     void closeOutputFiles();
     void printInstantValuesToFile();
-    void computeOneBodyDensity(const Eigen::VectorXd positions);
-    void computeTwoBodyDensity(const Eigen::VectorXd positions);
+    void computeOneBodyDensity(const Eigen::VectorXd radialVector);
+    void computeTwoBodyDensity(const Eigen::VectorXd radialVector);
     void computeAverages();
     void computeTotals();
     void doResampling();
@@ -143,7 +143,6 @@ private:
     int m_numberOfBins = 100;
     double m_maxRadius = 10;
     double m_radialStep = 0.1;
-    Eigen::VectorXd m_binLinSpace;
     Eigen::VectorXi m_particlesPerBin;
     Eigen::VectorXi m_totalParticlesPerBin;
     Eigen::MatrixXi m_particlesPerBinPairwise;

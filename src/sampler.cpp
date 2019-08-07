@@ -33,7 +33,6 @@ Sampler::Sampler(System *system)
     m_path = m_system->getPath();
     m_trialWaveFunction = m_system->getTrialWaveFunction();
     m_radialStep = m_maxRadius / m_numberOfBins;
-    m_binLinSpace = Eigen::VectorXd::LinSpaced(m_numberOfBins, 0, m_maxRadius);
     m_particlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
     m_particlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
 }
@@ -469,55 +468,24 @@ void Sampler::printInstantValuesToFile()
     }
 }
 
-void Sampler::computeOneBodyDensity(const Eigen::VectorXd positions)
+void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
 {
     if (m_computeOneBodyDensity) {
-        for (int particle = 0; particle < m_numberOfParticles; particle++) {
-            double dist = 0;
-            int positionIndex = m_numberOfDimensions * particle;
-            for (int d = 0; d < m_numberOfDimensions; d++) {
-                double position = positions(positionIndex + d);
-                dist += position * position;
-            }
-            double r = sqrt(dist); // Distance from particle to origin
-            for (int k = 0; k < m_numberOfBins; k++) {
-                if (r < m_binLinSpace(k)) {
-                    m_particlesPerBin(k) += 1;
-                    break;
-                }
-            }
+        for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
+            int bin = int(radialVector(i_p) / m_radialStep) + 1;
+            m_particlesPerBin(bin)++;
         }
     }
 }
 
-void Sampler::computeTwoBodyDensity(const Eigen::VectorXd positions)
+void Sampler::computeTwoBodyDensity(const Eigen::VectorXd radialVector)
 {
-    if (m_computeTwoBodyDensity) { // Calculate twobody densities
-        for (int particle1 = 0; particle1 < m_numberOfParticles; particle1++) {
-            double dist1 = 0;
-            int position1Index = m_numberOfDimensions * particle1;
-            for (int d = 0; d < m_numberOfDimensions; d++) {
-                double position1 = positions(position1Index + d);
-                dist1 += position1 * position1;
-            }
-            double r1 = sqrt(dist1); // Distance from particle 1 to origin
-            int counter1 = 0;
-            while (counter1 < m_numberOfBins - 1 && m_binLinSpace(counter1) < r1) {
-                counter1 += 1;
-            }
-            for (int particle2 = particle1 + 1; particle2 < m_numberOfParticles; particle2++) {
-                double dist2 = 0;
-                int position2Index = m_numberOfDimensions * particle2;
-                for (int d = 0; d < m_numberOfDimensions; d++) {
-                    double position2 = positions(position2Index + d);
-                    dist2 += position2 * position2;
-                }
-                double r2 = sqrt(dist2); // Distance from particle 2 to origin
-                int counter2 = 0;
-                while (counter2 < m_numberOfBins - 1 && m_binLinSpace(counter2) < r2) {
-                    counter2 += 1;
-                }
-                m_particlesPerBinPairwise(counter1, counter2) += 1;
+    if (m_computeTwoBodyDensity) {
+        for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
+            int bin_j = int(radialVector(i_p) / m_radialStep) + 1;
+            for (int j_p = i_p + 1; j_p < m_numberOfParticles; j_p++) {
+                int bin_k = int(radialVector(j_p) / m_radialStep) + 1;
+                m_particlesPerBinPairwise(bin_j, bin_k)++;
             }
         }
     }

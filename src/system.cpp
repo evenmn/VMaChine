@@ -66,8 +66,8 @@ void System::runMetropolisCycles()
             m_sampler->sample(acceptedStep, i);
             if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
                 m_sampler->printInstantValuesToFile();
-                m_sampler->computeOneBodyDensity(m_positions);
-                m_sampler->computeTwoBodyDensity(m_positions);
+                m_sampler->computeOneBodyDensity(m_radialVector);
+                m_sampler->computeTwoBodyDensity(m_radialVector);
             }
         }
     }
