@@ -25,7 +25,7 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions,
     m_positions = positions;
     m_distanceMatrix = distanceMatrix;
     m_probabilityRatio = 1;
-    //initializePrincipalDistance();
+    initializePrincipalDistance();
     initializeBeta();
     initializeMatrices();
 }
@@ -40,17 +40,8 @@ void PadeJastrow::updateArrays(const Eigen::VectorXd positions,
     m_positions = positions;
     m_distanceMatrix = distanceMatrix;
     updateMatrices(particle);
-    calculateG(changedCoord);
-    //updatePrincipalDistance(changedCoord, particle);
+    updatePrincipalDistance(changedCoord, particle);
     calculateProbabilityRatio(particle);
-
-    /*
-    std::cout << m_g << std::endl;
-    std::cout << std::endl;
-    std::cout << m_principalDistance << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-*/
 }
 
 void PadeJastrow::setArrays()
@@ -60,8 +51,7 @@ void PadeJastrow::setArrays()
     m_hOldOld = m_hOld;
     m_hOld = m_h;
     m_fOld = m_f;
-    m_gOld = m_g;
-    //m_principalDistanceOld = m_principalDistance;
+    m_principalDistanceOld = m_principalDistance;
     m_probabilityRatioOld = m_probabilityRatio;
 }
 
@@ -70,10 +60,9 @@ void PadeJastrow::resetArrays()
     m_positions = m_positionsOld;
     m_distanceMatrix = m_distanceMatrixOld;
     m_f = m_fOld;
-    m_g = m_gOld;
     m_h = m_hOld;
     m_hOld = m_hOldOld;
-    //m_principalDistance = m_principalDistanceOld;
+    m_principalDistance = m_principalDistanceOld;
     m_probabilityRatio = m_probabilityRatioOld;
 }
 
@@ -95,11 +84,11 @@ double PadeJastrow::computeGradient(const int k)
     double derivative = 0;
     for (int j_p = 0; j_p < k_p; j_p++) {
         int j = j_p * m_numberOfDimensions + k_d;
-        derivative += m_f(k_p, j_p) * m_g(k, j) / m_distanceMatrix(k_p, j_p);
+        derivative += m_f(k_p, j_p) * m_principalDistance(k, j);
     }
     for (int j_p = k_p + 1; j_p < m_numberOfParticles; j_p++) {
         int j = j_p * m_numberOfDimensions + k_d;
-        derivative += m_f(k_p, j_p) * m_g(k, j) / m_distanceMatrix(k_p, j_p);
+        derivative += m_f(k_p, j_p) * m_principalDistance(k, j);
     }
     return derivative;
 }
@@ -115,8 +104,8 @@ double PadeJastrow::computeLaplacian()
 
             derivative += m_f(k_p, j_p)
                           * (1
-                             - (1 + 2 * m_gamma * m_h(k_p, j_p)) * m_g(k, j) * m_g(k, j)
-                                   / (m_distanceMatrix(k_p, j_p) * m_distanceMatrix(k_p, j_p)))
+                             - (1 + 2 * m_gamma * m_h(k_p, j_p)) * m_principalDistance(k, j)
+                                   * m_principalDistance(k, j))
                           / m_distanceMatrix(k_p, j_p);
         }
     }
@@ -148,13 +137,6 @@ void PadeJastrow::initializeMatrices()
     Eigen::MatrixXd f = (Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfParticles)
                          + m_gamma * m_distanceMatrix)
                             .cwiseInverse();
-    m_g = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_degreesOfFreedom);
-    for (int i = 0; i < m_degreesOfFreedom; i++) {
-        for (int j = i; j < m_degreesOfFreedom; j++) {
-            m_g(i, j) = m_positions(i) - m_positions(j);
-            m_g(j, i) = -m_g(i, j);
-        }
-    }
     m_h = m_distanceMatrix.cwiseProduct(f);
     m_f = m_beta.cwiseProduct(f.cwiseAbs2());
 }
@@ -199,16 +181,34 @@ void PadeJastrow::updatePrincipalDistance(int i, int i_p)
      * {int} i:     The changed coordinate
      * {int} i_p:   The moved particle
      */
-    int i_d = i % m_numberOfDimensions;
-    for (int j_p = 0; j_p < i_p; j_p++) {
-        int j = i_d + j_p * m_numberOfDimensions;
-        m_principalDistance(i, j) = (m_positions(i) - m_positions(j)) / m_distanceMatrix(i_p, j_p);
-        m_principalDistance(j, i) = -m_principalDistance(i, j);
+
+    /*
+    for (int d = 0; d < m_numberOfDimensions; d++) {
+        int i = i_p + d;
+        for (int j_p = 1; j_p < i_p; j_p++) {
+            int j = d + j_p * m_numberOfDimensions;
+            m_principalDistance(i, j) = (m_positions(i) - m_positions(j))
+                                        / m_distanceMatrix(i_p, j_p);
+            m_principalDistance(j, i) = -m_principalDistance(i, j);
+        }
+        for (int j_p = i_p + 1; j_p < m_numberOfParticles; j_p++) {
+            int j = d + j_p * m_numberOfDimensions;
+            m_principalDistance(i, j) = (m_positions(i) - m_positions(j))
+                                        / m_distanceMatrix(i_p, j_p);
+            m_principalDistance(j, i) = -m_principalDistance(i, j);
+        }
     }
-    for (int j_p = i_p + 1; j_p < m_numberOfParticles; j_p++) {
-        int j = i_d + j_p * m_numberOfDimensions;
-        m_principalDistance(i, j) = (m_positions(i) - m_positions(j)) / m_distanceMatrix(i_p, j_p);
-        m_principalDistance(j, i) = -m_principalDistance(i, j);
+    */
+
+    m_principalDistance = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_degreesOfFreedom);
+    for (int n = 1; n < m_numberOfParticles; n++) {
+        int step = n * m_numberOfDimensions;
+        for (int j = 0; j < m_degreesOfFreedom - step; j++) {
+            int p = int(j / m_numberOfDimensions);
+            m_principalDistance(j, j + step) = (m_positions(j) - m_positions(j + step))
+                                               / m_distanceMatrix(p, p + n);
+            m_principalDistance(j + step, j) = -m_principalDistance(j, j + step);
+        }
     }
 }
 
@@ -220,14 +220,6 @@ void PadeJastrow::updateMatrices(int i_p)
         m_h(j_p, i_p) = m_h(i_p, j_p);
         m_f(i_p, j_p) = m_beta(i_p, j_p) * f * f;
         m_f(j_p, i_p) = m_f(i_p, j_p);
-    }
-}
-
-void PadeJastrow::calculateG(int i)
-{
-    for (int j = 0; j < m_degreesOfFreedom; j++) {
-        m_g(i, j) = m_positions(i) - m_positions(j);
-        m_g(j, i) = -m_g(i, j);
     }
 }
 

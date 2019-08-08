@@ -26,7 +26,6 @@ public:
     Eigen::VectorXd computeParameterGradient();
 
     void updateMatrices(int particle);
-    void calculateG(int pRand);
     void calculateProbabilityRatio(int particle);
     void initializeBeta();
     void initializeMatrices();
@@ -50,8 +49,6 @@ private:
     Eigen::MatrixXd m_beta;
     Eigen::MatrixXd m_f;
     Eigen::MatrixXd m_fOld;
-    Eigen::MatrixXd m_g;
-    Eigen::MatrixXd m_gOld;
     Eigen::MatrixXd m_h;
     Eigen::MatrixXd m_hOld;
     Eigen::MatrixXd m_hOldOld;
