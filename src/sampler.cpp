@@ -472,8 +472,10 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
 {
     if (m_computeOneBodyDensity) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
-            int bin = int(radialVector(i_p) / m_radialStep) + 1;
-            m_particlesPerBin(bin)++;
+            if(radialVector(i_p) < m_maxRadius) {
+                int bin = int(radialVector(i_p) / m_radialStep);
+                m_particlesPerBin(bin)++;
+            }
         }
     }
 }
@@ -482,10 +484,12 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd radialVector)
 {
     if (m_computeTwoBodyDensity) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
-            int bin_j = int(radialVector(i_p) / m_radialStep) + 1;
+            int bin_j = int(radialVector(i_p) / m_radialStep);
             for (int j_p = i_p + 1; j_p < m_numberOfParticles; j_p++) {
-                int bin_k = int(radialVector(j_p) / m_radialStep) + 1;
-                m_particlesPerBinPairwise(bin_j, bin_k)++;
+                int bin_k = int(radialVector(j_p) / m_radialStep);
+                if(bin_j < m_numberOfBins && bin_k < m_numberOfBins) {
+                    m_particlesPerBinPairwise(bin_j, bin_k)++;
+                }
             }
         }
     }
