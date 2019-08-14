@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     int numberOfDimensions = 2;
     int numberOfParticles = 20;
     int numberOfHiddenNodes = numberOfParticles;
-    int numberOfSteps = int(pow(2, 18));
-    int numberOfIterations = 5;
+    int numberOfSteps = int(pow(2, 16));
+    int numberOfIterations = 100;
     double totalSpin = 0;           // TotalSpin is half-integer
     double learningRate = 0.0001;   // Learning rate
     double omega = 0.01;            // Oscillator frequency
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     // Switches
     bool interaction = true;           // Repulsive interaction on or off
     bool checkConvergence = false;     // Stops the program after it has converged
-    bool applyAdaptiveSteps = false;   // Increase the number of MC-cycles for the last iterations
+    bool applyAdaptiveSteps = false;    // Increase the number of MC-cycles for the last iterations
     bool computeOneBodyDensity = true; // Compute one-body density and print to file
     bool computeTwoBodyDensity = true; // Compute one-body density and print to file
     bool printEnergyFile = true;       // Print energy for every iteration to file

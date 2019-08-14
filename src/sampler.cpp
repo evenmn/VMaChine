@@ -472,8 +472,8 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
 {
     if (m_computeOneBodyDensity) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
-            int bin = int(radialVector(i_p) / m_radialStep) + 1;
-            if (radialVector(i_p) < m_maxRadius) {
+            if(radialVector(i_p) < m_maxRadius) {
+                int bin = int(radialVector(i_p) / m_radialStep);
                 m_particlesPerBin(bin)++;
             }
         }

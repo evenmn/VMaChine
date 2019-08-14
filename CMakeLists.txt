@@ -63,7 +63,6 @@ set(SOURCES
     src/WaveFunctions/gaussian.cpp
     src/WaveFunctions/partlyrestricted.cpp
     src/WaveFunctions/slaterdeterminant.cpp
-    src/Optimization/barzilaiborwein.cpp
     src/RNG/rng.cpp
     src/RNG/mersennetwister.cpp
     src/Optimization/gradientdescent.cpp
