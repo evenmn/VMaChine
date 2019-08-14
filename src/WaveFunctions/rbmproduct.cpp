@@ -10,7 +10,7 @@ RBMProduct::RBMProduct(System *system)
     m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParameters = m_numberOfHiddenNodes * m_degreesOfFreedom + m_numberOfHiddenNodes;
-    double sigma = 1; //m_system->getWidth();
+    double sigma = 10 * m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
     m_sigmaQuad = m_sigmaSqrd * m_sigmaSqrd;
 }
@@ -97,7 +97,7 @@ Eigen::VectorXd RBMProduct::computeParameterGradient()
 
 void RBMProduct::updateVectors()
 {
-    m_v = m_b + m_W.transpose() * m_positions;
+    m_v = m_b + m_W.transpose() * m_positions / m_sigmaSqrd;
     Eigen::VectorXd m_e = m_v.array().exp();
     m_p = (m_e + Eigen::VectorXd::Ones(m_numberOfHiddenNodes)).cwiseInverse();
     m_n = m_e.cwiseProduct(m_p);

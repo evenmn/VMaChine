@@ -13,12 +13,12 @@ def radial(size, numberOfDimensions):
         return np.nan
 
 def generateFileName(method, dim, particle, omega):
-    fileName  = "../data/int1/twobody/"
+    fileName  = "../data/int0/twobody/"
     fileName += method   + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += "ADAM_MC1048576.dat"
+    fileName += "GD_MC524288.dat"
     return fileName
 
 
@@ -79,8 +79,8 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [50]
-    newRadius = [50]
+    maxRadius = [5]
+    newRadius = [5]
 
     methods   = ['VMC']
     dims      = ['2']

@@ -26,7 +26,7 @@ void Gaussian::initializeArrays(const Eigen::VectorXd positions,
 
 void Gaussian::updateProbabilityRatio(int changedCoord)
 {
-    m_probabilityRatio = exp(m_omega * m_alpha
+    m_probabilityRatio = exp(m_omegalpha
                              * (m_positionsOld(changedCoord) * m_positionsOld(changedCoord)
                                 - m_positions(changedCoord) * m_positions(changedCoord)));
 }
@@ -55,6 +55,7 @@ void Gaussian::resetArrays()
 void Gaussian::updateParameters(const Eigen::MatrixXd parameters)
 {
     m_alpha = parameters(m_elementNumber, 0);
+    m_omegalpha = m_omega * m_alpha;
 }
 
 double Gaussian::evaluateRatio()
@@ -64,13 +65,13 @@ double Gaussian::evaluateRatio()
 
 double Gaussian::computeGradient(const int k)
 {
-    return -m_omega * m_alpha * m_positions(k);
+    return -m_omegalpha * m_positions(k);
 }
 
 double Gaussian::computeLaplacian()
 {
     ;
-    return -m_omega * m_alpha * m_degreesOfFreedom;
+    return -m_omegalpha * m_degreesOfFreedom;
 }
 
 Eigen::VectorXd Gaussian::computeParameterGradient()

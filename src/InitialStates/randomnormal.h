@@ -10,4 +10,7 @@ public:
     double calculateRadialVectorElement(int particle);
     void calculateRadialVector();
     void setupInitialState();
+
+private:
+    double m_maxRadius = 1;
 };

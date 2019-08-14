@@ -11,6 +11,7 @@ RandomNormal::RandomNormal(System *system)
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_maxRadius = m_system->getMaxRadius();
     setupInitialState();
 }
 

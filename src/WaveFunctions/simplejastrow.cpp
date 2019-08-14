@@ -135,6 +135,7 @@ void SimpleJastrow::updatePrincipalDistance(int i, int i_p)
      * {int} i:     The changed coordinate
      * {int} i_p:   The moved particle
      */
+    /*
     int i_d = i % m_numberOfDimensions;
     for (int j_p = 0; j_p < i_p; j_p++) {
         int j = i_d + j_p * m_numberOfDimensions;
@@ -145,6 +146,18 @@ void SimpleJastrow::updatePrincipalDistance(int i, int i_p)
         int j = i_d + j_p * m_numberOfDimensions;
         m_principalDistance(i, j) = (m_positions(i) - m_positions(j)) / m_distanceMatrix(i_p, j_p);
         m_principalDistance(j, i) = -m_principalDistance(i, j);
+    }
+    */
+
+    m_principalDistance = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_degreesOfFreedom);
+    for (int n = 1; n < m_numberOfParticles; n++) {
+        int step = n * m_numberOfDimensions;
+        for (int j = 0; j < m_degreesOfFreedom - step; j++) {
+            int p = int(j / m_numberOfDimensions);
+            m_principalDistance(j, j + step) = (m_positions(j) - m_positions(j + step))
+                                               / m_distanceMatrix(p, p + n);
+            m_principalDistance(j + step, j) = -m_principalDistance(j, j + step);
+        }
     }
 }
 

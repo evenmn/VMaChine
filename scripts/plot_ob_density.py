@@ -19,10 +19,10 @@ def exact(r1, w):
     '''Exact solution without interaction for given w'''
     return (2*r1+1)*np.exp(- w * r1**2)
 
-files = ["../data/int1/onebody/VMC/2D/2P/0.010000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBM/2D/2P/0.010000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBMSJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBMPJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
+files = ["../data/int0/onebody/VMC/2D/2P/1.000000w/GD_MC65536.dat",
+         #"../data/int1/onebody/RBM/2D/2P/0.010000w/ADAM_MC1048576.dat",
+         #"../data/int1/onebody/RBMSJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
+         #"../data/int1/onebody/RBMPJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
          ]
          
 label = ["VMC",
@@ -72,7 +72,7 @@ plt.gcf().subplots_adjust(left=0.18)
 #exact1 = exact(r1, w=1.0)/np.sum(exact(r1, w=1.0))
 #plt.plot(r1, exact1, '--r', linewidth=1.0, label="Exact")
 
-plt.xlabel("r / r$_0$", **label_size)
+plt.xlabel("r / a$_0$", **label_size)
 plt.ylabel(r"$\rho(r)$", **label_size)
 plt.legend(loc="best", fontsize=size)
 plt.grid()

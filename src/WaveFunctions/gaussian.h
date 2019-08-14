@@ -34,6 +34,7 @@ private:
 
     double m_omega = 0;
     double m_alpha = 0;
+    double m_omegalpha = 0;
     double m_probabilityRatio = 0;
     double m_probabilityRatioOld = 0;
     Eigen::VectorXd m_positions;
