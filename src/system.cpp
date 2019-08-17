@@ -68,6 +68,7 @@ void System::runMetropolisCycles()
                 m_sampler->printInstantValuesToFile();
                 m_sampler->computeOneBodyDensity(m_radialVector);
                 m_sampler->computeTwoBodyDensity(m_radialVector);
+                m_sampler->computeOneBodyDensity2(m_positions);
             }
         }
     }

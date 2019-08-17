@@ -6,6 +6,7 @@ class Hamiltonian
 public:
     Hamiltonian(class System *system);
     virtual int getGlobalArrayNeed() = 0;
+    virtual std::string getLabel() = 0;
     virtual double getExternalEnergy() = 0;
     virtual double computeLocalEnergy() = 0;
     virtual ~Hamiltonian() = 0;

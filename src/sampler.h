@@ -30,6 +30,7 @@ public:
     void printInstantValuesToFile();
     void computeOneBodyDensity(const Eigen::VectorXd radialVector);
     void computeTwoBodyDensity(const Eigen::VectorXd radialVector);
+    void computeOneBodyDensity2(const Eigen::VectorXd positions);
     void computeAverages();
     void computeTotals();
     void doResampling();
@@ -132,6 +133,7 @@ private:
     std::string m_instantInteractionEnergyFileName = "Filename not generated yet";
     std::string m_path = "Path not specified";
     std::string m_trialWaveFunction = "Wave function not found";
+    std::string m_hamiltonian = "Hamiltonian not found";
 
     bool m_printEnergyToFile = true;
     bool m_printInstantEnergyToFile = true;
@@ -140,11 +142,15 @@ private:
     // Electron density related stuff
     bool m_computeOneBodyDensity = true;
     bool m_computeTwoBodyDensity = true;
-    int m_numberOfBins = 100;
+    int m_numberOfBins = 1000;
+    int m_numberOfBinsHalf = m_numberOfBins / 2;
     double m_maxRadius = 10;
     double m_radialStep = 0.1;
+
     Eigen::VectorXi m_particlesPerBin;
     Eigen::VectorXi m_totalParticlesPerBin;
+    Eigen::MatrixXi m_densityGrid;
+    Eigen::MatrixXi m_totalDensityGrid;
     Eigen::MatrixXi m_particlesPerBinPairwise;
     Eigen::MatrixXi m_totalParticlesPerBinPairwise;
     std::ofstream m_oneBodyFile;

@@ -28,11 +28,14 @@ Sampler::Sampler(System *system)
     m_printInstantEnergyToFile = m_system->doResampling();
     m_printParametersToFile = m_system->printParametersToFile();
     m_numberOfBins = m_system->getNumberOfBins();
+    m_numberOfBinsHalf = m_numberOfBins / 2;
     m_maxRadius = m_system->getMaxRadius();
     m_rank = m_system->getRank();
     m_path = m_system->getPath();
     m_trialWaveFunction = m_system->getTrialWaveFunction();
+    m_hamiltonian = m_system->getHamiltonian()->getLabel();
     m_radialStep = m_maxRadius / m_numberOfBins;
+    m_densityGrid = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
     m_particlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
     m_particlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
 }
@@ -170,6 +173,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
     cout << " Oscillator frequency    : " << m_omega << endl;
     cout << " Wave function           : " << m_trialWaveFunction << endl;
+    cout << " Hamiltonian             : " << m_hamiltonian << endl;
     cout << " # Metropolis steps      : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
          << " equilibration)" << endl;
     cout << " Data files stored as    : " << generateFileName("{type}", ".dat") << endl;
@@ -315,6 +319,7 @@ std::string Sampler::generateFileName(std::string name, std::string extension)
 {
     std::string fileName = m_path;
     fileName += "int" + std::to_string(m_interaction) + "/";
+    fileName += m_hamiltonian + "/";
     fileName += name + "/";
     fileName += m_trialWaveFunction + "/";
     fileName += std::to_string(m_numberOfDimensions) + "D/";
@@ -407,8 +412,20 @@ void Sampler::printOneBodyDensityToFile()
                    MPI_SUM,
                    0,
                    MPI_COMM_WORLD);
+        m_totalDensityGrid = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
+        MPI_Reduce(m_densityGrid.data(),
+                   m_totalDensityGrid.data(),
+                   m_numberOfBins * m_numberOfBins,
+                   MPI_INT,
+                   MPI_SUM,
+                   0,
+                   MPI_COMM_WORLD);
         if (m_rank == 0) {
             m_oneBodyFile << m_totalParticlesPerBin << endl;
+
+            std::ofstream file;
+            file.open(m_path + "test.dat");
+            file << m_totalDensityGrid << std::endl;
         }
     }
 }
@@ -474,7 +491,25 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             if(radialVector(i_p) < m_maxRadius) {
                 int bin = int(radialVector(i_p) / m_radialStep);
-                m_particlesPerBin(bin)++;
+                if (bin < m_numberOfBins) {
+                    m_particlesPerBin(bin)++;
+                }
+            }
+        }
+    }
+}
+
+void Sampler::computeOneBodyDensity2(const Eigen::VectorXd positions)
+{
+    if (m_computeOneBodyDensity) {
+        for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
+            Eigen::VectorXi indices = Eigen::VectorXi::Zero(m_numberOfDimensions);
+            for (int i_d = 0; i_d < m_numberOfDimensions; i_d++) {
+                int i = i_p * m_numberOfDimensions + i_d;
+                indices(i_d) = int(positions(i) / m_radialStep);
+            }
+            if (abs(indices(0)) < m_numberOfBinsHalf && abs(indices(1)) < m_numberOfBinsHalf) {
+                m_densityGrid(indices(1) + m_numberOfBinsHalf, indices(0) + m_numberOfBinsHalf)++;
             }
         }
     }
@@ -487,7 +522,7 @@ void Sampler::computeTwoBodyDensity(const Eigen::VectorXd radialVector)
             int bin_i = int(radialVector(i_p) / m_radialStep) + 1;
             for (int j_p = i_p + 1; j_p < m_numberOfParticles; j_p++) {
                 int bin_j = int(radialVector(j_p) / m_radialStep) + 1;
-                if (radialVector(i_p) < m_maxRadius && radialVector(j_p) < m_maxRadius) {
+                if (bin_i < m_numberOfBins && bin_j < m_numberOfBins) {
                     m_particlesPerBinPairwise(bin_i, bin_j)++;
                 }
             }

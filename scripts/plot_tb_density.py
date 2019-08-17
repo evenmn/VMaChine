@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import seaborn as sns
 sns.set()
 
@@ -12,18 +13,22 @@ def radial(size, numberOfDimensions):
     else:
         return np.nan
 
-def generateFileName(method, dim, particle, omega):
-    fileName  = "../data/int0/twobody/"
+def generateFileName(system, method, dim, particle, omega):
+    fileName  = "../data/int1/"
+    fileName += system   + "/"
+    filename += "twobody" + "/"
     fileName += method   + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += "GD_MC524288.dat"
+    fileName += "ADAM_MC1048576.dat"
     return fileName
 
 
-def saveFigure(method, dim, particle, omega):
-    fileName  = "../plots/int1/twobody/"
+def saveFigure(system, method, dim, particle, omega):
+    fileName  = "../plots/int1/"
+    fileName += system   + "/"
+    filename += "twobody" + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
@@ -43,13 +48,21 @@ def norm(data, numberOfDimensions):
     numBins = len(data)
     v = radial(numBins, numberOfDimensions)
     xx, yy = np.meshgrid(v, v, sparse=True)
-    data /= xx
-    data /= yy
+
+    xx = np.power(xx, numberOfDimensions - 1)
+    yy = np.power(yy, numberOfDimensions - 1)
+
+    data /= np.multiply(xx,yy)
     data /= np.sum(np.nan_to_num(data))
+    
+    data = np.where(data > 0.0002, 0, data)
+    
     return data
     
     
 def rotate(data):
+    data = data[2:,2:]
+
     data1 = np.rot90(data,0)
     data2 = np.rot90(data,-1)
     data3 = np.rot90(data,-2)
@@ -60,46 +73,56 @@ def rotate(data):
     data = np.concatenate((dataBottom,dataTop))
     return data
     
-
+def fmt(x, pos):
+    a, b = '{:.1e}'.format(x).split('e')
+    b = int(b)
+    return r'${} \times 10^{{{}}}$'.format(a, b)
 
 def plot(data, radius):
-    size = 16
+    size = 32
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
-    plt.gcf().subplots_adjust(bottom=0.2)
-    plt.gcf().subplots_adjust(left=0.18)
+    plt.rcParams['mathtext.default'] = 'regular'
+    plt.rcParams.update({'figure.autolayout': True})
 
-    plt.figure()
-    #sns.heatmap(data, cmap="YlGnBu")                                           
-    plt.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
-    plt.colorbar()
-    plt.xlabel("Radial distance from particle $j$", **label_size)
-    plt.ylabel("Radial distance from particle $i$", **label_size)
+    fig, ax = plt.subplots(figsize=(8,6))
+                 
+    img = ax.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
+    cbar = fig.colorbar(img, fraction=0.046, pad=0.04, format=ticker.FuncFormatter(fmt))
+    cbar.set_label(r'$\rho(r_i,r_j)$', rotation=270, labelpad=40, y=0.45, **label_size)
+    
+    plt.tight_layout()
+    
+    ax.set_xlabel("$r_j$", **label_size)
+    ax.set_ylabel("$r_i$", **label_size)
+    plt.grid()
 
 
 
 def main():
-    maxRadius = [5]
-    newRadius = [5]
+    maxRadius = [35]
+    newRadius = [8]
 
-    methods   = ['VMC']
-    dims      = ['2']
-    particles = ['2']
-    omegas    = ['1.000000'] #'1.000000','0.500000','0.280000','0.100000']      
+    systems   = ['quantumdot']
+    methods   = ['VMC','RBM']
+    dims      = ['3']
+    particles = ['70']
+    omegas    = ['1.000000']      
 
     i=0
-    for method in methods:
-        for dim in dims:
-            for particle in particles:
-                for omega in omegas:
-                    fileName = generateFileName(method, dim, particle, omega)
-                    data = np.loadtxt(fileName)
-                    data = crop(data, maxRadius[i], newRadius[i])
-                    data = norm(data, int(dim))
-                    data = rotate(data)
-                    plot(data, newRadius[i])
-                    #saveFigure(method, dim, particle, omega)
-                    i += 1
+    for system in systems:
+        for method in methods:
+            for dim in dims:
+                for particle in particles:
+                    for omega in omegas:
+                        fileName = generateFileName(system, method, dim, particle, omega)
+                        data = np.loadtxt(fileName)
+                        data = crop(data, maxRadius[0], newRadius[0])
+                        data = norm(data, int(dim))
+                        data = rotate(data)
+                        plot(data, newRadius[0])
+                        saveFigure(system, method, dim, particle, omega)
+                        i += 1
     plt.show()
 
 
