@@ -38,6 +38,7 @@ void System::runIterations(const int numberOfIterations)
         m_sampler->printEnergyToFile();
         if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
             m_sampler->printOneBodyDensityToFile();
+            m_sampler->printOneBodyDensity2ToFile();
             m_sampler->printTwoBodyDensityToFile();
         }
         printToTerminal(numberOfIterations);
@@ -66,8 +67,8 @@ void System::runMetropolisCycles()
             m_sampler->sample(acceptedStep, i);
             if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
                 m_sampler->printInstantValuesToFile();
-                m_sampler->computeOneBodyDensity(m_radialVector);
-                m_sampler->computeTwoBodyDensity(m_radialVector);
+                //m_sampler->computeOneBodyDensity(m_radialVector);
+                //m_sampler->computeTwoBodyDensity(m_radialVector);
                 m_sampler->computeOneBodyDensity2(m_positions);
             }
         }
@@ -377,12 +378,14 @@ void System::setAdaptiveStepTools(bool applyAdaptiveSteps,
     }
 }
 
-void System::setDensityTools(bool computeDensity,
+void System::setDensityTools(bool computeOneBodyDensity,
+                             bool computeOneBodyDensity2,
                              bool computeTwoBodyDensity,
                              int numberOfBins,
                              double maxRadius)
 {
-    m_computeOneBodyDensity = computeDensity;
+    m_computeOneBodyDensity = computeOneBodyDensity;
+    m_computeOneBodyDensity2 = computeOneBodyDensity2;
     m_computeTwoBodyDensity = computeTwoBodyDensity;
     m_numberOfBins = numberOfBins;
     m_maxRadius = maxRadius;

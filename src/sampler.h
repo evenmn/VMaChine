@@ -25,6 +25,7 @@ public:
     void printEnergyToFile();
     void printParametersToFile();
     void printOneBodyDensityToFile();
+    void printOneBodyDensity2ToFile();
     void printTwoBodyDensityToFile();
     void closeOutputFiles();
     void printInstantValuesToFile();
@@ -141,6 +142,7 @@ private:
 
     // Electron density related stuff
     bool m_computeOneBodyDensity = true;
+    bool m_computeOneBodyDensity2 = true;
     bool m_computeTwoBodyDensity = true;
     int m_numberOfBins = 1000;
     int m_numberOfBinsHalf = m_numberOfBins / 2;
@@ -154,6 +156,7 @@ private:
     Eigen::MatrixXi m_particlesPerBinPairwise;
     Eigen::MatrixXi m_totalParticlesPerBinPairwise;
     std::ofstream m_oneBodyFile;
+    std::ofstream m_oneBodyFile2;
     std::ofstream m_twoBodyFile;
 
     class System *m_system = nullptr;

@@ -53,7 +53,8 @@ public:
                               const int rangeOfAdaptiveSteps,
                               const int additionalSteps,
                               const int additionalStepsLastIteration);
-    void setDensityTools(const bool computeDensity,
+    void setDensityTools(const bool computeOneBodyDensity,
+                         const bool computeOneBodyDensity2,
                          const bool computeTwoBodyDensity,
                          const int numberOfBins,
                          const double maxRadius);
@@ -125,6 +126,7 @@ public:
     bool getScreening() { return m_screening; }
     bool getInteraction() { return m_interaction; }
     bool computeOneBodyDensity() { return m_computeOneBodyDensity; }
+    bool computeOneBodyDensity2() { return m_computeOneBodyDensity2; }
     bool computeTwoBodyDensity() { return m_computeTwoBodyDensity; }
     bool printEnergyToFile() { return m_printEnergyToFile; }
     bool printParametersToFile() { return m_printParametersToFile; }
@@ -184,6 +186,7 @@ private:
     bool m_checkConvergence = false;
     bool m_applyAdaptiveSteps = true;
     bool m_computeOneBodyDensity = true;
+    bool m_computeOneBodyDensity2 = true;
     bool m_computeTwoBodyDensity = true;
     bool m_printEnergyToFile = true;
     bool m_doResampling = true;

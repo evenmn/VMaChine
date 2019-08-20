@@ -23,6 +23,7 @@ Sampler::Sampler(System *system)
     m_numberOfStepsPerBatch = int(m_stepsWOEqui / m_numberOfBatches);
     m_interaction = m_system->getInteraction();
     m_computeOneBodyDensity = m_system->computeOneBodyDensity();
+    m_computeOneBodyDensity2 = m_system->computeOneBodyDensity2();
     m_computeTwoBodyDensity = m_system->computeTwoBodyDensity();
     m_printEnergyToFile = m_system->printEnergyToFile();
     m_printInstantEnergyToFile = m_system->doResampling();
@@ -357,6 +358,10 @@ void Sampler::openOutputFiles()
         std::string oneBodyFileName = generateFileName("onebody", ".dat");
         m_oneBodyFile.open(oneBodyFileName);
     }
+    if (m_computeOneBodyDensity2 && m_rank == 0) {
+        std::string oneBodyFileName2 = generateFileName("onebody2", ".dat");
+        m_oneBodyFile2.open(oneBodyFileName2);
+    }
     if (m_computeTwoBodyDensity && m_rank == 0) {
         std::string twoBodyFileName = generateFileName("twobody", ".dat");
         m_twoBodyFile.open(twoBodyFileName);
@@ -412,6 +417,15 @@ void Sampler::printOneBodyDensityToFile()
                    MPI_SUM,
                    0,
                    MPI_COMM_WORLD);
+        if (m_rank == 0) {
+            m_oneBodyFile << m_totalParticlesPerBin << endl;
+        }
+    }
+}
+
+void Sampler::printOneBodyDensity2ToFile()
+{
+    if (m_computeOneBodyDensity2) {
         m_totalDensityGrid = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
         MPI_Reduce(m_densityGrid.data(),
                    m_totalDensityGrid.data(),
@@ -421,11 +435,7 @@ void Sampler::printOneBodyDensityToFile()
                    0,
                    MPI_COMM_WORLD);
         if (m_rank == 0) {
-            m_oneBodyFile << m_totalParticlesPerBin << endl;
-
-            std::ofstream file;
-            file.open(m_path + "test.dat");
-            file << m_totalDensityGrid << std::endl;
+            m_oneBodyFile2 << m_totalDensityGrid << endl;
         }
     }
 }
@@ -464,6 +474,9 @@ void Sampler::closeOutputFiles()
     if (m_oneBodyFile.is_open()) {
         m_oneBodyFile.close();
     }
+    if (m_oneBodyFile2.is_open()) {
+        m_oneBodyFile2.close();
+    }
     if (m_twoBodyFile.is_open()) {
         m_twoBodyFile.close();
     }
@@ -501,7 +514,7 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
 
 void Sampler::computeOneBodyDensity2(const Eigen::VectorXd positions)
 {
-    if (m_computeOneBodyDensity) {
+    if (m_computeOneBodyDensity2) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             Eigen::VectorXi indices = Eigen::VectorXi::Zero(m_numberOfDimensions);
             for (int i_d = 0; i_d < m_numberOfDimensions; i_d++) {
