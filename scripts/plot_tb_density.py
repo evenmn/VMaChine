@@ -15,8 +15,8 @@ def radial(size, numberOfDimensions):
 
 def generateFileName(system, method, dim, particle, omega):
     fileName  = "../data/int1/"
-    fileName += system   + "/"
-    filename += "twobody" + "/"
+    #fileName += system   + "/"
+    fileName += "twobody" + "/"
     fileName += method   + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
@@ -27,8 +27,8 @@ def generateFileName(system, method, dim, particle, omega):
 
 def saveFigure(system, method, dim, particle, omega):
     fileName  = "../plots/int1/"
-    fileName += system   + "/"
-    filename += "twobody" + "/"
+    #fileName += system   + "/"
+    fileName += "twobody" + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
@@ -55,7 +55,7 @@ def norm(data, numberOfDimensions):
     data /= np.multiply(xx,yy)
     data /= np.sum(np.nan_to_num(data))
     
-    data = np.where(data > 0.0002, 0, data)
+    data = np.where(data > 0.000025, 0, data)
     
     return data
     
@@ -100,13 +100,13 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [35]
-    newRadius = [8]
+    maxRadius = [30]
+    newRadius = [6]
 
     systems   = ['quantumdot']
-    methods   = ['VMC','RBM']
-    dims      = ['3']
-    particles = ['70']
+    methods   = ['RBMSJ']
+    dims      = ['2']
+    particles = ['20']
     omegas    = ['1.000000']      
 
     i=0

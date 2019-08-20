@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 #sns.set()
 
-numberOfDimensions = 3
+numberOfDimensions = 2
 
 def radial(size):
     n = np.arange(size)
@@ -19,15 +19,15 @@ def exact(r1, w):
     '''Exact solution without interaction for given w'''
     return (2*r1+1)*np.exp(- w * r1**2)
 
-files = ["../data/int1/quantumdot/onebody/VMC/3D/70P/1.000000w/ADAM_MC1048576.dat",
-         "../data/int1/quantumdot/onebody/RBM/3D/70P/1.000000w/ADAM_MC1048576.dat",
-         #"../data/int1/onebody/RBMSJ/2D/6P/0.010000w/ADAM_MC1048576.dat",
-         #"../data/int1/onebody/RBMPJ/2D/6P/0.010000w/ADAM_MC1048576.dat",
+files = ["../data/int1/onebody/VMC/2D/20P/0.280000w/ADAM_MC1048576.dat",
+         #"../data/int1/onebody/RBM/2D/20P/0.280000w/ADAM_MC1048576.dat",
+         "../data/int1/onebody/RBMSJ/2D/20P/0.280000w/ADAM_MC1048576.dat",
+         #"../data/int1/onebody/RBMPJ/2D/20P/0.280000w/ADAM_MC1048576.dat",
          ]
          
 label = ["VMC",
-         "RBM",
-         #"RBM+SJ",
+         #"RBM",
+         "RBM+SJ",
          "RBM+PJ"
          ]
          
@@ -38,14 +38,14 @@ line_style = ["-",
               ]
          
 maxRadius = [30,
-             35,
+             30,
              30,
              30
              ]
 
-limit = [0.00023, 
-         0.00023, 
-         0.000, 
+limit = [0.00013, 
+         0.000125, 
+         0.000125, 
          0.000
          ]
 
