@@ -19,14 +19,14 @@ def exact(r1, w):
     '''Exact solution without interaction for given w'''
     return (2*r1+1)*np.exp(- w * r1**2)
 
-files = ["../data/int1/onebody/VMC/2D/20P/0.280000w/ADAM_MC1048576.dat",
-         #"../data/int1/onebody/RBM/2D/20P/0.280000w/ADAM_MC1048576.dat",
-         "../data/int1/onebody/RBMSJ/2D/20P/0.280000w/ADAM_MC1048576.dat",
+files = ["../data/int1/quantumdot/onebody/VMC/2D/90P/1.000000w/ADAM_MC1048576.dat",
+         "../data/int1/quantumdot/onebody/RBM/2D/90P/1.000000w/ADAM_MC1048576.dat",
+         #"../data/int1/onebody/RBMSJ/2D/20P/0.280000w/ADAM_MC1048576.dat",
          #"../data/int1/onebody/RBMPJ/2D/20P/0.280000w/ADAM_MC1048576.dat",
          ]
          
 label = ["VMC",
-         #"RBM",
+         "RBM",
          "RBM+SJ",
          "RBM+PJ"
          ]
@@ -37,8 +37,8 @@ line_style = ["-",
               ":"
               ]
          
-maxRadius = [30,
-             30,
+maxRadius = [45,
+             55,
              30,
              30
              ]
