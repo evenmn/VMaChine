@@ -10,6 +10,7 @@ Constant::Constant(System *system, const double factor = 1)
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfElements = m_system->getNumberOfElements();
+    m_omega = m_system->getFrequency();
     m_maxParameters = m_system->getMaxParameters();
     m_factor = factor;
     setupInitialWeights();
@@ -18,14 +19,16 @@ Constant::Constant(System *system, const double factor = 1)
 void Constant::setupInitialWeights()
 {
     m_parameters = m_factor * Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
+
     int i = 0;
     for (auto &element : m_system->getWaveFunctionElements()) {
         std::string label = element->getLabel();
         if (label == "padejastrow") {
-            m_parameters(i, 0) = 1;
+            m_parameters(i, 0) = 0.5 * m_omega;
         }
         i++;
     }
+
     m_system->updateAllParameters(m_parameters);
 }
 

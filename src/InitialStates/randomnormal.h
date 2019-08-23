@@ -13,4 +13,5 @@ public:
 
 private:
     double m_maxRadius = 1;
+    double m_omega = 1;
 };

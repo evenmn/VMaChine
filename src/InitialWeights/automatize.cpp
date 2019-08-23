@@ -19,6 +19,7 @@ Automatize::Automatize(System *system)
     m_omega = m_system->getFrequency();
     m_initialTotalStepsWOEqui = m_system->getInitialTotalStepsWOEqui();
     m_trialWaveFunction = m_system->getTrialWaveFunction();
+    m_hamiltonian = m_system->getHamiltonian()->getLabel();
     setupInitialWeights();
 }
 
@@ -26,6 +27,7 @@ std::string Automatize::generateFileName(std::string name, std::string extension
 {
     std::string fileName = m_path;
     fileName += "int" + std::to_string(m_interaction) + "/";
+    fileName += m_hamiltonian + "/";
     fileName += name + "/";
     fileName += m_trialWaveFunction + "/";
     fileName += std::to_string(m_numberOfDimensions) + "D/";
@@ -57,7 +59,7 @@ void writeFileContentIntoEigenMatrix(std::ifstream infile, Eigen::MatrixXd &matr
 
 void Automatize::setupInitialWeights()
 {
-    bool searchForWeights = false;
+    bool searchForWeights = true;
     std::ifstream infile(generateFileName("weights", ".dat"));
     if (infile.is_open() && searchForWeights) {
         m_parameters = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);

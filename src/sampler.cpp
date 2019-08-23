@@ -519,7 +519,7 @@ void Sampler::computeOneBodyDensity2(const Eigen::VectorXd positions)
             Eigen::VectorXi indices = Eigen::VectorXi::Zero(m_numberOfDimensions);
             for (int i_d = 0; i_d < m_numberOfDimensions; i_d++) {
                 int i = i_p * m_numberOfDimensions + i_d;
-                indices(i_d) = int(positions(i) / m_radialStep);
+                indices(i_d) = int(positions(i) / (2 * m_radialStep));
             }
             if (abs(indices(0)) < m_numberOfBinsHalf && abs(indices(1)) < m_numberOfBinsHalf) {
                 m_densityGrid(indices(1) + m_numberOfBinsHalf, indices(0) + m_numberOfBinsHalf)++;

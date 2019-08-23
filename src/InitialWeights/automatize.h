@@ -13,6 +13,7 @@ public:
 private:
     double m_factor = 0;
     std::string m_trialWaveFunction;
+    std::string m_hamiltonian;
 
     int m_initialTotalStepsWOEqui = 0;
     bool m_interaction = 0;

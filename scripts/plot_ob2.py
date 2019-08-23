@@ -4,12 +4,20 @@ import matplotlib.ticker as ticker
 from mpl_toolkits.mplot3d import axes3d
 from matplotlib import cm 
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from savitzky_golay import sgolay2d
 
 class PlotOB():
 
     def __init__(self, fileName, radius):
         self.data = np.loadtxt(fileName)
         self.radius = radius
+        
+    def remove_cross(self):
+        lengthHalf = int(len(self.data)/2)
+        self.data[lengthHalf] = self.data[lengthHalf-1]
+        self.data[lengthHalf+1] = self.data[lengthHalf+2]
+        self.data[:,lengthHalf] = self.data[:,lengthHalf-1]
+        self.data[:,lengthHalf+1] = self.data[:,lengthHalf+2]
     
     def norm(self, numberOfParticles):
         self.data = numberOfParticles * self.data/self.data.sum()
@@ -26,6 +34,15 @@ class PlotOB():
         
         self.data = self.data[start:stop, start:stop]
         self.radius = newRadius
+        
+    def smooth(self, window, order):
+        self.data = sgolay2d(self.data, window, order)
+        
+    def mask_cross_section(self):
+        lengthHalf = int(len(self.data)/2)
+        masked_data = self.data.copy()
+        masked_data[:lengthHalf,lengthHalf:] = 0
+        return masked_data
         
     def plot_heatmap(self):
         plt.figure()
@@ -78,12 +95,13 @@ class PlotOB():
         b = int(b)
         return r'${} \times 10^{{{}}}$'.format(a, b)
         
-    def plot_3Dcontour(self):
+    def plot_3Dcontour(self, masked_data=None):
+        if type(masked_data) is not np.ndarray:
+            masked_data = self.data
         size = 16
         label_size = {"size":str(size)}
         plt.rcParams["font.family"] = "Serif"
         plt.rcParams['mathtext.default'] = 'regular'
-        #plt.rcParams.update({'figure.autolayout': True})
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
@@ -92,11 +110,12 @@ class PlotOB():
         x = y = np.linspace(-self.radius, self.radius, len(self.data))
         xx, yy = np.meshgrid(x, y)
 
-        ax.plot_surface(xx, yy, self.data, rstride=8, cstride=8, alpha=0.5)
+        ax.plot_surface(xx, yy, masked_data, rstride=8, cstride=8, alpha=1, cmap=cm.coolwarm)
 
-        cset = ax.contourf(xx, yy, self.data, zdir='z', offset=-maximum, cmap=cm.jet)
-        cset = ax.contourf(xx, yy, self.data, zdir='x', offset=-self.radius, cmap=cm.coolwarm)
-        cset = ax.contourf(xx, yy, self.data, zdir='y', offset=self.radius, cmap=cm.coolwarm)
+        ax.contourf(xx, yy, self.data, zdir='z', offset=-maximum, cmap=cm.jet)
+        ax.contour(xx, yy, self.data, zdir='x', offset=-self.radius, cmap=cm.gist_gray, levels=[0])
+        ax.contourf(xx, yy, self.data, zdir='y', offset=self.radius, cmap=cm.gist_gray)
+        
 
         ax.set_xlim(-self.radius, self.radius)
         ax.set_ylim(-self.radius, self.radius)
@@ -106,8 +125,8 @@ class PlotOB():
         ax.set_ylabel('$y$', labelpad=10, **label_size)
         ax.set_zlabel(r'$\rho$(x,y)', labelpad=30, **label_size)
         
-        ax.set_xticks([-3,-2,-1, 0, 1, 2, 3])
-        ax.set_yticks([-3,-2,-1, 0, 1, 2, 3])
+        ax.set_xticks([-6,-4,-2, 0, 2, 4, 6])
+        ax.set_yticks([-6,-4,-2, 0, 2, 4, 6])
         ax.zaxis.set_major_formatter(ticker.FuncFormatter(self.fmt))
         ax.zaxis.set_tick_params(pad=15)
         
@@ -116,8 +135,12 @@ class PlotOB():
 
 if __name__ == "__main__":
 
-    QD = PlotOB("../data/int1/quantumdot/onebody2/VMC/2D/2P/1.000000w/ADAM_MC262144.dat", 5)
+    QD = PlotOB("../data/int1/doubledot/onebody2/RBMPJ/2D/2P/1.000000w/ADAM_MC1048576.dat", 10)
+    QD.remove_cross()
     QD.norm(2)
-    QD.cut(0.000005)
-    QD.crop(3)
+    #QD.cut(0.03)
+    QD.crop(6)
+    QD.smooth(29, 4)
+    masked_data = QD.mask_cross_section()
+    #QD.plot_heatmap()
     QD.plot_3Dcontour()

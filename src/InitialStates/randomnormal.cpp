@@ -12,6 +12,7 @@ RandomNormal::RandomNormal(System *system)
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_maxRadius = m_system->getMaxRadius();
+    m_omega = m_system->getFrequency();
     setupInitialState();
 }
 
@@ -60,7 +61,7 @@ void RandomNormal::setupInitialState()
 {
     m_positions = Eigen::VectorXd::Zero(m_degreesOfFreedom);
     for (int i = 0; i < m_degreesOfFreedom; i++) {
-        m_positions(i) = m_system->getRandomNumberGenerator()->nextGaussian(0, 1);
+        m_positions(i) = m_system->getRandomNumberGenerator()->nextGaussian(0, 1 / sqrt(m_omega));
     }
     InitialState::calculateDistanceMatrix();
     InitialState::calculateRadialVector();

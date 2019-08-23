@@ -11,4 +11,5 @@ public:
 
 private:
     double m_factor = 1;
+    double m_omega = 1;
 };
