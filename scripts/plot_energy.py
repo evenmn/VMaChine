@@ -1,23 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
+from scipy.signal import savgol_filter
 
-asymptote = 29.9779
+asymptote = 0.073839
 
-files = ["../data/int1/energy/RBM/2D/20P/0.100000w/ADAM_MC1048576.dat", 
-         #"../data/energy_VMC_P6_D2_w0.500000_MC1048576.dat",
-         #"../data/energy_VMC_P6_D2_w0.280000_MC1048576.dat",
-         #"../data/energy_VMC_P6_D2_w0.100000_MC1048576.dat"
+files = ["../data/int1/quantumdot/energy/VMC/2D/2P/0.010000w/ADAM_MC1048576.dat", 
+         "../data/int1/quantumdot/energy/RBM/2D/2P/0.010000w/ADAM_MC1048576.dat",
+         "../data/int1/quantumdot/energy/RBMSJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
+         "../data/int1/quantumdot/energy/RBMPJ/2D/2P/0.010000w/ADAM_MC1048576.dat"
          ]
 
-label = [#"VMC, $\omega=0.5$", 
-         #"VMC, $\omega=0.28$", 
-         "RBM, $\omega=0.10$"
+label = ["VMC", 
+         "RBM", 
+         "RBM+SJ",
+         "RBM+PJ"
          ]
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])
     x = np.linspace(0, len(data) - 1, len(data))
+    x = savgol_filter(x, 51, 2)
     plt.plot(x, data, label=label[i])
 
 label_size = {"size":"14"}

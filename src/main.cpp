@@ -15,15 +15,15 @@ int main(int argc, char *argv[])
     int numberOfDimensions = 2;
     int numberOfParticles = 2;
     int numberOfHiddenNodes = numberOfParticles;
-    int numberOfSteps = int(pow(2, 20));
-    int numberOfIterations = 200;
+    int numberOfSteps = int(pow(2, 18));
+    int numberOfIterations = 1000;
     double totalSpin = 0;           // TotalSpin is half-integer
-    double learningRate = 0.01;     // Learning rate
-    double omega = 1.0;             // Oscillator frequency
+    double learningRate = 0.1;      // Learning rate
+    double omega = 1;               // Oscillator frequency
     int Z = numberOfParticles;      // Atomic number (nucleus charge)
     double sigma = 1 / sqrt(omega); // Width of probability distribution
-    double stepLength = 0.1 / omega; // Metropolis step length
-    double equilibration = 0.00;     // Amount of the total steps used
+    double stepLength = 0.05 / omega; // Metropolis step length
+    double equilibration = 0.00;      // Amount of the total steps used
 
     // Switches
     bool interaction = true;           // Repulsive interaction on or off
@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
     bool computeOneBodyDensity2 = true; // Compute one-body density and print to file
     bool computeTwoBodyDensity = false; // Compute one-body density and print to file
     bool printEnergyFile = false;       // Print energy for every iteration to file
-    bool printParametersToFile = true; // Print parameter matrix to file
-    bool doResampling = false;         // Print blocking file for the last iteration and do blocking
+    bool printParametersToFile = true;  // Print parameter matrix to file
+    bool doResampling = false; // Print blocking file for the last iteration and do blocking
     bool screening = false;
 
     // --- ADVANCED SETTINGS ---
@@ -46,13 +46,13 @@ int main(int argc, char *argv[])
     double tolerance = 1e-7;  // Convergence tolerance
 
     // Dynamic step tools
-    int rangeOfAdaptiveSteps = 10;   // For how many iterations should we increase # MC-cycles?
-    int additionalSteps = 4;         // How much should we increase it? (as a power of 2)
-    int additionalStepsLastIter = 8; // How much should we increase the very last? (as a power of 2)
+    int rangeOfAdaptiveSteps = 10;    // For how many iterations should we increase # MC-cycles?
+    int additionalSteps = 4;          // How much should we increase it? (as a power of 2)
+    int additionalStepsLastIter = 14; // How much should we increase the very last? (as a power of 2)
 
     // Density tools
-    double maxRadius = 10;   // Max radius of one-body density plots
-    int numberOfBins = 3000; // 100 bins per radius unit
+    double maxRadius = 3; // Max radius of one-body density plots
+    int numberOfBins = 1000;
 
     // Screening tools
     double screeningStrength = 1; // Screening parameter
@@ -93,18 +93,18 @@ int main(int argc, char *argv[])
     if (argc == 2)
         system->parserConstants(argv[1], numberOfIterations);
 
-    system->setBasis(new Hermite(system));
-    //system->setWaveFunctionElement(new Gaussian(system));
+    system->setBasis(new HermiteExpansion(system));
+    system->setWaveFunctionElement(new Gaussian(system));
     system->setWaveFunctionElement(new SlaterDeterminant(system));
-    system->setWaveFunctionElement(new RBMGaussian(system));
-    system->setWaveFunctionElement(new RBMProduct(system));
+    //system->setWaveFunctionElement(new RBMGaussian(system));
+    //system->setWaveFunctionElement(new RBMProduct(system));
     system->setWaveFunctionElement(new PadeJastrow(system));
 
     system->setRandomNumberGenerator(new MersenneTwister());
     system->setOptimization(new ADAM(system));
-    system->setInitialWeights(new Constant(system, 0));
+    system->setInitialWeights(new Constant(system, 1));
     system->setInitialState(new RandomNormal(system));
-    system->setHamiltonian(new DoubleWell(system, 5));
+    system->setHamiltonian(new DoubleWell(system, 2));
     system->setMetropolis(new ImportanceSampling(system));
 
     if (argc == 2)

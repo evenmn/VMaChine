@@ -29,6 +29,7 @@ def saveFigure(system, method, dim, particle, omega):
     fileName  = "../plots/int1/"
     #fileName += system   + "/"
     fileName += "twobody" + "/"
+    #fileName += "VMC" + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
@@ -42,7 +43,13 @@ def crop(data, maxRadius, newRadius):
     newData = data[0:newLength, 0:newLength]
     return newData
 
-    
+def remove_cross(data):
+    lengthHalf = int(len(data)/2)
+    data[lengthHalf] = data[lengthHalf-1]
+    data[lengthHalf+1] = data[lengthHalf+2]
+    data[:,lengthHalf] = data[:,lengthHalf-1]
+    data[:,lengthHalf+1] = data[:,lengthHalf+2]
+    return data
     
 def norm(data, numberOfDimensions):
     numBins = len(data)
@@ -55,7 +62,7 @@ def norm(data, numberOfDimensions):
     data /= np.multiply(xx,yy)
     data /= np.sum(np.nan_to_num(data))
     
-    data = np.where(data > 0.000001, 0, data)
+    data = np.where(data > 0.0000475, 0, data)
     
     return data
     
@@ -79,7 +86,7 @@ def fmt(x, pos):
     return r'${} \times 10^{{{}}}$'.format(a, b)
 
 def plot(data, radius):
-    size = 32
+    size = 16
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
     plt.rcParams['mathtext.default'] = 'regular'
@@ -100,14 +107,14 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [15]
-    newRadius = [15]
+    maxRadius = [30]
+    newRadius = [10]
 
     systems   = ['quantumdot']
-    methods   = ['RBM']
+    methods   = ['RBMSJ']
     dims      = ['2']
-    particles = ['6']
-    omegas    = ['0.100000']      
+    particles = ['20']
+    omegas    = ['0.500000']      
 
     i=0
     for system in systems:
@@ -120,8 +127,9 @@ def main():
                         data = crop(data, maxRadius[0], newRadius[0])
                         data = norm(data, int(dim))
                         data = rotate(data)
+                        data = remove_cross(data)
                         plot(data, newRadius[0])
-                        saveFigure(system, method, dim, particle, omega)
+                        #saveFigure(system, method, dim, particle, omega)
                         i += 1
     plt.show()
 

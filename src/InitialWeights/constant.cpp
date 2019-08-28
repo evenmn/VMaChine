@@ -24,7 +24,7 @@ void Constant::setupInitialWeights()
     for (auto &element : m_system->getWaveFunctionElements()) {
         std::string label = element->getLabel();
         if (label == "padejastrow") {
-            m_parameters(i, 0) = 0.5 * m_omega;
+            m_parameters(i, 0) = m_omega;
         }
         i++;
     }

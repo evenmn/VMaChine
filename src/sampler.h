@@ -146,7 +146,7 @@ private:
     bool m_computeTwoBodyDensity = true;
     int m_numberOfBins = 1000;
     int m_numberOfBinsHalf = m_numberOfBins / 2;
-    double m_maxRadius = 10;
+    double m_maxRadius = 10.;
     double m_radialStep = 0.1;
 
     Eigen::VectorXi m_particlesPerBin;

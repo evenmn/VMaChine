@@ -35,6 +35,9 @@ class PlotOB():
         self.data = self.data[start:stop, start:stop]
         self.radius = newRadius
         
+    def rotate(self):
+        self.data = np.rot90(self.data)
+        
     def smooth(self, window, order):
         self.data = sgolay2d(self.data, window, order)
         
@@ -83,7 +86,7 @@ class PlotOB():
                 radii = int(np.sqrt((i-numberOfPoints/2-1)**2 + (j-numberOfPoints/2-1)**2))
                 if radii < numberOfPoints/2:
                     binshit[radii] += 1.
-                    radiii[radii] += data[i, j]
+                    radiii[radii] += self.data[i, j]
                     
         plt.figure()
         x = np.linspace(0,self.radius,numberOfPoints/2)
@@ -125,8 +128,8 @@ class PlotOB():
         ax.set_ylabel('$y$', labelpad=10, **label_size)
         ax.set_zlabel(r'$\rho$(x,y)', labelpad=30, **label_size)
         
-        ax.set_xticks([-6,-4,-2, 0, 2, 4, 6])
-        ax.set_yticks([-6,-4,-2, 0, 2, 4, 6])
+        ax.set_xticks([-50, -30, -10, 10, 30, 50])
+        ax.set_yticks([-50, -30, -10, 10, 30, 50])
         ax.zaxis.set_major_formatter(ticker.FuncFormatter(self.fmt))
         ax.zaxis.set_tick_params(pad=15)
         
@@ -135,12 +138,14 @@ class PlotOB():
 
 if __name__ == "__main__":
 
-    QD = PlotOB("../data/int1/doubledot/onebody2/RBMPJ/2D/2P/1.000000w/ADAM_MC1048576.dat", 10)
+    QD = PlotOB("../data/int1/quantumdot/onebody2/VMC/2D/2P/0.010000w/ADAM_MC1048576.dat", 50)
     QD.remove_cross()
-    QD.norm(2)
-    #QD.cut(0.03)
-    QD.crop(6)
-    QD.smooth(29, 4)
-    masked_data = QD.mask_cross_section()
+    QD.norm(6)
+    #QD.cut(0.00006)
+    #QD.crop(50)
+    #QD.smooth(29, 4)
+    #masked_data = QD.mask_cross_section()
     #QD.plot_heatmap()
-    QD.plot_3Dcontour()
+    #QD.rotate()
+    QD.plot_radial()
+    #QD.plot_3Dcontour()
