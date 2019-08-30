@@ -18,10 +18,10 @@ def radial(size):
 
 def exact(r1, w):
     '''Exact solution without interaction for given w'''
-    return (2*r1*0+1)*np.exp(- w * r1**2)
+    return 2 * np.sqrt(w/np.pi) * np.exp(- w * r1**2)
 
-files = ["../data/int1/quantumdot/onebody/VMC/2D/6P/0.010000w/ADAM_MC1048576.dat",
-         "../data/int1/quantumdot/onebody/RBM/2D/6P/0.010000w/ADAM_MC1048576.dat",
+files = ["../data/int1/atom/onebody/VMC/3D/2P/1.000000w/ADAM_MC1048576.dat",
+         #"../data/int1/quantumdot/onebody/RBM/2D/6P/0.010000w/ADAM_MC1048576.dat",
          #"../data/int1/quantumdot/onebody/RBMSJ/2D/6P/0.010000w/ADAM_MC1048576.dat",
          #"../data/int1/quantumdot/onebody/RBMPJ/2D/6P/0.010000w/ADAM_MC1048576.dat",
          ]
@@ -38,7 +38,7 @@ line_style = ["-",
               ":"
               ]
          
-maxRadius = [55,
+maxRadius = [10,
              55,
              55,
              55
@@ -58,12 +58,13 @@ for i in range(len(files)):
     data /= np.sum(data)
     #data *= int(len(data)/1000)
     r = np.linspace(0,maxRadius[i],len(data))
-    data = np.where(data > 1.003, 0, data) 
+    #data = np.where(data > 1.003, 0, data) 
     data[:np.argmax(data)] = np.where(data[:np.argmax(data)] < limit[i], 0, data[:np.argmax(data)])
     indices = np.where(data == 0)[0]
     data = np.delete(data, indices)
     r = np.delete(r, indices)
     data /= np.sum(data)
+    data = np.multiply(data, r**2)
     #r = r[np.argmax(data):]
     #data = data[np.argmax(data):]
     
@@ -81,10 +82,10 @@ plt.gcf().subplots_adjust(left=0.18)
 #exact1 = exact(r, w=1.0)/np.sum(exact(r, w=1.0))
 #plt.plot(r, exact1, '--r', linewidth=1.0, label="Exact")
 
-plt.xlabel("r", **label_size)
-plt.ylabel(r"$\rho$(r)", **label_size)
-plt.legend(loc="best", fontsize=size)
-#plt.axis([-0.1,3.1,-0.0001,0.0036])
+plt.xlabel("$r$", **label_size)
+plt.ylabel(r"$r^2\rho(r)$", **label_size)
+#plt.legend(loc="best", fontsize=size)
+plt.axis([-0.1,3.1,-0.00002,0.00175])
 plt.grid()
 #plt.savefig("../html/onebody_PJ_NQS_P2_D2_MC1048576.png")
 plt.show()

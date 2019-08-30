@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from scipy.integrate import simps
 import seaborn as sns
 sns.set()
 
@@ -51,20 +52,24 @@ def remove_cross(data):
     data[:,lengthHalf+1] = data[:,lengthHalf+2]
     return data
     
-def norm(data, numberOfDimensions):
+def norm(data, numberOfDimensions, numberOfParticles):
     numBins = len(data)
     v = radial(numBins, numberOfDimensions)
     xx, yy = np.meshgrid(v, v, sparse=True)
 
-    xx = np.power(xx, numberOfDimensions - 1)
-    yy = np.power(yy, numberOfDimensions - 1)
+    # xx = np.power(xx, numberOfDimensions - 1)
+    # yy = np.power(yy, numberOfDimensions - 1)
 
-    data /= np.multiply(xx,yy)
-    data /= np.sum(np.nan_to_num(data))
+    # data /= np.multiply(xx,yy)
+    # data /= np.sum(np.nan_to_num(data))
     
-    data = np.where(data > 0.0000475, 0, data)
+    #data = np.where(data > 1.0000475, 0, data)
     
-    return data
+    norm_constant = simps(simps(data, v), v)
+    print(norm_constant)
+    print(data.sum())
+    
+    return numberOfParticles * data / norm_constant
     
     
 def rotate(data):
@@ -86,7 +91,8 @@ def fmt(x, pos):
     return r'${} \times 10^{{{}}}$'.format(a, b)
 
 def plot(data, radius):
-    size = 16
+    size = 24
+    size_ticks = 16
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
     plt.rcParams['mathtext.default'] = 'regular'
@@ -97,23 +103,25 @@ def plot(data, radius):
     img = ax.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
     cbar = fig.colorbar(img, fraction=0.046, pad=0.04, format=ticker.FuncFormatter(fmt))
     cbar.set_label(r'$\rho(r_i,r_j)$', rotation=270, labelpad=40, y=0.45, **label_size)
+    cbar.ax.tick_params(labelsize=size_ticks)
     
     plt.tight_layout()
     
     ax.set_xlabel("$r_j$", **label_size)
     ax.set_ylabel("$r_i$", **label_size)
+    ax.tick_params(labelsize=size_ticks)
     plt.grid()
 
 
 
 def main():
-    maxRadius = [30]
-    newRadius = [10]
+    maxRadius = [10]
+    newRadius = [6]
 
     systems   = ['quantumdot']
-    methods   = ['RBMSJ']
+    methods   = ['RBM']
     dims      = ['2']
-    particles = ['20']
+    particles = ['6']
     omegas    = ['0.500000']      
 
     i=0
@@ -125,7 +133,7 @@ def main():
                         fileName = generateFileName(system, method, dim, particle, omega)
                         data = np.loadtxt(fileName)
                         data = crop(data, maxRadius[0], newRadius[0])
-                        data = norm(data, int(dim))
+                        data = norm(data, int(dim), int(particle))
                         data = rotate(data)
                         data = remove_cross(data)
                         plot(data, newRadius[0])

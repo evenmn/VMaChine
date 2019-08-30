@@ -138,14 +138,14 @@ class PlotOB():
 
 if __name__ == "__main__":
 
-    QD = PlotOB("../data/int1/quantumdot/onebody2/VMC/2D/2P/0.010000w/ADAM_MC1048576.dat", 50)
+    QD = PlotOB("../data/int1/quantumdot/onebody2/VMC/2D/6P/0.010000w/ADAM_MC1048576.dat", 55)
     QD.remove_cross()
     QD.norm(6)
     #QD.cut(0.00006)
-    #QD.crop(50)
-    #QD.smooth(29, 4)
+    #QD.crop(25)
+    QD.smooth(29, 4)
     #masked_data = QD.mask_cross_section()
     #QD.plot_heatmap()
     #QD.rotate()
-    QD.plot_radial()
-    #QD.plot_3Dcontour()
+    #QD.plot_radial()
+    QD.plot_3Dcontour()
