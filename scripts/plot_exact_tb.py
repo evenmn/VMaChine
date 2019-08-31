@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
+plt.style.use("bmh")
+
 def exact(r1, r2, w):
     return 2 * np.sqrt(w/np.pi) * np.exp(- w * (r1 * r1 + r2 * r2))
     
@@ -26,7 +28,6 @@ if __name__ == "__main__":
     size_ticks = 16
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
-    plt.rcParams['mathtext.default'] = 'regular'
     plt.rcParams.update({'figure.autolayout': True})
 
     fig, ax = plt.subplots(figsize=(8,6))
@@ -41,4 +42,5 @@ if __name__ == "__main__":
     ax.set_xlabel("$r_j$", **label_size)
     ax.set_ylabel("$r_i$", **label_size)
     ax.tick_params(labelsize=size_ticks)
+    plt.grid()
     plt.show()

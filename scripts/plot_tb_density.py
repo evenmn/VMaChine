@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from scipy.integrate import simps
-import seaborn as sns
-sns.set()
+
+plt.style.use("bmh")
 
 def radial(size, numberOfDimensions):
     n = np.arange(size)
@@ -15,26 +15,26 @@ def radial(size, numberOfDimensions):
         return np.nan
 
 def generateFileName(system, method, dim, particle, omega):
-    fileName  = "../data/int1/"
+    fileName  = "../data/int0/"
     fileName += system   + "/"
     fileName += "twobody" + "/"
     fileName += method   + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += "ADAM_MC1048576.dat"
+    fileName += "GD_MC65536.dat"
     return fileName
 
 
 def saveFigure(system, method, dim, particle, omega):
-    fileName  = "../plots/int1/"
+    fileName  = "../plots/int0/"
     #fileName += system   + "/"
     fileName += "twobody" + "/"
     #fileName += "VMC" + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += method   + "_ADAM_MC2pow28.png"
+    fileName += method   + "_GD_MC2pow30.png"
     plt.savefig(fileName)
 
 
@@ -57,19 +57,14 @@ def norm(data, numberOfDimensions, numberOfParticles):
     v = radial(numBins, numberOfDimensions)
     xx, yy = np.meshgrid(v, v, sparse=True)
 
-    # xx = np.power(xx, numberOfDimensions - 1)
-    # yy = np.power(yy, numberOfDimensions - 1)
-
-    # data /= np.multiply(xx,yy)
-    # data /= np.sum(np.nan_to_num(data))
+    data /= np.multiply(xx,yy)
+    data /= np.sum(np.nan_to_num(data))
     
-    #data = np.where(data > 1.0000475, 0, data)
+    data = np.where(data > 0.000016, 0, data)
     
-    norm_constant = simps(simps(data, v), v)
-    print(norm_constant)
-    print(data.sum())
+    data *= 4e4
     
-    return numberOfParticles * data / norm_constant
+    return data * numberOfParticles
     
     
 def rotate(data):
@@ -95,13 +90,12 @@ def plot(data, radius):
     size_ticks = 16
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
-    plt.rcParams['mathtext.default'] = 'regular'
     plt.rcParams.update({'figure.autolayout': True})
 
     fig, ax = plt.subplots(figsize=(8,6))
                  
     img = ax.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
-    cbar = fig.colorbar(img, fraction=0.046, pad=0.04, format=ticker.FuncFormatter(fmt))
+    cbar = fig.colorbar(img, fraction=0.046, pad=0.04)#, format=ticker.FuncFormatter(fmt))
     cbar.set_label(r'$\rho(r_i,r_j)$', rotation=270, labelpad=40, y=0.45, **label_size)
     cbar.ax.tick_params(labelsize=size_ticks)
     
@@ -110,21 +104,26 @@ def plot(data, radius):
     ax.set_xlabel("$r_j$", **label_size)
     ax.set_ylabel("$r_i$", **label_size)
     ax.tick_params(labelsize=size_ticks)
+    
+    ticks = [-3,-2,-1, 0, 1, 2, 3]
+        
+    ax.set_xticks(ticks)
+    ax.set_yticks(ticks)
     plt.grid()
 
 
 
 def main():
-    maxRadius = [10]
-    newRadius = [6]
+    maxRadius = [3]
+    newRadius = [3]
 
     systems   = ['quantumdot']
-    methods   = ['RBM']
+    methods   = ['VMC']
     dims      = ['2']
-    particles = ['6']
-    omegas    = ['0.500000']      
+    particles = ['2']
+    omegas    = ['1.000000']      
 
-    i=0
+    i = 0
     for system in systems:
         for method in methods:
             for dim in dims:

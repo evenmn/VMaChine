@@ -6,6 +6,8 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from savitzky_golay import sgolay2d
 
+plt.style.use("bmh")
+
 class PlotOB():
 
     def __init__(self, fileName, radius):
@@ -21,6 +23,7 @@ class PlotOB():
     
     def norm(self, numberOfParticles):
         self.data = numberOfParticles * self.data/self.data.sum()
+        self.data *= 1e4
         
     def cut(self, threshold=0.00001):
         self.data = np.where(self.data > threshold, 0, self.data)
@@ -101,23 +104,24 @@ class PlotOB():
     def plot_3Dcontour(self, masked_data=None):
         if type(masked_data) is not np.ndarray:
             masked_data = self.data
-        size = 16
+        size = 24
+        size_ticks = 24
         label_size = {"size":str(size)}
         plt.rcParams["font.family"] = "Serif"
-        plt.rcParams['mathtext.default'] = 'regular'
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')
+        ax.set_facecolor('white')
         
         maximum = np.max(self.data)
         x = y = np.linspace(-self.radius, self.radius, len(self.data))
         xx, yy = np.meshgrid(x, y)
 
-        ax.plot_surface(xx, yy, masked_data, rstride=8, cstride=8, alpha=1, cmap=cm.coolwarm)
+        ax.plot_surface(xx, yy, masked_data, rstride=8, cstride=8, alpha=1, antialiased=False)
 
-        ax.contourf(xx, yy, self.data, zdir='z', offset=-maximum, cmap=cm.jet)
-        ax.contour(xx, yy, self.data, zdir='x', offset=-self.radius, cmap=cm.gist_gray, levels=[0])
-        ax.contourf(xx, yy, self.data, zdir='y', offset=self.radius, cmap=cm.gist_gray)
+        ax.contourf(xx, yy, self.data, zdir='z', offset=-maximum, cmap=cm.Blues)
+        ax.contour(xx, yy, self.data, zdir='x', offset=-self.radius, levels=[0], cmap=cm.gist_gray)
+        #ax.contourf(xx, yy, self.data, zdir='y', offset=self.radius)#, cmap=cm.gist_gray)
         
 
         ax.set_xlim(-self.radius, self.radius)
@@ -126,24 +130,28 @@ class PlotOB():
 
         ax.set_xlabel('$x$', labelpad=10, **label_size)
         ax.set_ylabel('$y$', labelpad=10, **label_size)
-        ax.set_zlabel(r'$\rho$(x,y)', labelpad=30, **label_size)
+        ax.set_zlabel(r'$\rho(x,y)$', labelpad=20, **label_size)
         
-        ax.set_xticks([-50, -30, -10, 10, 30, 50])
-        ax.set_yticks([-50, -30, -10, 10, 30, 50])
-        ax.zaxis.set_major_formatter(ticker.FuncFormatter(self.fmt))
-        ax.zaxis.set_tick_params(pad=15)
+        ticks = [-3, -2, -1, 0, 1, 2, 3]
         
-        plt.tight_layout(rect=[-0.1, 0, 0.91, 1.06])
+        ax.set_xticks(ticks)
+        ax.set_yticks(ticks)
+        #ax.zaxis.set_major_formatter(ticker.FuncFormatter(self.fmt))
+        ax.zaxis.set_tick_params(pad=10)
+        #ax.tick_params(labelsize=size_ticks)
+        
+        plt.tight_layout(rect=[-0.1, 0, 0.95, 1.06])
+        plt.savefig("../plots/int0/onebody2/2D/2P/1.000000w/VMC_GD_MC2pow30_blue_small.png")
         plt.show()
 
 if __name__ == "__main__":
 
-    QD = PlotOB("../data/int1/quantumdot/onebody2/VMC/2D/6P/0.010000w/ADAM_MC1048576.dat", 55)
+    QD = PlotOB("../data/int0/quantumdot/onebody2/VMC/2D/2P/1.000000w/GD_MC65536.dat", 3)
     QD.remove_cross()
     QD.norm(6)
-    #QD.cut(0.00006)
-    #QD.crop(25)
-    QD.smooth(29, 4)
+    #QD.cut(1)
+    #QD.crop(50)
+    #QD.smooth(29, 4)
     #masked_data = QD.mask_cross_section()
     #QD.plot_heatmap()
     #QD.rotate()

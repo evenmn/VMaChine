@@ -2,8 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tikzplotlib
 
+plt.style.use("bmh")
+
 def plot_ratio(data, w, systems, labels):
     data = np.array(data)
+    
     for system in systems:
         potential = data[system, :, 2] + data[system, :, 3]
         kinetic = data[system, :, 1]
@@ -13,13 +16,13 @@ def plot_ratio(data, w, systems, labels):
     size = 16
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
+    
     plt.gcf().subplots_adjust(bottom=0.15)
     plt.gcf().subplots_adjust(left=0.18)
 
     plt.xlabel("$\omega$", **label_size)
     plt.ylabel(r"$\frac{\langle\hat{T}\rangle}{\langle\hat{V}\rangle}$", rotation=0, labelpad=10, **label_size)
     plt.legend(loc="best", fontsize=size)
-    plt.grid()
     #plt.show()
 
 if __name__ == "__main__":
