@@ -11,7 +11,7 @@ public:
 
 private:
     int m_step = 0;
-    int m_numberOfBatches = 10;
+    int m_numberOfBatches = 1;
     double m_gamma = 0;
     double m_monotonicExp = 0;
     Eigen::MatrixXd m_v;

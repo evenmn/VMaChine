@@ -45,7 +45,6 @@ void HermiteExpansion::readCoefficientFile()
 {
     std::string fileName = generateFileName();
     m_basisSize = Basis::fileLength(fileName);
-    std::cout << m_basisSize << std::endl;
     m_coefficients = Eigen::MatrixXd::Zero(m_basisSize, m_basisSize);
     Basis::writeFileContentIntoEigenMatrix(fileName, m_coefficients);
 }

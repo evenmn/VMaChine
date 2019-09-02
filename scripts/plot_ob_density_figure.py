@@ -20,7 +20,7 @@ label = ["$\omega=0.1$",
 maxRadius = [20,10,10,10]
 
 ax = plt.gca()
-ax.set_facecolor((.8,.8,1))
+ax.set_facecolor('white')
 
 for i in range(len(files)):
     data = np.loadtxt(files[i])

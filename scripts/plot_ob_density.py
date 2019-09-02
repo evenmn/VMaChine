@@ -3,98 +3,224 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 
 plt.style.use("bmh")
-
-numberOfDimensions = 3
-numberOfParticles = 2
-
-def radial(size):
-    n = np.arange(size)
-    if numberOfDimensions == 2:
-        return 2*n+1
-    elif numberOfDimensions == 3:
-        return 3*n*(n+1)+1
-    else:
-        return np.nan
-
-
-def exact(r1, w):
-    '''Exact solution without interaction for given w'''
-    return 1.2*np.sqrt(w/np.pi) * np.exp(- w * r1**2)
-
-files = ["../data/int0/quantumdot/onebody/VMC/3D/2P/1.000000w/GD_MC65536.dat",
-         "../data/int0/quantumdot/onebody/RBM/3D/2P/1.000000w/GD_MC65536.dat",
-         #"../data/int1/quantumdot/onebody/RBMSJ/2D/6P/0.500000w/ADAM_MC1048576.dat",
-         #"../data/int1/quantumdot/onebody/RBMPJ/2D/6P/0.500000w/ADAM_MC1048576.dat",
-         ]
-         
-label = ["VMC",
-         "RBM",
-         "RBM+SJ",
-         "RBM+PJ"
-         ]
-         
-line_style = ["-",
-              "--", 
-              "-.", 
-              ":"
-              ]
-         
-maxRadius = [3,
-             3,
-             15,
-             15
-             ]
-
-limit = [0.0, 
-         0.000, 
-         0.000, 
-         0.000
-         ]
-
-ax = plt.gca()
-ax.set_facecolor('white')
-
-for i in range(len(files)):
-    data = np.loadtxt(files[i])
-    data /= radial(len(data))
-    #data /= np.sum(np.nan_to_num(data))
-    #data /= maxRadius[i]
-    #data /= np.sum(data)
-    #data *= int(len(data)/1000)
-    r = np.linspace(0,maxRadius[i],len(data))
-    #data = np.where(data > 1.003, 0, data) 
-    data[:np.argmax(data)] = np.where(data[:np.argmax(data)] < limit[i], 0, data[:np.argmax(data)])
-    indices = np.where(data == 0)[0]
-    data = np.delete(data, indices)
-    r = np.delete(r, indices)
-    #
-    data /= 1048576
-    
-    #data = np.multiply(data, r**2)
-    #r = r[np.argmax(data):]
-    #data = data[np.argmax(data):]
-    norm_const = np.trapz(data)
-    data /= norm_const
-    data *= numberOfParticles
-    data *= 100
-    #data = savgol_filter(data, 101, 2)
-    
-    plt.plot(r, data, line_style[i], markersize=1, label=label[i])
-
-size = 24
-label_size = {"size":str(size)}
 plt.rcParams["font.family"] = "Serif"
+plt.rc('figure', max_open_warning = 0)
 
-plt.gcf().subplots_adjust(bottom=0.15)
-plt.gcf().subplots_adjust(left=0.18)
-#plt.tight_layout()
+class PlotOB():
+    def __init__(self, system = 'quantumdot', 
+                       method = 'VMC', 
+                       dimension = 2, 
+                       particles = 2, 
+                       omega = '1.000000',
+                       radius = 10,
+                       interaction=1, 
+                       optimizer='ADAM', 
+                       cycles=1048576):
+        '''
+        Plotting engine for electron densities
+        
+        Arguments:
+        ----------
+        
+        system      {string} :   System/potential
+        methods     {string} :   Method
+        dimensions  {int} :      Number of dimensions
+        particles   {int} :      Number of particles
+        omega       {float} :    Frequency
+        radius      {float} :    Max radius of simulation
+        newRadius   {float} :    New cropping radius
+        interaction {bool} :     Interaction on (1)/ off (0)
+        optimizer   {string} :   Optimizer used
+        cycles      {int} :      Number of cycles, integer
+        '''
+        
+        self.system = system
+        self.method = method
+        self.dimension = dimension
+        self.particles = particles
+        self.omega = omega
+        self.radius = radius
+        self.interaction = interaction
+        self.optimizer = optimizer
+        self.cycles = cycles
+        
+        fileName = self.generateFileName()
+        self.load(fileName)
+        self.r = np.linspace(0, self.radius, len(self.data))
+        
+    def generateFileName(self):
+        fileName  = "../data/int"
+        fileName += str(self.interaction) + "/"
+        fileName += self.system   + "/"
+        fileName += "onebody" + "/"
+        fileName += self.method   + "/"
+        fileName += str(self.dimension)      + "D/"
+        fileName += str(self.particles) + "P/"
+        fileName += str(self.omega)    + "w/"
+        fileName += self.optimizer + "_MC"
+        fileName += str(self.cycles) + ".dat"
+        return fileName
 
-exact1 = exact(r, w=1.0)
-plt.plot(r, exact1, '--k', linewidth=1.0, label="Exact")
+    def saveFigure(self):
+        fileName  = "../plots/int"
+        fileName += str(self.interaction) + "/"
+        fileName += "onebody" + "/"
+        fileName += str(self.dimension)      + "D/"
+        fileName += str(self.particles) + "P/"
+        fileName += str(self.omega)    + "w/"
+        fileName += self.method + "_"  
+        fileName += self.optimizer + "_MC"
+        fileName += str(self.cycles) + ".png"
+        plt.savefig(fileName)
+        
+    def load(self, fileName):
+        self.data = np.loadtxt(fileName)
+        
+    def radial(self):
+        n = np.arange(len(self.data))
+        if self.dimension == 2:
+            return 2*n+1
+        elif self.dimension == 3:
+            return 3*n*(n+1)+1
+        else:
+            return np.nan
+        
+    def norm_bins(self):
+        self.data /= self.radial()
+        
+    def norm(self):
+        #data /= np.sum(np.nan_to_num(data))
+        #data /= maxRadius[i]
+        #data /= np.sum(data)
+        #data *= int(len(data)/1000)
+        self.data /= self.cycles
+    
+        #data = np.multiply(data, r**2)
+        #r = r[np.argmax(data):]
+        #data = data[np.argmax(data):]
+        norm_const = np.trapz(self.data)
+        self.data /= norm_const
+        self.data *= self.particles
+        self.data *= 100
+        
+    def crop_edges(self, newRadius):
+        length = len(self.data)
+        newLength = int(length * (newRadius / self.radius))
+        self.data = self.data[0:newLength]
+        self.radius = newRadius
+        self.r = np.linspace(0, self.radius, len(self.data))
+        
+    def cut(self, threshold=0.00001):
+        self.data = np.where(self.data > threshold, 0, self.data)
+        
+    def cut_noise(self, limit):
+        self.data[:np.argmax(self.data)] = np.where(self.data[:np.argmax(self.data)] < limit, 0, self.data[:np.argmax(self.data)])
+        indices = np.where(self.data == 0)[0]
+        self.data = np.delete(self.data, indices)
+        self.r = np.delete(self.r, indices)
+        
+    def smooth(self, window=29, order=4):
+        if len(self.data[0]) > 1:
+            self.data = sgolay2d(self.data, window, order)
+        else:
+            self.data = savitzky_golay(self.data, window, order)
 
-plt.xlabel("$r$", **label_size)
-plt.ylabel(r"$\rho(r)$", **label_size)
-plt.legend(loc="best", fontsize=size, facecolor='white', framealpha=1)
-plt.axis([-0.1,3.1,-0.001, 0.701])
-#plt.savefig("../html/onebody_PJ_NQS_P2_D2_MC1048576.png")
-plt.show()
+    def exact(self):
+        '''Exact solution without interaction for given w'''
+        return np.sqrt(self.omega/np.pi) * np.exp(- self.omega * self.r**2)
+            
+    def plot_radial(self, line_style, label):
+        print(label)
+        plt.plot(self.r, self.data, line_style, markersize=1, label=label)
+        
+        
+def saveFigure(dim, par, omega, method, optimizer='ADAM', cycles=1048576):
+        fileName  = "../plots/int1/"
+        fileName += "onebody" + "/"
+        fileName += str(dim)      + "D/"
+        fileName += str(par) + "P/"
+        fileName += str(omega)    + "w/"
+        fileName += optimizer + "_MC"
+        fileName += str(cycles) + ".png"
+        print(fileName)
+        plt.savefig(fileName)
+        
+if __name__ == '__main__':
+
+    systems   = ['quantumdot']
+    
+    methods   = ['VMC',
+                 'RBM',
+                 'RBMSJ',
+                 'RBMPJ'
+                ]
+                
+    dims      = [2]
+    
+    particles = [#2, 
+                 #6, 
+                 12, 
+                 #20
+                 #30,
+                 #42
+                 #2,
+                 #8,
+                 #20
+                 ]
+                 
+    omegas    = ['1.000000']#,'0.500000','0.280000','0.100000'] 
+
+    radius = [#10, 
+              #15, 
+              25, 
+              #30,
+              #35,
+              #40
+              ]
+                 
+    newRadius = [#3, 4, 6, 10,
+                 #4, 6, 8, 15,
+                 5, 8, 10, 20,
+                 6, 10, 12, 25,
+                 6, 12, 14, 30,
+                 7, 14, 16, 35
+                 ]
+                 
+    line_style = ["-", 
+                  "--", 
+                  "-.", 
+                  ":"
+                  ]
+                  
+    limit = 0
+           
+    i = 0
+    for s in range(len(systems)):
+        for d in range(len(dims)):
+            for p in range(len(particles)):
+                for o in range(len(omegas)):
+                    plt.figure()
+                    ax = plt.gca()
+                    ax.set_facecolor('white')
+                    for m in range(len(methods)):
+                        QD = PlotOB(systems[s], methods[m], dims[d], particles[p], omegas[o], radius[p])
+                        QD.norm_bins()
+                        QD.norm()
+                        QD.crop_edges(newRadius[i])
+                        QD.cut_noise(limit)
+                        #QD.smooth()
+                        QD.plot_radial(line_style=line_style[m], label=methods[m])
+                      
+                    size = 16
+                    label_size = {"size":str(size)}
+
+                    plt.gcf().subplots_adjust(bottom=0.15)
+                    plt.gcf().subplots_adjust(left=0.18)
+                    #plt.tight_layout()
+
+                    plt.xlabel("$r$", **label_size)
+                    plt.ylabel(r"$\rho(r)$", **label_size)
+                    plt.legend(loc="best", fontsize=size, facecolor='white', framealpha=1)
+                    #saveFigure(dims[d], particles[p], omegas[o], methods[m])
+                    plt.show()
+                    i += 1

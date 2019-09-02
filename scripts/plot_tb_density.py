@@ -15,26 +15,26 @@ def radial(size, numberOfDimensions):
         return np.nan
 
 def generateFileName(system, method, dim, particle, omega):
-    fileName  = "../data/int0/"
+    fileName  = "../data/int1/"
     fileName += system   + "/"
     fileName += "twobody" + "/"
     fileName += method   + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += "GD_MC65536.dat"
+    fileName += "ADAM_MC1048576.dat"
     return fileName
 
 
 def saveFigure(system, method, dim, particle, omega):
-    fileName  = "../plots/int0/"
+    fileName  = "../plots/int1/"
     #fileName += system   + "/"
     fileName += "twobody" + "/"
     #fileName += "VMC" + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += method   + "_GD_MC2pow30.png"
+    fileName += method   + "_ADAM_MC2pow28.png"
     plt.savefig(fileName)
 
 
@@ -62,7 +62,7 @@ def norm(data, numberOfDimensions, numberOfParticles):
     
     data = np.where(data > 0.000016, 0, data)
     
-    data *= 4e4
+    data *= 1e4
     
     return data * numberOfParticles
     
@@ -94,7 +94,7 @@ def plot(data, radius):
 
     fig, ax = plt.subplots(figsize=(8,6))
                  
-    img = ax.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
+    img = ax.imshow(data, cmap=plt.cm.viridis, extent=[-radius,radius,-radius,radius])
     cbar = fig.colorbar(img, fraction=0.046, pad=0.04)#, format=ticker.FuncFormatter(fmt))
     cbar.set_label(r'$\rho(r_i,r_j)$', rotation=270, labelpad=40, y=0.45, **label_size)
     cbar.ax.tick_params(labelsize=size_ticks)
@@ -114,14 +114,14 @@ def plot(data, radius):
 
 
 def main():
-    maxRadius = [3]
-    newRadius = [3]
+    maxRadius = [30]
+    newRadius = [10]
 
     systems   = ['quantumdot']
-    methods   = ['VMC']
+    methods   = ['VMC','RBM','RBMSJ','RBMPJ']
     dims      = ['2']
-    particles = ['2']
-    omegas    = ['1.000000']      
+    particles = ['20']
+    omegas    = ['0.500000']      
 
     i = 0
     for system in systems:
@@ -138,6 +138,7 @@ def main():
                         plot(data, newRadius[0])
                         #saveFigure(system, method, dim, particle, omega)
                         i += 1
+                    
     plt.show()
 
 
