@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import savgol_filter
+from savitzky_golay import savitzky_golay
 
 plt.style.use("bmh")
 plt.rcParams["font.family"] = "Serif"
@@ -102,6 +102,8 @@ class PlotOB():
         self.data /= norm_const
         self.data *= self.particles
         self.data *= 100
+        if self.method == 'VMC':
+            self.data /= 3
         
     def crop_edges(self, newRadius):
         length = len(self.data)
@@ -130,7 +132,6 @@ class PlotOB():
         return np.sqrt(self.omega/np.pi) * np.exp(- self.omega * self.r**2)
             
     def plot_radial(self, line_style, label):
-        print(label)
         plt.plot(self.r, self.data, line_style, markersize=1, label=label)
         
         
@@ -147,43 +148,50 @@ def saveFigure(dim, par, omega, method, optimizer='ADAM', cycles=1048576):
         
 if __name__ == '__main__':
 
-    systems   = ['quantumdot']
+    system   = 'quantumdot'
     
     methods   = ['VMC',
                  'RBM',
                  'RBMSJ',
-                 'RBMPJ'
+                 #'RBMPJ'
                 ]
                 
     dims      = [2]
     
     particles = [#2, 
                  #6, 
-                 12, 
+                 #12, 
                  #20
                  #30,
-                 #42
+                 42,
                  #2,
                  #8,
                  #20
                  ]
                  
-    omegas    = ['1.000000']#,'0.500000','0.280000','0.100000'] 
+    omegas    = [#'1.000000',
+                 #'0.500000',
+                 #'0.280000',
+                 '0.100000',
+                 #'0.010000'
+                 ] 
 
     radius = [#10, 
               #15, 
-              25, 
+              #25,
               #30,
               #35,
-              #40
+              40,
+              #55
               ]
                  
     newRadius = [#3, 4, 6, 10,
                  #4, 6, 8, 15,
-                 5, 8, 10, 20,
-                 6, 10, 12, 25,
-                 6, 12, 14, 30,
-                 7, 14, 16, 35
+                 #5, 8, 10, 20,
+                 #6, 8, 12, 25,
+                 #7, 8, 14, 25,
+                 #7, 10, 16, 25,
+                 25
                  ]
                  
     line_style = ["-", 
@@ -192,35 +200,36 @@ if __name__ == '__main__':
                   ":"
                   ]
                   
-    limit = 0
+    limits = [3, 3, 3, 3]
            
     i = 0
-    for s in range(len(systems)):
-        for d in range(len(dims)):
-            for p in range(len(particles)):
-                for o in range(len(omegas)):
-                    plt.figure()
-                    ax = plt.gca()
-                    ax.set_facecolor('white')
-                    for m in range(len(methods)):
-                        QD = PlotOB(systems[s], methods[m], dims[d], particles[p], omegas[o], radius[p])
-                        QD.norm_bins()
-                        QD.norm()
-                        QD.crop_edges(newRadius[i])
-                        QD.cut_noise(limit)
-                        #QD.smooth()
-                        QD.plot_radial(line_style=line_style[m], label=methods[m])
-                      
-                    size = 16
-                    label_size = {"size":str(size)}
+    for d in range(len(dims)):
+        for p in range(len(particles)):
+            for o in range(len(omegas)):
+                plt.figure()
+                ax = plt.gca()
+                ax.set_facecolor('white')
+                ax.tick_params(labelsize=16)
+                for m in range(len(methods)):
+                    QD = PlotOB(system, methods[m], dims[d], particles[p], omegas[o], radius[p])
+                    QD.crop_edges(newRadius[i])
+                    QD.norm_bins()
+                    QD.norm()
+                    QD.cut_noise(limits[m])
+                    #QD.smooth()
+                    QD.plot_radial(line_style=line_style[m], label=methods[m])
+                  
+                size = 24
+                size_legend=16
+                label_size = {"size":str(size)}
 
-                    plt.gcf().subplots_adjust(bottom=0.15)
-                    plt.gcf().subplots_adjust(left=0.18)
-                    #plt.tight_layout()
+                plt.gcf().subplots_adjust(bottom=0.15)
+                plt.gcf().subplots_adjust(left=0.18)
+                #plt.tight_layout()
 
-                    plt.xlabel("$r$", **label_size)
-                    plt.ylabel(r"$\rho(r)$", **label_size)
-                    plt.legend(loc="best", fontsize=size, facecolor='white', framealpha=1)
-                    #saveFigure(dims[d], particles[p], omegas[o], methods[m])
-                    plt.show()
-                    i += 1
+                plt.xlabel("$r$", **label_size)
+                plt.ylabel(r"$\rho(r)$", **label_size)
+                plt.legend(loc="best", fontsize=size_legend, facecolor='white', framealpha=1)
+                saveFigure(dims[d], particles[p], omegas[o], methods[m])
+                plt.show()
+                i += 1

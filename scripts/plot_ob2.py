@@ -13,8 +13,8 @@ ax = plt.gca()
 ax.set_facecolor('white')
 
 class PlotED():
-
     def __init__(self, system = 'quantumdot', 
+                       observable = 'onebody2',
                        method = 'VMC', 
                        dimension = 2, 
                        particles = 2, 
@@ -30,10 +30,11 @@ class PlotED():
         ----------
         
         system      {string} :   System/potential
+        observable  {string} :   Which electron density to plot
         methods     {string} :   Method
         dimensions  {int} :      Number of dimensions
         particles   {int} :      Number of particles
-        omega       {float} :    Frequency
+        omega       {string} :   Frequency
         radius      {float} :    Max radius of simulation
         newRadius   {float} :    New cropping radius
         interaction {bool} :     Interaction on (1)/ off (0)
@@ -100,7 +101,7 @@ class PlotED():
             raise ValueError("Number of dimensions needs to be 2 or 3!!!")
     
     def norm_radial(self, factor=1e4):
-        v = radial()
+        v = self.radial()
         if len(self.data[0]) > 1:
             xx, yy = np.meshgrid(v, v, sparse=True)
             self.data /= np.multiply(xx,yy)
@@ -110,6 +111,8 @@ class PlotED():
         self.data *= factor * self.particles
     
     def norm(self, factor=1e4):
+        norm_const = np.trapz(self.data)
+        self.data /= norm_const
         self.data /= np.sum(np.nan_to_num(self.data))
         self.data *= factor * self.particles
         
@@ -128,21 +131,19 @@ class PlotED():
     def crop_edges(self, newRadius):
         length = len(self.data)
         newLength = int(length * (newRadius / self.radius))
-        newData = data[0:newLength, 0:newLength]
-        return newData
+        self.data = self.data[0:newLength, 0:newLength]
         
-    def window(data):
-        data = data[2:,2:]
+    def window(self):
+        self.data = self.data[2:,2:]
 
-        data1 = np.rot90(data,0)
-        data2 = np.rot90(data,-1)
-        data3 = np.rot90(data,-2)
-        data4 = np.rot90(data,-3)
+        data1 = np.rot90(self.data,0)
+        data2 = np.rot90(self.data,-1)
+        data3 = np.rot90(self.data,-2)
+        data4 = np.rot90(self.data,-3)
         
         dataTop = np.c_[data2,data1]
         dataBottom = np.c_[data3,data4]
-        data = np.concatenate((dataBottom,dataTop))
-        return data
+        self.data = np.concatenate((dataBottom,dataTop))
         
     def rotate(self):
         self.data = np.rot90(self.data)
@@ -219,7 +220,7 @@ class PlotED():
 
         fig, ax = plt.subplots(figsize=(8,6))
                      
-        img = ax.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
+        img = ax.imshow(self.data, cmap=plt.cm.jet, extent=[-self.radius,self.radius,-self.radius,self.radius])
         cbar = fig.colorbar(img, fraction=0.046, pad=0.04)
         cbar.set_label(r'$\rho(r_i,r_j)$', rotation=270, labelpad=40, y=0.45, **label_size)
         cbar.ax.tick_params(labelsize=size_ticks)
@@ -384,93 +385,61 @@ def saveFigure(dim, par, omega, optimizer='ADAM', cycles=1048576):
         fileName += str(omega)    + "w/"
         fileName += optimizer + "_MC"
         fileName += str(cycles) + ".png"
+        print(fileName)
         plt.savefig(fileName)
 
 if __name__ == "__main__":
 
-    systems   = ['quantumdot']
-    methods   = ['VMC',
-                 'RBM',
-                 'RBMSJ',
-                 'RBMPJ'
-                ]
-    dims      = [2]
-    particles = [20]#, 6, 12, 20]
-    omegas    = ['1.000000','0.500000','0.280000','0.100000'] 
-
-    maxRadius = [#10, 10, 10, 10,
-                 #10, 10, 10, 10,
-                 #10, 10, 10, 10,
-                 #10, 10, 10, 10,
-                 
-                 #15, 15, 15, 15,
-                 #15, 15, 15, 15,
-                 #15, 15, 15, 15,
-                 #15, 15, 15, 15,
-                 
-                 #25, 25, 25, 25,
-                 #25, 25, 25, 25,
-                 #25, 25, 25, 25,
-                 #25, 25, 25, 25,
-                 
-                 30, 30, 30, 30,
-                 30, 30, 30, 30,
-                 30, 30, 30, 30,
-                 30, 30, 30, 30,
-                 ]
-                 
-    newRadius = [#3, 3, 3, 3,
-                 #4, 4, 4, 4,
-                 #6, 6, 6, 6,
-                 #10, 10, 10, 10,
-                 
-                 #4, 4, 4, 4,
-                 #6, 6, 6, 6,
-                 #8, 8, 8, 8,
-                 #15, 15, 15, 15,
-                 
-                 #5, 5, 5, 5,
-                 #8, 8, 8, 8,
-                 #10, 10, 10, 10,
-                 #20, 20, 20, 20,
-                 
-                 6, 6, 6, 6,
-                 10, 10, 10, 10,
-                 12, 12, 12, 12,
-                 25, 25, 25, 25
-                 ]
-           
-    i = 0
-    for system in systems:
-        for dim in dims:
-            for particle in particles:
-                for omega in omegas:
-                    for method in methods:
-                        QD = PlotED(system, method, dim, particle, omega, maxRadius[i])
-                        QD.remove_cross()
-                        QD.norm()
-                        QD.crop_center(newRadius[i])
-                        QD.smooth()
-                        #QD.plot_radial(label=method)
-                        QD.plot_3Dcontour(save=True)
-                        i += 1
-                        print(i)
-                    '''
-                    size = 20
-                    label_size = {"size":str(size)}
-
-                    plt.gcf().subplots_adjust(bottom=0.15)
-                    plt.gcf().subplots_adjust(left=0.18)
-                    #plt.tight_layout()
-
-                    #exact1 = exact(r, w=1.0)
-                    #plt.plot(r, exact1, '--k', linewidth=1.0, label="Exact")
-
-                    plt.xlabel("$r$", **label_size)
-                    plt.ylabel(r"$\rho(r)$", **label_size)
-                    plt.legend(loc="best", fontsize=size, facecolor='white', framealpha=1)
-                    saveFigure(dim, particle, omega)
-                    #plt.show()
-                    '''
+    system   = 'quantumdot'
+    observable = 'onebody2'
     
+    methods   = ['VMC',
+                 #'RBM',
+                 #'RBMSJ',
+                 #'RBMPJ'
+                ]
+                
+    dims      = [2]
+    
+    particles = [2, 
+                 #6, 
+                 #12, 
+                 #20
+                 #30,
+                 #42,
+                 #56,
+                 #2,
+                 #8,
+                 #20
+                 ]
+                 
+    omegas    = ['1.000000']#,'0.500000','0.280000','0.100000'] 
+
+    radius = [10, 
+              #15, 
+              #25, 
+              #30,
+              #35,
+              #40,
+              ]
+                 
+    newRadius = [#3, 4, 6, 10,
+                 #4, 6, 8, 15,
+                 #5, 8, 10, 20,
+                 #6, 10, 12, 25,
+                 #6, 12, 14, 30,
+                 #7, 14, 16, 35
+                 3
+                 ]
+                 
+    for d in range(len(dims)):
+        for p in range(len(particles)):
+            for o in range(len(omegas)):
+                for m in range(len(methods)):
+                    QD = PlotED(system, observable, methods[m], dims[d], particles[p], omegas[o], radius[p], interaction=0, cycles=268435456)
+                    QD.crop_center(newRadius[p])
+                    QD.norm_radial()
+                    QD.remove_cross()
+                    QD.smooth()
+                    QD.plot_3Dcontour(show=True)
     

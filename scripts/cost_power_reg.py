@@ -24,7 +24,34 @@ def reg_power(x, y):
     return np.exp(a), b
     
 def f(x, a, b):
-    return a*x**b
+    return a*np.power(x, b)
+    
+def MSE(x, y, a, b):
+    summer = 0
+    diff = y - f(x, a, b)
+    return 0.5 * diff.T.dot(diff)
+    
+def function(x, b):
+    return np.multiply(np.power(x, b), np.log(x))
+    
+def derA(x, y, a, b):
+    print(a)
+    print(b)
+    return - (y - f(x, a, b)).T.dot(np.power(x, b))
+    
+def derB(x, y, a, b):
+    return - (y - f(x, a, b)).T.dot(function(x, b))
+    
+def gradient_descent(x, y, a=5, b=1.1, iterations=10000, eta=0.0000001):
+    for _ in range(iterations):
+        
+        error = MSE(x, y, a, b)
+        a -= eta * derA(x, y, a, b)
+        b -= eta * derB(x, y, a, b)
+        print(derA(x, y, a, b))
+        print(error)
+        print(" ")
+    return a, b
 
 if __name__ == '__main__':
     P_2D = [2, 6, 12, 20, 30, 42, 56, 72, 90]
@@ -40,13 +67,17 @@ if __name__ == '__main__':
     VMC_3D = [6.70, 20.99, 62.54, 185.65, 486.02]
     
     a, b = reg_power(P_2D, VMC_2D)
-    
+    print(a, b)
+    #a, b = gradient_descent(P_2D, VMC_2D)
+    #print(a, b)
 
-    plt.plot(P_2D, VMC_2D)
+    plt.plot(P_2D, VMC_2D, label='exact')
+        
     plt.plot(P_2D, f(P_2D, a, b))
     #plt.plot(P_2D[:-2], RBMSJ_2D)
     #plt.plot(P_2D[:-2], RBMPJ_2D)
     #plt.plot(P_2D, VMC_2D)
+    plt.legend()
     plt.show()
     
     

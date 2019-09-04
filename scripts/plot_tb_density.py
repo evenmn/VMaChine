@@ -34,9 +34,9 @@ def saveFigure(system, method, dim, particle, omega):
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += method   + "_ADAM_MC2pow28.png"
+    fileName += method   + "_ADAM_MC1048576_zoomed.png"
+    print(fileName)
     plt.savefig(fileName)
-
 
 def crop(data, maxRadius, newRadius):
     length = len(data)
@@ -52,20 +52,16 @@ def remove_cross(data):
     data[:,lengthHalf+1] = data[:,lengthHalf+2]
     return data
     
-def norm(data, numberOfDimensions, numberOfParticles):
+def norm(data, numberOfDimensions, numberOfParticles, factor=1e5):
     numBins = len(data)
     v = radial(numBins, numberOfDimensions)
     xx, yy = np.meshgrid(v, v, sparse=True)
-
     data /= np.multiply(xx,yy)
-    data /= np.sum(np.nan_to_num(data))
-    
-    data = np.where(data > 0.000016, 0, data)
-    
-    data *= 1e4
-    
+    #data /= np.sum(np.nan_to_num(data))
+    norm_const = simps(simps(data, v), v)
+    data /= norm_const
+    data *= factor
     return data * numberOfParticles
-    
     
 def rotate(data):
     data = data[2:,2:]
@@ -80,23 +76,41 @@ def rotate(data):
     data = np.concatenate((dataBottom,dataTop))
     return data
     
+def cut(data, threshold=0.00001):
+    return np.where(data > threshold, 0, data)
+    
+def ticks(radius):
+    if radius % 2 == 0 or radius < 2:
+        return [-radius, -radius/2., 0, radius/2., radius]
+    elif radius % 3 == 0:
+        return [-radius, -2*(radius/3.), -radius/3., 0, radius/3., 2*(radius/3.), radius]
+    elif radius == 5:
+        return [-5, -3, -1, 1, 3, 5]
+    elif radius == 25:
+        return [-25, -15, -5, 5, 15, 25]
+    elif radius == 35:
+        return [-35, -17.5, 0, 17.5, 35]
+    else:
+        print("Warning: Ticks out of bounds")
+        return []
+    
 def fmt(x, pos):
     a, b = '{:.1e}'.format(x).split('e')
     b = int(b)
     return r'${} \times 10^{{{}}}$'.format(a, b)
 
 def plot(data, radius):
-    size = 24
-    size_ticks = 16
+    size = 28
+    size_ticks = 20
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
     plt.rcParams.update({'figure.autolayout': True})
 
     fig, ax = plt.subplots(figsize=(8,6))
                  
-    img = ax.imshow(data, cmap=plt.cm.viridis, extent=[-radius,radius,-radius,radius])
+    img = ax.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
     cbar = fig.colorbar(img, fraction=0.046, pad=0.04)#, format=ticker.FuncFormatter(fmt))
-    cbar.set_label(r'$\rho(r_i,r_j)$', rotation=270, labelpad=40, y=0.45, **label_size)
+    cbar.set_label(r'$\rho(r_i,r_j)$', rotation=90, labelpad=10, y=0.5, **label_size)
     cbar.ax.tick_params(labelsize=size_ticks)
     
     plt.tight_layout()
@@ -105,43 +119,38 @@ def plot(data, radius):
     ax.set_ylabel("$r_i$", **label_size)
     ax.tick_params(labelsize=size_ticks)
     
-    ticks = [-3,-2,-1, 0, 1, 2, 3]
+    tick = ticks(radius)
         
-    ax.set_xticks(ticks)
-    ax.set_yticks(ticks)
+    ax.set_xticks(tick)
+    ax.set_yticks(tick)
     plt.grid()
-
-
-
-def main():
-    maxRadius = [30]
-    newRadius = [10]
-
-    systems   = ['quantumdot']
-    methods   = ['VMC','RBM','RBMSJ','RBMPJ']
-    dims      = ['2']
-    particles = ['20']
-    omegas    = ['0.500000']      
-
-    i = 0
-    for system in systems:
-        for method in methods:
-            for dim in dims:
-                for particle in particles:
-                    for omega in omegas:
-                        fileName = generateFileName(system, method, dim, particle, omega)
-                        data = np.loadtxt(fileName)
-                        data = crop(data, maxRadius[0], newRadius[0])
-                        data = norm(data, int(dim), int(particle))
-                        data = rotate(data)
-                        data = remove_cross(data)
-                        plot(data, newRadius[0])
-                        #saveFigure(system, method, dim, particle, omega)
-                        i += 1
-                    
-    plt.show()
+    #plt.show()
 
 
 if __name__ == '__main__':
-    main()
+    system   = 'quantumdot'
+
+    maxRadius = [10]
+    newRadius = [5]
+
+    methods   = ['VMC','RBM','RBMSJ','RBMPJ']
+    dims      = ['2']
+    particles = ['2']
+    omegas    = ['0.500000']      
+
+    i = 0
+    for method in methods:
+        for dim in dims:
+            for particle in particles:
+                for omega in omegas:
+                    fileName = generateFileName(system, method, dim, particle, omega)
+                    data = np.loadtxt(fileName)
+                    data = crop(data, maxRadius[0], newRadius[0])
+                    data = norm(data, int(dim), int(particle))
+                    data = rotate(data)
+                    data = remove_cross(data)
+                    data = cut(data, 0.18)
+                    plot(data, newRadius[0])
+                    saveFigure(system, method, dim, particle, omega)
+                    i += 1
 
