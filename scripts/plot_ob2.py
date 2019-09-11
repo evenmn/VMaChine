@@ -79,6 +79,7 @@ class PlotED():
         fileName += self.method + "_"  
         fileName += self.optimizer + "_MC"
         fileName += str(self.cycles) + ".png"
+        print(fileName)
         plt.savefig(fileName)
         
     def load(self, fileName):
@@ -319,7 +320,7 @@ class PlotED():
     def plot_3Dcontour(self, ticks=None, 
                              masked_data=None, 
                              size=24, 
-                             size_ticks=14,
+                             size_ticks=12,
                              show=False,
                              save=False):
         '''
@@ -393,8 +394,8 @@ if __name__ == "__main__":
     system   = 'quantumdot'
     observable = 'onebody2'
     
-    methods   = ['VMC',
-                 #'RBM',
+    methods   = [#'VMC',
+                 'RBM',
                  #'RBMSJ',
                  #'RBMPJ'
                 ]
@@ -413,14 +414,21 @@ if __name__ == "__main__":
                  #20
                  ]
                  
-    omegas    = ['1.000000']#,'0.500000','0.280000','0.100000'] 
+    omegas    = ['1.000000',
+                 #'0.500000',
+                 #'0.280000',
+                 #'0.100000',
+                 #'0.010000'
+                 ] 
 
-    radius = [10, 
+    radius = [10,
               #15, 
               #25, 
               #30,
               #35,
               #40,
+              #45
+              #50
               ]
                  
     newRadius = [#3, 4, 6, 10,
@@ -440,6 +448,7 @@ if __name__ == "__main__":
                     QD.crop_center(newRadius[p])
                     QD.norm_radial()
                     QD.remove_cross()
+                    #QD.cut(0.2)
                     QD.smooth()
-                    QD.plot_3Dcontour(show=True)
+                    QD.plot_3Dcontour(save=True, show=True)
     

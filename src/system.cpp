@@ -486,10 +486,13 @@ void System::parserConstants(const std::string configFile, int &numberOfIteratio
                 if (key == "numParticles") {
                     m_numberOfParticles = std::stoi(value);
                     m_numberOfHiddenNodes = m_numberOfParticles;
+                    m_Z = m_numberOfParticles;
                 } else if (key == "numDimensions") {
                     m_numberOfDimensions = std::stoi(value);
                 } else if (key == "omega") {
                     m_omega = std::stod(value);
+                    m_stepLength = 0.1 / sqrt(m_omega);
+                    m_sigma = 1.0 / sqrt(m_omega);
                 } else if (key == "learningRate") {
                     m_eta = std::stod(value);
                 } else if (key == "maxRadius") {
@@ -541,8 +544,6 @@ void System::parserConstants(const std::string configFile, int &numberOfIteratio
         }
     }
     m_degreesOfFreedom = m_numberOfParticles * m_numberOfDimensions;
-    m_sigma = 1 / sqrt(m_omega);
-    m_Z = m_numberOfParticles;
 }
 
 void System::parserObjects(const std::string configFile)

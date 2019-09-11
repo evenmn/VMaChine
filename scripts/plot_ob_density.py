@@ -71,6 +71,7 @@ class PlotOB():
         fileName += self.method + "_"  
         fileName += self.optimizer + "_MC"
         fileName += str(self.cycles) + ".png"
+        print(fileName)
         plt.savefig(fileName)
         
     def load(self, fileName):
@@ -103,7 +104,7 @@ class PlotOB():
         self.data *= self.particles
         self.data *= 100
         if self.method == 'VMC':
-            self.data /= 3
+            self.data/=3
         
     def crop_edges(self, newRadius):
         length = len(self.data)
@@ -158,12 +159,12 @@ if __name__ == '__main__':
                 
     dims      = [2]
     
-    particles = [#2, 
+    particles = [42, 
                  #6, 
                  #12, 
                  #20
                  #30,
-                 42,
+                 #56,
                  #2,
                  #8,
                  #20
@@ -185,7 +186,7 @@ if __name__ == '__main__':
               #55
               ]
                  
-    newRadius = [#3, 4, 6, 10,
+    newRadius = [#3, 4, 4, 10,
                  #4, 6, 8, 15,
                  #5, 8, 10, 20,
                  #6, 8, 12, 25,
@@ -200,7 +201,7 @@ if __name__ == '__main__':
                   ":"
                   ]
                   
-    limits = [3, 3, 3, 3]
+    limits = [0.0, 0.0, 0.0, 0.0]
            
     i = 0
     for d in range(len(dims)):

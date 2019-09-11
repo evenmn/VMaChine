@@ -12,7 +12,7 @@ def plot_ratio(data, w, systems, labels):
         kinetic = data[system, :, 1]
         ratio = np.divide(kinetic, potential)
         
-        plt.plot(w, ratio, label=labels[system])
+        plt.plot(np.log10(w), ratio, label=labels[system])
     size = 16
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
@@ -23,7 +23,7 @@ def plot_ratio(data, w, systems, labels):
     plt.xlabel("$\omega$", **label_size)
     plt.ylabel(r"$\frac{\langle\hat{T}\rangle}{\langle\hat{V}\rangle}$", rotation=0, labelpad=10, **label_size)
     plt.legend(loc="best", fontsize=size)
-    #plt.show()
+    plt.show()
 
 if __name__ == "__main__":
     w = [0.01, 0.1, 0.28, 0.5, 1.0, 2.0, 3.0, 5.0, 10.0]
@@ -195,4 +195,4 @@ if __name__ == "__main__":
     
     plot_ratio(eval(system), w, [0,1,2,3], labels)
     
-    tikzplotlib.save("/home/evenmn/Master-thesis/doc/text/pgf/" + system + ".tex")
+    #tikzplotlib.save("/home/evenmn/Master-thesis/doc/text/pgf/" + system + ".tex")

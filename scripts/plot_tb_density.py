@@ -34,7 +34,7 @@ def saveFigure(system, method, dim, particle, omega):
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
-    fileName += method   + "_ADAM_MC1048576_zoomed.png"
+    fileName += method   + "_ADAM_MC1048576.png"
     print(fileName)
     plt.savefig(fileName)
 
@@ -130,13 +130,13 @@ def plot(data, radius):
 if __name__ == '__main__':
     system   = 'quantumdot'
 
-    maxRadius = [10]
-    newRadius = [5]
+    maxRadius = [55]
+    newRadius = [50]
 
-    methods   = ['VMC','RBM','RBMSJ','RBMPJ']
+    methods   = ['RBMSJ']#,'RBM']#,'RBMSJ','RBMPJ']
     dims      = ['2']
-    particles = ['2']
-    omegas    = ['0.500000']      
+    particles = ['6']
+    omegas    = ['0.010000']      
 
     i = 0
     for method in methods:
@@ -149,8 +149,9 @@ if __name__ == '__main__':
                     data = norm(data, int(dim), int(particle))
                     data = rotate(data)
                     data = remove_cross(data)
-                    data = cut(data, 0.18)
+                    #data = cut(data, 0.06)
                     plot(data, newRadius[0])
                     saveFigure(system, method, dim, particle, omega)
+                    plt.show()
                     i += 1
 
