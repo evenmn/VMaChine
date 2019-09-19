@@ -103,8 +103,8 @@ class PlotOB():
         self.data /= norm_const
         self.data *= self.particles
         self.data *= 100
-        if self.method == 'VMC':
-            self.data/=3
+        #if self.method == 'VMC':
+        #    self.data/=3
         
     def crop_edges(self, newRadius):
         length = len(self.data)
@@ -123,10 +123,7 @@ class PlotOB():
         self.r = np.delete(self.r, indices)
         
     def smooth(self, window=29, order=4):
-        if len(self.data[0]) > 1:
-            self.data = sgolay2d(self.data, window, order)
-        else:
-            self.data = savitzky_golay(self.data, window, order)
+        self.data = savitzky_golay(self.data, window, order)
 
     def exact(self):
         '''Exact solution without interaction for given w'''
@@ -152,19 +149,19 @@ if __name__ == '__main__':
     system   = 'quantumdot'
     
     methods   = ['VMC',
-                 'RBM',
+                 #'RBM',
                  'RBMSJ',
-                 #'RBMPJ'
+                 'RBMPJ'
                 ]
                 
     dims      = [2]
     
-    particles = [42, 
-                 #6, 
+    particles = [#2, 
+                 6, 
                  #12, 
                  #20
                  #30,
-                 #56,
+                 #42,
                  #2,
                  #8,
                  #20
@@ -173,8 +170,8 @@ if __name__ == '__main__':
     omegas    = [#'1.000000',
                  #'0.500000',
                  #'0.280000',
-                 '0.100000',
-                 #'0.010000'
+                 #'0.100000',
+                 '0.010000'
                  ] 
 
     radius = [#10, 
@@ -182,8 +179,8 @@ if __name__ == '__main__':
               #25,
               #30,
               #35,
-              40,
-              #55
+              #40,
+              55
               ]
                  
     newRadius = [#3, 4, 4, 10,
@@ -192,11 +189,11 @@ if __name__ == '__main__':
                  #6, 8, 12, 25,
                  #7, 8, 14, 25,
                  #7, 10, 16, 25,
-                 25
+                 55
                  ]
                  
     line_style = ["-", 
-                  "--", 
+                  #"--", 
                   "-.", 
                   ":"
                   ]
@@ -217,7 +214,7 @@ if __name__ == '__main__':
                     QD.norm_bins()
                     QD.norm()
                     QD.cut_noise(limits[m])
-                    #QD.smooth()
+                    QD.smooth()
                     QD.plot_radial(line_style=line_style[m], label=methods[m])
                   
                 size = 24
@@ -231,6 +228,6 @@ if __name__ == '__main__':
                 plt.xlabel("$r$", **label_size)
                 plt.ylabel(r"$\rho(r)$", **label_size)
                 plt.legend(loc="best", fontsize=size_legend, facecolor='white', framealpha=1)
-                saveFigure(dims[d], particles[p], omegas[o], methods[m])
+                #saveFigure(dims[d], particles[p], omegas[o], methods[m])
                 plt.show()
                 i += 1

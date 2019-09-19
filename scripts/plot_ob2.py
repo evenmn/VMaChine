@@ -8,7 +8,6 @@ from savitzky_golay import savitzky_golay, sgolay2d
 
 plt.style.use("bmh")
 plt.rcParams["font.family"] = "Serif"
-plt.rc('figure', max_open_warning = 0)
 ax = plt.gca()
 ax.set_facecolor('white')
 
@@ -110,6 +109,7 @@ class PlotED():
             self.data /= v
         self.data /= np.sum(np.nan_to_num(self.data))
         self.data *= factor * self.particles
+        self.data *= 2.6
     
     def norm(self, factor=1e4):
         norm_const = np.trapz(self.data)
@@ -421,7 +421,7 @@ if __name__ == "__main__":
                  #'0.010000'
                  ] 
 
-    radius = [10,
+    radius = [#10,
               #15, 
               #25, 
               #30,
@@ -429,26 +429,28 @@ if __name__ == "__main__":
               #40,
               #45
               #50
+              10
               ]
                  
-    newRadius = [#3, 4, 6, 10,
+    newRadius = [#3, 4, 5, 10,
                  #4, 6, 8, 15,
                  #5, 8, 10, 20,
                  #6, 10, 12, 25,
                  #6, 12, 14, 30,
                  #7, 14, 16, 35
-                 3
+                 6
                  ]
                  
     for d in range(len(dims)):
         for p in range(len(particles)):
             for o in range(len(omegas)):
                 for m in range(len(methods)):
-                    QD = PlotED(system, observable, methods[m], dims[d], particles[p], omegas[o], radius[p], interaction=0, cycles=268435456)
+                    QD = PlotED(system, observable, methods[m], dims[d], particles[p], omegas[o], radius[p])
                     QD.crop_center(newRadius[p])
                     QD.norm_radial()
                     QD.remove_cross()
-                    #QD.cut(0.2)
+                    #QD.cut(1.)
                     QD.smooth()
-                    QD.plot_3Dcontour(save=True, show=True)
+                    #QD.rotate()
+                    QD.plot_3Dcontour(save=False, show=True)
     
