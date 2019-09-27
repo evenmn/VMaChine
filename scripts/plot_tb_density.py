@@ -30,7 +30,7 @@ def saveFigure(system, method, dim, particle, omega):
     fileName  = "../plots/int1/"
     #fileName += system   + "/"
     fileName += "twobody" + "/"
-    #fileName += "VMC" + "/"
+    #fileName += method + "/"
     fileName += dim      + "D/"
     fileName += particle + "P/"
     fileName += omega    + "w/"
@@ -61,6 +61,7 @@ def norm(data, numberOfDimensions, numberOfParticles, factor=1e5):
     norm_const = simps(simps(data, v), v)
     data /= norm_const
     data *= factor
+    data /= 7.5
     return data * numberOfParticles
     
 def rotate(data):
@@ -125,18 +126,20 @@ def plot(data, radius):
     ax.set_yticks(tick)
     plt.grid()
     #plt.show()
+    
+
 
 
 if __name__ == '__main__':
     system   = 'quantumdot'
 
-    maxRadius = [55]
-    newRadius = [50]
+    maxRadius = [40]
+    newRadius = [6]
 
-    methods   = ['RBMSJ']#,'RBM']#,'RBMSJ','RBMPJ']
+    methods   = ['VMC']#,'RBM']#,'RBMSJ','RBMPJ']
     dims      = ['2']
-    particles = ['6']
-    omegas    = ['0.010000']      
+    particles = ['42']
+    omegas    = ['1.000000']      
 
     i = 0
     for method in methods:
@@ -149,7 +152,7 @@ if __name__ == '__main__':
                     data = norm(data, int(dim), int(particle))
                     data = rotate(data)
                     data = remove_cross(data)
-                    #data = cut(data, 0.06)
+                    data = cut(data, 6.4)
                     plot(data, newRadius[0])
                     saveFigure(system, method, dim, particle, omega)
                     plt.show()

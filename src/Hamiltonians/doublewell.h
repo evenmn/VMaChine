@@ -15,5 +15,6 @@ private:
     double m_omega_sqrd = 0;
     int m_globalArrayNeed = 1;
     double m_b = 2;
+    double m_offset = 1;
     std::string m_label = "doubledot";
 };

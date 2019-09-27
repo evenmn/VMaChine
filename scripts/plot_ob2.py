@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 from mpl_toolkits.mplot3d import axes3d
-from matplotlib import cm 
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from savitzky_golay import savitzky_golay, sgolay2d
 
 plt.style.use("bmh")
@@ -51,33 +48,35 @@ class PlotED():
         self.optimizer = optimizer
         self.cycles = cycles
         
-        fileName = self.generateFileName()
-        self.load(fileName)
+        #fileName = self.generateFileName()
+        #self.load(fileName)
+        self.data = self.exact_matrix()
         
     def generateFileName(self):
         fileName  = "../data/int"
         fileName += str(self.interaction) + "/"
-        fileName += self.system   + "/"
-        fileName += "onebody2" + "/"
-        fileName += self.method   + "/"
-        fileName += str(self.dimension)      + "D/"
-        fileName += str(self.particles) + "P/"
-        fileName += str(self.omega)    + "w/"
-        fileName += self.optimizer + "_MC"
-        fileName += str(self.cycles) + ".dat"
+        fileName += self.system           + "/"
+        fileName += "onebody2"            + "/"
+        fileName += self.method           + "/"
+        fileName += str(self.dimension)   + "D/"
+        fileName += str(self.particles)   + "P/"
+        fileName += str(self.omega)       + "w/"
+        fileName += self.optimizer        + "_MC"
+        fileName += str(self.cycles)      + ".dat"
         return fileName
 
 
     def saveFigure(self):
         fileName  = "../plots/int"
         fileName += str(self.interaction) + "/"
-        fileName += "onebody2" + "/"
-        fileName += str(self.dimension)      + "D/"
-        fileName += str(self.particles) + "P/"
-        fileName += str(self.omega)    + "w/"
-        fileName += self.method + "_"  
-        fileName += self.optimizer + "_MC"
-        fileName += str(self.cycles) + ".png"
+        fileName += "onebody2"            + "/"
+        fileName += str(self.dimension)   + "D/"
+        fileName += str(self.particles)   + "P/"
+        fileName += str(self.omega)       + "w/"
+        fileName += self.method           + "_"  
+        fileName += self.optimizer        + "_MC"
+        fileName += str(self.cycles)      + ".png"
+        #fileName += "2pow28_smooth_blue.png"
         print(fileName)
         plt.savefig(fileName)
         
@@ -109,7 +108,7 @@ class PlotED():
             self.data /= v
         self.data /= np.sum(np.nan_to_num(self.data))
         self.data *= factor * self.particles
-        self.data *= 2.6
+        self.data /= 10
     
     def norm(self, factor=1e4):
         norm_const = np.trapz(self.data)
@@ -189,11 +188,6 @@ class PlotED():
         x = np.linspace(0,self.radius,numberOfPoints/2)
         y = np.divide(radiii, binshit)
         return x, y
-            
-    def fmt(self, x, pos):
-        a, b = '{:.1e}'.format(x).split('e')
-        b = int(b)
-        return r'${} \times 10^{{{}}}$'.format(a, b)
         
     def plot_heatmap(self, ticks=None, 
                            size=24, 
@@ -320,7 +314,7 @@ class PlotED():
     def plot_3Dcontour(self, ticks=None, 
                              masked_data=None, 
                              size=24, 
-                             size_ticks=12,
+                             size_ticks=16,
                              show=False,
                              save=False):
         '''
@@ -354,9 +348,9 @@ class PlotED():
         xx, yy = np.meshgrid(v, v)
 
         ax.plot_surface(xx, yy, masked_data, rstride=8, cstride=8, alpha=1, antialiased=False)
-        ax.contour(xx, yy, self.data, zdir='x', offset=-self.radius, levels=[0], cmap=cm.gist_gray)
-        ax.contourf(xx, yy, self.data, zdir='z', offset=-maximum, cmap=cm.Blues)
-        #ax.contourf(xx, yy, self.data, zdir='y', offset=self.radius)#, cmap=cm.gist_gray)
+        ax.contour(xx, yy, self.data, zdir='x', offset=-self.radius, levels=[0], cmap=plt.cm.gist_gray)
+        ax.contourf(xx, yy, self.data, zdir='z', offset=-maximum, cmap=plt.cm.Blues)
+        #ax.contourf(xx, yy, self.data, zdir='y', offset=self.radius)#, cmap=plt.cm.gist_gray)
         
 
         ax.set_xlim(-self.radius, self.radius)
@@ -376,7 +370,19 @@ class PlotED():
         if save:
             self.saveFigure()
         if show:
-            plt.show()     
+            plt.show()
+            
+            
+    def exact(self, x, y):
+        return np.exp(-(x*x + y*y))
+        
+    def exact_matrix(self, N=1000, R=3):
+        x = np.linspace(-R, R, N)
+        A = np.zeros((N, N))
+        for i in range(N):
+            for j in range(N):
+                A[i, j] = self.exact(x[i], x[j])
+        return A
         
 def saveFigure(dim, par, omega, optimizer='ADAM', cycles=1048576):
         fileName  = "../plots/int1/"
@@ -402,13 +408,13 @@ if __name__ == "__main__":
                 
     dims      = [2]
     
-    particles = [2, 
+    particles = [#2, 
                  #6, 
                  #12, 
                  #20
                  #30,
                  #42,
-                 #56,
+                 56,
                  #2,
                  #8,
                  #20
@@ -427,9 +433,9 @@ if __name__ == "__main__":
               #30,
               #35,
               #40,
-              #45
+              3
               #50
-              10
+              #6
               ]
                  
     newRadius = [#3, 4, 5, 10,
@@ -438,19 +444,19 @@ if __name__ == "__main__":
                  #6, 10, 12, 25,
                  #6, 12, 14, 30,
                  #7, 14, 16, 35
-                 6
+                 3
                  ]
                  
     for d in range(len(dims)):
         for p in range(len(particles)):
             for o in range(len(omegas)):
                 for m in range(len(methods)):
-                    QD = PlotED(system, observable, methods[m], dims[d], particles[p], omegas[o], radius[p])
+                    QD = PlotED(system, observable, methods[m], dims[d], particles[p], omegas[o], radius[p], cycles=1048576)
                     QD.crop_center(newRadius[p])
                     QD.norm_radial()
                     QD.remove_cross()
                     #QD.cut(1.)
-                    QD.smooth()
+                    QD.smooth(window=79, order=5)
                     #QD.rotate()
                     QD.plot_3Dcontour(save=False, show=True)
     

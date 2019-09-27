@@ -24,8 +24,8 @@ if __name__ == "__main__":
     
     #data /= np.sum(data)
     
-    size = 24
-    size_ticks = 16
+    size = 28
+    size_ticks = 20
     label_size = {"size":str(size)}
     plt.rcParams["font.family"] = "Serif"
     plt.rcParams.update({'figure.autolayout': True})
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     
     img = ax.imshow(data, cmap=plt.cm.jet, extent=[-radius,radius,-radius,radius])
     cbar = fig.colorbar(img, fraction=0.046, pad=0.04) #, format=ticker.FuncFormatter(fmt))
-    cbar.set_label(r'$\rho(r_i,r_j)$', rotation=270, labelpad=40, y=0.45, **label_size)
+    cbar.set_label(r'$\rho(r_i,r_j)$', rotation=90, labelpad=10, y=0.5, **label_size)
     cbar.ax.tick_params(labelsize=size_ticks)
     
     plt.tight_layout()
@@ -42,5 +42,10 @@ if __name__ == "__main__":
     ax.set_xlabel("$r_j$", **label_size)
     ax.set_ylabel("$r_i$", **label_size)
     ax.tick_params(labelsize=size_ticks)
+    
+    tick = [-3, -2, -1, 0, 1, 2, 3]
+    ax.set_xticks(tick)
+    ax.set_yticks(tick)
+    
     plt.grid()
     plt.show()

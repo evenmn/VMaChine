@@ -25,11 +25,17 @@ for i in range(N):
     
     plt.plot(x, y, 'o', markersize=3, color=color)
 
-plt.arrow(-1, 1.5, 1, 0, length_includes_head=True, head_width=0.08, head_length=0.00002)
+y = 1.07
+space = 0.2
+
+s = space/2
+plt.arrow(-s, y, -1+s, 0, length_includes_head=True, width=0.01, head_width=0.04, head_length=0.04, color='k')
+plt.arrow(+s, y, +1-s, 0, length_includes_head=True, width=0.01, head_width=0.04, head_length=0.04, color='k')
+plt.text(-0.065, y-0.025, "$2r$", fontsize=16)
+
 plt.axis('equal')
+plt.ylim((-1.1, 1.1))
 plt.axis('off')
-#plt.xticks([])
-#plt.yticks([])
 plt.grid()
 plt.show()
     

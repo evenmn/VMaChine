@@ -2,13 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 from scipy.signal import savgol_filter
+import tikzplotlib
 
-asymptote = 0.073839
+plt.style.use("bmh")
+plt.rcParams["font.family"] = "Serif"
+plt.rc('figure', max_open_warning = 0)
 
-files = ["../data/int1/quantumdot/energy/VMC/2D/2P/0.010000w/ADAM_MC1048576.dat", 
-         "../data/int1/quantumdot/energy/RBM/2D/2P/0.010000w/ADAM_MC1048576.dat",
-         "../data/int1/quantumdot/energy/RBMSJ/2D/2P/0.010000w/ADAM_MC1048576.dat",
-         "../data/int1/quantumdot/energy/RBMPJ/2D/2P/0.010000w/ADAM_MC1048576.dat"
+asymptote = 3
+
+files = ["../data/int1/quantumdot/energy/VMC/2D/2P/1.000000w/ADAM_MC1048576.dat", 
+         "../data/int1/quantumdot/energy/RBM/2D/2P/1.000000w/ADAM_MC1048576.dat",
+         "../data/int1/quantumdot/energy/RBMSJ/2D/2P/1.000000w/ADAM_MC1048576.dat",
+         "../data/int1/quantumdot/energy/RBMPJ/2D/2P/1.000000w/ADAM_MC1048576.dat"
          ]
 
 label = ["VMC", 
@@ -17,21 +22,30 @@ label = ["VMC",
          "RBM+PJ"
          ]
 
+plt.figure()
+ax = plt.gca()
+ax.set_facecolor('white')
+ax.tick_params(labelsize=16)
+plt.axhline(asymptote, linestyle='--', color='r', label="Exact")
+
 for i in range(len(files)):
     data = np.loadtxt(files[i])
     x = np.linspace(0, len(data) - 1, len(data))
     x = savgol_filter(x, 51, 2)
     plt.plot(x, data, label=label[i])
 
-label_size = {"size":"14"}
+label_size = {"size":"16"}
 
-plt.axhline(asymptote, linestyle='--', color='r', label="Exact")
+plt.gcf().subplots_adjust(bottom=0.15)
+plt.gcf().subplots_adjust(left=0.18)
 
-plt.xlabel("Iteration",**label_size)
-plt.ylabel("Dimensionless energy",**label_size)
-plt.legend()
-plt.grid()
-plt.show()
+plt.xlabel("Iteration", **label_size)
+plt.ylabel("Energy [Ha]", **label_size)
+plt.legend(loc='best',fontsize=14, facecolor='white', framealpha=1)
+#plt.show()
+
+tikzplotlib.save("/home/evenmn/Master-thesis/doc/text/pgf/convergence42.tex")
+
 '''
 fig, ax = plt.subplots()
 ax.plot(x, data1, label="Brute-force Metropolis")

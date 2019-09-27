@@ -26,7 +26,7 @@ class PlotOB():
         methods     {string} :   Method
         dimensions  {int} :      Number of dimensions
         particles   {int} :      Number of particles
-        omega       {float} :    Frequency
+        omega       {string} :   Frequency
         radius      {float} :    Max radius of simulation
         newRadius   {float} :    New cropping radius
         interaction {bool} :     Interaction on (1)/ off (0)
@@ -122,15 +122,33 @@ class PlotOB():
         self.data = np.delete(self.data, indices)
         self.r = np.delete(self.r, indices)
         
+    def cut_peaks(self, threshold=0.1):
+        for i in range(1, len(self.data)-1):
+            if abs(self.data[i] - self.data[i-1]) > threshold:
+                self.data[i-1] = self.data[i]
+            elif abs(self.data[i] - self.data[i+1]) > threshold:
+               self.data[i] = self.data[i+1]
+        
     def smooth(self, window=29, order=4):
         self.data = savitzky_golay(self.data, window, order)
 
-    def exact(self):
+    def exact_qd(self):
         '''Exact solution without interaction for given w'''
-        return np.sqrt(self.omega/np.pi) * np.exp(- self.omega * self.r**2)
+        return np.sqrt(float(self.omega)/np.pi) * np.exp(- float(self.omega) * self.r**2)
+        
+    def exact_atom(self):
+        return 7.3*self.r*self.r*np.exp(-6.8*self.r)
             
     def plot_radial(self, line_style, label):
-        plt.plot(self.r, self.data, line_style, markersize=1, label=label)
+        plt.plot(self.r, self.r*self.r*self.data, line_style, markersize=1, label=label)
+        
+    def plot_exact_qd(self, line_style=':', label='Exact'):
+        exact_curve = self.exact_qd()
+        plt.plot(self.r, 1.2*exact_curve, line_style, markersize=1, label=label)
+        
+    def plot_exact_atom(self, line_style=':', label='Exact'):
+        exact_curve = self.exact_atom()
+        plt.plot(self.r, exact_curve, line_style, markersize=1, label=label)
         
         
 def saveFigure(dim, par, omega, method, optimizer='ADAM', cycles=1048576):
@@ -146,32 +164,32 @@ def saveFigure(dim, par, omega, method, optimizer='ADAM', cycles=1048576):
         
 if __name__ == '__main__':
 
-    system   = 'quantumdot'
+    system   = 'atom'
     
     methods   = ['VMC',
                  #'RBM',
-                 'RBMSJ',
-                 'RBMPJ'
+                 #'RBMSJ',
+                 #'RBMPJ'
                 ]
                 
-    dims      = [2]
+    dims      = [3]
     
-    particles = [#2, 
-                 6, 
+    particles = [2, 
+                 #6, 
                  #12, 
                  #20
                  #30,
                  #42,
-                 #2,
+                 #56,
                  #8,
                  #20
                  ]
                  
-    omegas    = [#'1.000000',
+    omegas    = ['1.000000',
                  #'0.500000',
                  #'0.280000',
                  #'0.100000',
-                 '0.010000'
+                 #'0.010000'
                  ] 
 
     radius = [#10, 
@@ -180,7 +198,7 @@ if __name__ == '__main__':
               #30,
               #35,
               #40,
-              55
+              5
               ]
                  
     newRadius = [#3, 4, 4, 10,
@@ -189,11 +207,11 @@ if __name__ == '__main__':
                  #6, 8, 12, 25,
                  #7, 8, 14, 25,
                  #7, 10, 16, 25,
-                 55
+                 2
                  ]
                  
     line_style = ["-", 
-                  #"--", 
+                  "--", 
                   "-.", 
                   ":"
                   ]
@@ -213,8 +231,9 @@ if __name__ == '__main__':
                     QD.crop_edges(newRadius[i])
                     QD.norm_bins()
                     QD.norm()
-                    QD.cut_noise(limits[m])
-                    QD.smooth()
+                    #QD.cut_noise(limits[m])
+                    #QD.cut_peaks(threshold=0.1)
+                    #QD.smooth()
                     QD.plot_radial(line_style=line_style[m], label=methods[m])
                   
                 size = 24
@@ -225,8 +244,10 @@ if __name__ == '__main__':
                 plt.gcf().subplots_adjust(left=0.18)
                 #plt.tight_layout()
 
+                QD.plot_exact_atom()
+
                 plt.xlabel("$r$", **label_size)
-                plt.ylabel(r"$\rho(r)$", **label_size)
+                plt.ylabel(r"$r^2\rho(r)$", **label_size)
                 plt.legend(loc="best", fontsize=size_legend, facecolor='white', framealpha=1)
                 #saveFigure(dims[d], particles[p], omegas[o], methods[m])
                 plt.show()
