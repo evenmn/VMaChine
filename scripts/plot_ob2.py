@@ -48,9 +48,9 @@ class PlotED():
         self.optimizer = optimizer
         self.cycles = cycles
         
-        #fileName = self.generateFileName()
-        #self.load(fileName)
-        self.data = self.exact_matrix()
+        fileName = self.generateFileName()
+        self.load(fileName)
+        #self.data = self.exact_matrix()
         
     def generateFileName(self):
         fileName  = "../data/int"
@@ -108,7 +108,6 @@ class PlotED():
             self.data /= v
         self.data /= np.sum(np.nan_to_num(self.data))
         self.data *= factor * self.particles
-        self.data /= 10
     
     def norm(self, factor=1e4):
         norm_const = np.trapz(self.data)
@@ -400,40 +399,40 @@ if __name__ == "__main__":
     system   = 'quantumdot'
     observable = 'onebody2'
     
-    methods   = [#'VMC',
-                 'RBM',
-                 #'RBMSJ',
-                 #'RBMPJ'
+    methods   = ['VMC',
+                 #'RBM',
+                 'RBMSJ',
+                 'RBMPJ'
                 ]
                 
     dims      = [2]
     
     particles = [#2, 
                  #6, 
-                 #12, 
+                 12, 
                  #20
                  #30,
                  #42,
-                 56,
+                 #56,
                  #2,
                  #8,
                  #20
                  ]
                  
-    omegas    = ['1.000000',
+    omegas    = [#'1.000000',
                  #'0.500000',
                  #'0.280000',
-                 #'0.100000',
+                 '0.100000',
                  #'0.010000'
                  ] 
 
     radius = [#10,
               #15, 
-              #25, 
+              25, 
               #30,
               #35,
-              #40,
-              3
+              #6,
+              #45
               #50
               #6
               ]
@@ -444,19 +443,19 @@ if __name__ == "__main__":
                  #6, 10, 12, 25,
                  #6, 12, 14, 30,
                  #7, 14, 16, 35
-                 3
+                 20
                  ]
                  
     for d in range(len(dims)):
         for p in range(len(particles)):
             for o in range(len(omegas)):
                 for m in range(len(methods)):
-                    QD = PlotED(system, observable, methods[m], dims[d], particles[p], omegas[o], radius[p], cycles=1048576)
+                    QD = PlotED(system, observable, methods[m], dims[d], particles[p], omegas[o], radius[p])
                     QD.crop_center(newRadius[p])
                     QD.norm_radial()
                     QD.remove_cross()
                     #QD.cut(1.)
                     QD.smooth(window=79, order=5)
                     #QD.rotate()
-                    QD.plot_3Dcontour(save=False, show=True)
+                    QD.plot_3Dcontour(save=True, show=False, size_ticks=12)
     

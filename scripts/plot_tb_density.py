@@ -133,13 +133,13 @@ def plot(data, radius):
 if __name__ == '__main__':
     system   = 'quantumdot'
 
-    maxRadius = [40]
-    newRadius = [6]
+    maxRadius = [35]
+    newRadius = [30]
 
-    methods   = ['VMC']#,'RBM']#,'RBMSJ','RBMPJ']
+    methods   = ['RBMPJ']#,'RBM']#,'RBMSJ','RBMPJ']
     dims      = ['2']
-    particles = ['42']
-    omegas    = ['1.000000']      
+    particles = ['30']
+    omegas    = ['0.100000']      
 
     i = 0
     for method in methods:
@@ -152,9 +152,9 @@ if __name__ == '__main__':
                     data = norm(data, int(dim), int(particle))
                     data = rotate(data)
                     data = remove_cross(data)
-                    data = cut(data, 6.4)
+                    data = cut(data, 0.1)
                     plot(data, newRadius[0])
-                    saveFigure(system, method, dim, particle, omega)
+                    #saveFigure(system, method, dim, particle, omega)
                     plt.show()
                     i += 1
 

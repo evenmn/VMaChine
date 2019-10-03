@@ -103,8 +103,10 @@ class PlotOB():
         self.data /= norm_const
         self.data *= self.particles
         self.data *= 100
-        #if self.method == 'VMC':
-        #    self.data/=3
+        if self.method == 'VMC':
+            self.data/=3
+        if self.method == 'RBMPJ':
+            self.data*=1.1
         
     def crop_edges(self, newRadius):
         length = len(self.data)
@@ -137,10 +139,10 @@ class PlotOB():
         return np.sqrt(float(self.omega)/np.pi) * np.exp(- float(self.omega) * self.r**2)
         
     def exact_atom(self):
-        return 7.3*self.r*self.r*np.exp(-6.8*self.r)
+        return self.r*self.r*np.exp(-self.r)
             
     def plot_radial(self, line_style, label):
-        plt.plot(self.r, self.r*self.r*self.data, line_style, markersize=1, label=label)
+        plt.plot(self.r, self.data, line_style, markersize=1, label=label)
         
     def plot_exact_qd(self, line_style=':', label='Exact'):
         exact_curve = self.exact_qd()
@@ -164,31 +166,31 @@ def saveFigure(dim, par, omega, method, optimizer='ADAM', cycles=1048576):
         
 if __name__ == '__main__':
 
-    system   = 'atom'
+    system   = 'quantumdot'
     
     methods   = ['VMC',
-                 #'RBM',
-                 #'RBMSJ',
-                 #'RBMPJ'
+                 'RBM',
+                 'RBMSJ',
+                 'RBMPJ'
                 ]
                 
-    dims      = [3]
+    dims      = [2]
     
-    particles = [2, 
+    particles = [#2, 
                  #6, 
                  #12, 
                  #20
                  #30,
-                 #42,
+                 42,
                  #56,
                  #8,
                  #20
                  ]
                  
-    omegas    = ['1.000000',
+    omegas    = [#'1.000000',
                  #'0.500000',
                  #'0.280000',
-                 #'0.100000',
+                 '0.100000',
                  #'0.010000'
                  ] 
 
@@ -198,7 +200,7 @@ if __name__ == '__main__':
               #30,
               #35,
               #40,
-              5
+              40, 40, 40, 36
               ]
                  
     newRadius = [#3, 4, 4, 10,
@@ -207,7 +209,7 @@ if __name__ == '__main__':
                  #6, 8, 12, 25,
                  #7, 8, 14, 25,
                  #7, 10, 16, 25,
-                 2
+                 30
                  ]
                  
     line_style = ["-", 
@@ -216,7 +218,7 @@ if __name__ == '__main__':
                   ":"
                   ]
                   
-    limits = [0.0, 0.0, 0.0, 0.0]
+    limits = [3.0, 2.5, 1.5, 3.0]
            
     i = 0
     for d in range(len(dims)):
@@ -227,12 +229,12 @@ if __name__ == '__main__':
                 ax.set_facecolor('white')
                 ax.tick_params(labelsize=16)
                 for m in range(len(methods)):
-                    QD = PlotOB(system, methods[m], dims[d], particles[p], omegas[o], radius[p])
+                    QD = PlotOB(system, methods[m], dims[d], particles[p], omegas[o], radius[m])
                     QD.crop_edges(newRadius[i])
                     QD.norm_bins()
                     QD.norm()
-                    #QD.cut_noise(limits[m])
-                    #QD.cut_peaks(threshold=0.1)
+                    QD.cut_noise(limits[m])
+                    QD.cut_peaks(threshold=0.1)
                     #QD.smooth()
                     QD.plot_radial(line_style=line_style[m], label=methods[m])
                   
@@ -244,11 +246,9 @@ if __name__ == '__main__':
                 plt.gcf().subplots_adjust(left=0.18)
                 #plt.tight_layout()
 
-                QD.plot_exact_atom()
-
                 plt.xlabel("$r$", **label_size)
-                plt.ylabel(r"$r^2\rho(r)$", **label_size)
+                plt.ylabel(r"$\rho(r)$", **label_size)
                 plt.legend(loc="best", fontsize=size_legend, facecolor='white', framealpha=1)
-                #saveFigure(dims[d], particles[p], omegas[o], methods[m])
+                saveFigure(dims[d], particles[p], omegas[o], methods[m])
                 plt.show()
                 i += 1
