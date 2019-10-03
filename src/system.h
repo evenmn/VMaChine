@@ -142,40 +142,40 @@ public:
     std::vector<class WaveFunction *> getWaveFunctionElements() { return m_waveFunctionElements; }
 
 private:
-    int m_numberOfElements = 0;
-    int m_numberOfHiddenNodes = m_numberOfParticles;
-    int m_numberOfParticles = 0;
+    int m_numberOfParticles = 2;
     int m_numberOfDimensions = 3;
-    int m_degreesOfFreedom = 0;
-    int m_maxParameters = 0;
-    int m_totalNumberOfParameters = 0;
+    int m_degreesOfFreedom = 6;
+    int m_numberOfElements = 3;
+    int m_numberOfHiddenNodes = m_numberOfParticles;
+    int m_maxParameters = 1;
+    int m_totalNumberOfParameters = 3;
     int m_Z = 1;
     int m_rangeOfAdaptiveSteps = 10;
     int m_additionalSteps = 4;
     int m_additionalStepsLastIter = 8;
     int m_lastIteration = 1;
-    int m_numberOfEnergies = 0;
-    int m_numberOfBins = 1;
-    int m_numberOfProcesses = 1;
+    int m_numberOfEnergies = 5;
+    int m_numberOfBins = 1000;
+    int m_numberOfProcesses = 4;
     int m_myRank = 0;
     int m_iter = 0;
 
-    int m_totalStepsWOEqui = 0;
-    int m_totalStepsWEqui = 0;
+    int m_totalStepsWOEqui = int(pow(2,19));
+    int m_totalStepsWEqui = int(pow(2,19));
     int m_totalEquilibriationSteps = 0;
-    int m_stepsWOEqui = 0;
-    int m_stepsWEqui = 0;
+    int m_stepsWOEqui = int(pow(2, 17));
+    int m_stepsWEqui = int(pow(2, 17));
     int m_equilibriationSteps = 0;
-    int m_initialStepsWOEqui = 0;
-    int m_initialTotalStepsWOEqui = 0;
+    int m_initialStepsWOEqui = int(pow(2, 17));
+    int m_initialTotalStepsWOEqui = int(pow(2, 19));
 
-    double m_equilibrationFraction = 0.001;
+    double m_equilibrationFraction = 0;
     double m_stepLength = 0.1;
     double m_omega = 1.0;
     double m_sigma = 1.0;
     double m_eta = 0.1;
     double m_tolerance = 1e-7;
-    double m_maxRadius = 10;
+    double m_maxRadius = 5;
     double m_totalTime = 0;
     double m_totalSpin = 0;
     double m_screeningStrength = 100;
@@ -184,16 +184,16 @@ private:
 
     bool m_interaction = true;
     bool m_checkConvergence = false;
-    bool m_applyAdaptiveSteps = true;
-    bool m_computeOneBodyDensity = true;
-    bool m_computeOneBodyDensity2 = true;
-    bool m_computeTwoBodyDensity = true;
-    bool m_printEnergyToFile = true;
+    bool m_applyAdaptiveSteps = false;
+    bool m_computeOneBodyDensity = false;
+    bool m_computeOneBodyDensity2 = false;
+    bool m_computeTwoBodyDensity = false;
+    bool m_printEnergyToFile = false;
     bool m_doResampling = true;
-    bool m_printParametersToFile = true;
-    bool m_calculateDistanceMatrix = true;
-    bool m_calculateRadialVector = true;
-    bool m_screening = true;
+    bool m_printParametersToFile = false;
+    bool m_calculateDistanceMatrix = false;
+    bool m_calculateRadialVector = false;
+    bool m_screening = false;
 
     class WaveFunction *m_waveFunction = nullptr;
     class Hamiltonian *m_hamiltonian = nullptr;
@@ -207,7 +207,7 @@ private:
     std::vector<class WaveFunction *> m_waveFunctionElements;
 
     std::string m_path = "../data/";
-    std::string m_trialWaveFunction = "Not defined";
+    std::string m_trialWaveFunction = "quantumdot";
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_parameters;
