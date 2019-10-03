@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 
     // --- SYSTEM SETTINGS ---
     // Parameters
+    /*
     int numberOfDimensions = 2;
     int numberOfParticles = 6;
     int numberOfHiddenNodes = numberOfParticles;
@@ -34,7 +35,7 @@ int main(int argc, char *argv[])
     bool computeTwoBodyDensity = false;  // Compute one-body density and print to file
     bool printEnergyFile = true;         // Print energy for every iteration to file
     bool printParametersToFile = false;  // Print parameter matrix to file
-    bool doResampling = true; // Print blocking file for the last iteration and do blocking
+    bool doResampling = false; // Print blocking file for the last iteration and do blocking
     bool screening = false;
 
     // --- ADVANCED SETTINGS ---
@@ -57,61 +58,62 @@ int main(int argc, char *argv[])
     // Screening tools
     double screeningStrength = 1; // Screening parameter
     double dsl = 100;             // Debye Screening length
-
+    */
     // --- SET PARAMETERS ---
     System *system = new System();
 
-    system->setPath(path);
-    system->setEquilibrationFraction(equilibration);
-    system->setStepLength(stepLength);
-    system->setFrequency(omega);
-    system->setAtomicNumber(Z);
-    system->setWidth(sigma);
-    system->setTotalSpin(totalSpin);
-    system->setLearningRate(learningRate);
-    system->setNumberOfParticles(numberOfParticles);
-    system->setNumberOfDimensions(numberOfDimensions);
-    system->setNumberOfHiddenNodes(numberOfHiddenNodes);
+    //system->setPath(path);
+    //system->setEquilibrationFraction(equilibration);
+    //system->setStepLength(stepLength);
+    //system->setFrequency(omega);
+    //system->setAtomicNumber(Z);
+    //system->setWidth(sigma);
+    //system->setTotalSpin(totalSpin);
+    //system->setLearningRate(learningRate);
+    //system->setNumberOfParticles(numberOfParticles);
+    //system->setNumberOfDimensions(numberOfDimensions);
+    //system->setNumberOfHiddenNodes(numberOfHiddenNodes);
     system->setMPITools(myRank, numberOfProcesses);
-    system->setNumberOfMetropolisSteps(numberOfSteps);
+    //system->setNumberOfMetropolisSteps(numberOfSteps);
 
-    system->setInteraction(interaction);
-    system->setParameterPrintingTools(printParametersToFile);
-    system->setConvergenceTools(checkConvergence, numberOfEnergies, tolerance);
-    system->setAdaptiveStepTools(applyAdaptiveSteps,
-                                 rangeOfAdaptiveSteps,
-                                 additionalSteps,
-                                 additionalStepsLastIter);
-    system->setDensityTools(computeOneBodyDensity,
-                            computeOneBodyDensity2,
-                            computeTwoBodyDensity,
-                            numberOfBins,
-                            maxRadius);
-    system->setEnergyPrintingTools(printEnergyFile, doResampling);
-    system->setScreeningTools(screening, screeningStrength, dsl);
+    //system->setInteraction(interaction);
+    //system->setParameterPrintingTools(printParametersToFile);
+    //system->setConvergenceTools(checkConvergence, numberOfEnergies, tolerance);
+    //system->setAdaptiveStepTools(applyAdaptiveSteps,
+    //                             rangeOfAdaptiveSteps,
+    //                             additionalSteps,
+    //                             additionalStepsLastIter);
+    //system->setDensityTools(computeOneBodyDensity,
+    //                        computeOneBodyDensity2,
+    //                        computeTwoBodyDensity,
+    //                        numberOfBins,
+    //                        maxRadius);
+    //system->setEnergyPrintingTools(printEnergyFile, doResampling);
+    //system->setScreeningTools(screening, screeningStrength, dsl);
 
-    if (argc == 2)
-        system->parserConstants(argv[1], numberOfIterations);
+    //if (argc == 2)
+    //    system->parserConstants(argv[1], numberOfIterations);
 
     system->setBasis(new Hermite(system));
-    //system->setWaveFunctionElement(new Gaussian(system));
+    system->setWaveFunctionElement(new Gaussian(system));
     system->setWaveFunctionElement(new SlaterDeterminant(system));
-    system->setWaveFunctionElement(new RBMGaussian(system));
-    system->setWaveFunctionElement(new RBMProduct(system));
-    //system->setWaveFunctionElement(new PadeJastrow(system));
+    //system->setWaveFunctionElement(new RBMGaussian(system));
+    //system->setWaveFunctionElement(new RBMProduct(system));
+    system->setWaveFunctionElement(new PadeJastrow(system));
     //system->setWaveFunctionElement(new HydrogenLike(system));
 
-    system->setRandomNumberGenerator(new MersenneTwister());
+    //system->setRandomNumberGenerator(new MersenneTwister());
     system->setOptimization(new ADAM(system));
-    system->setInitialWeights(new Randomize(system, 0.1));
+    system->setInitialWeights(new Constant(system, 1));
     system->setInitialState(new RandomNormal(system));
     system->setHamiltonian(new HarmonicOscillator(system));
     system->setMetropolis(new ImportanceSampling(system));
 
-    if (argc == 2)
-        system->parserObjects(argv[1]);
+    //if (argc == 2)
+    //    system->parserObjects(argv[1]);
 
-    system->runIterations(numberOfIterations);
+    //system->runSimulation(numberOfIterations);
+    system->runSimulation(1000);
 
     return 0;
 }
