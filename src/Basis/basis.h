@@ -11,6 +11,7 @@ public:
     void numberOfOrbitals();
     void generateListOfStates();
 
+    virtual void initialize() = 0;
     virtual void setParameters(Eigen::VectorXd parameters) = 0;
 
     virtual double evaluate(double x, int n) = 0;

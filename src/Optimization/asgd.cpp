@@ -1,5 +1,4 @@
 #include "asgd.h"
-#include "../WaveFunctions/wavefunction.h"
 #include "../sampler.h"
 #include "../system.h"
 #include <cassert>
@@ -8,12 +7,15 @@
 ASGD::ASGD(System *system, const double gamma)
     : Optimization(system)
 {
+    m_gamma = gamma;
+}
+
+void ASGD::initialize()
+{
     m_numberOfElements = m_system->getNumberOfElements();
     m_maxParameters = m_system->getMaxParameters();
-    m_waveFunctionVector = m_system->getWaveFunctionElements();
     m_eta = m_system->getLearningRate();
     m_v = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
-    m_gamma = gamma;
 }
 
 Eigen::MatrixXd ASGD::updateParameters()

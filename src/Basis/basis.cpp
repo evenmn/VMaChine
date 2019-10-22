@@ -1,6 +1,9 @@
 #include "basis.h"
 
-Basis::Basis(System *system) {}
+Basis::Basis(System *system)
+{
+    m_system = system;
+}
 
 long long Basis::factorial(const int n)
 {

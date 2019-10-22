@@ -5,10 +5,12 @@ class AtomicNucleus : public Hamiltonian
 {
 public:
     AtomicNucleus(System *system);
-    double computeLocalEnergy();
-    double getExternalEnergy();
     int getGlobalArrayNeed() { return m_globalArrayNeed; }
     std::string getLabel() { return m_label; }
+
+    void initialize();
+    double computeLocalEnergy();
+    double getExternalEnergy();
 
 private:
     int m_Z = 1;

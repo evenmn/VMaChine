@@ -4,9 +4,11 @@
 class GradientDescent : public Optimization
 {
 public:
-    GradientDescent(System *system, const double gamma, const double monotonicExp);
+    GradientDescent(System *system, const double gamma = 0, const double monotonicExp = 0);
     int getNumberOfBatches() { return m_numberOfBatches; }
     std::string getLabel() { return m_label; }
+
+    void initialize();
     Eigen::MatrixXd updateParameters();
 
 private:

@@ -14,6 +14,7 @@ class System
 {
 public:
     int adaptiveSteps();
+    void initializeSystem();
     void runMetropolisCycles();
     void checkingConvergence();
     void setNumberOfFreeDimensions();
@@ -24,7 +25,7 @@ public:
     void setAllConstants();
     void collectAllLabels();
     void setAtomicNumber(const int Z);
-    void runIterations(const int numberOfIterations);
+    void runSimulation(const int numberOfIterations = 1000);
     void printToTerminal(const int numberOfIterations);
     void setNumberOfParticles(const int numberOfParticles);
     void setNumberOfDimensions(const int numberOfDimensions);
@@ -60,7 +61,7 @@ public:
                          const double maxRadius);
     void setScreeningTools(const bool screening, const double screeningStrength, const double dsl);
     void setEnergyPrintingTools(const bool printEnergyFile, const bool printInstantEnergyFile);
-    void setMPITools(const int myRank, int numberOfProcesses);
+    void initializeMPI();
 
     void updateAllParameters(const Eigen::MatrixXd parameters);
     void initializeAllArrays(const Eigen::VectorXd positions,
@@ -142,22 +143,23 @@ public:
     std::vector<class WaveFunction *> getWaveFunctionElements() { return m_waveFunctionElements; }
 
 private:
-    int m_numberOfParticles = 2;
-    int m_numberOfDimensions = 3;
-    int m_degreesOfFreedom = 6;
-    int m_numberOfElements = 3;
-    int m_numberOfHiddenNodes = m_numberOfParticles;
-    int m_maxParameters = 1;
-    int m_totalNumberOfParameters = 3;
-    int m_Z = 1;
+    int m_numberOfParticles;
+    int m_numberOfDimensions;
+    int m_degreesOfFreedom;
+    int m_numberOfElements;
+    int m_numberOfHiddenNodes;
+    int m_maxParameters;
+    int m_totalNumberOfParameters;
+    int m_Z;
+    int m_numberOfProcesses;
+    int m_myRank;
+
     int m_rangeOfAdaptiveSteps = 10;
     int m_additionalSteps = 4;
     int m_additionalStepsLastIter = 8;
     int m_lastIteration = 1;
     int m_numberOfEnergies = 5;
     int m_numberOfBins = 1000;
-    int m_numberOfProcesses = 4;
-    int m_myRank = 0;
     int m_iter = 0;
 
     int m_totalStepsWOEqui = int(pow(2,19));
@@ -170,10 +172,6 @@ private:
     int m_initialTotalStepsWOEqui = int(pow(2, 19));
 
     double m_equilibrationFraction = 0;
-    double m_stepLength = 0.1;
-    double m_omega = 1.0;
-    double m_sigma = 1.0;
-    double m_eta = 0.1;
     double m_tolerance = 1e-7;
     double m_maxRadius = 5;
     double m_totalTime = 0;
@@ -181,6 +179,11 @@ private:
     double m_screeningStrength = 100;
     double m_dsl = 100;
     double m_globalTime = 0;
+
+    double m_omega = 1.0;
+    double m_sigma = 1.0;
+    double m_stepLength = 0.05;
+    double m_eta = 0.1;
 
     bool m_interaction = true;
     bool m_checkConvergence = false;
@@ -196,18 +199,18 @@ private:
     bool m_screening = false;
 
     class WaveFunction *m_waveFunction = nullptr;
-    class Hamiltonian *m_hamiltonian = nullptr;
-    class Basis *m_basis = nullptr;
-    class InitialState *m_initialState = nullptr;
-    class InitialWeights *m_initialWeights = nullptr;
+    class Hamiltonian *m_hamiltonian = new HarmonicOscillator(this);
+    class Basis *m_basis = new Hermite(this);
+    class InitialState *m_initialState = new RandomNormal(this);
+    class InitialWeights *m_initialWeights = new Automatize(this);
     class Sampler *m_sampler = nullptr;
-    class Metropolis *m_metropolis = nullptr;
-    class Optimization *m_optimization = nullptr;
+    class Metropolis *m_metropolis = new ImportanceSampling(this);
+    class Optimization *m_optimization = new ADAM(this);
     class RandomNumberGenerator *m_randomNumberGenerator = new MersenneTwister();
     std::vector<class WaveFunction *> m_waveFunctionElements;
 
     std::string m_path = "../data/";
-    std::string m_trialWaveFunction = "quantumdot";
+    std::string m_trialWaveFunction;
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_parameters;

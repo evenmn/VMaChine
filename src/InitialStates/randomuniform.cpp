@@ -7,11 +7,25 @@
 
 RandomUniform::RandomUniform(System *system)
     : InitialState(system)
+{}
+
+void RandomUniform::setupInitialState()
 {
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    setupInitialState();
+
+    m_positions = Eigen::VectorXd::Zero(m_degreesOfFreedom);
+    for (int i = 0; i < m_degreesOfFreedom; i++) {
+        m_positions(i) = m_system->getRandomNumberGenerator()->nextDouble();
+    }
+    InitialState::calculateDistanceMatrix();
+    InitialState::calculateRadialVector();
+
+    for (auto &i : m_system->getWaveFunctionElements()) {
+        i->initializeArrays(m_positions, m_radialVector, m_distanceMatrix);
+        i->setArrays();
+    }
 }
 
 double RandomUniform::calculateDistanceMatrixElement(int i, int j)
@@ -52,20 +66,5 @@ void RandomUniform::calculateRadialVector()
     m_radialVector = Eigen::VectorXd::Zero(m_numberOfParticles);
     for (int i = 0; i < m_numberOfParticles; i++) {
         m_radialVector(i) = calculateRadialVectorElement(i);
-    }
-}
-
-void RandomUniform::setupInitialState()
-{
-    m_positions = Eigen::VectorXd::Zero(m_degreesOfFreedom);
-    for (int i = 0; i < m_degreesOfFreedom; i++) {
-        m_positions(i) = m_system->getRandomNumberGenerator()->nextDouble();
-    }
-    InitialState::calculateDistanceMatrix();
-    InitialState::calculateRadialVector();
-
-    for (auto &i : m_system->getWaveFunctionElements()) {
-        i->initializeArrays(m_positions, m_radialVector, m_distanceMatrix);
-        i->setArrays();
     }
 }

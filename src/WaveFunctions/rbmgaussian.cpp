@@ -5,17 +5,16 @@
 
 RBMGaussian::RBMGaussian(System *system)
     : WaveFunction(system)
+{}
+
+void RBMGaussian::setConstants(const int elementNumber)
 {
+    m_elementNumber = elementNumber;
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParameters = m_degreesOfFreedom;
     m_omega = m_system->getFrequency();
     double sigma = m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
-}
-
-void RBMGaussian::setConstants(const int elementNumber)
-{
-    m_elementNumber = elementNumber;
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

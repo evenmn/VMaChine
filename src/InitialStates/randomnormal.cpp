@@ -7,13 +7,25 @@
 
 RandomNormal::RandomNormal(System *system)
     : InitialState(system)
+{}
+
+void RandomNormal::setupInitialState()
 {
-    m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
+    m_numberOfParticles = m_system->getNumberOfParticles();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_maxRadius = m_system->getMaxRadius();
     m_omega = m_system->getFrequency();
-    setupInitialState();
+
+    m_positions = Eigen::VectorXd::Zero(m_degreesOfFreedom);
+    for (int i = 0; i < m_degreesOfFreedom; i++) {
+        m_positions(i) = m_system->getRandomNumberGenerator()->nextGaussian(0, 1 / sqrt(m_omega));
+    }
+    InitialState::calculateDistanceMatrix();
+    InitialState::calculateRadialVector();
+    for (auto &i : m_system->getWaveFunctionElements()) {
+        i->initializeArrays(m_positions, m_radialVector, m_distanceMatrix);
+        i->setArrays();
+    }
 }
 
 double RandomNormal::calculateDistanceMatrixElement(int i, int j)
@@ -54,19 +66,5 @@ void RandomNormal::calculateRadialVector()
     m_radialVector = Eigen::VectorXd::Zero(m_numberOfParticles);
     for (int i = 0; i < m_numberOfParticles; i++) {
         m_radialVector(i) = calculateRadialVectorElement(i);
-    }
-}
-
-void RandomNormal::setupInitialState()
-{
-    m_positions = Eigen::VectorXd::Zero(m_degreesOfFreedom);
-    for (int i = 0; i < m_degreesOfFreedom; i++) {
-        m_positions(i) = m_system->getRandomNumberGenerator()->nextGaussian(0, 1 / sqrt(m_omega));
-    }
-    InitialState::calculateDistanceMatrix();
-    InitialState::calculateRadialVector();
-    for (auto &i : m_system->getWaveFunctionElements()) {
-        i->initializeArrays(m_positions, m_radialVector, m_distanceMatrix);
-        i->setArrays();
     }
 }

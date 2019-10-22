@@ -5,16 +5,15 @@
 
 HydrogenLike::HydrogenLike(System *system)
     : WaveFunction(system)
-{
-    m_numberOfParticles = m_system->getNumberOfParticles();
-    m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_Z = m_system->getAtomicNumber();
-}
+{}
 
 void HydrogenLike::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
+    m_numberOfParticles = m_system->getNumberOfParticles();
+    m_numberOfDimensions = m_system->getNumberOfDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_Z = m_system->getAtomicNumber();
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

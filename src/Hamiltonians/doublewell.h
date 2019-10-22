@@ -4,11 +4,13 @@
 class DoubleWell : public Hamiltonian
 {
 public:
-    DoubleWell(System *system, double displacement);
-    double computeLocalEnergy();
-    double getExternalEnergy();
+    DoubleWell(System *system, double displacement = 2);
     int getGlobalArrayNeed() { return m_globalArrayNeed; }
     std::string getLabel() { return m_label; }
+
+    void initialize();
+    double computeLocalEnergy();
+    double getExternalEnergy();
 
 private:
     double m_omega = 0;

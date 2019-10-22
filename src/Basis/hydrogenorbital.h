@@ -10,6 +10,7 @@ public:
     double evaluateDerivative(double x, int n);
     double evaluateSecondDerivative(double x, int n);
 
+    void initialize();
     void setParameters(Eigen::VectorXd parameters);
 
     double basisElement(const int n, Eigen::VectorXd position);

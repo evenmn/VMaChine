@@ -5,14 +5,13 @@
 
 Gaussian::Gaussian(System *system)
     : WaveFunction(system)
-{
-    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_omega = m_system->getFrequency();
-}
+{}
 
 void Gaussian::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_omega = m_system->getFrequency();
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

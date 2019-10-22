@@ -6,15 +6,14 @@
 
 PadeJastrow::PadeJastrow(System *system)
     : WaveFunction(system)
-{
-    m_numberOfParticles = m_system->getNumberOfParticles();
-    m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-}
+{}
 
 void PadeJastrow::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
+    m_numberOfParticles = m_system->getNumberOfParticles();
+    m_numberOfDimensions = m_system->getNumberOfDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

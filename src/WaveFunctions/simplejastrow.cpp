@@ -6,16 +6,15 @@
 
 SimpleJastrow::SimpleJastrow(System *system)
     : WaveFunction(system)
-{
-    m_numberOfParticles = m_system->getNumberOfParticles();
-    m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_numberOfParameters = m_numberOfParticles * m_numberOfParticles;
-}
+{}
 
 void SimpleJastrow::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
+    m_numberOfParticles = m_system->getNumberOfParticles();
+    m_numberOfDimensions = m_system->getNumberOfDimensions();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_numberOfParameters = m_numberOfParticles * m_numberOfParticles;
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

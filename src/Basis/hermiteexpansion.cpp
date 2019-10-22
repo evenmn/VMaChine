@@ -6,13 +6,15 @@
 
 HermiteExpansion::HermiteExpansion(System *system)
     : Basis(system)
+{}
+
+void HermiteExpansion::initialize()
 {
-    m_system = system;
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_omega = m_system->getFrequency();
     m_path = m_system->getPath();
-    m_basis = new Hermite(system);
+    m_basis = new Hermite(m_system);
     readCoefficientFile();
     Basis::numberOfOrbitals();
     Basis::generateListOfStates();

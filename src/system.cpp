@@ -1,16 +1,9 @@
 #include "system.h"
 
-void System::runIterations(const int numberOfIterations)
+void System::runSimulation(const int numberOfIterations)
 {
-    setGradients();
-    m_positions = m_initialState->getParticles();
-    m_distanceMatrix = m_initialState->getDistanceMatrix();
-    m_radialVector = m_initialState->getRadialVector();
-    m_parameters = m_initialWeights->getParameters();
-    m_sampler = new Sampler(this);
-    m_sampler->openOutputFiles();
+    initializeSystem();
     m_lastIteration = numberOfIterations - m_rangeOfAdaptiveSteps - 1;
-
     for (m_iter = 0; m_iter < numberOfIterations; m_iter++) {
         if (m_applyAdaptiveSteps) {
             m_stepsWOEqui = m_initialStepsWOEqui * adaptiveSteps();
@@ -54,6 +47,26 @@ void System::runIterations(const int numberOfIterations)
         MPI_Barrier(MPI_COMM_WORLD);
         updateAllParameters(m_parameters);
     }
+}
+
+void System::initializeSystem()
+{
+    initializeMPI();
+    setGradients();
+    m_hamiltonian->initialize();
+    m_basis->initialize();
+    setAllConstants();
+    m_optimization->initialize();
+    m_initialWeights->setupInitialWeights();
+    m_parameters = m_initialWeights->getParameters();
+    m_initialState->setupInitialState();
+    m_positions = m_initialState->getParticles();
+    m_distanceMatrix = m_initialState->getDistanceMatrix();
+    m_radialVector = m_initialState->getRadialVector();
+    m_metropolis->initialize();
+
+    m_sampler = new Sampler(this);
+    m_sampler->openOutputFiles();
 }
 
 void System::runMetropolisCycles()
@@ -225,9 +238,9 @@ void System::setGlobalArraysToCalculate()
 
 void System::setNumberOfParticles(const int numberOfParticles)
 {
-    assert(numberOfParticles
-           > 0); // Check if the elements need distance matrix or radial distance vector
+    assert(numberOfParticles > 0);
     m_numberOfParticles = numberOfParticles;
+    initializeMPI();
 }
 
 void System::setNumberOfDimensions(const int numberOfDimensions)
@@ -402,10 +415,14 @@ void System::setParameterPrintingTools(bool printParametersToFile)
     m_printParametersToFile = printParametersToFile;
 }
 
-void System::setMPITools(int myRank, int numberOfProcesses)
+void System::initializeMPI()
 {
-    m_myRank = myRank;
-    m_numberOfProcesses = numberOfProcesses;
+    int initialized;
+    MPI_Initialized(&initialized);
+    if (!initialized)
+        MPI_Init(nullptr, nullptr);
+    MPI_Comm_size(MPI_COMM_WORLD, &m_numberOfProcesses);
+    MPI_Comm_rank(MPI_COMM_WORLD, &m_myRank);
 }
 
 void System::setPath(const std::string path)
@@ -436,7 +453,6 @@ void System::setWaveFunctionElement(WaveFunction *waveFunction)
     m_waveFunctionElements.push_back(waveFunction);
     setMaxParameters();
     setNumberOfElements(m_waveFunctionElements.size());
-    setAllConstants();
 }
 
 void System::setInitialState(InitialState *initialState)

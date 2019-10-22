@@ -8,6 +8,7 @@ public:
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 
+    void initialize();
     void setParameters(Eigen::VectorXd parameters);
 
     double evaluate(double x, int n);

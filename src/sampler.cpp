@@ -173,7 +173,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     cout << " Number of processes     : " << m_numberOfProcesses << endl;
     cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
     cout << " Oscillator frequency    : " << m_omega << endl;
-    cout << " Wave function           : " << m_trialWaveFunction << endl;
+    cout << " Trial wave function     : " << m_trialWaveFunction << endl;
     cout << " Hamiltonian             : " << m_hamiltonian << endl;
     cout << " # Metropolis steps      : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
          << " equilibration)" << endl;

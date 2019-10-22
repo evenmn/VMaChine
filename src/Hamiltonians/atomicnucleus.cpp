@@ -4,6 +4,9 @@
 
 AtomicNucleus::AtomicNucleus(System *system)
     : Hamiltonian(system)
+{}
+
+void AtomicNucleus::initialize()
 {
     m_Z = m_system->getAtomicNumber();
     m_numberOfParticles = m_system->getNumberOfParticles();

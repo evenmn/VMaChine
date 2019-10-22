@@ -8,12 +8,16 @@
 SGD::SGD(System *system, const double gamma, const double monotonicExp)
     : Optimization(system)
 {
+    m_gamma = gamma;
+    m_monotonicExp = monotonicExp;
+}
+
+void SGD::initialize()
+{
     m_numberOfElements = m_system->getNumberOfElements();
     m_maxParameters = m_system->getMaxParameters();
     m_eta = m_system->getLearningRate();
     m_v = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
-    m_gamma = gamma;
-    m_monotonicExp = monotonicExp;
 }
 
 Eigen::MatrixXd SGD::updateParameters()

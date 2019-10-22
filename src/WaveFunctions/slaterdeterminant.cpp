@@ -6,17 +6,16 @@
 
 SlaterDeterminant::SlaterDeterminant(System *system)
     : WaveFunction(system)
+{}
+
+void SlaterDeterminant::setConstants(const int elementNumber)
 {
+    m_elementNumber = elementNumber;
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticlesHalf = m_numberOfParticles / 2;
     m_basis = m_system->getBasis();
-}
-
-void SlaterDeterminant::setConstants(const int elementNumber)
-{
-    m_elementNumber = elementNumber;
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

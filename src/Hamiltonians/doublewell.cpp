@@ -3,8 +3,13 @@
 #include "../system.h"
 #include <iostream>
 
-DoubleWell::DoubleWell(System *system, double displacement = 2)
+DoubleWell::DoubleWell(System *system, double displacement)
     : Hamiltonian(system)
+{
+    m_b = displacement;
+}
+
+void DoubleWell::initialize()
 {
     m_omega = m_system->getFrequency();
     m_omega_sqrd = m_omega * m_omega;
@@ -14,7 +19,6 @@ DoubleWell::DoubleWell(System *system, double displacement = 2)
     m_screening = m_system->getScreening();
     m_screeningStrength = m_system->getScreeningStrength();
     m_dsl = m_system->getDSL();
-    m_b = displacement;
     m_offset = m_numberOfParticles * m_b * m_b / 4;
 }
 

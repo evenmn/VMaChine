@@ -5,8 +5,10 @@
 
 Hermite::Hermite(System *system)
     : Basis(system)
+{}
+
+void Hermite::initialize()
 {
-    m_system = system;
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_omega = m_system->getFrequency();

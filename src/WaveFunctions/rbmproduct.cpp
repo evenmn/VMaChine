@@ -6,18 +6,17 @@
 
 RBMProduct::RBMProduct(System *system)
     : WaveFunction(system)
+{}
+
+void RBMProduct::setConstants(const int elementNumber)
 {
+    m_elementNumber = elementNumber;
     m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParameters = m_numberOfHiddenNodes * m_degreesOfFreedom + m_numberOfHiddenNodes;
     double sigma = 10 * m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
     m_sigmaQuad = m_sigmaSqrd * m_sigmaSqrd;
-}
-
-void RBMProduct::setConstants(const int elementNumber)
-{
-    m_elementNumber = elementNumber;
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

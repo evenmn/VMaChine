@@ -7,10 +7,12 @@
 
 ADAM::ADAM(System *system)
     : Optimization(system)
+{}
+
+void ADAM::initialize()
 {
     m_numberOfElements = m_system->getNumberOfElements();
     m_maxParameters = m_system->getMaxParameters();
-    m_waveFunctionVector = m_system->getWaveFunctionElements();
     m_eta = m_system->getLearningRate();
     m_m = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);
     m_v = Eigen::MatrixXd::Ones(m_numberOfElements, m_maxParameters);

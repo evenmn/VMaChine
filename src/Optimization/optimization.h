@@ -8,6 +8,8 @@ public:
     Optimization(class System *system);
     virtual int getNumberOfBatches() = 0;
     virtual std::string getLabel() = 0;
+
+    virtual void initialize() = 0;
     virtual Eigen::MatrixXd updateParameters() = 0;
     virtual ~Optimization() = 0;
 
@@ -16,7 +18,6 @@ public:
 protected:
     class System *m_system = nullptr;
     Eigen::VectorXd m_positions;
-    int m_numberOfStepsAfterEquilibrium = 0;
     int m_numberOfElements = 0;
     int m_maxParameters = 0;
     double m_eta = 1;

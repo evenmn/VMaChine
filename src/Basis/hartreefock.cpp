@@ -11,13 +11,16 @@
 HartreeFock::HartreeFock(System *system, Basis *basis)
     : Basis(system)
 {
-    m_system = system;
+    m_basis = basis;
+}
+
+void HartreeFock::initialize()
+{
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_omega = m_system->getFrequency();
     m_omegaSqrt = sqrt(m_omega);
     m_path = m_system->getPath();
-    m_basis = basis;
     readCoefficientFile();
     Basis::numberOfOrbitals();
     Basis::generateListOfStates();

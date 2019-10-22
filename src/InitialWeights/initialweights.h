@@ -12,8 +12,6 @@ public:
     virtual ~InitialWeights() = 0;
 
 protected:
-    int m_numberOfDimensions = 0;
-    int m_numberOfParticles = 0;
     int m_numberOfElements = 0;
     int m_maxParameters = 0;
     Eigen::MatrixXd m_parameters;

@@ -7,6 +7,8 @@ public:
     ASGD(System *system, const double gamma);
     int getNumberOfBatches() { return m_numberOfBatches; }
     std::string getLabel() { return m_label; }
+
+    void initialize();
     Eigen::MatrixXd updateParameters();
 
 private:

@@ -8,11 +8,6 @@ DRBMProduct::DRBMProduct(System *system, int numberOfLayers)
     : WaveFunction(system)
 {
     m_numberOfLayers = numberOfLayers;
-    m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
-    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_numberOfParameters = m_numberOfHiddenNodes * (1 + numberOfLayers * m_degreesOfFreedom);
-    double sigma = 1; //m_system->getWidth();
-    m_sigmaSqrd = sigma * sigma;
 }
 
 template<typename T>
@@ -24,6 +19,11 @@ int sgn(T val)
 void DRBMProduct::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
+    m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_numberOfParameters = m_numberOfHiddenNodes * (1 + m_numberOfLayers * m_degreesOfFreedom);
+    double sigma = 1; //m_system->getWidth();
+    m_sigmaSqrd = sigma * sigma;
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

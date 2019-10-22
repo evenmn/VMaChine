@@ -5,14 +5,13 @@
 
 PartlyRestricted::PartlyRestricted(System *system)
     : WaveFunction(system)
-{
-    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_numberOfParameters = m_degreesOfFreedom * m_degreesOfFreedom;
-}
+{}
 
 void PartlyRestricted::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_numberOfParameters = m_degreesOfFreedom * m_degreesOfFreedom;
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 

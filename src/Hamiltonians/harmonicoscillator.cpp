@@ -5,6 +5,9 @@
 
 HarmonicOscillator::HarmonicOscillator(System *system)
     : Hamiltonian(system)
+{}
+
+void HarmonicOscillator::initialize()
 {
     m_omega = m_system->getFrequency();
     m_omegaSqrd = m_omega * m_omega;
