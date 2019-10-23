@@ -6,6 +6,7 @@ class ImportanceSampling : public Metropolis
 {
 public:
     ImportanceSampling(System *system);
+    void initialize();
     bool acceptMove();
 
     void initializeQuantumForce();

@@ -23,6 +23,7 @@ private:
     Eigen::MatrixXd m_mHat;
     Eigen::MatrixXd m_vHat;
     Eigen::MatrixXd m_theta;
+    Eigen::MatrixXd m_denom;
 
     std::string m_label = "ADAM";
 };

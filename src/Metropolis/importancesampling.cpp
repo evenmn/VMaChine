@@ -8,7 +8,20 @@
 
 ImportanceSampling::ImportanceSampling(System *system)
     : Metropolis(system)
-{
+{}
+
+void ImportanceSampling::initialize() {
+    m_numberOfDimensions = m_system->getNumberOfDimensions();
+    m_numberOfParticles = m_system->getNumberOfParticles();
+    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
+    m_stepLength = m_system->getStepLength();
+    m_positions = m_system->getInitialState()->getParticles();
+    m_radialVector = m_system->getInitialState()->getRadialVector();
+    m_distanceMatrix = m_system->getInitialState()->getDistanceMatrix();
+    m_system->setGlobalArraysToCalculate();
+    m_calculateDistanceMatrix = m_system->getCalculateDistanceMatrix();
+    m_calculateRadialVector = m_system->getCalculateRadialVector();
+    m_RNG = m_system->getRandomNumberGenerator();
     m_waveFunctionVector = m_system->getWaveFunctionElements();
     m_dtD = m_stepLength * m_diff;
     m_sqrtStep = sqrt(m_stepLength);

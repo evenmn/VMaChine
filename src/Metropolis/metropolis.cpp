@@ -4,17 +4,6 @@
 Metropolis::Metropolis(System *system)
 {
     m_system = system;
-    m_numberOfDimensions = m_system->getNumberOfDimensions();
-    m_numberOfParticles = m_system->getNumberOfParticles();
-    m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_stepLength = m_system->getStepLength();
-    m_positions = m_system->getInitialState()->getParticles();
-    m_radialVector = m_system->getInitialState()->getRadialVector();
-    m_distanceMatrix = m_system->getInitialState()->getDistanceMatrix();
-    system->setGlobalArraysToCalculate();
-    m_calculateDistanceMatrix = m_system->getCalculateDistanceMatrix();
-    m_calculateRadialVector = m_system->getCalculateRadialVector();
-    m_RNG = m_system->getRandomNumberGenerator();
 }
 
 double Metropolis::calculateDistanceMatrixElement(const int i, const int j)
