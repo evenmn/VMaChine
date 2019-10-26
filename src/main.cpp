@@ -1,4 +1,4 @@
-#include "allheaders.h"
+#include "main.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     QD->setWaveFunctionElement(new SlaterDeterminant(QD));
     QD->setWaveFunctionElement(new PadeJastrow(QD));
 
-    QD->runSimulation(1000);
+    QD->setNumberOfIterations(1000);
+    QD->runSimulation();
     return 0;
 }

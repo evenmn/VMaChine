@@ -78,7 +78,7 @@ SOURCES += \
 HEADERS += \
     src/WaveFunctions/drbmproduct.h \
     src/WaveFunctions/rbmproduct.h \
-    src/allheaders.h \
+    src/main.h \
     src/system.h \
     src/sampler.h \
     src/Hamiltonians/hamiltonian.h \

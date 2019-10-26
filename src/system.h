@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "Eigen/Dense"
-#include "allheaders.h"
+#include "main.h"
 
 class System
 {
@@ -25,12 +25,13 @@ public:
     void setAllConstants();
     void collectAllLabels();
     void setAtomicNumber(const int Z);
-    void runSimulation(const int numberOfIterations = 1000);
-    void printToTerminal(const int numberOfIterations);
+    void runSimulation();
+    void printToTerminal();
     void setNumberOfParticles(const int numberOfParticles);
     void setNumberOfDimensions(const int numberOfDimensions);
     void setNumberOfHiddenNodes(const int numberOfHiddenNodes);
     void setNumberOfMetropolisSteps(const int steps);
+    void setNumberOfIterations(const int numberOfIterations);
     void setNumberOfElements(const unsigned long numberOfElements);
     void setStepLength(const double stepLength);
     void setEquilibrationFraction(const double equilibrationFraction);
@@ -39,8 +40,8 @@ public:
     void setTotalSpin(const double totalSpin);
     void setLearningRate(const double eta);
     void setPath(const std::string path);
-    void parserConstants(const std::string configFile, int &numberOfIterations);
-    void parserObjects(const std::string configFile);
+    void initializeFromConfig(int argc, char** argv);
+    void parser(const std::string configFile);
     void searchShortning(const std::vector<std::string> labels,
                          const std::string newLabel,
                          std::string &allLabels);
@@ -146,6 +147,7 @@ private:
     int m_numberOfParticles;
     int m_numberOfDimensions;
     int m_degreesOfFreedom;
+    int m_numberOfIterations;
     int m_numberOfElements;
     int m_numberOfHiddenNodes;
     int m_maxParameters;
@@ -161,6 +163,7 @@ private:
     int m_numberOfEnergies = 5;
     int m_numberOfBins = 1000;
     int m_iter = 0;
+    int m_args = 1;
 
     int m_totalStepsWOEqui = int(pow(2,19));
     int m_totalStepsWEqui = int(pow(2,19));
@@ -211,6 +214,7 @@ private:
 
     std::string m_path = "../data/";
     std::string m_trialWaveFunction;
+    std::string m_configFile = "none";
 
     Eigen::VectorXd m_positions;
     Eigen::MatrixXd m_parameters;

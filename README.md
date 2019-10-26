@@ -1,9 +1,9 @@
 # VMC
 ----------------------
-VMC is a general variational Monte-Carlo solver written in C++. It was implemented with the purpose of being flexible, such that various wave functions based on neural networks easily can added. At this point, several machine learning wave functions are already implemented, in particular based on Gaussian-binary Boltzmann machines. 
+VMC is a general variational Monte-Carlo solver written in object-oriented C++. It was implemented with the aim of being flexible, fast and readable.
 
 ## Prerequisites
-To run this project without issues, the most recent C++ version, C++17, is recommended. In addition, a few external packages are required:
+To run the code without issues, the most recent C++ version, C++17, is recommended. In addition, a few external packages are required:
 - MPI
 - Eigen
 - Blocker
@@ -54,20 +54,58 @@ This setup will run 4 parallel processes. The executable is dropped to ```build-
 
 -------------------
 
-## Adjust parameters
-All adjustable parameters can currently be found in ```main.cpp```, including
+## Set up system
+The parameters can be set in two different ways:
 
-- number of particles
-- number of dimensions
-- wave function structure
+1. They can be specified in ```main.cpp```
+2. They can be specified in a config file
 
-in addition to more technical settings. Another option is to write a config file where you specify the various parameters. Then you need add the config file as an argument when running the code, for example like this:
+In general, the settings from the config file overwrite the setting in ```main.cpp```, which again overwrites the default settings found in ```system.h```.
 
+### From ```main.cpp```
+From ```main.cpp```, all possible settings can be adjusted. Below, we present a minimalistic example on how main could look like for a two-dimensional quantum dot system with 6 electrons and frequency 1. We choose a Slater-Jastrow wave function as our trial wave function.
+``` c++
+#include "main.h"
+
+int main(int argc, char** argv)
+{
+    // Define system
+    System *QD = new System();
+
+    QD->setNumberOfParticles(6);
+    QD->setNumberOfDimensions(2);
+    QD->setFrequency(1.0);
+    QD->setInteraction(true);
+
+    QD->setLearningRate(0.1);
+    QD->setStepLength(0.05);
+    QD->setNumberOfMetropolisSteps(int(pow(2, 20)));
+
+    QD->setHamiltonian(new HarmonicOscillator(QD));
+
+    // Define trial wave function
+    QD->setBasis(new Hermite(QD));
+    QD->setWaveFunctionElement(new Gaussian(QD));
+    QD->setWaveFunctionElement(new SlaterDeterminant(QD));
+    QD->setWaveFunctionElement(new PadeJastrow(QD));
+    
+    QD->setNumberOfIterations(1000);
+    QD->runSimulation();
+    return 0;
+}
+```
+We first define the physical system and then we define method related tools. ```main.h``` needs to be included in order to pass the objects ```HarmonicOscillator(QD)```, ```Hermite(QD)``` and so on. Apart from the system declaration and simulation call, the order of calls is irrelevant. Everything that is not specified in ```main.cpp``` will stay by the default. 
+
+### From config
+The config file, ```config```, needs to be passed as an argument when running the code,
 ```bash
 mpirun -n 4 build/dotnet config
 ```
-
-An example on such a config file is found as ```config```. 
+The advantage of this is that we can change parameters without compiling the code again, which allows us to run multiple simulations in parallel. In particular, this is beneficial when running large simulations on computer clusters. To tell the program to access the config file, simply add
+```c++
+QD->initializeFromConfig(argc, argv);
+```
+to ```main.cpp```. An example on such a config file is found in [config](config). 
 
 -------------------
 
