@@ -6,31 +6,31 @@ Metropolis::Metropolis(System *system)
     m_system = system;
 }
 
-double Metropolis::calculateDistanceMatrixElement(const int i, const int j)
+double Metropolis::calculateDistanceMatrixElement(const arma::uword i, const arma::uword j)
 {
     double dist = 0;
-    int parti = m_numberOfDimensions * i;
-    int partj = m_numberOfDimensions * j;
-    for (int d = 0; d < m_numberOfDimensions; d++) {
+    arma::uword parti = m_numberOfDimensions * i;
+    arma::uword partj = m_numberOfDimensions * j;
+    for (arma::uword d = 0; d < m_numberOfDimensions; d++) {
         double diff = m_positions(parti + d) - m_positions(partj + d);
         dist += diff * diff;
     }
     return sqrt(dist);
 }
 
-void Metropolis::calculateDistanceMatrixCross(const int particle)
+void Metropolis::calculateDistanceMatrixCross(const arma::uword particle)
 {
-    for (int i = 0; i < m_numberOfParticles; i++) {
+    for (arma::uword i = 0; i < m_numberOfParticles; i++) {
         m_distanceMatrix(particle, i) = calculateDistanceMatrixElement(particle, i);
         m_distanceMatrix(i, particle) = m_distanceMatrix(particle, i);
     }
 }
 
-void Metropolis::calculateRadialVectorElement(const int particle)
+void Metropolis::calculateRadialVectorElement(const arma::uword particle)
 {
     double sqrdElementWise = 0;
-    int initPartCoord = particle * m_numberOfDimensions;
-    for (int i = initPartCoord; i < initPartCoord + m_numberOfDimensions; i++) {
+    arma::uword initPartCoord = particle * m_numberOfDimensions;
+    for (arma::uword i = initPartCoord; i < initPartCoord + m_numberOfDimensions; i++) {
         sqrdElementWise += m_positions(i) * m_positions(i);
     }
     m_radialVector(particle) = sqrt(sqrdElementWise);

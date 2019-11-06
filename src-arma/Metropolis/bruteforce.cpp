@@ -10,8 +10,7 @@ BruteForce::BruteForce(System *system)
     : Metropolis(system)
 {}
 
-void BruteForce::initialize()
-{
+void BruteForce::initialize() {
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
@@ -27,7 +26,7 @@ void BruteForce::initialize()
 
 bool BruteForce::acceptMove()
 {
-    int i = m_RNG->nextInt(m_degreesOfFreedom);
+    arma::uword i = m_RNG->nextInt(m_degreesOfFreedom);
 
     m_positionsOld = m_positions;
     m_radialVectorOld = m_radialVector;
@@ -35,10 +34,10 @@ bool BruteForce::acceptMove()
 
     m_positions(i) += 10 * (m_RNG->nextDouble() - 0.5) * m_stepLength;
     if (m_calculateDistanceMatrix) {
-        Metropolis::calculateDistanceMatrixCross(int(i / m_numberOfDimensions));
+        Metropolis::calculateDistanceMatrixCross(arma::uword(i / m_numberOfDimensions));
     }
     if (m_calculateRadialVector) {
-        Metropolis::calculateRadialVectorElement(int(i / m_numberOfDimensions));
+        Metropolis::calculateRadialVectorElement(arma::uword(i / m_numberOfDimensions));
     }
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, i);
 
