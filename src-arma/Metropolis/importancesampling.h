@@ -9,12 +9,13 @@ public:
     void initialize();
     bool acceptMove();
 
-    double QuantumForce(const int i);
-    double GreenRatio(const int i);
+    void initializeQuantumForce();
+    double QuantumForce(const arma::uword i);
+    double GreenRatio(const arma::uword i);
 
 private:
-    Eigen::VectorXd m_quantumForceOld;
-    Eigen::VectorXd m_quantumForceNew;
+    arma::vec m_quantumForceOld;
+    arma::vec m_quantumForceNew;
     std::vector<class WaveFunction *> m_waveFunctionVector;
 
     double m_dtD = 1;

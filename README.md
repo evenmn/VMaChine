@@ -5,7 +5,7 @@ VMC is a general variational Monte-Carlo solver written in object-oriented C++. 
 ## Prerequisites
 To run the code without issues, the most recent C++ version, C++17, is recommended. In addition, a few external packages are required:
 - MPI
-- Eigen
+- Eigen or Armadillo
 - Blocker
 
 ### MPI
@@ -19,6 +19,9 @@ MPI is also avaliable on other platforms.
 ### Eigen
 Eigen is a C++ template library for linear algebra operations. See 
 [http://eigen.tuxfamily.org/](http://eigen.tuxfamily.org/) for installation details.
+
+### Armadillo
+Armadillo is a C++ library for linear algebra and scientific computing. For installation details, see [this link](https://www.uio.no/studier/emner/matnat/fys/FYS4411/v13/guides/installing-armadillo/).
 
 ### Blocker
 Blocker is an auto blocking package developed by Marius Jonsson, which is our preferred resampling tool. To get the package, go to [https://github.com/computative/block](https://github.com/computative/block) and clone the repository. 
@@ -39,14 +42,14 @@ or simply run ```./CompileVMC```. The executable is then found in the ```build``
 
 ### QMake (QT-creator)
 1. [Download QT-creator](https://www.qt.io/download-qt-installer?hsCtaTracking=9f6a2170-a938-42df-a8e2-a9f0b1d6cdce%7C6cb0de4f-9bb5-4778-ab02-bfb62735f3e5)
-2. Configure the building file ```QMC.pro```
+2. Configure the building file ```EigenVMC.pro``` or ```ArmaVMC.pro```, where the former uses the Eigen library and the latter uses the Armadillo library.
 
 The project can then be run in QT-creator using ```ctrl``` + ```R```.
 
 #### Parallel processing using QT-creator
 To run in parallel, one needs to add a run configuration that supports this. Go to ```Projects-> Run-> Add-> Custom Executable```. Then set
 - Executable: ```/usr/bin/mpirun```
-- Command line arguments: ```-n 4 build-qt/QMC```
+- Command line arguments: ```-n 4 build-qt/EigenVMC``` or ```-n 4 build-qt/ArmaVMC```
 - Working directory: ```/where/the/executable/is```
 
 This setup will run 4 parallel processes. The executable is dropped to ```build-qt/```. The settings window should look similar to this

@@ -10,8 +10,7 @@ ImportanceSampling::ImportanceSampling(System *system)
     : Metropolis(system)
 {}
 
-void ImportanceSampling::initialize()
-{
+void ImportanceSampling::initialize() {
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
@@ -26,31 +25,12 @@ void ImportanceSampling::initialize()
     m_waveFunctionVector = m_system->getWaveFunctionElements();
     m_dtD = m_stepLength * m_diff;
     m_sqrtStep = sqrt(m_stepLength);
-
-    m_quantumForceNew = Eigen::VectorXd::Zero(m_degreesOfFreedom);
-    for (int i = 0; i < m_degreesOfFreedom; i++) {
-        m_quantumForceNew(i) = QuantumForce(i);
-    }
-}
-
-double ImportanceSampling::QuantumForce(const int i)
-{
-    double QF = 0;
-    for (auto &j : m_waveFunctionVector) {
-        QF += j->computeGradient(i);
-    }
-    return 2 * QF;
-}
-
-double ImportanceSampling::GreenRatio(const int i)
-{
-    double dQF = m_quantumForceOld(i) - m_quantumForceNew(i);
-    return exp(0.5 * dQF * m_dx) + 1;
+    initializeQuantumForce();
 }
 
 bool ImportanceSampling::acceptMove()
 {
-    int i = m_RNG->nextInt(m_degreesOfFreedom);
+    arma::uword i = m_RNG->nextInt(m_degreesOfFreedom);
 
     m_quantumForceOld = m_quantumForceNew;
     m_positionsOld = m_positions;
@@ -61,10 +41,10 @@ bool ImportanceSampling::acceptMove()
     m_dx = m_dtD * m_quantumForceNew(i) + m_RNG->nextGaussian(0, 1) * m_sqrtStep;
     m_positions(i) += m_dx;
     if (m_calculateDistanceMatrix) {
-        Metropolis::calculateDistanceMatrixCross(int(i / m_numberOfDimensions));
+        Metropolis::calculateDistanceMatrixCross(arma::uword(i / m_numberOfDimensions));
     }
     if (m_calculateRadialVector) {
-        Metropolis::calculateRadialVectorElement(int(i / m_numberOfDimensions));
+        Metropolis::calculateRadialVectorElement(arma::uword(i / m_numberOfDimensions));
     }
 
     m_system->updateAllArrays(m_positions, m_radialVector, m_distanceMatrix, i);
@@ -80,4 +60,27 @@ bool ImportanceSampling::acceptMove()
         return false;
     }
     return true;
+}
+
+void ImportanceSampling::initializeQuantumForce()
+{
+    m_quantumForceNew.zeros(m_degreesOfFreedom);
+    for (arma::uword i = 0; i < m_degreesOfFreedom; i++) {
+        m_quantumForceNew(i) = QuantumForce(i);
+    }
+}
+
+double ImportanceSampling::QuantumForce(const arma::uword i)
+{
+    double QF = 0;
+    for (auto &j : m_waveFunctionVector) {
+        QF += j->computeGradient(i);
+    }
+    return 2 * QF;
+}
+
+double ImportanceSampling::GreenRatio(const arma::uword i)
+{
+    double dQF = m_quantumForceOld(i) - m_quantumForceNew(i);
+    return exp(0.5 * dQF * m_dx) + 1;
 }
