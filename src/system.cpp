@@ -52,10 +52,11 @@ void System::runSimulation(const int numberOfIterations)
 void System::initializeSystem()
 {
     initializeMPI();
-    setGradients();
     m_hamiltonian->initialize();
     m_basis->initialize();
     setAllConstants();
+    setMaxParameters();
+    setGradients();
     m_optimization->initialize();
     m_initialWeights->setupInitialWeights();
     m_parameters = m_initialWeights->getParameters();
@@ -97,7 +98,7 @@ void System::printToTerminal(int numberOfIterations)
             m_sampler->printFinalOutputToTerminal();
             std::cout << std::endl;
             std::cout << "Average CPU time: " << m_globalTime / m_lastIteration << std::endl;
-            std::cout << "Finalized successfully" << std::endl;
+            //std::cout << "Finalized successfully" << std::endl;
         }
 
         MPI_Finalize();
@@ -307,6 +308,15 @@ void System::setMaxParameters()
     m_totalNumberOfParameters = counter;
 }
 
+void System::setMaxParameter(WaveFunction *waveFunction)
+{
+    int numberOfParameters = waveFunction->getNumberOfParameters();
+    if (numberOfParameters > m_maxParameters) {
+        m_maxParameters = numberOfParameters;
+    }
+    m_totalNumberOfParameters += numberOfParameters;
+}
+
 void System::setStepLength(const double stepLength)
 {
     assert(stepLength > 0);
@@ -443,7 +453,7 @@ void System::setBasis(Basis *basis)
 void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements)
 {
     m_waveFunctionElements = waveFunctionElements;
-    setMaxParameters();
+    //setMaxParameters();
     setNumberOfElements(waveFunctionElements.size());
     setAllConstants();
 }
@@ -451,7 +461,7 @@ void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunct
 void System::setWaveFunctionElement(WaveFunction *waveFunction)
 {
     m_waveFunctionElements.push_back(waveFunction);
-    setMaxParameters();
+    //setMaxParameter(waveFunction);
     setNumberOfElements(m_waveFunctionElements.size());
 }
 

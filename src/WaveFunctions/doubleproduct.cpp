@@ -17,11 +17,11 @@ void DoubleProduct::setConstants(const int elementNumber)
     double sigma = 10 * m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
     m_sigmaQuad = m_sigmaSqrd * m_sigmaSqrd;
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void DoubleProduct::updateParameters(Eigen::MatrixXd parameters)
 {
+    std::cout << "updateParameters1" << std::endl;
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber)
                                    .segment(m_numberOfHiddenNodes,
                                             m_degreesOfFreedom * m_numberOfHiddenNodes);
@@ -29,6 +29,7 @@ void DoubleProduct::updateParameters(Eigen::MatrixXd parameters)
 
     m_WSqrd = m_W.cwiseAbs2();
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
+    std::cout << "updateParameters2" << std::endl;
 }
 
 void DoubleProduct::initializeArrays(const Eigen::VectorXd positions,
@@ -36,21 +37,25 @@ void DoubleProduct::initializeArrays(const Eigen::VectorXd positions,
                                      const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
+    m_positionBlock = WaveFunction::reshape(positions, m_numberOfParticles, m_numberOfDimensions);
     m_probabilityRatio = 1;
 
+    m_v = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfHiddenNodes);
     m_n = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfHiddenNodes);
-    m_p = Eigen::MatrixXd::Zero(m_numberOfHiddenNodes, m_numberOfHiddenNodes);
+    m_p = Eigen::MatrixXd::Zero(m_numberOfParticles, m_numberOfHiddenNodes);
     updateVectors();
 }
 
 void DoubleProduct::updateArrays(const Eigen::VectorXd positions,
-                                 const Eigen::VectorXd radialVector,
-                                 const Eigen::MatrixXd distanceMatrix,
-                                 const int changedCoord)
+                                 const Eigen::VectorXd /*radialVector*/,
+                                 const Eigen::MatrixXd /*distanceMatrix*/,
+                                 const int /*changedCoord*/)
 {
+    std::cout << "updateArrays1" << std::endl;
     m_positions = positions;
     updateVectors();
     updateRatio();
+    std::cout << "updateArrays2" << std::endl;
 }
 
 void DoubleProduct::setArrays()
@@ -78,27 +83,45 @@ double DoubleProduct::evaluateRatio()
 
 double DoubleProduct::computeGradient(const int k)
 {
-    return double(m_W.row(k) * m_n) / m_sigmaSqrd;
+    std::cout << "computeGradient1" << std::endl;
+    int particle = int(k % m_numberOfDimensions);
+    double g = double(m_W.row(k) * m_n.row(particle).transpose()) / m_sigmaSqrd;
+    std::cout << "computeGradient2" << std::endl;
+    return double(m_W.row(k) * m_n.row(particle).transpose()) / m_sigmaSqrd;
 }
 
 double DoubleProduct::computeLaplacian()
 {
-    return (m_WSqrd * m_p.cwiseProduct(m_n)).sum() / m_sigmaQuad;
+    double result = 0;
+    for (int k = 0; k < m_degreesOfFreedom; k++) {
+        int particle = int(k % m_numberOfDimensions);
+        result += m_WSqrd.row(k) * m_n.row(particle).cwiseProduct(m_p.row(particle)).transpose();
+    }
+    return result / m_sigmaQuad;
 }
 
 Eigen::VectorXd DoubleProduct::computeParameterGradient()
 {
-    Eigen::MatrixXd out = m_positions * m_n.transpose();
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
+    Eigen::VectorXd m_nSum = m_n.colwise().sum();
+    Eigen::MatrixXd out = m_positions * m_nSum.transpose();
     m_gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
-    m_gradients.head(m_numberOfHiddenNodes) = m_n;
+    m_gradients.head(m_numberOfHiddenNodes) = m_nSum;
     return m_gradients;
 }
 
 void DoubleProduct::updateVectors()
 {
-    m_v = m_b + m_W.transpose() * m_positions / m_sigmaSqrd;
-    Eigen::VectorXd m_e = m_v.array().exp();
-    m_p = (m_e + Eigen::VectorXd::Ones(m_numberOfHiddenNodes)).cwiseInverse();
+    for (int i = 0; i < m_numberOfParticles; i++) {
+        m_v.row(i) = m_b
+                     + m_positionBlock.row(i)
+                           * m_W.block(m_numberOfDimensions * i,
+                                       0,
+                                       m_numberOfDimensions,
+                                       m_numberOfHiddenNodes);
+    }
+    Eigen::MatrixXd m_e = m_v.array().exp();
+    m_p = (m_e + Eigen::MatrixXd::Ones(m_numberOfParticles, m_numberOfHiddenNodes)).cwiseInverse();
     m_n = m_e.cwiseProduct(m_p);
 }
 

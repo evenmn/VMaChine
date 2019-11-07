@@ -17,7 +17,6 @@ void RBMProduct::setConstants(const int elementNumber)
     double sigma = 10 * m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
     m_sigmaQuad = m_sigmaSqrd * m_sigmaSqrd;
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void RBMProduct::updateParameters(Eigen::MatrixXd parameters)
@@ -88,6 +87,7 @@ double RBMProduct::computeLaplacian()
 
 Eigen::VectorXd RBMProduct::computeParameterGradient()
 {
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
     Eigen::MatrixXd out = m_positions * m_n.transpose();
     m_gradients.segment(m_numberOfHiddenNodes, out.size()) = WaveFunction::flatten(out);
     m_gradients.head(m_numberOfHiddenNodes) = m_n;

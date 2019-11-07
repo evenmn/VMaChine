@@ -1,4 +1,4 @@
-#include "allheaders.h"
+#include "main.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,9 +18,11 @@ int main(int argc, char *argv[])
 
     // Define trial wave function
     QD->setBasis(new Hermite(QD));
-    QD->setWaveFunctionElement(new Gaussian(QD));
+    QD->setWaveFunctionElement(new RBMGaussian(QD));
+    //QD->setWaveFunctionElement(new Gaussian(QD));
     QD->setWaveFunctionElement(new SlaterDeterminant(QD));
-    QD->setWaveFunctionElement(new PadeJastrow(QD));
+    //QD->setWaveFunctionElement(new PadeJastrow(QD));
+    QD->setWaveFunctionElement(new DoubleProduct(QD));
 
     QD->runSimulation(1000);
     return 0;

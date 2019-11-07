@@ -16,7 +16,6 @@ void SlaterDeterminant::setConstants(const int elementNumber)
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_numberOfParticlesHalf = m_numberOfParticles / 2;
     m_basis = m_system->getBasis();
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions,
@@ -195,5 +194,5 @@ double SlaterDeterminant::computeLaplacian()
 
 Eigen::VectorXd SlaterDeterminant::computeParameterGradient()
 {
-    return m_gradients;
+    return Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }

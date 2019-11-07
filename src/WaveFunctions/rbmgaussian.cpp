@@ -15,7 +15,6 @@ void RBMGaussian::setConstants(const int elementNumber)
     m_omega = m_system->getFrequency();
     double sigma = m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters)
@@ -24,8 +23,8 @@ void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters)
 }
 
 void RBMGaussian::initializeArrays(const Eigen::VectorXd positions,
-                                   const Eigen::VectorXd radialVector,
-                                   const Eigen::MatrixXd distanceMatrix)
+                                   const Eigen::VectorXd /*radialVector*/,
+                                   const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
     m_Xa = positions - m_a;
@@ -33,8 +32,8 @@ void RBMGaussian::initializeArrays(const Eigen::VectorXd positions,
 }
 
 void RBMGaussian::updateArrays(const Eigen::VectorXd positions,
-                               const Eigen::VectorXd radialVector,
-                               const Eigen::MatrixXd distanceMatrix,
+                               const Eigen::VectorXd /*radialVector*/,
+                               const Eigen::MatrixXd /*distanceMatrix*/,
                                const int i)
 {
     m_positions = positions;
@@ -69,12 +68,12 @@ double RBMGaussian::computeGradient(const int k)
 
 double RBMGaussian::computeLaplacian()
 {
-    ;
     return -m_degreesOfFreedom / m_sigmaSqrd;
 }
 
 Eigen::VectorXd RBMGaussian::computeParameterGradient()
 {
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
     m_gradients.head(m_degreesOfFreedom) = m_Xa / m_sigmaSqrd;
     return m_gradients;
 }

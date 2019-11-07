@@ -14,9 +14,9 @@ public:
                           const Eigen::VectorXd radialVector,
                           const Eigen::MatrixXd distanceMatrix);
     void updateArrays(const Eigen::VectorXd positions,
-                      const Eigen::VectorXd radialVector,
-                      const Eigen::MatrixXd distanceMatrix,
-                      const int changedCoord);
+                      const Eigen::VectorXd,
+                      const Eigen::MatrixXd,
+                      const int);
     void setConstants(const int elementNumber);
     void setArrays();
     void resetArrays();
@@ -39,15 +39,17 @@ private:
 
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
+    Eigen::MatrixXd m_positionBlock;
+    Eigen::MatrixXd m_positionBlockOld;
     Eigen::VectorXd m_b;
     Eigen::MatrixXd m_W;
     Eigen::MatrixXd m_WSqrd;
-    Eigen::VectorXd m_vOld;
-    Eigen::VectorXd m_v;
-    Eigen::VectorXd m_nOld;
-    Eigen::VectorXd m_n;
-    Eigen::VectorXd m_pOld;
-    Eigen::VectorXd m_p;
+    Eigen::MatrixXd m_vOld;
+    Eigen::MatrixXd m_v;
+    Eigen::MatrixXd m_nOld;
+    Eigen::MatrixXd m_n;
+    Eigen::MatrixXd m_pOld;
+    Eigen::MatrixXd m_p;
     Eigen::VectorXd m_gradients;
 
     // Properties of the element (DO NOT TOUCH!)
