@@ -24,4 +24,13 @@ Eigen::Map<Eigen::MatrixXd> WaveFunction::square(Eigen::VectorXd A)
     return Eigen::Map<Eigen::MatrixXd>(A.data(), Eigen::Index(sqrt(size)), Eigen::Index(sqrt(size)));
 }
 
+Eigen::MatrixXd WaveFunction::stack(Eigen::VectorXd A, int n)
+{
+    Eigen::MatrixXd stacked = Eigen::MatrixXd::Zero(A.size(), n);
+    for (int i = 0; i < n; i++) {
+        stacked.row(i) = A;
+    }
+    return stacked;
+}
+
 WaveFunction::~WaveFunction() {}

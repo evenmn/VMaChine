@@ -18,6 +18,7 @@ public:
     void runMetropolisCycles();
     void checkingConvergence();
     void setNumberOfFreeDimensions();
+    void setMaxParameter(WaveFunction *waveFunction);
     void setMaxParameters();
     void setGradients();
     void setGlobalArraysToCalculate();

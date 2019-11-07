@@ -1,6 +1,7 @@
 #include "sampler.h"
 #include "system.h"
 
+#include "WaveFunctions/doubleproduct.h"
 #include "WaveFunctions/drbmproduct.h"
 #include "WaveFunctions/gaussian.h"
 #include "WaveFunctions/hydrogenlike.h"

@@ -36,6 +36,7 @@ public:
                                         const Eigen::Index m,
                                         const Eigen::Index n);
     Eigen::Map<Eigen::MatrixXd> square(Eigen::VectorXd A);
+    Eigen::MatrixXd stack(Eigen::VectorXd A, int n);
 
 protected:
     int m_numberOfParticles = 0;
