@@ -30,7 +30,9 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 # Load internal source files
 SOURCES += src/main.cpp \
+    src/WaveFunctions/doubleproduct.cpp \
     src/WaveFunctions/drbmproduct.cpp \
+    src/WaveFunctions/fnn.cpp \
     src/WaveFunctions/rbmproduct.cpp \
     src/system.cpp \
     src/sampler.cpp \
@@ -76,9 +78,11 @@ SOURCES += \
 
 # Load internal header files
 HEADERS += \
+    src/WaveFunctions/doubleproduct.h \
     src/WaveFunctions/drbmproduct.h \
+    src/WaveFunctions/fnn.h \
     src/WaveFunctions/rbmproduct.h \
-    src/allheaders.h \
+    src/main.h \
     src/system.h \
     src/sampler.h \
     src/Hamiltonians/hamiltonian.h \

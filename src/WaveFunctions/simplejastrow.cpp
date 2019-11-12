@@ -15,7 +15,6 @@ void SimpleJastrow::setConstants(const int elementNumber)
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParameters = m_numberOfParticles * m_numberOfParticles;
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void SimpleJastrow::initializeArrays(const Eigen::VectorXd positions,
@@ -108,6 +107,7 @@ double SimpleJastrow::computeLaplacian()
 
 Eigen::VectorXd SimpleJastrow::computeParameterGradient()
 {
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
     m_gradients.head(m_numberOfParameters) = WaveFunction::flatten(m_distanceMatrix);
     return m_gradients;
 }
