@@ -12,12 +12,11 @@ void Gaussian::setConstants(const int elementNumber)
     m_elementNumber = elementNumber;
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_omega = m_system->getFrequency();
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void Gaussian::initializeArrays(const Eigen::VectorXd positions,
-                                const Eigen::VectorXd radialVector,
-                                const Eigen::MatrixXd distanceMatrix)
+                                const Eigen::VectorXd /*radialVector*/,
+                                const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
     m_probabilityRatio = 1;
@@ -31,8 +30,8 @@ void Gaussian::updateProbabilityRatio(int changedCoord)
 }
 
 void Gaussian::updateArrays(const Eigen::VectorXd positions,
-                            const Eigen::VectorXd radialVector,
-                            const Eigen::MatrixXd distanceMatrix,
+                            const Eigen::VectorXd /*radialVector*/,
+                            const Eigen::MatrixXd /*distanceMatrix*/,
                             const int changedCoord)
 {
     m_positions = positions;
@@ -75,6 +74,7 @@ double Gaussian::computeLaplacian()
 
 Eigen::VectorXd Gaussian::computeParameterGradient()
 {
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
     m_gradients(0) = -0.5 * m_omega * m_positions.cwiseAbs2().sum();
     return m_gradients;
 }

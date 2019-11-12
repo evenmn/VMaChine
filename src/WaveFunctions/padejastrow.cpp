@@ -14,7 +14,6 @@ void PadeJastrow::setConstants(const int elementNumber)
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void PadeJastrow::initializeArrays(const Eigen::VectorXd positions,
@@ -113,6 +112,7 @@ double PadeJastrow::computeLaplacian()
 
 Eigen::VectorXd PadeJastrow::computeParameterGradient()
 {
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
     m_gradients(0) = -m_beta.cwiseProduct(m_h.cwiseAbs2()).sum() / 2;
     return m_gradients;
 }

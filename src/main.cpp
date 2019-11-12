@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
     // Define system
     System *QD = new System();
 
-    QD->setNumberOfParticles(6);
+    QD->setNumberOfParticles(2);
     QD->setNumberOfDimensions(2);
     QD->setFrequency(1.0);
     QD->setInteraction(true);
@@ -18,11 +18,11 @@ int main(int argc, char *argv[])
 
     // Define trial wave function
     QD->setBasis(new Hermite(QD));
-    QD->setWaveFunctionElement(new RBMGaussian(QD));
-    //QD->setWaveFunctionElement(new Gaussian(QD));
-    QD->setWaveFunctionElement(new SlaterDeterminant(QD));
-    //QD->setWaveFunctionElement(new PadeJastrow(QD));
-    QD->setWaveFunctionElement(new DoubleProduct(QD));
+    //QD->setWaveFunctionElement(new RBMGaussian(QD));
+    QD->setWaveFunctionElement(new Gaussian(QD));
+    //QD->setWaveFunctionElement(new SlaterDeterminant(QD));
+    QD->setWaveFunctionElement(new PadeJastrow(QD));
+    //QD->setWaveFunctionElement(new DoubleProduct(QD));
 
     QD->setNumberOfIterations(1000);
     QD->runSimulation();

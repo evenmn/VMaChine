@@ -24,7 +24,6 @@ void DRBMProduct::setConstants(const int elementNumber)
     m_numberOfParameters = m_numberOfHiddenNodes * (1 + m_numberOfLayers * m_degreesOfFreedom);
     double sigma = 1; //m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
-    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 }
 
 void DRBMProduct::updateGradient()
@@ -178,6 +177,7 @@ double DRBMProduct::computeLaplacian()
 
 Eigen::VectorXd DRBMProduct::computeParameterGradient()
 {
+    m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
     for (int l = 0; l < m_numberOfHiddenNodes; l++) {
         m_gradients(l) = m_n(l);
         for (int m = 0; m < m_degreesOfFreedom; m++) {
