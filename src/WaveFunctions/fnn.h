@@ -1,13 +1,13 @@
 #pragma once
+#include "../Activation/activation.h"
+#include "../Activation/sigmoid.h"
 #include "wavefunction.h"
+#include <vector>
 
 class FNN : public WaveFunction
 {
 public:
-    FNN(class System *system,
-        int numberOfHiddenUnits = 5,
-        Eigen::VectorXd (*f1)(Eigen::VectorXd) = [](Eigen::VectorXd x) { return x; },
-        double (*f2)(double) = [](double x) { return x; });
+    FNN(class System *system);
     int getNumberOfParameters() { return m_numberOfParameters; }
     int getGlobalArrayNeed() { return m_globalArrayNeed; }
     std::string getLabel() { return m_label; }
@@ -41,9 +41,6 @@ private:
     double m_probabilityRatio = 0;
     double m_probabilityRatioOld = 0;
 
-    double (*m_f1)(double);
-    double (*m_f2)(double);
-
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
 
@@ -51,6 +48,10 @@ private:
     Eigen::VectorXd m_W2;
 
     Eigen::VectorXd m_gradients;
+
+    std::vector<Eigen::MatrixXd> m_weights;
+    std::vector<class Activation *> m_activationFunctions;
+    std::vector<int> m_units;
 
     std::string m_label = "fnn";
 };

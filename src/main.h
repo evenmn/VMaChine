@@ -13,6 +13,15 @@
 #include "WaveFunctions/slaterdeterminant.h"
 #include "WaveFunctions/wavefunction.h"
 
+#include "Activation/activation.h"
+#include "Activation/elu.h"
+#include "Activation/leakyrelu.h"
+#include "Activation/purelinear.h"
+#include "Activation/relu.h"
+
+#include "Layer/dense.h"
+#include "Layer/layer.h"
+
 #include "Hamiltonians/atomicnucleus.h"
 #include "Hamiltonians/doublewell.h"
 #include "Hamiltonians/hamiltonian.h"

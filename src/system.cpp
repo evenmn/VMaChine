@@ -467,6 +467,17 @@ void System::setWaveFunctionElement(WaveFunction *waveFunction)
     setNumberOfElements(m_waveFunctionElements.size());
 }
 
+void System::addFNNLayer(int numberOfUnits, Activation *activation)
+{
+    m_hiddenUnits.push_back(numberOfUnits);
+    m_layers.push_back(new Dense(this,
+                                 m_hiddenUnits.at(m_hiddenUnits.size() - 2),
+                                 m_hiddenUnits.at(m_hiddenUnits.size() - 1),
+                                 activation));
+    m_activationFunctions.push_back(activation);
+    setNumberOfElements(m_waveFunctionElements.size());
+}
+
 void System::setInitialState(InitialState *initialState)
 {
     m_initialState = initialState;
