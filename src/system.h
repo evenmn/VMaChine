@@ -86,6 +86,7 @@ public:
     void setRandomNumberGenerator(class RandomNumberGenerator *randomNumberGenerator);
     void setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements);
     void setWaveFunctionElement(WaveFunction *waveFunction);
+    void addFNNLayer(int numberOfUnits, Activation *activation);
 
     class WaveFunction *getWaveFunction() { return m_waveFunction; }
     class Hamiltonian *getHamiltonian() { return m_hamiltonian; }
@@ -125,6 +126,7 @@ public:
     double getTotalSpin() { return m_totalSpin; }
     double getScreeningStrength() { return m_screeningStrength; }
     double getDSL() { return m_dsl; }
+
     bool getScreening() { return m_screening; }
     bool getInteraction() { return m_interaction; }
     bool computeOneBodyDensity() { return m_computeOneBodyDensity; }
@@ -135,13 +137,18 @@ public:
     bool doResampling() { return m_doResampling; }
     bool getCalculateDistanceMatrix() { return m_calculateDistanceMatrix; }
     bool getCalculateRadialVector() { return m_calculateRadialVector; }
+
     Eigen::VectorXd getPositions() { return m_positions; }
     Eigen::VectorXd getRadialVector() { return m_radialVector; }
     Eigen::MatrixXd getDistanceMatrix() { return m_distanceMatrix; }
     Eigen::MatrixXd getWeights() { return m_parameters; }
+
     std::string getPath() { return m_path; }
     std::string getTrialWaveFunction() { return m_trialWaveFunction; }
+
     std::vector<class WaveFunction *> getWaveFunctionElements() { return m_waveFunctionElements; }
+    std::vector<class Activation *> getActivationFunctions() { return m_activationFunctions; }
+    std::vector<int> getHiddenUnits() { return m_hiddenUnits; }
 
 private:
     int m_numberOfParticles;
@@ -208,7 +215,11 @@ private:
     class Metropolis *m_metropolis = new ImportanceSampling(this);
     class Optimization *m_optimization = new ADAM(this);
     class RandomNumberGenerator *m_randomNumberGenerator = new MersenneTwister();
+
     std::vector<class WaveFunction *> m_waveFunctionElements;
+    std::vector<class Activation *> m_activationFunctions;
+    std::vector<class Layer *> m_layers;
+    std::vector<int> m_hiddenUnits;
 
     std::string m_path = "../data/";
     std::string m_trialWaveFunction;

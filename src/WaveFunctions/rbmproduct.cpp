@@ -31,8 +31,8 @@ void RBMProduct::updateParameters(Eigen::MatrixXd parameters)
 }
 
 void RBMProduct::initializeArrays(const Eigen::VectorXd positions,
-                                  const Eigen::VectorXd radialVector,
-                                  const Eigen::MatrixXd distanceMatrix)
+                                  const Eigen::VectorXd /*radialVector*/,
+                                  const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
     m_probabilityRatio = 1;
@@ -43,9 +43,9 @@ void RBMProduct::initializeArrays(const Eigen::VectorXd positions,
 }
 
 void RBMProduct::updateArrays(const Eigen::VectorXd positions,
-                              const Eigen::VectorXd radialVector,
-                              const Eigen::MatrixXd distanceMatrix,
-                              const int changedCoord)
+                              const Eigen::VectorXd /*radialVector*/,
+                              const Eigen::MatrixXd /*distanceMatrix*/,
+                              const int /*changedCoord*/)
 {
     m_positions = positions;
     updateVectors();

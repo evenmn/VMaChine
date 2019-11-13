@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QD->setInteraction(true);
 
     QD->setLearningRate(0.1);
-    QD->setStepLength(0.05);
+    QD->setStepLength(0.01);
     QD->setNumberOfMetropolisSteps(int(pow(2, 20)));
 
     QD->setHamiltonian(new HarmonicOscillator(QD));
@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
     //QD->setWaveFunctionElement(new SlaterDeterminant(QD));
     QD->setWaveFunctionElement(new PadeJastrow(QD));
     //QD->setWaveFunctionElement(new DoubleProduct(QD));
+
+    QD->addFNNLayer(5, new ReLU(QD));
 
     QD->runSimulation(1000);
     return 0;

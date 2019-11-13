@@ -30,6 +30,14 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 # Load internal source files
 SOURCES += src/main.cpp \
+    src/Activation/activation.cpp \
+    src/Activation/elu.cpp \
+    src/Activation/leakyrelu.cpp \
+    src/Activation/purelinear.cpp \
+    src/Activation/relu.cpp \
+    src/Activation/sigmoid.cpp \
+    src/Layer/dense.cpp \
+    src/Layer/layer.cpp \
     src/WaveFunctions/doubleproduct.cpp \
     src/WaveFunctions/drbmproduct.cpp \
     src/WaveFunctions/fnn.cpp \
@@ -78,6 +86,14 @@ SOURCES += \
 
 # Load internal header files
 HEADERS += \
+    src/Activation/activation.h \
+    src/Activation/elu.h \
+    src/Activation/leakyrelu.h \
+    src/Activation/purelinear.h \
+    src/Activation/relu.h \
+    src/Activation/sigmoid.h \
+    src/Layer/dense.h \
+    src/Layer/layer.h \
     src/WaveFunctions/doubleproduct.h \
     src/WaveFunctions/drbmproduct.h \
     src/WaveFunctions/fnn.h \
