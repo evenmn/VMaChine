@@ -21,26 +21,26 @@ void Dense::initialize()
     m_W = Eigen::MatrixXd::Random(m_h0 + 1, m_h1); // Add bias weights
 }
 
-Vector2l Dense::getWeightDim() {
+Layer::Vector2l Dense::getWeightDim() {
     Vector2l size;
     size(0) = m_W.rows();
     size(1) = m_W.cols();
     return size;
 }
 
-Eigen::VectorXd Dense::evaluate(Eigen::VectorXd a0)
+Eigen::VectorXd Dense::evaluate()
 {
-    Eigen::VectorXd a = Eigen::VectorXd::Ones(m_h0 + 1); // Add bias unit
-    a.tail(m_h0) = a0;
-    Eigen::VectorXd z = a * m_W;
-    return z;
+    m_z = m_a0 * m_W;
+    return m_z;
 }
 
 Eigen::VectorXd Dense::activate(Eigen::VectorXd a0)
 {
-    Eigen::VectorXd z = evaluate(a0);
-    Eigen::VectorXd a = m_activation->evaluate(z);
-    return a;
+    m_a0 = Eigen::VectorXd::Ones(m_h0 + 1); // Add bias unit
+    m_a0.tail(m_h0) = a0;
+    evaluate();
+    m_a = m_activation->evaluate(m_z);
+    return m_a;
 }
 
 Eigen::VectorXd Dense::activateDer(Eigen::VectorXd z)
@@ -55,16 +55,15 @@ Eigen::VectorXd Dense::activateSecDer(Eigen::VectorXd z)
     return ddf;
 }
 
-Eigen::VectorXd Dense::calculateDelta(Eigen::VectorXd z)
+Eigen::VectorXd Dense::calculateDelta()
 {
-    Eigen::VectorXd df = activateDer(z);
-    Eigen::VectorXd delta = df;
-    return delta;
+    Eigen::VectorXd df = m_activation->gradient(m_z);
+    m_delta = df;
+    return m_delta;
 }
 
-Eigen::MatrixXd Dense::calculateGradient(Eigen::VectorXd z, Eigen::VectorXd a0)
+Eigen::MatrixXd Dense::calculateGradient()
 {
-    Eigen::VectorXd delta = calculateDelta(z);
-    Eigen::MatrixXd dC = a0.transpose() * delta;
+    Eigen::MatrixXd dC = m_a0.transpose() * m_delta;
     return dC;
 }
