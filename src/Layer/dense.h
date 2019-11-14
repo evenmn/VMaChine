@@ -8,9 +8,7 @@ public:
     void initialize();
     Eigen::VectorXd evaluate();
     Eigen::VectorXd activate(Eigen::VectorXd a0);
-    Eigen::VectorXd activateDer(Eigen::VectorXd z);
-    Eigen::VectorXd activateSecDer(Eigen::VectorXd z);
-    Eigen::VectorXd calculateDelta();
+    Eigen::VectorXd calculateDelta(Eigen::VectorXd delta0);
     Eigen::MatrixXd calculateGradient();
     void updateWeights(Eigen::MatrixXd m_WNew);
     Vector2l getWeightDim();

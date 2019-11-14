@@ -18,7 +18,7 @@ void SimpleJastrow::setConstants(const int elementNumber)
 }
 
 void SimpleJastrow::initializeArrays(const Eigen::VectorXd positions,
-                                     const Eigen::VectorXd radialVector,
+                                     const Eigen::VectorXd /*radialVector*/,
                                      const Eigen::MatrixXd distanceMatrix)
 {
     m_positions = positions;
@@ -28,7 +28,7 @@ void SimpleJastrow::initializeArrays(const Eigen::VectorXd positions,
 }
 
 void SimpleJastrow::updateArrays(const Eigen::VectorXd positions,
-                                 const Eigen::VectorXd radialVector,
+                                 const Eigen::VectorXd /*radialVector*/,
                                  const Eigen::MatrixXd distanceMatrix,
                                  const int i)
 {

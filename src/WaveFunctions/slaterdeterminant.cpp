@@ -19,8 +19,8 @@ void SlaterDeterminant::setConstants(const int elementNumber)
 }
 
 void SlaterDeterminant::updateArrays(const Eigen::VectorXd positions,
-                                     const Eigen::VectorXd radialVector,
-                                     const Eigen::MatrixXd distanceMatrix,
+                                     const Eigen::VectorXd /*radialVector*/,
+                                     const Eigen::MatrixXd /*distanceMatrix*/,
                                      const int changedCoord)
 {
     m_particle = int(changedCoord / m_numberOfDimensions);
@@ -67,8 +67,8 @@ void SlaterDeterminant::resetArrays()
 }
 
 void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions,
-                                         const Eigen::VectorXd radialVector,
-                                         const Eigen::MatrixXd distanceMatrix)
+                                         const Eigen::VectorXd /*radialVector*/,
+                                         const Eigen::MatrixXd /*distanceMatrix*/)
 {
     Eigen::VectorXd Positions = positions;
     m_ratio = 1;
@@ -85,7 +85,7 @@ void SlaterDeterminant::initializeArrays(const Eigen::VectorXd positions,
     updateSlaterDeterminantDerivatives(0, m_numberOfParticles);
 }
 
-void SlaterDeterminant::updateParameters(Eigen::MatrixXd parameters) {}
+void SlaterDeterminant::updateParameters(Eigen::MatrixXd /*parameters*/) {}
 
 void SlaterDeterminant::initializeSlaterMatrix()
 {

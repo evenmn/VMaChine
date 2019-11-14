@@ -17,7 +17,7 @@ void PadeJastrow::setConstants(const int elementNumber)
 }
 
 void PadeJastrow::initializeArrays(const Eigen::VectorXd positions,
-                                   const Eigen::VectorXd radialVector,
+                                   const Eigen::VectorXd /*radialVector*/,
                                    const Eigen::MatrixXd distanceMatrix)
 {
     m_positions = positions;
@@ -29,7 +29,7 @@ void PadeJastrow::initializeArrays(const Eigen::VectorXd positions,
 }
 
 void PadeJastrow::updateArrays(const Eigen::VectorXd positions,
-                               const Eigen::VectorXd radialVector,
+                               const Eigen::VectorXd /*radialVector*/,
                                const Eigen::MatrixXd distanceMatrix,
                                const int changedCoord)
 {

@@ -69,15 +69,15 @@ void FNN::updateParameters(const Eigen::MatrixXd parameters)
     for(auto &i : m_layers) {
         Layer::Vector2l size = i->getWeightDim();
         cumulativeStart += size.prod();
-        Eigen::MatrixXd wFlatten = parameters.row(m_elementNumber).segment(cumulativeStart, size.prod());
-        //i->updateWeights(wFlatten.resize(size(0), size(1)));
-        i->updateWeights(WaveFunction::reshape(wFlatten, size(0), size(1)));
+        Eigen::MatrixXd WFlatten = parameters.row(m_elementNumber)
+                                       .segment(cumulativeStart, size.prod());
+        i->updateWeights(WaveFunction::reshape(WFlatten, size(0), size(1)));
     }
 }
 
 double FNN::evaluateRatio()
 {
-    return m_probabilityRatio;
+    return m_probabilityRatio * m_probabilityRatio;
 }
 
 double FNN::computeGradient(const int k)
@@ -87,13 +87,19 @@ double FNN::computeGradient(const int k)
 
 double FNN::computeLaplacian()
 {
-    ;
     return -m_omegalpha * m_degreesOfFreedom;
 }
 
 Eigen::VectorXd FNN::computeParameterGradient()
 {
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
-    m_gradients(0) = -0.5 * m_omega * m_positions.cwiseAbs2().sum();
+
+    int cumulativeStart = 0;
+    for (auto &i : m_layers) {
+        Layer::Vector2l size = i->getWeightDim();
+        cumulativeStart += size.prod();
+        Eigen::MatrixXd W = i->calculateGradient();
+        m_gradients.segment(cumulativeStart, size.prod()) = WaveFunction::flatten(W);
+    }
     return m_gradients;
 }

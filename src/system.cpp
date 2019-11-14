@@ -52,6 +52,7 @@ void System::runSimulation()
 void System::initializeSystem()
 {
     initializeMPI();
+    addDenseLayer(1, new Sigmoid(this));
     m_hamiltonian->initialize();
     m_basis->initialize();
     setAllConstants();
@@ -480,7 +481,6 @@ void System::addDenseLayer(int numberOfUnits, Activation *activation)
                                  m_hiddenUnits.at(m_hiddenUnits.size() - 2),
                                  m_hiddenUnits.at(m_hiddenUnits.size() - 1),
                                  activation));
-    m_activationFunctions.push_back(activation);
     setNumberOfElements(m_waveFunctionElements.size());
 }
 

@@ -77,8 +77,8 @@ void DRBMProduct::updateRatio()
 }
 
 void DRBMProduct::updateArrays(const Eigen::VectorXd positions,
-                               const Eigen::VectorXd radialVector,
-                               const Eigen::MatrixXd distanceMatrix,
+                               const Eigen::VectorXd /*radialVector*/,
+                               const Eigen::MatrixXd /*distanceMatrix*/,
                                const int changedCoord)
 {
     m_positions = positions;
@@ -116,8 +116,8 @@ void DRBMProduct::resetArrays()
 }
 
 void DRBMProduct::initializeArrays(const Eigen::VectorXd positions,
-                                   const Eigen::VectorXd radialVector,
-                                   const Eigen::MatrixXd distanceMatrix)
+                                   const Eigen::VectorXd /*radialVector*/,
+                                   const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
     m_positionsPow = Eigen::MatrixXd::Zero(m_numberOfLayers + 2, m_degreesOfFreedom);

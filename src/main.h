@@ -18,6 +18,7 @@
 #include "Activation/leakyrelu.h"
 #include "Activation/purelinear.h"
 #include "Activation/relu.h"
+#include "Activation/sigmoid.h"
 
 #include "Layer/dense.h"
 #include "Layer/layer.h"

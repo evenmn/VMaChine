@@ -21,7 +21,6 @@ void DoubleProduct::setConstants(const int elementNumber)
 
 void DoubleProduct::updateParameters(Eigen::MatrixXd parameters)
 {
-    std::cout << "updateParameters1" << std::endl;
     Eigen::VectorXd wFlatten = parameters.row(m_elementNumber)
                                    .segment(m_numberOfHiddenNodes,
                                             m_degreesOfFreedom * m_numberOfHiddenNodes);
@@ -29,7 +28,6 @@ void DoubleProduct::updateParameters(Eigen::MatrixXd parameters)
 
     m_WSqrd = m_W.cwiseAbs2();
     m_b = parameters.row(m_elementNumber).head(m_numberOfHiddenNodes);
-    std::cout << "updateParameters2" << std::endl;
 }
 
 void DoubleProduct::initializeArrays(const Eigen::VectorXd positions,
@@ -51,11 +49,9 @@ void DoubleProduct::updateArrays(const Eigen::VectorXd positions,
                                  const Eigen::MatrixXd /*distanceMatrix*/,
                                  const int /*changedCoord*/)
 {
-    std::cout << "updateArrays1" << std::endl;
     m_positions = positions;
     updateVectors();
     updateRatio();
-    std::cout << "updateArrays2" << std::endl;
 }
 
 void DoubleProduct::setArrays()
@@ -83,10 +79,8 @@ double DoubleProduct::evaluateRatio()
 
 double DoubleProduct::computeGradient(const int k)
 {
-    std::cout << "computeGradient1" << std::endl;
     int particle = int(k % m_numberOfDimensions);
-    double g = double(m_W.row(k) * m_n.row(particle).transpose()) / m_sigmaSqrd;
-    std::cout << "computeGradient2" << std::endl;
+    //double g = double(m_W.row(k) * m_n.row(particle).transpose()) / m_sigmaSqrd;
     return double(m_W.row(k) * m_n.row(particle).transpose()) / m_sigmaSqrd;
 }
 

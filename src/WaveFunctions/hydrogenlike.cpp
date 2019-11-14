@@ -19,7 +19,7 @@ void HydrogenLike::setConstants(const int elementNumber)
 
 void HydrogenLike::initializeArrays(const Eigen::VectorXd positions,
                                     const Eigen::VectorXd radialVector,
-                                    const Eigen::MatrixXd distanceMatrix)
+                                    const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
     m_radialVector = radialVector;
@@ -28,7 +28,7 @@ void HydrogenLike::initializeArrays(const Eigen::VectorXd positions,
 
 void HydrogenLike::updateArrays(const Eigen::VectorXd positions,
                                 const Eigen::VectorXd radialVector,
-                                const Eigen::MatrixXd distanceMatrix,
+                                const Eigen::MatrixXd /*distanceMatrix*/,
                                 const int changedCoord)
 {
     int particle = int(changedCoord / m_numberOfDimensions);

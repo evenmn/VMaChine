@@ -12,9 +12,7 @@ public:
     virtual Vector2l getWeightDim() = 0;
     virtual Eigen::VectorXd evaluate() = 0;
     virtual Eigen::VectorXd activate(Eigen::VectorXd a0) = 0;
-    virtual Eigen::VectorXd activateDer(Eigen::VectorXd z) = 0;
-    virtual Eigen::VectorXd activateSecDer(Eigen::VectorXd z) = 0;
-    virtual Eigen::VectorXd calculateDelta() = 0;
+    virtual Eigen::VectorXd calculateDelta(Eigen::VectorXd delta0) = 0;
     virtual Eigen::MatrixXd calculateGradient() = 0;
     virtual void updateWeights(Eigen::MatrixXd WNew) = 0;
 
