@@ -1,6 +1,7 @@
 #pragma once
 #include "../Activation/activation.h"
 #include "../Activation/sigmoid.h"
+#include "../Layer/layer.h"
 #include "wavefunction.h"
 #include <vector>
 
@@ -29,6 +30,7 @@ public:
     Eigen::VectorXd computeParameterGradient();
 
     void updateProbabilityRatio(int changedCoord);
+    double evaluate(Eigen::VectorXd position);
 
 private:
     int m_numberOfParameters = 1;
@@ -50,6 +52,7 @@ private:
     Eigen::VectorXd m_gradients;
 
     std::vector<Eigen::MatrixXd> m_weights;
+    std::vector<class Layer *> m_layers;
     std::vector<class Activation *> m_activationFunctions;
     std::vector<int> m_units;
 

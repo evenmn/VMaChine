@@ -12,9 +12,12 @@ public:
     Eigen::VectorXd activateSecDer(Eigen::VectorXd z);
     Eigen::VectorXd calculateDelta(Eigen::VectorXd z);
     Eigen::MatrixXd calculateGradient(Eigen::VectorXd z, Eigen::VectorXd a0);
-    Eigen::MatrixXd updateWeights(Eigen::VectorXd z, Eigen::VectorXd a0);
+    void updateWeights(Eigen::MatrixXd m_WNew);
+    Eigen::Vector2i getWeightDim();
 
 private:
+    typedef Eigen::Matrix<long, 2, 1> Vector2l;
+
     int m_numberOfElements = 0;
     int m_maxParameters = 0;
 

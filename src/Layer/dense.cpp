@@ -8,16 +8,30 @@ Dense::Dense(System *system, int h0, int h1, Activation *activation)
     m_h0 = h0;
     m_h1 = h1;
     m_activation = activation;
+    //initialize();
+}
+
+void Dense::updateWeights(Eigen::MatrixXd WNew)
+{
+    m_W = WNew;
 }
 
 void Dense::initialize()
 {
-    m_W = Eigen::MatrixXd::Random(m_h0, m_h1);
+    m_W = Eigen::MatrixXd::Random(m_h0 + 1, m_h1); // Add bias weights
+}
+
+Vector2l Dense::getWeightDim() {
+    Vector2l size;
+    size(0) = m_W.rows();
+    size(1) = m_W.cols();
+    return size;
 }
 
 Eigen::VectorXd Dense::evaluate(Eigen::VectorXd a0)
 {
-    Eigen::VectorXd a = Eigen::VectorXd::Ones(a0.size() + 1); // Add bias unit
+    Eigen::VectorXd a = Eigen::VectorXd::Ones(m_h0 + 1); // Add bias unit
+    a.tail(m_h0) = a0;
     Eigen::VectorXd z = a * m_W;
     return z;
 }
@@ -53,11 +67,4 @@ Eigen::MatrixXd Dense::calculateGradient(Eigen::VectorXd z, Eigen::VectorXd a0)
     Eigen::VectorXd delta = calculateDelta(z);
     Eigen::MatrixXd dC = a0.transpose() * delta;
     return dC;
-}
-
-Eigen::MatrixXd Dense::updateWeights(Eigen::VectorXd z, Eigen::VectorXd a0)
-{
-    Eigen::MatrixXd dC = calculateGradient(z, a0);
-    m_W -= 0.1 * dC;
-    return m_W;
 }

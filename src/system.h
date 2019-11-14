@@ -87,7 +87,7 @@ public:
     void setRandomNumberGenerator(class RandomNumberGenerator *randomNumberGenerator);
     void setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements);
     void setWaveFunctionElement(WaveFunction *waveFunction);
-    void addFNNLayer(int numberOfUnits, Activation *activation);
+    void addDenseLayer(int numberOfUnits, Activation *activation);
 
     class WaveFunction *getWaveFunction() { return m_waveFunction; }
     class Hamiltonian *getHamiltonian() { return m_hamiltonian; }
@@ -149,6 +149,7 @@ public:
 
     std::vector<class WaveFunction *> getWaveFunctionElements() { return m_waveFunctionElements; }
     std::vector<class Activation *> getActivationFunctions() { return m_activationFunctions; }
+    std::vector<class Layer *> getLayers() { return m_layers; }
     std::vector<int> getHiddenUnits() { return m_hiddenUnits; }
 
 private:
@@ -222,7 +223,7 @@ private:
     std::vector<class WaveFunction *> m_waveFunctionElements;
     std::vector<class Activation *> m_activationFunctions;
     std::vector<class Layer *> m_layers;
-    std::vector<int> m_hiddenUnits;
+    std::vector<int> m_hiddenUnits{ 1 };
 
     std::string m_path = "../data/";
     std::string m_trialWaveFunction;

@@ -12,6 +12,7 @@ void FNN::setConstants(const int elementNumber)
     m_elementNumber = elementNumber;
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_omega = m_system->getFrequency();
+    m_layers = m_system->getLayers();
     m_activationFunctions = m_system->getActivationFunctions();
     m_units = m_system->getHiddenUnits();
     m_units.insert(m_units.begin(), m_degreesOfFreedom);    // Add input layer
@@ -28,32 +29,17 @@ void FNN::initializeArrays(const Eigen::VectorXd positions,
     m_probabilityRatio = 1;
 }
 
-void FNN::updateProbabilityRatio(int /*changedCoord*/)
-{
-    /*
-    for (auto &i : m_hiddenUnits) {
-        int numberOfParameters = i->getNumberOfParameters();
-        if (numberOfParameters > maxNumberOfElements) {
-            maxNumberOfElements = numberOfParameters;
-        }
-        counter += numberOfParameters;
+double FNN::evaluate(Eigen::VectorXd position) {
+    Eigen::VectorXd a = position;
+    for(auto &i : m_layers) {
+        a = i->activate(a);
     }
-    */
+    return a(0);
+}
 
-    /*
-    Eigen::VectorXd z1 = m_positionsOld.transpose() * m_W1;
-    Eigen::VectorXd a1 = m_activationFunctions.at(0)->evaluate(z1);
-    double z2 = a1.transpose() * m_W2;
-    double a2 = m_activationFunctions.at(1)->evaluate(Eigen::VectorXd(z2))(0);
-
-    Eigen::VectorXd z1New = m_positions.transpose() * m_W1;
-    Eigen::VectorXd a1New = m_activationFunctions.at(0)->evaluate(z1New);
-    double z2New = a1New.transpose() * m_W2;
-    double a2New = m_activationFunctions.at(1)->evaluate(Eigen::VectorXd(z2New))(0);
-    */
-
-    m_probabilityRatio = 1;
-    //a2New / a2;
+void FNN::updateProbabilityRatio(int /*changedCoord*/)
+{   
+    m_probabilityRatio = evaluate(m_positions) / evaluate(m_positionsOld);
 }
 
 void FNN::updateArrays(const Eigen::VectorXd positions,
@@ -79,14 +65,14 @@ void FNN::resetArrays()
 
 void FNN::updateParameters(const Eigen::MatrixXd parameters)
 {
-    Eigen::VectorXd wFlatten1 = parameters.row(m_elementNumber)
-                                    .segment(m_units.at(1),
-                                             m_degreesOfFreedom * m_numberOfHiddenUnits);
-    m_W1 = WaveFunction::reshape(wFlatten1, m_degreesOfFreedom, m_units.at(1));
-    Eigen::VectorXd wFlatten2 = parameters.row(m_elementNumber)
-                                    .segment(m_numberOfHiddenUnits,
-                                             m_degreesOfFreedom * m_numberOfHiddenUnits);
-    m_W2 = parameters.row(m_elementNumber).head(m_numberOfHiddenUnits);
+    int cumulativeStart = 0;
+    for(auto &i : m_layers) {
+        Layer::Vector2l size = i->getWeightDim();
+        cumulativeStart += size.prod();
+        Eigen::MatrixXd wFlatten = parameters.row(m_elementNumber).segment(cumulativeStart, size.prod());
+        //i->updateWeights(wFlatten.resize(size(0), size(1)));
+        i->updateWeights(WaveFunction::reshape(wFlatten, size(0), size(1)));
+    }
 }
 
 double FNN::evaluateRatio()

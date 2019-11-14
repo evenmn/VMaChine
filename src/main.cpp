@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QD->setFrequency(1.0);
     QD->setInteraction(true);
 
-    QD->setLearningRate(0.1);
+    QD->setLearningRate(0.5);
     QD->setStepLength(0.01);
     QD->setNumberOfMetropolisSteps(int(pow(2, 20)));
 
@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
     //QD->setWaveFunctionElement(new SlaterDeterminant(QD));
     QD->setWaveFunctionElement(new PadeJastrow(QD));
     //QD->setWaveFunctionElement(new DoubleProduct(QD));
+
+    QD->addDenseLayer(5, new ReLU(QD));
 
     QD->setNumberOfIterations(1000);
     QD->runSimulation();

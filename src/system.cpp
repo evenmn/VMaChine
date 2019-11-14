@@ -295,6 +295,12 @@ void System::setNumberOfElements(const unsigned long numberOfElements)
     collectAllLabels();
 }
 
+void System::setNumberOfIterations(const int numberOfIterations)
+{
+    assert(numberOfIterations > 0);
+    m_numberOfIterations = numberOfIterations;
+}
+
 void System::setMaxParameters()
 {
     int maxNumberOfElements = 0;
@@ -467,7 +473,7 @@ void System::setWaveFunctionElement(WaveFunction *waveFunction)
     setNumberOfElements(m_waveFunctionElements.size());
 }
 
-void System::addFNNLayer(int numberOfUnits, Activation *activation)
+void System::addDenseLayer(int numberOfUnits, Activation *activation)
 {
     m_hiddenUnits.push_back(numberOfUnits);
     m_layers.push_back(new Dense(this,
