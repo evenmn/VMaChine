@@ -1,7 +1,7 @@
-#include "dense.h"
+#include "input.h"
 #include "../Activation/activation.h"
 
-Dense::Dense(System *system, int h0, int h1, Activation *activation)
+Input::Input(System *system, int h0, int h1, Activation *activation)
     : Layer(system)
 {
     m_system = system;
@@ -11,30 +11,31 @@ Dense::Dense(System *system, int h0, int h1, Activation *activation)
     //initialize();
 }
 
-void Dense::updateWeights(Eigen::MatrixXd WNew)
+void Input::updateWeights(Eigen::MatrixXd WNew)
 {
     m_W = WNew;
 }
 
-void Dense::initialize()
+void Input::initialize()
 {
     m_W = Eigen::MatrixXd::Random(m_h0 + 1, m_h1); // Add bias weights
 }
 
-Layer::Vector2l Dense::getWeightDim() {
+Layer::Vector2l Input::getWeightDim()
+{
     Vector2l size;
     size(0) = m_W.rows();
     size(1) = m_W.cols();
     return size;
 }
 
-Eigen::VectorXd Dense::evaluate()
+Eigen::VectorXd Input::evaluate()
 {
     m_z = m_a0 * m_W;
     return m_z;
 }
 
-Eigen::VectorXd Dense::activate(Eigen::VectorXd a0)
+Eigen::VectorXd Input::activate(Eigen::VectorXd a0)
 {
     m_a0 = Eigen::VectorXd::Ones(m_h0 + 1); // Add bias unit
     m_a0.tail(m_h0) = a0;
@@ -43,14 +44,14 @@ Eigen::VectorXd Dense::activate(Eigen::VectorXd a0)
     return m_a;
 }
 
-Eigen::VectorXd Dense::calculateDelta(Eigen::VectorXd delta1)
+Eigen::VectorXd Input::calculateDelta(Eigen::VectorXd delta1)
 {
     Eigen::VectorXd df = m_activation->gradient(m_z);
     m_delta = df.cwiseProduct(m_W * delta1);
     return m_delta;
 }
 
-Eigen::MatrixXd Dense::calculateGradient()
+Eigen::MatrixXd Input::calculateGradient()
 {
     Eigen::MatrixXd dC = m_a0 * m_delta.transpose();
     return dC;

@@ -13,7 +13,7 @@ void FNN::setConstants(const int elementNumber)
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_omega = m_system->getFrequency();
     m_layers = m_system->getLayers();
-    m_activationFunctions = m_system->getActivationFunctions();
+    //m_activationFunctions = m_system->getActivationFunctions();
     m_units = m_system->getHiddenUnits();
     m_units.insert(m_units.begin(), m_degreesOfFreedom);    // Add input layer
     m_units.push_back(1);                                   // Add output layer

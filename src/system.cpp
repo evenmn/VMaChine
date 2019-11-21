@@ -474,6 +474,12 @@ void System::setWaveFunctionElement(WaveFunction *waveFunction)
     setNumberOfElements(m_waveFunctionElements.size());
 }
 
+void System::setInputLayer(int numberOfUnits)
+{
+    //m_hiddenUnits.push_back(numberOfUnits);
+    //m_layer.push_back(new Input(this, m_hiddenUnits(0));
+}
+
 void System::addDenseLayer(int numberOfUnits, Activation *activation)
 {
     m_hiddenUnits.push_back(numberOfUnits);

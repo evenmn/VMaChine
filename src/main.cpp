@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
     // Define system
     System *QD = new System();
 
-    QD->setNumberOfParticles(6);
+    QD->setNumberOfParticles(2);
     QD->setNumberOfDimensions(2);
     QD->setFrequency(1.0);
     QD->setInteraction(true);
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     QD->setWaveFunctionElement(new PadeJastrow(QD));
     //QD->setWaveFunctionElement(new DoubleProduct(QD));
 
-    QD->addDenseLayer(5, new ReLU(QD));
+    //QD->addDenseLayer(5, new ReLU(QD));
 
     QD->setNumberOfIterations(1000);
     QD->runSimulation();

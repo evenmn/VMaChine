@@ -37,6 +37,7 @@ SOURCES += src/main.cpp \
     src/Activation/relu.cpp \
     src/Activation/sigmoid.cpp \
     src/Layer/dense.cpp \
+    src/Layer/input.cpp \
     src/Layer/layer.cpp \
     src/WaveFunctions/doubleproduct.cpp \
     src/WaveFunctions/drbmproduct.cpp \
@@ -93,6 +94,7 @@ HEADERS += \
     src/Activation/relu.h \
     src/Activation/sigmoid.h \
     src/Layer/dense.h \
+    src/Layer/input.h \
     src/Layer/layer.h \
     src/WaveFunctions/doubleproduct.h \
     src/WaveFunctions/drbmproduct.h \
