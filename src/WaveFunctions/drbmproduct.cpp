@@ -19,7 +19,7 @@ int sgn(T val)
 void DRBMProduct::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
-    m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
+    m_numberOfHiddenNodes = m_system->getNumberOfHiddenUnits();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParameters = m_numberOfHiddenNodes * (1 + m_numberOfLayers * m_degreesOfFreedom);
     double sigma = 1; //m_system->getWidth();

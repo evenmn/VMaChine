@@ -1,7 +1,50 @@
 #include "system.h"
 
+void System::initializeMPI()
+{
+    /* Initialize MPI based on command line arguments.
+     * Command line arguments are taken automatically
+     * from main. */
+    int initialized;
+    MPI_Initialized(&initialized);
+    if (!initialized)
+        MPI_Init(nullptr, nullptr);
+    MPI_Comm_size(MPI_COMM_WORLD, &m_numberOfProcesses);
+    MPI_Comm_rank(MPI_COMM_WORLD, &m_myRank);
+}
+
+void System::initializeSystem()
+{
+    /* Initialize system
+     * The various objects need to be initialized in the correct order,
+     * which is the task of this function. This lets the calls be in arbitrary
+     * order in main/configuration file */
+    initializeMPI();
+    //addDenseLayer(1, new Sigmoid(this));
+    m_hamiltonian->initialize();
+    m_basis->initialize();
+    setAllConstants();
+    setMaxParameters();
+    setGradients();
+    m_optimization->initialize();
+    m_initialWeights->setupInitialWeights();
+    m_parameters = m_initialWeights->getParameters();
+    m_initialState->setupInitialState();
+    m_positions = m_initialState->getParticles();
+    m_distanceMatrix = m_initialState->getDistanceMatrix();
+    m_radialVector = m_initialState->getRadialVector();
+    m_metropolis->initialize();
+
+    parser(m_configFile);
+
+    m_sampler = new Sampler(this);
+    m_sampler->openOutputFiles();
+}
+
 void System::runSimulation()
 {
+    /* Run simulation specified in main/configuration file.
+     * This is the main loop in VMC, where we update the parameters. */
     initializeSystem();
     m_lastIteration = m_numberOfIterations - m_rangeOfAdaptiveSteps - 1;
     for (m_iter = 0; m_iter < m_numberOfIterations; m_iter++) {
@@ -49,32 +92,10 @@ void System::runSimulation()
     }
 }
 
-void System::initializeSystem()
-{
-    initializeMPI();
-    addDenseLayer(1, new Sigmoid(this));
-    m_hamiltonian->initialize();
-    m_basis->initialize();
-    setAllConstants();
-    setMaxParameters();
-    setGradients();
-    m_optimization->initialize();
-    m_initialWeights->setupInitialWeights();
-    m_parameters = m_initialWeights->getParameters();
-    m_initialState->setupInitialState();
-    m_positions = m_initialState->getParticles();
-    m_distanceMatrix = m_initialState->getDistanceMatrix();
-    m_radialVector = m_initialState->getRadialVector();
-    m_metropolis->initialize();
-
-    parser(m_configFile);
-
-    m_sampler = new Sampler(this);
-    m_sampler->openOutputFiles();
-}
-
 void System::runMetropolisCycles()
 {
+    /* This is the sampling loop, where we move the particles
+     * and calculate expectation values */
     for (int i = 0; i < m_stepsWEqui; i++) {
         bool acceptedStep = m_metropolis->acceptMove();
         m_positions = m_metropolis->updatePositions();
@@ -94,6 +115,7 @@ void System::runMetropolisCycles()
 
 void System::printToTerminal()
 {
+    /* Call this function to print to terminal */
     if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
         m_sampler->closeOutputFiles();
         if (m_myRank == 0) {
@@ -115,6 +137,7 @@ void System::printToTerminal()
 
 void System::checkingConvergence()
 {
+    /* This functions checks if the trial wave function has converged */
     m_energies.head(m_numberOfEnergies - 1) = m_energies.tail(m_numberOfEnergies - 1);
     m_energies(m_numberOfEnergies - 1) = m_sampler->getAverageEnergy();
     if (fabs(m_energies(0) - m_energies(m_numberOfEnergies - 1)) < m_tolerance) {
@@ -126,6 +149,7 @@ void System::checkingConvergence()
 
 int System::adaptiveSteps()
 {
+    /* Is responsible for the adaptive steps */
     int stepRatio = 1;
     if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
         stepRatio = int(pow(2, m_additionalStepsLastIter));
@@ -135,8 +159,13 @@ int System::adaptiveSteps()
     return stepRatio;
 }
 
+
+// OPERATIONS ON WAVE FUNCTION ELEMENTS
+
 void System::setAllConstants()
 {
+    /* Initialize the wave function elements with essential variables
+     * specified by used. */
     for (int i = 0; i < m_numberOfElements; i++) {
         m_waveFunctionElements[unsigned(i)]->setConstants(i);
     }
@@ -146,6 +175,7 @@ void System::initializeAllArrays(const Eigen::VectorXd positions,
                                  const Eigen::VectorXd radialVector,
                                  const Eigen::MatrixXd distanceMatrix)
 {
+    /* Initialize the wave function elements with positions. */
     for (auto &i : m_waveFunctionElements) {
         i->initializeArrays(positions, radialVector, distanceMatrix);
         i->setArrays();
@@ -157,6 +187,8 @@ void System::updateAllArrays(const Eigen::VectorXd positions,
                              const Eigen::MatrixXd distanceMatrix,
                              const int changedCoord)
 {
+    /* Update positions in all wave function elements when a
+     * particle is moved. */
     for (auto &i : m_waveFunctionElements) {
         i->setArrays();
         i->updateArrays(positions, radialVector, distanceMatrix, changedCoord);
@@ -165,6 +197,8 @@ void System::updateAllArrays(const Eigen::VectorXd positions,
 
 void System::resetAllArrays()
 {
+    /* Reset positions in all ave function elements when a
+     * particle move is rejected. */
     for (auto &i : m_waveFunctionElements) {
         i->resetArrays();
     }
@@ -172,6 +206,8 @@ void System::resetAllArrays()
 
 void System::updateAllParameters(const Eigen::MatrixXd parameters)
 {
+    /* Update the parameters/weights in all the wave function
+     * elements when the parameters are updated. */
     for (auto &i : m_waveFunctionElements) {
         i->updateParameters(parameters);
     }
@@ -179,6 +215,7 @@ void System::updateAllParameters(const Eigen::MatrixXd parameters)
 
 double System::evaluateProbabilityRatio()
 {
+    /* Evaluate the collective probability ratio. */
     double ratio = 1;
     for (auto &i : m_waveFunctionElements) {
         ratio *= i->evaluateRatio();
@@ -188,6 +225,9 @@ double System::evaluateProbabilityRatio()
 
 double System::getKineticEnergy()
 {
+    /* Obtain the total kinetic energy of the system
+     * based on the gradients and Laplacians of all
+     * elements. */
     double kineticEnergy = 0;
     for (auto &i : m_waveFunctionElements) {
         kineticEnergy += i->computeLaplacian();
@@ -204,6 +244,8 @@ double System::getKineticEnergy()
 
 Eigen::MatrixXd System::getAllParameterGradients()
 {
+    /* Get the gradient of all the wave function elements with respect to
+     * all the parameters. To be used in the parameter update. */
     for (int i = 0; i < m_numberOfElements; i++) {
         m_gradients.row(i) = m_waveFunctionElements[unsigned(i)]->computeParameterGradient();
     }
@@ -212,7 +254,7 @@ Eigen::MatrixXd System::getAllParameterGradients()
 
 void System::setGlobalArraysToCalculate()
 {
-    // Check if the elements need distance matrix or radial distance vector
+    /* Check if the elements need distance matrix and/or radial distance vector */
     for (auto &p : m_waveFunctionElements) {
         int need = p->getGlobalArrayNeed();
         if (need == 1) {
@@ -226,7 +268,7 @@ void System::setGlobalArraysToCalculate()
             m_calculateRadialVector = true;
         }
     }
-    // Check if the Hamiltonian needs distance matrix or radial distance vector
+    /* Check if the Hamiltonian needs distance matrix and/or radial distance vector */
     int need = m_hamiltonian->getGlobalArrayNeed();
     if (need == 1) {
         m_calculateDistanceMatrix = true;
@@ -240,8 +282,32 @@ void System::setGlobalArraysToCalculate()
     }
 }
 
+void System::setMaxParameters()
+{
+    /* Set the maximum number of parameters found in a
+     * wave function element. This will be used to create
+     * the parameter matrix, with dim
+     * (maxNumberOfParameter x numberOfElements). Determines
+     * also the total number of particles. Called
+     * automatically when needed. */
+    int maxNumberOfElements = 0;
+    int counter = 0;
+    for (auto &i : m_waveFunctionElements) {
+        int numberOfParameters = i->getNumberOfParameters();
+        if (numberOfParameters > maxNumberOfElements) {
+            maxNumberOfElements = numberOfParameters;
+        }
+        counter += numberOfParameters;
+    }
+    m_maxParameters = maxNumberOfElements;
+    m_totalNumberOfParameters = counter;
+}
+
+// VARIABLES SPECIFIED IN MAIN
+
 void System::setNumberOfParticles(const int numberOfParticles)
 {
+    /* Specify the number of particles, N, to be used. */
     assert(numberOfParticles > 0);
     m_numberOfParticles = numberOfParticles;
     initializeMPI();
@@ -249,6 +315,7 @@ void System::setNumberOfParticles(const int numberOfParticles)
 
 void System::setNumberOfDimensions(const int numberOfDimensions)
 {
+    /* Specify the number of dimensions, d, of the system. Supported 2 and 3 dimensions. */
     assert(numberOfDimensions > 1);
     assert(numberOfDimensions < 4);
     m_numberOfDimensions = numberOfDimensions;
@@ -257,18 +324,23 @@ void System::setNumberOfDimensions(const int numberOfDimensions)
 
 void System::setNumberOfFreeDimensions()
 {
+    /* Set the number of free dimensions, F=Nd. This is called automatically after the
+     * number of particles and number of dimensions are specified. */
     m_degreesOfFreedom = m_numberOfParticles * m_numberOfDimensions;
 }
 
-void System::setNumberOfHiddenNodes(const int numberOfHiddenNodes)
+void System::setNumberOfHiddenUnits(const int numberOfHiddenUnits)
 {
-    assert(numberOfHiddenNodes > 0);
-    m_numberOfHiddenNodes = numberOfHiddenNodes;
+    /* Set the number of hidden units used in RBM trial wave function. */
+    assert(numberOfHiddenUnits > 0);
+    m_numberOfHiddenUnits = numberOfHiddenUnits;
 }
 
 void System::setNumberOfMetropolisSteps(const int steps)
 {
-    // Calculate number of steps without equilibriation (power of 2)
+    /* Determine the number of steps used by each process
+     * when the equilibriation (burn-in period) is excluded
+     * (a power of 2) and when it is included. */
     m_totalStepsWOEqui = steps;
     if (m_myRank == 0) {
         m_stepsWOEqui = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
@@ -292,196 +364,202 @@ void System::setNumberOfMetropolisSteps(const int steps)
 
 void System::setNumberOfElements(const unsigned long numberOfElements)
 {
+    /* Set the number of wave function elements. This is called
+     * automatically when needed. */
     m_numberOfElements = static_cast<int>(numberOfElements);
     collectAllLabels();
 }
 
 void System::setNumberOfIterations(const int numberOfIterations)
 {
+    /* Set maximum number of iterations used in the Monte Carlo
+     * integration. The actual number of iterations used can
+     * be overruled by the stop criterion. */
     assert(numberOfIterations > 0);
     m_numberOfIterations = numberOfIterations;
 }
 
-void System::setMaxParameters()
-{
-    int maxNumberOfElements = 0;
-    int counter = 0;
-    for (auto &i : m_waveFunctionElements) {
-        int numberOfParameters = i->getNumberOfParameters();
-        if (numberOfParameters > maxNumberOfElements) {
-            maxNumberOfElements = numberOfParameters;
-        }
-        counter += numberOfParameters;
-    }
-    m_maxParameters = maxNumberOfElements;
-    m_totalNumberOfParameters = counter;
-}
-
-void System::setMaxParameter(WaveFunction *waveFunction)
-{
-    int numberOfParameters = waveFunction->getNumberOfParameters();
-    if (numberOfParameters > m_maxParameters) {
-        m_maxParameters = numberOfParameters;
-    }
-    m_totalNumberOfParameters += numberOfParameters;
-}
-
 void System::setStepLength(const double stepLength)
 {
+    /* Set step length used in sampling. */
     assert(stepLength > 0);
     m_stepLength = stepLength;
 }
 
 void System::setEquilibrationFraction(const double equilibrationFraction)
 {
+    /* Set equilibriation fraction (burn-in period). */
     assert(equilibrationFraction >= 0);
     m_equilibrationFraction = equilibrationFraction;
 }
 
 void System::setFrequency(const double omega)
 {
+    /* Set frequency of harmonic oscillator potential. */
     assert(omega > 0);
     m_omega = omega;
 }
 
-void System::setScreeningTools(const bool screening,
-                               const double screeningStrength,
+void System::setScreeningTools(const double screeningStrength,
                                const double dsl)
 {
+    /* By calling this function, the screening is enabled.
+     * The screening strength and Debye screening length (DSL)
+     * need to be specified. */
     assert(screeningStrength >= 1);
     assert(dsl > 0);
-    m_screening = screening;
+    m_screening = true;
     m_screeningStrength = screeningStrength;
     m_dsl = dsl;
 }
 
-void System::setTotalSpin(const double totalSpin)
-{
-    double intpart;
-    assert(std::modf(m_numberOfParticles / 2 - abs(totalSpin), &intpart) == 0.0);
-    m_totalSpin = totalSpin;
-}
-
 void System::setAtomicNumber(const int Z)
 {
+    /* Set atomic number, Z, when simulating atoms. */
     assert(Z > 0);
     m_Z = Z;
 }
 
 void System::setLearningRate(const double eta)
 {
+    /* Set learning rate of simulation. */
     assert(eta > 0);
     m_eta = eta;
 }
 
 void System::setWidth(const double sigma)
 {
+    /* Set distribution width of Gaussian distribution
+     * when using a Gaussian-binary restricted Boltzmann
+     * machine as the trial wave fucntion guess. */
     assert(sigma > 0);
     m_sigma = sigma;
 }
 
 void System::setInteraction(const bool interaction)
 {
+    /* Decided whether or not the electrons should be
+     * interacting. */
     m_interaction = interaction;
 }
 
-void System::setConvergenceTools(bool checkConvergence, int numberOfEnergies, double tolerance)
+void System::setConvergenceTools(int numberOfEnergies, double tolerance)
 {
-    m_checkConvergence = checkConvergence;
+    /* Specify convergence. Convergence is enabled when
+     * this function is called. */
+    m_checkConvergence = true;
     m_tolerance = tolerance;
     m_numberOfEnergies = numberOfEnergies;
     m_energies = Eigen::VectorXd::Zero(numberOfEnergies);
 }
 
-void System::setAdaptiveStepTools(bool applyAdaptiveSteps,
-                                  int rangeOfAdaptiveSteps,
+void System::setAdaptiveStepTools(int rangeOfAdaptiveSteps,
                                   int additionalSteps,
                                   int additionalStepsLastIteration)
 {
-    m_applyAdaptiveSteps = applyAdaptiveSteps;
-    if (m_applyAdaptiveSteps) {
-        m_rangeOfAdaptiveSteps = rangeOfAdaptiveSteps;
-        m_additionalSteps = additionalSteps;
-        m_additionalStepsLastIter = additionalStepsLastIteration;
-    } else {
-        m_rangeOfAdaptiveSteps = 0;
-        m_additionalSteps = 0;
-        m_additionalStepsLastIter = 0;
-    }
+    /* Set adaptive steps. Adaptive steps are enabled when
+     * this function is called. Default is 4 times as many
+     * cycles when 10 iterations are remaining and 8 times
+     * as many cycles for the last iteration. */
+    m_applyAdaptiveSteps = true;
+    m_rangeOfAdaptiveSteps = rangeOfAdaptiveSteps;
+    m_additionalSteps = additionalSteps;
+    m_additionalStepsLastIter = additionalStepsLastIteration;
 }
 
 void System::setDensityTools(bool computeOneBodyDensity,
-                             bool computeOneBodyDensity2,
+                             bool computeSpatialOneBodyDensity,
                              bool computeTwoBodyDensity,
                              int numberOfBins,
                              double maxRadius)
 {
+    /* Specify which electron density that should be
+     * dumped to file. The default is to not dump any
+     * electron density to file. */
     m_computeOneBodyDensity = computeOneBodyDensity;
-    m_computeOneBodyDensity2 = computeOneBodyDensity2;
+    m_computeOneBodyDensity2 = computeSpatialOneBodyDensity;
     m_computeTwoBodyDensity = computeTwoBodyDensity;
     m_numberOfBins = numberOfBins;
     m_maxRadius = maxRadius;
 }
 
-void System::setEnergyPrintingTools(bool printEnergyFile, bool printInstantEnergyFile)
+void System::setTotalSpin(const double totalSpin)
 {
+    /* Set total spin of the system. To be implemented. */
+    double intpart;
+    assert(std::modf(m_numberOfParticles / 2 - abs(totalSpin), &intpart) == 0.0);
+    m_totalSpin = totalSpin;
+}
+
+void::System::dumpEnergyToFile(bool printEnergyFile) {
+    /* Dump the energy expectation value after each iteration
+     * to file. Default setting is to print energy file. */
     m_printEnergyToFile = printEnergyFile;
+}
+
+void::System::checkResampling(bool printInstantEnergyFile) {
+    /* Dump the instant energy to file (energies from all
+     * the cycles). This will be used in the resampling.
+     * Default setting is to print instant file for the
+     * last iteration. */
     m_doResampling = printInstantEnergyFile;
 }
 
 void System::setParameterPrintingTools(bool printParametersToFile)
 {
+    /* Print parameters to file after each iterations. Makes it
+     * possible to start where the previous simulation ended.
+     * Default setting is to print parameters to file. */
     m_printParametersToFile = printParametersToFile;
-}
-
-void System::initializeMPI()
-{
-    int initialized;
-    MPI_Initialized(&initialized);
-    if (!initialized)
-        MPI_Init(nullptr, nullptr);
-    MPI_Comm_size(MPI_COMM_WORLD, &m_numberOfProcesses);
-    MPI_Comm_rank(MPI_COMM_WORLD, &m_myRank);
 }
 
 void System::setPath(const std::string path)
 {
+    /* Set path to where to save the files. */
     m_path = path;
 }
 
+
+// CLASSES SPECIFIED IN MAIN
+
 void System::setHamiltonian(Hamiltonian *hamiltonian)
 {
+    /* Specify which Hamiltonian to use. */
     m_hamiltonian = hamiltonian;
 }
 
 void System::setBasis(Basis *basis)
 {
+    /* Specify the basis to be used in the Slater determinant. */
     m_basis = basis;
 }
 
 void System::setWaveFunctionElements(std::vector<class WaveFunction *> waveFunctionElements)
 {
+    /* Set all wave function elements, based on a std::vector. */
     m_waveFunctionElements = waveFunctionElements;
-    //setMaxParameters();
     setNumberOfElements(waveFunctionElements.size());
     setAllConstants();
 }
 
 void System::setWaveFunctionElement(WaveFunction *waveFunction)
 {
+    /* Add a wave function element. */
     m_waveFunctionElements.push_back(waveFunction);
-    //setMaxParameter(waveFunction);
     setNumberOfElements(m_waveFunctionElements.size());
 }
 
 void System::setInputLayer(int numberOfUnits)
 {
+    /* Set the input layer when a feed-forward neural network
+     * (FNN) is used as a trial wave function element. */
     //m_hiddenUnits.push_back(numberOfUnits);
     //m_layer.push_back(new Input(this, m_hiddenUnits(0));
 }
 
 void System::addDenseLayer(int numberOfUnits, Activation *activation)
 {
+    /* Add dense layer to a feed-forward neural network. */
     m_hiddenUnits.push_back(numberOfUnits);
     m_layers.push_back(new Dense(this,
                                  m_hiddenUnits.at(m_hiddenUnits.size() - 2),
@@ -492,35 +570,58 @@ void System::addDenseLayer(int numberOfUnits, Activation *activation)
 
 void System::setInitialState(InitialState *initialState)
 {
+    /* Initialize particle positions.
+     * Possible choices are:
+     *  - Random normal (default)
+     *  - Random uniform */
     m_initialState = initialState;
 }
 
 void System::setInitialWeights(InitialWeights *initialWeights)
 {
+    /* Initialize parameters.
+     * Possible choices are:
+     *  - Automatize (default)
+     *  - Constant
+     *  - Random uniform */
     m_initialWeights = initialWeights;
 }
 
 void System::setMetropolis(Metropolis *metropolis)
 {
+    /* Specify sampling algorithm.
+     * Possible choices:
+     *  - Brute force
+     *  - Importance sampling */
     m_metropolis = metropolis;
 }
 
 void System::setOptimization(Optimization *optimization)
 {
+    /* Specify optimization tool when updating parameters.
+     * Possible choices:
+     *  - Gradient descent
+     *  - Stochastic gradient descent
+     *  - Adam */
     m_optimization = optimization;
 }
 
 void System::setRandomNumberGenerator(RandomNumberGenerator *randomNumberGenerator)
 {
+    /* Specify which random number generator to be used.
+     * Currently, only Mersenne Twister 19337 is available. */
     m_randomNumberGenerator = randomNumberGenerator;
 }
 
 void System::setGradients()
 {
+    /* Initialize gradient matrix. */
     m_gradients = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
 }
 
 void System::initializeFromConfig(int argc, char** argv) {
+    /* Initialize variables from configuration file. Will
+     * overwrite main and default settings. */
     if (argc >= 2) {
         m_configFile = argv[1];
         m_args = argc;
@@ -529,6 +630,7 @@ void System::initializeFromConfig(int argc, char** argv) {
 
 void System::parser(const std::string configFile)
 {
+    /* Parse from configuration file. */
     std::ifstream infile;
     infile.open(configFile.c_str());
     if (!infile.is_open() && m_args >= 2) {
@@ -544,7 +646,7 @@ void System::parser(const std::string configFile)
                 if (std::getline(is_line, value)) {
                     if (key == "numParticles") {
                         m_numberOfParticles = std::stoi(value);
-                        m_numberOfHiddenNodes = m_numberOfParticles;
+                        m_numberOfHiddenUnits = m_numberOfParticles;
                         m_Z = m_numberOfParticles;
                     } else if (key == "numDimensions") {
                         m_numberOfDimensions = std::stoi(value);
@@ -561,7 +663,7 @@ void System::parser(const std::string configFile)
                     } else if (key == "numSteps") {
                         m_initialTotalStepsWOEqui = std::stoi(value);
                     } else if (key == "numHiddenNodes") {
-                        m_numberOfHiddenNodes = std::stoi(value);
+                        m_numberOfHiddenUnits = std::stoi(value);
                     } else if (key == "totalSpin") {
                         m_totalSpin = std::stod(value);
                     } else if (key == "stepLength") {
@@ -708,6 +810,8 @@ void System::searchShortning(const std::vector<std::string> labels,
                              const std::string newLabel,
                              std::string &allLabels)
 {
+    /* Search if a shortning of the specified wave function element
+     * configuration exist, and eventually label it as the shortning. */
     if (labels.size() == 1) {
         if (allLabels == "_" + labels.at(0)) {
             allLabels = newLabel;
@@ -757,6 +861,7 @@ void System::searchShortning(const std::vector<std::string> labels,
 
 void System::collectAllLabels()
 {
+    /* Possible shortnings. */
     m_trialWaveFunction = "";
     for (auto &i : m_waveFunctionElements) {
         m_trialWaveFunction += "_";

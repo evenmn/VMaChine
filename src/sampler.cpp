@@ -5,6 +5,8 @@ using std::endl;
 
 Sampler::Sampler(System *system)
 {
+    /* Constructor.
+     * Initialize everything that is needed in class Sampler. */
     m_system = system;
     m_numberOfProcesses = m_system->getNumberOfProcesses();
     m_numberOfParticles = m_system->getNumberOfParticles();
@@ -43,6 +45,7 @@ Sampler::Sampler(System *system)
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber)
 {
+    /* Sample particles. */
     if (stepNumber == m_equilibriationSteps) {
         m_acceptence = 0;
         m_cumulativeKineticEnergy = 0;
@@ -75,8 +78,20 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber)
     }
 }
 
+void Sampler::setNumberOfSteps(int numberOfStepsWOEqui,
+                               int totalNumberOfStepsWOEqui,
+                               int totalNumberOfStepsWEqui)
+{
+    /* Set number of step for each iterations. */
+    m_stepsWOEqui = numberOfStepsWOEqui;
+    m_totalStepsWOEqui = totalNumberOfStepsWOEqui;
+    m_totalStepsWEqui = totalNumberOfStepsWEqui;
+    m_numberOfStepsPerBatch = int(m_totalStepsWOEqui / m_numberOfBatches);
+}
+
 void Sampler::computeTotals()
 {
+    /* Sum the expectation values from all processes. */
     int parameterSlots = int(m_numberOfElements * m_maxParameters);
     m_totalCumulativeGradients = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
     m_totalCumulativeGradientsE = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
@@ -132,18 +147,9 @@ void Sampler::computeTotals()
                MPI_COMM_WORLD);
 }
 
-void Sampler::setNumberOfSteps(int numberOfStepsWOEqui,
-                               int totalNumberOfStepsWOEqui,
-                               int totalNumberOfStepsWEqui)
-{
-    m_stepsWOEqui = numberOfStepsWOEqui;
-    m_totalStepsWOEqui = totalNumberOfStepsWOEqui;
-    m_totalStepsWEqui = totalNumberOfStepsWEqui;
-    m_numberOfStepsPerBatch = int(m_totalStepsWOEqui / m_numberOfBatches);
-}
-
 void Sampler::computeAverages()
 {
+    /* Compute the average of values over all processes. */
     m_averageKineticEnergy = m_totalCumulativeKineticEnergy / m_totalStepsWOEqui;
     m_averageExternalEnergy = m_totalCumulativeExternalEnergy / m_totalStepsWOEqui;
     m_averageInteractionEnergy = m_totalCumulativeInteractionEnergy / m_totalStepsWOEqui;
@@ -163,6 +169,7 @@ void Sampler::computeAverages()
 
 void Sampler::printOutputToTerminal(const int maxIter, const double time)
 {
+    /* Print output to terminal for an ordinary iteration. */
     m_iter += 1;
     cout << endl;
     cout << "  -- System info: "
@@ -194,6 +201,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
 
 void Sampler::printFinalOutputToTerminal()
 {
+    /* Print output to terminal for final iteration. */
     cout << endl;
     std::cout << std::fixed;
     std::cout << std::setprecision(10);
@@ -215,6 +223,9 @@ void Sampler::printFinalOutputToTerminal()
 
 void Sampler::doResampling()
 {
+    /* Perform blocking, based on the code
+     * implemented by Marius Jonsson. See
+     * github.com/computative. */
     if (m_printInstantEnergyToFile) {
         appendInstantFiles(".dat");
         appendInstantFiles("_kin.dat");
@@ -298,6 +309,8 @@ void Sampler::doResampling()
 
 void Sampler::appendInstantFiles(const std::string extension)
 {
+    /* Append the instant file from each process to a total instant file.
+     * To be used for blocking. */
     std::string outfileName = m_path + std::to_string(m_instantNumber) + "_"
                               + std::to_string(m_rank) + extension;
     std::ofstream outfile(outfileName.c_str(), std::ios::out | std::ios::app);
@@ -318,6 +331,8 @@ void Sampler::appendInstantFiles(const std::string extension)
 
 std::string Sampler::generateFileName(std::string name, std::string extension)
 {
+    /* Generate filename and path of dumped files, including
+     * local energy, electron density and weights. */
     std::string fileName = m_path;
     fileName += "int" + std::to_string(m_interaction) + "/";
     fileName += m_hamiltonian + "/";
@@ -334,25 +349,26 @@ std::string Sampler::generateFileName(std::string name, std::string extension)
 
 void Sampler::openOutputFiles()
 {
+    /* Open the generated files to store local energy, electron
+     * density, weight etc.. */
     if (m_rank == 0) {
         m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(1e6);
     }
     MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // Print average energies to file
-    if (m_printEnergyToFile && m_rank == 0) {
-        std::string averageEnergyFileName = generateFileName("energy", ".dat");
-        //std::string averageKineticEnergyFileName = generateFileName("energy", "_kin.dat");
-        //std::string averageExternalEnergyFileName = generateFileName("energy", "_ext.dat");
-        //std::string averageInteractionEnergyFileName = generateFileName("energy", "_int.dat");
-        m_averageEnergyFile.open(averageEnergyFileName);
-        //m_averageKineticEnergyFile.open(averageKineticEnergyFileName);
-        //m_averageExternalEnergyFile.open(averageExternalEnergyFileName);
-        //m_averageInteractionEnergyFile.open(averageInteractionEnergyFileName);
-    }
     if (m_printParametersToFile && m_rank == 0) {
         m_parameterFileName = generateFileName("weights", ".dat");
         m_parameterFile.open(m_parameterFileName);
+    }
+    if (m_printEnergyToFile && m_rank == 0) {
+        std::string averageEnergyFileName = generateFileName("energy", ".dat");
+        m_averageEnergyFile.open(averageEnergyFileName);
+        std::string averageKineticEnergyFileName = generateFileName("kineticEnergy", ".dat");
+        m_averageEnergyFile.open(averageEnergyFileName);
+        std::string averageExternalEnergyFileName = generateFileName("externalEnergy", ".dat");
+        m_averageEnergyFile.open(averageEnergyFileName);
+        std::string averageInteractionEnergyFileName = generateFileName("interactionEnergy", ".dat");
+        m_averageEnergyFile.open(averageEnergyFileName);
     }
     if (m_computeOneBodyDensity && m_rank == 0) {
         std::string oneBodyFileName = generateFileName("onebody", ".dat");
@@ -388,16 +404,19 @@ void Sampler::openOutputFiles()
 
 void Sampler::printEnergyToFile()
 {
+    /* Print total energy, kinetic energy, external potential and
+     * interaction energy to files. */
     if (m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFile << m_averageEnergy << endl;
-        //m_averageKineticEnergyFile << m_averageKineticEnergy << endl;
-        //m_averageExternalEnergyFile << m_averageExternalEnergy << endl;
-        //m_averageInteractionEnergyFile << m_averageInteractionEnergy << endl;
+        m_averageKineticEnergyFile << m_averageKineticEnergy << endl;
+        m_averageExternalEnergyFile << m_averageExternalEnergy << endl;
+        m_averageInteractionEnergyFile << m_averageInteractionEnergy << endl;
     }
 }
 
 void Sampler::printParametersToFile()
 {
+    /* Print parameters to file. */
     if (m_printParametersToFile && m_rank == 0) {
         std::string parameterFileName = generateFileName("weights", ".dat");
         m_parameterFile.open(parameterFileName);
@@ -408,6 +427,7 @@ void Sampler::printParametersToFile()
 
 void Sampler::printOneBodyDensityToFile()
 {
+    /* Print radial one-body density to file. */
     if (m_computeOneBodyDensity) {
         m_totalParticlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
         MPI_Reduce(m_particlesPerBin.data(),
@@ -425,6 +445,7 @@ void Sampler::printOneBodyDensityToFile()
 
 void Sampler::printOneBodyDensity2ToFile()
 {
+    /* Print spatial one-body density to file. */
     if (m_computeOneBodyDensity2) {
         m_totalDensityGrid = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
         MPI_Reduce(m_densityGrid.data(),
@@ -442,6 +463,7 @@ void Sampler::printOneBodyDensity2ToFile()
 
 void Sampler::printTwoBodyDensityToFile()
 {
+    /* Print radial two-body density to file. */
     if (m_computeTwoBodyDensity) {
         m_totalParticlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
         MPI_Reduce(m_particlesPerBinPairwise.data(),
@@ -459,6 +481,7 @@ void Sampler::printTwoBodyDensityToFile()
 
 void Sampler::closeOutputFiles()
 {
+    /* Close all output files after printing. */
     if (m_averageEnergyFile.is_open()) {
         m_averageEnergyFile.close();
     }
@@ -490,6 +513,7 @@ void Sampler::closeOutputFiles()
 
 void Sampler::printInstantValuesToFile()
 {
+    /* Print instant energies to file for blocking. */
     if (m_printInstantEnergyToFile) {
         m_instantEnergyFile << m_instantEnergy << endl;
         m_instantKineticEnergyFile << m_kineticEnergy << endl;
@@ -500,6 +524,7 @@ void Sampler::printInstantValuesToFile()
 
 void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
 {
+    /* Compute radial one-body density. */
     if (m_computeOneBodyDensity) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             if(radialVector(i_p) < m_maxRadius) {
@@ -514,6 +539,7 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
 
 void Sampler::computeOneBodyDensity2(const Eigen::VectorXd positions)
 {
+    /* Compute spatial one-body density. */
     if (m_computeOneBodyDensity2) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             Eigen::VectorXi indices = Eigen::VectorXi::Zero(m_numberOfDimensions);
@@ -530,6 +556,7 @@ void Sampler::computeOneBodyDensity2(const Eigen::VectorXd positions)
 
 void Sampler::computeTwoBodyDensity(const Eigen::VectorXd radialVector)
 {
+    /* Compute radial two-body density. */
     if (m_computeTwoBodyDensity) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             int bin_i = int(radialVector(i_p) / m_radialStep) + 1;

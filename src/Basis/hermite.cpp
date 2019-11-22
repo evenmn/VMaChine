@@ -5,10 +5,13 @@
 
 Hermite::Hermite(System *system)
     : Basis(system)
-{}
+{
+    /* Constructor for the Hermite class. */
+}
 
 void Hermite::initialize()
 {
+   /* Initialize the Hermite class. */
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_omega = m_system->getFrequency();
@@ -17,10 +20,12 @@ void Hermite::initialize()
     Basis::generateListOfStates();
 }
 
-void Hermite::setParameters(Eigen::VectorXd parameters) {}
+void Hermite::setParameters(Eigen::VectorXd /*parameters*/) {}
 
 double Hermite::basisElement(const int n, Eigen::VectorXd positions)
 {
+    /* Evaluate the Hermite polynomial of n'th order at coordinates
+     * positions. */
     double prod = 1;
     for (int i = 0; i < m_numberOfDimensions; i++) {
         prod *= evaluate(positions(i), int(m_listOfStates(n, i)));
@@ -30,7 +35,9 @@ double Hermite::basisElement(const int n, Eigen::VectorXd positions)
 
 double Hermite::basisElementDer(const int n, const int i, Eigen::VectorXd positions)
 {
-    // i is the dimension we are derivating with respect to
+    /* Evaluate the derivative of the Hermite polynomial of n'th order
+     * at coordnates positions.  i is the dimension we are derivating
+     * with respect to. */
     double prod = evaluateDerivative(positions(i), m_listOfStates(n, i));
     for (int j = 0; j < m_numberOfDimensions; j++) {
         if (i != j) {
@@ -42,7 +49,9 @@ double Hermite::basisElementDer(const int n, const int i, Eigen::VectorXd positi
 
 double Hermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions)
 {
-    // i is the dimension we are derivating with respect to
+    /* Evaluate the second derivative of the Hermite polynomial of n'th
+     * order at coordnates positions.  i is the dimension we are
+     * derivating with respect to. */
     double prod = evaluateSecondDerivative(positions(i), m_listOfStates(n, i));
     for (int j = 0; j < m_numberOfDimensions; j++) {
         if (i != j) {
@@ -52,12 +61,14 @@ double Hermite::basisElementSecDer(const int n, const int i, Eigen::VectorXd pos
     return prod;
 }
 
-double Hermite::basisElementPar(const int n, Eigen::VectorXd position)
+double Hermite::basisElementPar(const int /*n*/, Eigen::VectorXd /*position*/)
 {
     return 0;
 }
 
-double HH0(const double x)
+// HARD-CODED HERMITE POLYNOMIAL ELEMENTS
+
+double HH0(const double /*x*/)
 {
     return 1;
 }
@@ -141,11 +152,11 @@ double HH17(const double x)
            + 131736084480 * pow(x, 5) - 94097203200 * pow(x, 3) + 17643225600 * x;
 }
 
-double DHH0(const double x)
+double DHH0(const double /*x*/)
 {
     return 0;
 }
-double DHH1(const double x)
+double DHH1(const double /*x*/)
 {
     return 2;
 }
@@ -226,15 +237,15 @@ double DHH17(const double x)
            + 658680422400 * pow(x, 4) - 282291609600 * pow(x, 2) + 17643225600;
 }
 
-double DDHH0(const double x)
+double DDHH0(const double /*x*/)
 {
     return 0;
 }
-double DDHH1(const double x)
+double DDHH1(const double /*x*/)
 {
     return 0;
 }
-double DDHH2(const double x)
+double DDHH2(const double /*x*/)
 {
     return 8;
 }
@@ -312,7 +323,7 @@ double DDHH17(const double x)
 
 double Hermite::evaluate(double x, int n)
 {
-    //Hermite polynomial of n'th degree
+    /* Hermite polynomial of n'th degree. */
     bool hardcoded = true;
 
     double prefactor = 1.0 / sqrt(pow(2, n) * factorial(n));
@@ -377,7 +388,7 @@ double Hermite::evaluate(double x, int n)
 
 double Hermite::evaluateDerivative(double x, int n)
 {
-    //First derivative of Hermite polynomial of n'th degree
+    /* First derivative of Hermite polynomial of n'th degree. */
     bool hardcoded = true;
 
     double prefactor = 1.0 / sqrt(pow(2, n) * factorial(n));
@@ -435,7 +446,7 @@ double Hermite::evaluateDerivative(double x, int n)
 
 double Hermite::evaluateSecondDerivative(const double x, const int n)
 {
-    //Second derivative of Hermite polynomial of n'th degree
+    /* Second derivative of Hermite polynomial of n'th degree. */
     bool hardcoded = true;
 
     double prefactor = 1.0 / sqrt(pow(2, n) * factorial(n));

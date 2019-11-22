@@ -6,10 +6,13 @@
 
 HermiteExpansion::HermiteExpansion(System *system)
     : Basis(system)
-{}
+{
+    /* Constructor of the HermiteExpansion class. */
+}
 
 void HermiteExpansion::initialize()
 {
+    /* Initialize the HermiteExpansion class. */
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_omega = m_system->getFrequency();
@@ -31,10 +34,11 @@ void HermiteExpansion::initialize()
     file << y << std::endl;
 }
 
-void HermiteExpansion::setParameters(Eigen::VectorXd parameters) {}
+void HermiteExpansion::setParameters(Eigen::VectorXd /*parameters*/) {}
 
 std::string HermiteExpansion::generateFileName()
 {
+    /* Generate filename that match the filenames in the Sample class. */
     std::string fileName = m_path;
     fileName += "int1/";
     fileName += "doublewell/";
@@ -45,6 +49,7 @@ std::string HermiteExpansion::generateFileName()
 
 void HermiteExpansion::readCoefficientFile()
 {
+    /* Read file with expansion coefficients. */
     std::string fileName = generateFileName();
     m_basisSize = Basis::fileLength(fileName);
     m_coefficients = Eigen::MatrixXd::Zero(m_basisSize, m_basisSize);
@@ -53,7 +58,7 @@ void HermiteExpansion::readCoefficientFile()
 
 double HermiteExpansion::evaluate(double x, int n)
 {
-    //Hermite polynomial of n'th degree
+    /* Hermite polynomial of n'th degree. */
     if (m_dim == 0) {
         double sum = 0;
         for (int lambda = 0; lambda < m_basisSize; lambda++) {
@@ -68,7 +73,7 @@ double HermiteExpansion::evaluate(double x, int n)
 
 double HermiteExpansion::evaluateDerivative(double x, int n)
 {
-    //First derivative of Hermite polynomial of n'th degree
+    /* First derivative of Hermite polynomial of n'th degree. */
     if (m_dim == 0) {
         double sum = 0;
         for (int lambda = 0; lambda < m_basisSize; lambda++) {
@@ -82,7 +87,7 @@ double HermiteExpansion::evaluateDerivative(double x, int n)
 
 double HermiteExpansion::evaluateSecondDerivative(const double x, const int n)
 {
-    //Second derivative of Hermite polynomial of n'th degree
+    /* Second derivative of Hermite polynomial of n'th degree. */
     if (m_dim == 0) {
         double sum = 0;
         for (int lambda = 0; lambda < m_basisSize; lambda++) {
@@ -127,7 +132,7 @@ double HermiteExpansion::basisElementSecDer(const int n, const int i, Eigen::Vec
     return prod;
 }
 
-double HermiteExpansion::basisElementPar(const int n, Eigen::VectorXd position)
+double HermiteExpansion::basisElementPar(const int /*n*/, Eigen::VectorXd /*position*/)
 {
     return 0;
 }

@@ -11,11 +11,13 @@
 HartreeFock::HartreeFock(System *system, Basis *basis)
     : Basis(system)
 {
+    /* Constructor for the HartreeFock class. */
     m_basis = basis;
 }
 
 void HartreeFock::initialize()
 {
+    /* Initialize the Hartree-Fock object. */
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_omega = m_system->getFrequency();
@@ -28,6 +30,8 @@ void HartreeFock::initialize()
 
 std::string HartreeFock::generateFileName()
 {
+    /* Generate filename identical to what was generated
+     * in the Sampling class. */
     std::string fileName = m_path;
     fileName += "int1/";
     fileName += "hartree-fock/";
@@ -41,6 +45,7 @@ std::string HartreeFock::generateFileName()
 
 void HartreeFock::readCoefficientFile()
 {
+    /* Read the Hartree-Fock coefficients from file. */
     std::string fileName = generateFileName();
     std::ifstream inFile(generateFileName().c_str(), std::ios::in);
     m_basisSize = Basis::fileLength(fileName);
@@ -59,11 +64,11 @@ void HartreeFock::readCoefficientFile()
     }
 }
 
-void HartreeFock::setParameters(Eigen::VectorXd parameters) {}
+void HartreeFock::setParameters(Eigen::VectorXd /*parameters*/) {}
 
 double HartreeFock::evaluate(double x, int n)
 {
-    //Hermite polynomial of n'th degree
+    /* Returns the Hermite polynomial of n'th degree. */
     double sum = 0;
     for (int lambda = 0; lambda < m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_basis->evaluate(x, lambda);
@@ -73,7 +78,7 @@ double HartreeFock::evaluate(double x, int n)
 
 double HartreeFock::evaluateDerivative(double x, int n)
 {
-    //First derivative of Hermite polynomial of n'th degree
+    /* Returns the first derivative of Hermite polynomial of n'th degree. */
     double sum = 0;
     for (int lambda = 0; lambda < m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_basis->evaluateDerivative(x, lambda);
@@ -83,7 +88,7 @@ double HartreeFock::evaluateDerivative(double x, int n)
 
 double HartreeFock::evaluateSecondDerivative(const double x, const int n)
 {
-    //Second derivative of Hermite polynomial of n'th degree
+    /* Returns the second derivative of Hermite polynomial of n'th degree. */
     double sum = 0;
     for (int lambda = 0; lambda < m_basisSize; lambda++) {
         sum += m_coefficients(n, lambda) * m_basis->evaluateSecondDerivative(x, lambda);
@@ -93,6 +98,8 @@ double HartreeFock::evaluateSecondDerivative(const double x, const int n)
 
 double HartreeFock::basisElement(const int n, Eigen::VectorXd positions)
 {
+    /* Return the single-particle value of the n'th Hermite element
+     * at coordinates positions. */
     double prod = 1;
     for (int i = 0; i < m_numberOfDimensions; i++) {
         prod *= evaluate(positions(i), int(m_listOfStates(n, i)));
@@ -102,7 +109,9 @@ double HartreeFock::basisElement(const int n, Eigen::VectorXd positions)
 
 double HartreeFock::basisElementDer(const int n, const int i, Eigen::VectorXd positions)
 {
-    // i is the dimension we are derivating with respect to
+    /* Return the derivative of the single-particle value of the n-th Hermite
+     * element at coordinates positions. i is the dimension we are derivating
+     * with respect to. */
     double prod = evaluateDerivative(positions(i), m_listOfStates(n, i));
     for (int j = 0; j < m_numberOfDimensions; j++) {
         if (i != j) {
@@ -114,7 +123,9 @@ double HartreeFock::basisElementDer(const int n, const int i, Eigen::VectorXd po
 
 double HartreeFock::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions)
 {
-    // i is the dimension we are derivating with respect to
+    /* Return the second derivative of the single-particle value of the n-th Hermite
+     * element at coordinates positions. i is the dimension we are derivating
+     * with respect to. */
     double prod = evaluateSecondDerivative(positions(i), m_listOfStates(n, i));
     for (int j = 0; j < m_numberOfDimensions; j++) {
         if (i != j) {
@@ -124,7 +135,7 @@ double HartreeFock::basisElementSecDer(const int n, const int i, Eigen::VectorXd
     return prod;
 }
 
-double HartreeFock::basisElementPar(const int n, Eigen::VectorXd position)
+double HartreeFock::basisElementPar(const int /*n*/, Eigen::VectorXd /*position*/)
 {
     return 0;
 }

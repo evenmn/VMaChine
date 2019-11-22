@@ -2,6 +2,7 @@
 
 Activation::Activation(System *system)
 {
+    /* Constructor of activation class. */
     m_system = system;
 }
 

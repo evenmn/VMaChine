@@ -30,7 +30,7 @@ public:
 
 private:
     int m_numberOfParameters = 1;
-    int m_numberOfHiddenNodes = 1;
+    int m_numberOfHiddenUnits = 1;
 
     double m_sigmaSqrd = 1;
     double m_sigmaQuad = 1;

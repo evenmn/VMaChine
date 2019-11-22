@@ -2,28 +2,33 @@
 
 Basis::Basis(System *system)
 {
+    /* Constructor for the Basis class. */
     m_system = system;
 }
 
 long long Basis::factorial(const int n)
 {
+    /* Returns the factorial of the integer n. */
     return (n <= 1) ? 1 : factorial(n - 1) * n;
 }
 
 int Basis::factorialDifference(const int high, const int low)
 {
+    /* Returns the factorial of an integer high divided by the
+     * factorial of an lower integer low. */
     return (high <= 1 || high <= low) ? 1 : factorialDifference(high - 1, low) * high;
 }
 
 int Basis::binomial(const int n, const int p)
 {
-    //Binomial coefficients, equal to magic numbers
-    //return int(factorial(n+p)/(factorial(n)*factorial(p)));
+    /* Binomial coefficients, equal to magic numbers. */
+    // return int(factorial(n+p)/(factorial(n)*factorial(p)))
     return factorialDifference(n + p, n) / factorial(p);
 }
 
 std::ifstream::pos_type Basis::fileLength(std::string fileName)
 {
+    /* Determine the length of the file "fileName". */
     std::ifstream inFile(fileName.c_str());
     return std::count(std::istreambuf_iterator<char>(inFile),
                       std::istreambuf_iterator<char>(),
@@ -32,6 +37,7 @@ std::ifstream::pos_type Basis::fileLength(std::string fileName)
 
 void Basis::writeFileContentIntoEigenMatrix(std::string fileName, Eigen::MatrixXd &matrix)
 {
+    /* Open a file containing numbers and transform it to an Eigen matrix. */
     std::ifstream inFile(fileName);
     if (inFile.is_open()) {
         std::string line;
@@ -55,7 +61,7 @@ void Basis::writeFileContentIntoEigenMatrix(std::string fileName, Eigen::MatrixX
 
 void Basis::numberOfOrbitals()
 {
-    //Number of closed-shell orbitals
+    /* Returns the number of closed-shell orbitals. */
     int counter = 0;
     while (true) {
         int orb = 2 * Basis::binomial(counter, m_numberOfDimensions);
@@ -73,9 +79,9 @@ void Basis::numberOfOrbitals()
 
 void Basis::generateListOfStates()
 {
-    // Returns the index list used in Slater
-    // For instance (0,0), (1,0), (0,1) for 6P in 2D
-    //              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc..
+    /* Returns the index list used in Slater
+     * For instance (0,0), (1,0), (0,1) for 6P in 2D
+     *              (0,0,0), (1,0,0), (0,1,0), (0,0,1) for 8P in 3D etc.. */
     numberOfOrbitals();
     int numberOfStates = Basis::binomial(m_numberOfOrbitals - 1, m_numberOfDimensions);
     m_listOfStates = Eigen::MatrixXi::Zero(numberOfStates, m_numberOfDimensions);

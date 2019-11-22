@@ -18,7 +18,6 @@ public:
     void runMetropolisCycles();
     void checkingConvergence();
     void setNumberOfFreeDimensions();
-    void setMaxParameter(WaveFunction *waveFunction);
     void setMaxParameters();
     void setGradients();
     void setGlobalArraysToCalculate();
@@ -30,7 +29,7 @@ public:
     void printToTerminal();
     void setNumberOfParticles(const int numberOfParticles);
     void setNumberOfDimensions(const int numberOfDimensions);
-    void setNumberOfHiddenNodes(const int numberOfHiddenNodes);
+    void setNumberOfHiddenUnits(const int numberOfHiddenUnits);
     void setNumberOfMetropolisSteps(const int steps);
     void setNumberOfIterations(const int numberOfIterations);
     void setNumberOfElements(const unsigned long numberOfElements);
@@ -48,21 +47,20 @@ public:
                          std::string &allLabels);
 
     void setInteraction(const bool interaction);
-    void setParameterPrintingTools(const bool printParametersToFile);
-    void setConvergenceTools(const bool checkConvergence,
-                             const int numberOfEnergies,
-                             const double tolerance);
-    void setAdaptiveStepTools(const bool applyAdaptiveSteps,
-                              const int rangeOfAdaptiveSteps,
-                              const int additionalSteps,
-                              const int additionalStepsLastIteration);
-    void setDensityTools(const bool computeOneBodyDensity,
-                         const bool computeOneBodyDensity2,
-                         const bool computeTwoBodyDensity,
-                         const int numberOfBins,
-                         const double maxRadius);
-    void setScreeningTools(const bool screening, const double screeningStrength, const double dsl);
-    void setEnergyPrintingTools(const bool printEnergyFile, const bool printInstantEnergyFile);
+    void setParameterPrintingTools(const bool printParametersToFile = true);
+    void setConvergenceTools(const int numberOfEnergies = 5,
+                             const double tolerance = 1e-6);
+    void setAdaptiveStepTools(const int rangeOfAdaptiveSteps = 10,
+                              const int additionalSteps = 4,
+                              const int additionalStepsLastIteration = 8);
+    void setDensityTools(const bool computeOneBodyDensity = false,
+                         const bool computeSpatialOneBodyDensity = false,
+                         const bool computeTwoBodyDensity = false,
+                         const int numberOfBins = 1000,
+                         const double maxRadius = 50);
+    void setScreeningTools(const double screeningStrength, const double dsl);
+    void dumpEnergyToFile(bool printEnergyFile = true);
+    void checkResampling(bool printInstantEnergyFile = true);
     void initializeMPI();
 
     void updateAllParameters(const Eigen::MatrixXd parameters);
@@ -103,7 +101,7 @@ public:
     int getNumberOfProcesses() { return m_numberOfProcesses; }
     int getNumberOfParticles() { return m_numberOfParticles; }
     int getNumberOfDimensions() { return m_numberOfDimensions; }
-    int getNumberOfHiddenNodes() { return m_numberOfHiddenNodes; }
+    int getNumberOfHiddenUnits() { return m_numberOfHiddenUnits; }
     int getNumberOfFreeDimensions() { return m_degreesOfFreedom; }
     int getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
     int getMaxParameters() { return m_maxParameters; }
@@ -158,7 +156,7 @@ private:
     int m_degreesOfFreedom;
     int m_numberOfIterations;
     int m_numberOfElements;
-    int m_numberOfHiddenNodes;
+    int m_numberOfHiddenUnits;
     int m_maxParameters;
     int m_totalNumberOfParameters;
     int m_Z;

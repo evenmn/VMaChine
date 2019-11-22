@@ -11,7 +11,7 @@ RBMProduct::RBMProduct(System *system)
 void RBMProduct::setConstants(const int elementNumber)
 {
     m_elementNumber = elementNumber;
-    m_numberOfHiddenNodes = m_system->getNumberOfHiddenNodes();
+    m_numberOfHiddenNodes = m_system->getNumberOfHiddenUnits();
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_numberOfParameters = m_numberOfHiddenNodes * m_degreesOfFreedom + m_numberOfHiddenNodes;
     double sigma = 10 * m_system->getWidth();

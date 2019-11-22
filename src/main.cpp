@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     QD->setStepLength(0.005);
     QD->setNumberOfMetropolisSteps(int(pow(2, 20)));
 
-    QD->setAdaptiveStepTools(true, 100, 4, 4);
+    QD->setAdaptiveStepTools(100, 4, 4);
 
     QD->setHamiltonian(new HarmonicOscillator(QD));
 
