@@ -4,10 +4,13 @@
 
 HydrogenOrbital::HydrogenOrbital(System *system)
     : Basis(system)
-{}
+{
+    /* Constructor for the HydrogenOrbital class. */
+}
 
 void HydrogenOrbital::initialize()
 {
+    /* Initialize the class HydrogenOrbitals. */
     m_Z = m_system->getAtomicNumber();
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
@@ -18,11 +21,13 @@ void HydrogenOrbital::initialize()
 
 void HydrogenOrbital::setParameters(Eigen::VectorXd parameters)
 {
+    /* Update the parameter alpha. Called for every iteration. */
     m_alpha = parameters(0);
 }
 
 void HydrogenOrbital::numberOfOrbitalss()
 {
+    /* Exploit the number of orbitals. */
     int number = 1;
     int number2 = 0;
     int maxNumber = 0;
@@ -53,6 +58,7 @@ void HydrogenOrbital::numberOfOrbitalss()
 
 void HydrogenOrbital::generateLOS()
 {
+    /* Generate list of states. */
     int sum = 0;
     for (int i = 1; i < m_numberOfShells + 1; i++) {
         sum += i * i;
@@ -71,16 +77,21 @@ void HydrogenOrbital::generateLOS()
 
 double HydrogenOrbital::basisElement(const int n, Eigen::VectorXd position)
 {
+    /* Evaluate the hydrogen orbitals of order n at coordinates positions. */
     return evaluateCart(position, m_LOS(n, 0), m_LOS(n, 1), m_LOS(n, 2));
 }
 
 double HydrogenOrbital::basisElementDer(const int n, const int i, Eigen::VectorXd position)
 {
+    /* Evaluate the derivative of the hydrogen orbitals of order n at coordinates
+     * positions with respect to the coordinate i. */
     return evaluateCartDerivative(position, i, m_LOS(n, 0), m_LOS(n, 1), m_LOS(n, 2));
 }
 
 double HydrogenOrbital::basisElementSecDer(const int n, const int i, Eigen::VectorXd position)
 {
+    /* Evaluate the second derivative of the hydrogen orbitals of order n at
+     * coordinates positions with respect to the coordinate i. */
     return evaluateCartSecondDerivative(position, i, m_LOS(n, 0), m_LOS(n, 1), m_LOS(n, 2));
 }
 
@@ -92,11 +103,14 @@ double HydrogenOrbital::basisElementPar(const int n, Eigen::VectorXd position)
     } else if (n == 1) {
         return m_Z * r * (2 - m_alpha * m_Z * r / 2);
     }
+    else {
+        exit(0);
+    }
 }
 
 double HydrogenOrbital::evaluateCart(Eigen::VectorXd position, int n, int l, int m)
 {
-    //Hard coded Hydrogen orbitals taken from Jorgen Hogberget
+    /* Hard coded Hydrogen orbitals taken from Jorgen Hogberget. */
     double r = position.norm();
     double x = position(0);
     double y = position(1);
@@ -159,7 +173,7 @@ double HydrogenOrbital::evaluateCart(Eigen::VectorXd position, int n, int l, int
 
 double HydrogenOrbital::evaluateCartDerivative(Eigen::VectorXd position, int i, int n, int l, int m)
 {
-    //Hard coded derivatives of Hydrogen orbitals taken from Jorgen Hogberget
+    /* Hard coded derivatives of Hydrogen orbitals taken from Jorgen Hogberget. */
     double r = position.norm();
     double x = position(0);
     double y = position(1);
@@ -302,7 +316,7 @@ double HydrogenOrbital::evaluateCartDerivative(Eigen::VectorXd position, int i, 
 double HydrogenOrbital::evaluateCartSecondDerivative(
     Eigen::VectorXd position, int i, int n, int l, int m)
 {
-    //Hard coded Laplacian of Hydrogen orbitals
+    /* Hard coded Laplacian of Hydrogen orbitals. */
     double r = position.norm();
     double x = position(0);
     double y = position(1);
@@ -380,15 +394,18 @@ double HydrogenOrbital::evaluateCartSecondDerivative(
 
 double HydrogenOrbital::evaluate(double x, int n)
 {
+    /* Evaluate? */
     return x + n;
 }
 
 double HydrogenOrbital::evaluateDerivative(double x, int n)
 {
+    /* Evaluate? */
     return x + n;
 }
 
 double HydrogenOrbital::evaluateSecondDerivative(double x, int n)
 {
+    /* Evaluate? */
     return x + n;
 }

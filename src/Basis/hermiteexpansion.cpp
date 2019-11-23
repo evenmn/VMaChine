@@ -101,6 +101,7 @@ double HermiteExpansion::evaluateSecondDerivative(const double x, const int n)
 
 double HermiteExpansion::basisElement(const int n, Eigen::VectorXd positions)
 {
+    /* Evaluate the Hermite polynomial of n'th order at coordinates positions. */
     double prod = 1;
     for (m_dim = 0; m_dim < m_numberOfDimensions; m_dim++) {
         prod *= evaluate(positions(m_dim), m_listOfStates(n, m_dim));
@@ -110,7 +111,8 @@ double HermiteExpansion::basisElement(const int n, Eigen::VectorXd positions)
 
 double HermiteExpansion::basisElementDer(const int n, const int i, Eigen::VectorXd positions)
 {
-    // i is the dimension we are derivating with respect to
+    /* Evaluate the derivate of Hermite polynomial of n'th order at coordinates
+     * positions with respect to coordinate i. */
     double prod = evaluateDerivative(positions(i), m_listOfStates(n, i));
     for (m_dim = 0; m_dim < m_numberOfDimensions; m_dim++) {
         if (i != m_dim) {
@@ -122,7 +124,8 @@ double HermiteExpansion::basisElementDer(const int n, const int i, Eigen::Vector
 
 double HermiteExpansion::basisElementSecDer(const int n, const int i, Eigen::VectorXd positions)
 {
-    // i is the dimension we are derivating with respect to
+    /* Evaluate the second derivate of Hermite polynomial of n'th order at
+     * coordinates positions with respect to coordinate i. */
     double prod = evaluateSecondDerivative(positions(i), m_listOfStates(n, i));
     for (m_dim = 0; m_dim < m_numberOfDimensions; m_dim++) {
         if (i != m_dim) {
