@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "test_basis.h"
-#include "../src/Basis/basis.h"
+#include "../src-eigen/Basis/basis.h"
 
 TEST(SquareRootTest, PositiveNos) {
     ASSERT_EQ(6, squareRoot(36.0));

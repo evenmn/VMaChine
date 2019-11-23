@@ -1,9 +1,9 @@
-# VMC
+# VMaChine
 ----------------------
-VMC is a general variational Monte-Carlo solver written in object-oriented C++. It was implemented with the aim of being flexible, fast and readable.
+VMaChine is a general variational Monte Carlo (VMC) solver written in object-oriented C++. It was implemented with focus on quantum dot systems, and standard trial wave functions (Hermite functions) are implemented. However, we primary aim of examining trial wave functions where a less amount of physical intuition is required. Therefore, several trial wave functions based on neural networks and machine learning are also included, hence VMaChine. The code is also largely parallelizable and is made to be fast. 
 
 ## Prerequisites
-To run the code without issues, the most recent C++ version, C++17, is recommended. In addition, a few external packages are required:
+To run the code without issues, C++14 is required. In addition, a few external packages are needed:
 - MPI
 - Eigen or Armadillo
 - Blocker
@@ -29,16 +29,17 @@ Blocker is an auto blocking package developed by Marius Jonsson, which is our pr
 -------------------
 
 ## Build
-There are several ways to build the code, and below we will present two easy and rebust methods based on CMake and QMake, respectively. 
+The code can be built in two ways, based on CMake or QMake
 
 ### CMake
+Eigen is the default linear algebra library used in CMake:
 ```bash
-1. mkdir build
-2. cd build
-3. cmake ../
-4. make -j4
+mkdir build
+cd build
+cmake ..
+make -j8
 ```
-or simply run ```./CompileVMC```. The executable is then found in the ```build``` folder.
+or simply run ```./CompileVMC```. The executable is then found in the ```build``` folder. If you prefer Armadillo, the flag ```-Darmadillo=ON``` has to be added to ```cmake```. 
 
 ### QMake (QT-creator)
 1. [Download QT-creator](https://www.qt.io/download-qt-installer?hsCtaTracking=9f6a2170-a938-42df-a8e2-a9f0b1d6cdce%7C6cb0de4f-9bb5-4778-ab02-bfb62735f3e5)
@@ -57,7 +58,7 @@ This setup will run 4 parallel processes. The executable is dropped to ```build-
 
 -------------------
 
-## Set up system
+## Setting up system
 The parameters can be set in two different ways:
 
 1. They can be specified in ```main.cpp```
@@ -112,7 +113,7 @@ to ```main.cpp```. An example on such a config file is found in [config](config)
 
 -------------------
 
-## Getting results
+## Analyze results
 ### Energy and blocking results
 The current energy is printed to the terminal for every iteration, together with the estimated variance, standard deviation, acceptence ratio and CPU time. _System info_ presents the settings used for the current run.
 
@@ -126,11 +127,11 @@ python3 scripts/plot_energy.py
 which also support multiple files. 
 
 ### One-body density
-The one-body density is calculated during the last iteration by default, and the file is stored in the same way as the energy files described above. The one-body density can be plotted by 
+The one-body density is calculated during the last iteration by default, and the file is stored in the same way as the energy files described above. The one-body density can be plotted by the command
 ```bash
 python3 scripts/plot_ob_density.py
 ```
-which again supports multiple files. Remember to set correct number of dimensions inside the script!
+which again supports multiple files. Remember to set the correct number of dimensions inside the script!
 
 -------------------
 

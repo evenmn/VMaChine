@@ -1,7 +1,7 @@
 #pragma once
 #include <math.h>
 #include <gtest/gtest.h>
-#include "../src/Basis/basis.h"
+#include "../src-eigen/Basis/basis.h"
 
 double squareRoot(const double a);
 /*
