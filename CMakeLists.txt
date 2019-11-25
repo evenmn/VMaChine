@@ -24,6 +24,9 @@ OPTION(armadillo "use Armadillo library" OFF)
 # Print which build configuration used
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 
+# Add documentation
+add_subdirectory ("docs")
+
 if(armadillo)
     find_package(Armadillo REQUIRED)
     # Include directories
@@ -207,3 +210,6 @@ if(MPI_LINK_FLAGS)
     LINK_FLAGS "${MPI_LINK_FLAGS}")
 endif()
 
+# Add library to make source files visible for doxygen
+add_library(SourceFiles ${SOURCES})
+target_include_directories(SourceFiles PUBLIC .)
