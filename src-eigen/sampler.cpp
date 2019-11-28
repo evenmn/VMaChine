@@ -63,11 +63,17 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber)
     m_interactionEnergy = m_system->getHamiltonian()->getInteractionEnergy();
     m_instantEnergy = m_kineticEnergy + m_externalEnergy + m_interactionEnergy;
     m_instantGradients = m_system->getAllParameterGradients();
+
+    m_cumulativeEnergy += m_instantEnergy;
     m_cumulativeKineticEnergy += m_kineticEnergy;
     m_cumulativeExternalEnergy += m_externalEnergy;
     m_cumulativeInteractionEnergy += m_interactionEnergy;
-    m_cumulativeEnergy += m_instantEnergy;
+
     m_cumulativeEnergySqrd += m_instantEnergy * m_instantEnergy;
+    m_cumulativeKineticEnergySqrd += m_kineticEnergy * m_kineticEnergy;
+    m_cumulativeExternalEnergySqrd += m_externalEnergy * m_externalEnergy;
+    m_cumulativeInteractionEnergySqrd += m_interactionEnergy * m_interactionEnergy;
+
     if (stepNumber > (m_numberOfStepsPerBatch * (m_iter % m_numberOfBatches))
         && stepNumber < (m_numberOfStepsPerBatch * (m_iter % m_numberOfBatches + 1))) {
         m_cumulativeGradients += m_instantGradients;
@@ -131,6 +137,27 @@ void Sampler::computeTotals()
                MPI_SUM,
                0,
                MPI_COMM_WORLD);
+    MPI_Reduce(&m_cumulativeKineticEnergySqrd,
+               &m_totalCumulativeKineticEnergySqrd,
+               1,
+               MPI_DOUBLE,
+               MPI_SUM,
+               0,
+               MPI_COMM_WORLD);
+    MPI_Reduce(&m_cumulativeExternalEnergySqrd,
+               &m_totalCumulativeExternalEnergySqrd,
+               1,
+               MPI_DOUBLE,
+               MPI_SUM,
+               0,
+               MPI_COMM_WORLD);
+    MPI_Reduce(&m_cumulativeInteractionEnergySqrd,
+               &m_totalCumulativeInteractionEnergySqrd,
+               1,
+               MPI_DOUBLE,
+               MPI_SUM,
+               0,
+               MPI_COMM_WORLD);
     MPI_Reduce(m_cumulativeGradients.data(),
                m_totalCumulativeGradients.data(),
                parameterSlots,
@@ -154,10 +181,25 @@ void Sampler::computeAverages()
     m_averageExternalEnergy = m_totalCumulativeExternalEnergy / m_totalStepsWOEqui;
     m_averageInteractionEnergy = m_totalCumulativeInteractionEnergy / m_totalStepsWOEqui;
     m_averageEnergy = m_totalCumulativeEnergy / m_totalStepsWOEqui;
+
+    m_averageKineticEnergySqrd = m_totalCumulativeKineticEnergySqrd / m_totalStepsWOEqui;
+    m_averageExternalEnergySqrd = m_totalCumulativeExternalEnergySqrd / m_totalStepsWOEqui;
+    m_averageInteractionEnergySqrd = m_totalCumulativeInteractionEnergySqrd / m_totalStepsWOEqui;
     m_averageEnergySqrd = m_totalCumulativeEnergySqrd / m_totalStepsWOEqui;
+
+    m_variance = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalStepsWOEqui;
+    m_varianceKinetic = (m_averageKineticEnergySqrd - m_averageKineticEnergy * m_averageKineticEnergy) / m_totalStepsWOEqui;
+    m_varianceExternal = (m_averageExternalEnergySqrd - m_averageExternalEnergy * m_averageExternalEnergy) / m_totalStepsWOEqui;
+    m_varianceInteraction = (m_averageInteractionEnergySqrd - m_averageInteractionEnergy * m_averageInteractionEnergy) / m_totalStepsWOEqui;
+
+    m_stdError = sqrt(m_variance);
+    m_stdErrorKinetic = sqrt(m_varianceKinetic);
+    m_stdErrorExternal = sqrt(m_varianceExternal);
+    m_stdErrorInteraction = sqrt(m_varianceInteraction);
+
     m_averageGradients = m_totalCumulativeGradients / m_numberOfStepsPerBatch;
     m_averageGradientsE = m_totalCumulativeGradientsE / m_numberOfStepsPerBatch;
-    m_variance = (m_averageEnergySqrd - m_averageEnergy * m_averageEnergy) / m_totalStepsWOEqui;
+
     if (std::isnan(m_averageKineticEnergy)) {
         perror("Energy exploded, please decrease the learning rate");
         cout << " Kinetic energy        : " << m_averageKineticEnergy << endl;
@@ -182,18 +224,22 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     cout << " Oscillator frequency    : " << m_omega << endl;
     cout << " Trial wave function     : " << m_trialWaveFunction << endl;
     cout << " Hamiltonian             : " << m_hamiltonian << endl;
-    cout << " # Metropolis steps      : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
+    cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
          << " equilibration)" << endl;
-    cout << " Data files stored as    : " << generateFileName("{type}", ".dat") << endl;
-    cout << " Blocking file stored as : " << m_instantEnergyFileName << endl;
+    //cout << " Data files stored as    : " << generateFileName("{type}", ".dat") << endl;
+    //cout << " Blocking file stored as : " << m_instantEnergyFileName << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
-    cout << " Energy                : " << m_averageEnergy << endl;
-    cout << " Kinetic energy        : " << m_averageKineticEnergy << endl;
-    cout << " External energy       : " << m_averageExternalEnergy << endl;
-    cout << " Interaction energy    : " << m_averageInteractionEnergy << endl;
-    cout << " Variance              : " << m_variance << endl;
-    cout << " STD                   : " << sqrt(m_variance) << endl;
+    cout << " Energy                : " << m_averageEnergy;
+    cout << "        (STD : "           << sqrt(m_variance) << " )" << endl;
+    cout << " Kinetic energy        : " << m_averageKineticEnergy;
+    cout << "        (STD : "           << sqrt(m_varianceKinetic) << " )" << endl;
+    cout << " External energy       : " << m_averageExternalEnergy;
+    cout << "        (STD : "           << sqrt(m_varianceExternal) << " )" << endl;
+    cout << " Interaction energy    : " << m_averageInteractionEnergy;
+    cout << "        (STD : "           << sqrt(m_varianceInteraction) << " )" << endl;
+    //cout << " Variance              : " << m_variance << endl;
+    //cout << " STD                   : " << sqrt(m_variance) << endl;
     cout << " Acceptence Ratio      : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
     cout << " CPU Time              : " << time << endl;
     cout << endl;
@@ -206,17 +252,17 @@ void Sampler::printFinalOutputToTerminal()
     std::cout << std::fixed;
     std::cout << std::setprecision(10);
     cout << "  ===  Final results:  === " << endl;
-    cout << " Energy                : " << m_averageEnergy << " (with MSE = " << m_mseEnergy << ")"
-         << endl;
+    cout << " Energy                : " << m_averageEnergy;
+    cout << " (with STD = " << m_stdError << ")" << endl;
     cout << " Kinetic energy        : " << m_averageKineticEnergy
          << " (with STD = " << m_stdErrorKinetic << ")" << endl;
     cout << " External energy       : " << m_averageExternalEnergy
          << " (with STD = " << m_stdErrorExternal << ")" << endl;
     cout << " Interaction energy    : " << m_averageInteractionEnergy
          << " (with STD = " << m_stdErrorInteraction << ")" << endl;
-    cout << " Variance              : " << m_variance << " (with MSE = " << m_mseVariance << ")"
-         << endl;
-    cout << " STD                   : " << m_stdError << " (with MSE = " << m_mseSTD << ")" << endl;
+    //cout << " Variance              : " << m_variance << " (with MSE = " << m_mseVariance << ")"
+    //     << endl;
+    //cout << " STD                   : " << m_stdError << " (with MSE = " << m_mseSTD << ")" << endl;
     cout << " Acceptence Ratio      : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
     cout << endl;
 }

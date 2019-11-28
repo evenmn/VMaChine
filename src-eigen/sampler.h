@@ -69,46 +69,66 @@ private:
     double m_equilibrationFraction = 0;
     double m_omega = 0;
 
-    double m_variance = 0;
-    double m_stdError = 0;
-    double m_mseEnergy = 0;
-    double m_mseSTD = 0;
-    double m_mseVariance = 0;
-    double m_varianceKinetic = 0;
-    double m_stdErrorKinetic = 0;
-    double m_mseEnergyKinetic = 0;
-    double m_mseSTDKinetic = 0;
-    double m_mseVarianceKinetic = 0;
-    double m_varianceExternal = 0;
-    double m_stdErrorExternal = 0;
-    double m_mseEnergyExternal = 0;
-    double m_mseSTDExternal = 0;
-    double m_mseVarianceExternal = 0;
-    double m_varianceInteraction = 0;
-    double m_stdErrorInteraction = 0;
-    double m_mseEnergyInteraction = 0;
-    double m_mseSTDInteraction = 0;
-    double m_mseVarianceInteraction = 0;
+    double m_averageEnergy = 0;
     double m_averageKineticEnergy = 0;
     double m_averageExternalEnergy = 0;
     double m_averageInteractionEnergy = 0;
-    double m_averageEnergy = 0;
+
     double m_averageEnergySqrd = 0;
+    double m_averageKineticEnergySqrd = 0;
+    double m_averageExternalEnergySqrd = 0;
+    double m_averageInteractionEnergySqrd = 0;
+
+    double m_cumulativeEnergy = 0;
     double m_cumulativeKineticEnergy = 0;
     double m_cumulativeExternalEnergy = 0;
     double m_cumulativeInteractionEnergy = 0;
-    double m_cumulativeEnergy = 0;
+
     double m_cumulativeEnergySqrd = 0;
+    double m_cumulativeKineticEnergySqrd = 0;
+    double m_cumulativeExternalEnergySqrd = 0;
+    double m_cumulativeInteractionEnergySqrd = 0;
+
+    double m_instantEnergy = 0;
     double m_kineticEnergy = 0;
     double m_externalEnergy = 0;
     double m_interactionEnergy = 0;
-    double m_instantEnergy = 0;
 
+    double m_totalCumulativeEnergy = 0;
     double m_totalCumulativeKineticEnergy = 0;
     double m_totalCumulativeExternalEnergy = 0;
     double m_totalCumulativeInteractionEnergy = 0;
-    double m_totalCumulativeEnergy = 0;
+
     double m_totalCumulativeEnergySqrd = 0;
+    double m_totalCumulativeKineticEnergySqrd = 0;
+    double m_totalCumulativeExternalEnergySqrd = 0;
+    double m_totalCumulativeInteractionEnergySqrd = 0;
+
+    double m_variance = 0;
+    double m_varianceKinetic = 0;
+    double m_varianceExternal = 0;
+    double m_varianceInteraction = 0;
+
+    double m_stdError = 0;
+    double m_stdErrorKinetic = 0;
+    double m_stdErrorExternal = 0;
+    double m_stdErrorInteraction = 0;
+
+    double m_mseEnergy = 0;
+    double m_mseEnergyKinetic = 0;
+    double m_mseEnergyExternal = 0;
+    double m_mseEnergyInteraction = 0;
+
+    double m_mseSTD = 0;
+    double m_mseSTDKinetic = 0;
+    double m_mseSTDExternal = 0;
+    double m_mseSTDInteraction = 0;
+
+    double m_mseVariance = 0;
+    double m_mseVarianceKinetic = 0;
+    double m_mseVarianceExternal = 0;
+    double m_mseVarianceInteraction = 0;
+
     Eigen::MatrixXd m_totalCumulativeGradients;
     Eigen::MatrixXd m_totalCumulativeGradientsE;
 
