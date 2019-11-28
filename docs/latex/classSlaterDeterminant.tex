@@ -1,0 +1,93 @@
+\hypertarget{classSlaterDeterminant}{}\doxysection{Slater\+Determinant Class Reference}
+\label{classSlaterDeterminant}\index{SlaterDeterminant@{SlaterDeterminant}}
+Inheritance diagram for Slater\+Determinant\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classSlaterDeterminant}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_ab73e75b1609f0e8ba66245e3e407f3f7}\label{classSlaterDeterminant_ab73e75b1609f0e8ba66245e3e407f3f7}} 
+{\bfseries Slater\+Determinant} (class \mbox{\hyperlink{classSystem}{System}} $\ast$system)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_ade27cd0607fdc55b35f9816b1211d65d}\label{classSlaterDeterminant_ade27cd0607fdc55b35f9816b1211d65d}} 
+int {\bfseries get\+Number\+Of\+Parameters} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_af3db413508aa4831c89153fef1933823}\label{classSlaterDeterminant_af3db413508aa4831c89153fef1933823}} 
+int {\bfseries get\+Global\+Array\+Need} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a93eb486da73643e939c7a0f893353eca}\label{classSlaterDeterminant_a93eb486da73643e939c7a0f893353eca}} 
+std\+::string {\bfseries get\+Label} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a0034bfc158871a890925a2fa484c7d3a}\label{classSlaterDeterminant_a0034bfc158871a890925a2fa484c7d3a}} 
+void {\bfseries update\+Parameters} (const Eigen\+::\+Matrix\+Xd parameters)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a90a54e583c067294f8d1286cd5e9283d}\label{classSlaterDeterminant_a90a54e583c067294f8d1286cd5e9283d}} 
+void {\bfseries initialize\+Arrays} (const Eigen\+::\+Vector\+Xd positions, const Eigen\+::\+Vector\+Xd radial\+Vector, const Eigen\+::\+Matrix\+Xd distance\+Matrix)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a1351cf2688443e4d7ce652585b52712b}\label{classSlaterDeterminant_a1351cf2688443e4d7ce652585b52712b}} 
+void {\bfseries update\+Arrays} (const Eigen\+::\+Vector\+Xd positions, const Eigen\+::\+Vector\+Xd radial\+Vector, const Eigen\+::\+Matrix\+Xd distance\+Matrix, const int changed\+Coord)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a990462fa7fbd321b2157e7cc3066a6fb}\label{classSlaterDeterminant_a990462fa7fbd321b2157e7cc3066a6fb}} 
+void {\bfseries set\+Constants} (const int element\+Number)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a20901fe509fd8cb2f3d8a85ae76e1f5e}\label{classSlaterDeterminant_a20901fe509fd8cb2f3d8a85ae76e1f5e}} 
+void {\bfseries set\+Arrays} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_aeae243de6a9b4897a258791a8209f491}\label{classSlaterDeterminant_aeae243de6a9b4897a258791a8209f491}} 
+void {\bfseries reset\+Arrays} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_af5bd2846a68ef423167a0d6d6e0f51b6}\label{classSlaterDeterminant_af5bd2846a68ef423167a0d6d6e0f51b6}} 
+double {\bfseries evaluate\+Ratio} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_aa3f1661c7b9e3a9e2c735b74e9e4d3d3}\label{classSlaterDeterminant_aa3f1661c7b9e3a9e2c735b74e9e4d3d3}} 
+double {\bfseries compute\+Gradient} (const int k)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_afa18c0eeb6d04782fe8929b3d375a384}\label{classSlaterDeterminant_afa18c0eeb6d04782fe8929b3d375a384}} 
+double {\bfseries compute\+Laplacian} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_af243a0e4403094fb1ad4509d5b2f4137}\label{classSlaterDeterminant_af243a0e4403094fb1ad4509d5b2f4137}} 
+Eigen\+::\+Vector\+Xd {\bfseries compute\+Parameter\+Gradient} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a9292d441a8fd0ffbbae4bb611160de32}\label{classSlaterDeterminant_a9292d441a8fd0ffbbae4bb611160de32}} 
+void {\bfseries initialize\+Slater\+Matrix} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_ad6da62d3876ebf7f1aef201aad5da454}\label{classSlaterDeterminant_ad6da62d3876ebf7f1aef201aad5da454}} 
+void {\bfseries initialize\+Slater\+Matrix\+Der} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_ab85aea06b7dfe8fa036119377b22c2a6}\label{classSlaterDeterminant_ab85aea06b7dfe8fa036119377b22c2a6}} 
+void {\bfseries initialize\+Slater\+Matrix\+Sec\+Der} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a138b3484b716ec025d8417a6502a12ea}\label{classSlaterDeterminant_a138b3484b716ec025d8417a6502a12ea}} 
+void {\bfseries initialize\+Slater\+Matrix\+Inverse} ()
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a8d13de63fb2392b8b51fe1c56006fe33}\label{classSlaterDeterminant_a8d13de63fb2392b8b51fe1c56006fe33}} 
+void {\bfseries update\+Slater\+Matrix\+Element} (const int i, const int j)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a78ea2e26ea9fbffc5ed7df6b4e4322cd}\label{classSlaterDeterminant_a78ea2e26ea9fbffc5ed7df6b4e4322cd}} 
+void {\bfseries update\+Slater\+Matrix\+Row} (const int row)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a2c50b85ae2f1a3df950c533753026af5}\label{classSlaterDeterminant_a2c50b85ae2f1a3df950c533753026af5}} 
+void {\bfseries update\+Slater\+Matrix\+Der\+Row} (const int row)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_ac232a6d589bde1e1fd4cde6f133184ff}\label{classSlaterDeterminant_ac232a6d589bde1e1fd4cde6f133184ff}} 
+void {\bfseries update\+Slater\+Matrix\+Sec\+Der\+Row} (const int k)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_ad8923b840ddd18027cc718e6faf320f1}\label{classSlaterDeterminant_ad8923b840ddd18027cc718e6faf320f1}} 
+void {\bfseries update\+Slater\+Matrix\+Inverse} (int start, int end)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a7335c2df24a88fd91bfaf6cd1e9ab07f}\label{classSlaterDeterminant_a7335c2df24a88fd91bfaf6cd1e9ab07f}} 
+void {\bfseries update\+Slater\+Determinant\+Derivatives} (int start, int end)
+\item 
+\mbox{\Hypertarget{classSlaterDeterminant_a351e4bb31526ff907e6f2c1409e0b9f4}\label{classSlaterDeterminant_a351e4bb31526ff907e6f2c1409e0b9f4}} 
+void {\bfseries update\+Ratio} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Wave\+Functions/slaterdeterminant.\+h\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Wave\+Functions/slaterdeterminant.\+cpp\end{DoxyCompactItemize}

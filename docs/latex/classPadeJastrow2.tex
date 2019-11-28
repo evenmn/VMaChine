@@ -1,0 +1,72 @@
+\hypertarget{classPadeJastrow2}{}\doxysection{Pade\+Jastrow2 Class Reference}
+\label{classPadeJastrow2}\index{PadeJastrow2@{PadeJastrow2}}
+Inheritance diagram for Pade\+Jastrow2\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classPadeJastrow2}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_af4fa42815143b4eb259506dae55b2e86}\label{classPadeJastrow2_af4fa42815143b4eb259506dae55b2e86}} 
+{\bfseries Pade\+Jastrow2} (class \mbox{\hyperlink{classSystem}{System}} $\ast$system)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_a51edcf5fb33f972943e4948550720439}\label{classPadeJastrow2_a51edcf5fb33f972943e4948550720439}} 
+int {\bfseries get\+Number\+Of\+Parameters} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_ab3ec145b5df86db88ab483d8f75e1a33}\label{classPadeJastrow2_ab3ec145b5df86db88ab483d8f75e1a33}} 
+int {\bfseries get\+Global\+Array\+Need} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_a521895ad930e1e6f316c4caa0a18dc24}\label{classPadeJastrow2_a521895ad930e1e6f316c4caa0a18dc24}} 
+std\+::string {\bfseries get\+Label} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_ad1825f20f3455b7c8aab82d3cc5e3b59}\label{classPadeJastrow2_ad1825f20f3455b7c8aab82d3cc5e3b59}} 
+void {\bfseries update\+Arrays} (const Eigen\+::\+Vector\+Xd positions, const Eigen\+::\+Vector\+Xd radial\+Vector, const Eigen\+::\+Matrix\+Xd distance\+Matrix, const int changed\+Coord)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_aea2b7abe680a8dca7b7a62401b56dbf8}\label{classPadeJastrow2_aea2b7abe680a8dca7b7a62401b56dbf8}} 
+void {\bfseries set\+Arrays} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_a0ecc434c63886f54325175ec0e1d7248}\label{classPadeJastrow2_a0ecc434c63886f54325175ec0e1d7248}} 
+void {\bfseries reset\+Arrays} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_a3f2f121939d6af82fcfae2f5c58fe705}\label{classPadeJastrow2_a3f2f121939d6af82fcfae2f5c58fe705}} 
+void {\bfseries initialize\+Arrays} (const Eigen\+::\+Vector\+Xd positions, const Eigen\+::\+Vector\+Xd radial\+Vector, const Eigen\+::\+Matrix\+Xd distance\+Matrix)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_a66ff41e9d2013249b4ec5e230e99106f}\label{classPadeJastrow2_a66ff41e9d2013249b4ec5e230e99106f}} 
+void {\bfseries update\+Parameters} (const Eigen\+::\+Matrix\+Xd parameters, const int element\+Number)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_ac97fb412fc82061fd2adebba14a76267}\label{classPadeJastrow2_ac97fb412fc82061fd2adebba14a76267}} 
+double {\bfseries evaluate\+Ratio} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_a7803a54fe8a41a9c64258443e2c8ad3e}\label{classPadeJastrow2_a7803a54fe8a41a9c64258443e2c8ad3e}} 
+double {\bfseries compute\+Gradient} (const int k)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_a56fcec8323bdb0683f0e5089bf291faa}\label{classPadeJastrow2_a56fcec8323bdb0683f0e5089bf291faa}} 
+double {\bfseries compute\+Laplacian} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_ab7c947b264ff7a62ae8dcae9ce281728}\label{classPadeJastrow2_ab7c947b264ff7a62ae8dcae9ce281728}} 
+Eigen\+::\+Vector\+Xd {\bfseries compute\+Parameter\+Gradient} ()
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_ace65da5d71eb1812149fbcc15d57d057}\label{classPadeJastrow2_ace65da5d71eb1812149fbcc15d57d057}} 
+void {\bfseries calculateF} (int particle)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_abf0b0d488fcbd526060a5612319fe601}\label{classPadeJastrow2_abf0b0d488fcbd526060a5612319fe601}} 
+void {\bfseries calculateG} (int particle, int changed\+Coord)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_aea70f8cc7f9e56e99318f2cb2dab13b9}\label{classPadeJastrow2_aea70f8cc7f9e56e99318f2cb2dab13b9}} 
+void {\bfseries calculateH} (int particle)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_ae7ba7e9ffef8f645e0f3d0ffcc887fc6}\label{classPadeJastrow2_ae7ba7e9ffef8f645e0f3d0ffcc887fc6}} 
+void {\bfseries calculate\+Probability\+Ratio} (int particle)
+\item 
+\mbox{\Hypertarget{classPadeJastrow2_ad5983f9a1337a32ba8ffeee954a09168}\label{classPadeJastrow2_ad5983f9a1337a32ba8ffeee954a09168}} 
+void {\bfseries initialize\+Beta} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Wave\+Functions/padejastrow2.\+h\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Wave\+Functions/padejastrow2.\+cpp\end{DoxyCompactItemize}

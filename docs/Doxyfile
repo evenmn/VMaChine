@@ -829,7 +829,19 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../src-eigen ../src-arma
+INPUT                  =    ../src-eigen/main.h \
+                            ../src-eigen/system.h \
+                            ../src-eigen/sampler.h \
+                            ../src-eigen/Activation \
+                            ../src-eigen/Basis \
+                            ../src-eigen/Hamiltonians \
+                            ../src-eigen/InitialStates \
+                            ../src-eigen/InitialWeights \
+                            ../src-eigen/Layer \
+                            ../src-eigen/Metropolis \
+                            ../src-eigen/Optimization \
+                            ../src-eigen/RNG \
+                            ../src-eigen/WaveFunctions
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

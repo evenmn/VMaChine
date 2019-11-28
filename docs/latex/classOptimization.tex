@@ -1,0 +1,56 @@
+\hypertarget{classOptimization}{}\doxysection{Optimization Class Reference}
+\label{classOptimization}\index{Optimization@{Optimization}}
+Inheritance diagram for Optimization\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.964912cm]{classOptimization}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classOptimization_a7dc15f23e7cd99f0b6dbf29db68630fb}\label{classOptimization_a7dc15f23e7cd99f0b6dbf29db68630fb}} 
+{\bfseries Optimization} (class \mbox{\hyperlink{classSystem}{System}} $\ast$system)
+\item 
+\mbox{\Hypertarget{classOptimization_abe3edb21007703f9ac2b221b3147d104}\label{classOptimization_abe3edb21007703f9ac2b221b3147d104}} 
+virtual int {\bfseries get\+Number\+Of\+Batches} ()=0
+\item 
+\mbox{\Hypertarget{classOptimization_a084b293bbc5f95f1eb37a248a8ad6604}\label{classOptimization_a084b293bbc5f95f1eb37a248a8ad6604}} 
+virtual std\+::string {\bfseries get\+Label} ()=0
+\item 
+\mbox{\Hypertarget{classOptimization_a639813709f9e1f7da04dbbb9b566666c}\label{classOptimization_a639813709f9e1f7da04dbbb9b566666c}} 
+virtual void {\bfseries initialize} ()=0
+\item 
+\mbox{\Hypertarget{classOptimization_a6fe969eba7c1ae53995a8fb3902ac45a}\label{classOptimization_a6fe969eba7c1ae53995a8fb3902ac45a}} 
+virtual Eigen\+::\+Matrix\+Xd {\bfseries update\+Parameters} ()=0
+\item 
+\mbox{\Hypertarget{classOptimization_a947d4efd343bfe60278d434e55a9898b}\label{classOptimization_a947d4efd343bfe60278d434e55a9898b}} 
+Eigen\+::\+Matrix\+Xd {\bfseries get\+Energy\+Gradient} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classOptimization_a6d0bb7bc9b4c6657d071f1a93f7e3c06}\label{classOptimization_a6d0bb7bc9b4c6657d071f1a93f7e3c06}} 
+class \mbox{\hyperlink{classSystem}{System}} $\ast$ {\bfseries m\+\_\+system} = nullptr
+\item 
+\mbox{\Hypertarget{classOptimization_a51a8479dfc2db0ee7feed3d041e0fc9f}\label{classOptimization_a51a8479dfc2db0ee7feed3d041e0fc9f}} 
+Eigen\+::\+Vector\+Xd {\bfseries m\+\_\+positions}
+\item 
+\mbox{\Hypertarget{classOptimization_a2756f9e03a26afb39f60feb7493c8ca0}\label{classOptimization_a2756f9e03a26afb39f60feb7493c8ca0}} 
+int {\bfseries m\+\_\+number\+Of\+Elements} = 0
+\item 
+\mbox{\Hypertarget{classOptimization_a32ff00c9433e1a38668e58991de1ca48}\label{classOptimization_a32ff00c9433e1a38668e58991de1ca48}} 
+int {\bfseries m\+\_\+max\+Parameters} = 0
+\item 
+\mbox{\Hypertarget{classOptimization_a99c214a7ef969b8b332ccba826ee9010}\label{classOptimization_a99c214a7ef969b8b332ccba826ee9010}} 
+double {\bfseries m\+\_\+eta} = 1
+\item 
+\mbox{\Hypertarget{classOptimization_ac6522e34fe1f95589bb067d652bae4d2}\label{classOptimization_ac6522e34fe1f95589bb067d652bae4d2}} 
+std\+::vector$<$ class \mbox{\hyperlink{classWaveFunction}{Wave\+Function}} $\ast$ $>$ {\bfseries m\+\_\+wave\+Function\+Vector}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Optimization/optimization.\+h\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Optimization/optimization.\+cpp\end{DoxyCompactItemize}

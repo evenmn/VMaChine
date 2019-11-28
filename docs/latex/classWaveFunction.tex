@@ -1,0 +1,86 @@
+\hypertarget{classWaveFunction}{}\doxysection{Wave\+Function Class Reference}
+\label{classWaveFunction}\index{WaveFunction@{WaveFunction}}
+Inheritance diagram for Wave\+Function\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=12.000000cm]{classWaveFunction}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classWaveFunction_a9e8a90ff980abe1dfddb760d1743cceb}\label{classWaveFunction_a9e8a90ff980abe1dfddb760d1743cceb}} 
+{\bfseries Wave\+Function} (class \mbox{\hyperlink{classSystem}{System}} $\ast$system)
+\item 
+\mbox{\Hypertarget{classWaveFunction_aaaa71dfaec384c7d5d3ddbeff05e5c24}\label{classWaveFunction_aaaa71dfaec384c7d5d3ddbeff05e5c24}} 
+virtual int {\bfseries get\+Number\+Of\+Parameters} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a61b38d09e65e79cca04f489b92e8745d}\label{classWaveFunction_a61b38d09e65e79cca04f489b92e8745d}} 
+virtual int {\bfseries get\+Global\+Array\+Need} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a2991754ea53c86c368dae2c6f888d035}\label{classWaveFunction_a2991754ea53c86c368dae2c6f888d035}} 
+virtual std\+::string {\bfseries get\+Label} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a392a6cd2479b5bccca2704a730357cd9}\label{classWaveFunction_a392a6cd2479b5bccca2704a730357cd9}} 
+virtual void {\bfseries update\+Parameters} (const Eigen\+::\+Matrix\+Xd parameters)=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a3fc0cb9dd625dc7e65ccd1706997e52b}\label{classWaveFunction_a3fc0cb9dd625dc7e65ccd1706997e52b}} 
+virtual void {\bfseries initialize\+Arrays} (const Eigen\+::\+Vector\+Xd positions, const Eigen\+::\+Vector\+Xd radial\+Vector, const Eigen\+::\+Matrix\+Xd distance\+Matrix)=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_ae304977a3e441d6788e1c2953910bf59}\label{classWaveFunction_ae304977a3e441d6788e1c2953910bf59}} 
+virtual void {\bfseries update\+Arrays} (const Eigen\+::\+Vector\+Xd positions, const Eigen\+::\+Vector\+Xd radial\+Vector, const Eigen\+::\+Matrix\+Xd distance\+Matrix, const int changed\+Coord)=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a4d602a3b9d3d66cec01ca507cc5bb727}\label{classWaveFunction_a4d602a3b9d3d66cec01ca507cc5bb727}} 
+virtual void {\bfseries set\+Constants} (const int element\+Number)=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a8412fef37db9cacbd34642307bc08abb}\label{classWaveFunction_a8412fef37db9cacbd34642307bc08abb}} 
+virtual void {\bfseries set\+Arrays} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a3ad5ad261e9590ac0818a10b4fce462d}\label{classWaveFunction_a3ad5ad261e9590ac0818a10b4fce462d}} 
+virtual void {\bfseries reset\+Arrays} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a25e4f3ec4bbfccf8304d1b32c1fa0d5c}\label{classWaveFunction_a25e4f3ec4bbfccf8304d1b32c1fa0d5c}} 
+virtual double {\bfseries evaluate\+Ratio} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a992252afede9ad6ca54b9e8c9b8e9549}\label{classWaveFunction_a992252afede9ad6ca54b9e8c9b8e9549}} 
+virtual double {\bfseries compute\+Gradient} (const int k)=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a43411d8265fcdc56a35d762651a8abc5}\label{classWaveFunction_a43411d8265fcdc56a35d762651a8abc5}} 
+virtual double {\bfseries compute\+Laplacian} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a3b3eae3a4c7207f916c7f47c1482f07d}\label{classWaveFunction_a3b3eae3a4c7207f916c7f47c1482f07d}} 
+virtual Eigen\+::\+Vector\+Xd {\bfseries compute\+Parameter\+Gradient} ()=0
+\item 
+\mbox{\Hypertarget{classWaveFunction_ae6b53ee2850ef2d93328e37c4a4b6107}\label{classWaveFunction_ae6b53ee2850ef2d93328e37c4a4b6107}} 
+Eigen\+::\+Map$<$ Eigen\+::\+Vector\+Xd $>$ {\bfseries flatten} (Eigen\+::\+Matrix\+Xd A)
+\item 
+\mbox{\Hypertarget{classWaveFunction_af1317241186591faba21f978feb3d083}\label{classWaveFunction_af1317241186591faba21f978feb3d083}} 
+Eigen\+::\+Map$<$ Eigen\+::\+Matrix\+Xd $>$ {\bfseries reshape} (Eigen\+::\+Vector\+Xd A, const Eigen\+::\+Index m, const Eigen\+::\+Index n)
+\item 
+\mbox{\Hypertarget{classWaveFunction_af4ff26eba7399eea66839e3497ef9abb}\label{classWaveFunction_af4ff26eba7399eea66839e3497ef9abb}} 
+Eigen\+::\+Map$<$ Eigen\+::\+Matrix\+Xd $>$ {\bfseries square} (Eigen\+::\+Vector\+Xd A)
+\item 
+\mbox{\Hypertarget{classWaveFunction_a7870a62a1ec7c2a1d443e1ba0a326eb0}\label{classWaveFunction_a7870a62a1ec7c2a1d443e1ba0a326eb0}} 
+Eigen\+::\+Matrix\+Xd {\bfseries stack} (Eigen\+::\+Vector\+Xd A, int n)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classWaveFunction_a59198c360c2246b05213fbfc07219bd7}\label{classWaveFunction_a59198c360c2246b05213fbfc07219bd7}} 
+int {\bfseries m\+\_\+number\+Of\+Particles} = 0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a21aa7afefca1f9b2586c1b31c8509dd7}\label{classWaveFunction_a21aa7afefca1f9b2586c1b31c8509dd7}} 
+int {\bfseries m\+\_\+number\+Of\+Dimensions} = 0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a5d861a362f50f40f199dba216985fa91}\label{classWaveFunction_a5d861a362f50f40f199dba216985fa91}} 
+int {\bfseries m\+\_\+degrees\+Of\+Freedom} = 0
+\item 
+\mbox{\Hypertarget{classWaveFunction_a7be7d7f19d0e633bdd61c894b63e692b}\label{classWaveFunction_a7be7d7f19d0e633bdd61c894b63e692b}} 
+class \mbox{\hyperlink{classSystem}{System}} $\ast$ {\bfseries m\+\_\+system} = nullptr
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Wave\+Functions/wavefunction.\+h\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Wave\+Functions/wavefunction.\+cpp\end{DoxyCompactItemize}
