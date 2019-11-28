@@ -1,0 +1,86 @@
+\hypertarget{classBasis}{}\doxysection{Basis Class Reference}
+\label{classBasis}\index{Basis@{Basis}}
+Inheritance diagram for Basis\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.194030cm]{classBasis}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classBasis_a479b057b489ef0a2acb2615b7e818460}\label{classBasis_a479b057b489ef0a2acb2615b7e818460}} 
+{\bfseries Basis} (class \mbox{\hyperlink{classSystem}{System}} $\ast$system)
+\item 
+\mbox{\Hypertarget{classBasis_a014784e80eb89b7d001cd9b16cb54415}\label{classBasis_a014784e80eb89b7d001cd9b16cb54415}} 
+void {\bfseries number\+Of\+Orbitals} ()
+\item 
+\mbox{\Hypertarget{classBasis_a5b7462d3b59036ab6198968425cc1956}\label{classBasis_a5b7462d3b59036ab6198968425cc1956}} 
+void {\bfseries generate\+List\+Of\+States} ()
+\item 
+\mbox{\Hypertarget{classBasis_a056027daf7dde1cc574901f2c15b00a1}\label{classBasis_a056027daf7dde1cc574901f2c15b00a1}} 
+virtual void {\bfseries initialize} ()=0
+\item 
+\mbox{\Hypertarget{classBasis_a62b4efe1fbcffef1ec21540f3bae93a7}\label{classBasis_a62b4efe1fbcffef1ec21540f3bae93a7}} 
+virtual void {\bfseries set\+Parameters} (Eigen\+::\+Vector\+Xd parameters)=0
+\item 
+\mbox{\Hypertarget{classBasis_a6f1c5844f66410b21c60c4700b667594}\label{classBasis_a6f1c5844f66410b21c60c4700b667594}} 
+virtual double {\bfseries evaluate} (double x, int n)=0
+\item 
+\mbox{\Hypertarget{classBasis_a9e2cadfc48a3ab2281b3c0f60adaac59}\label{classBasis_a9e2cadfc48a3ab2281b3c0f60adaac59}} 
+virtual double {\bfseries evaluate\+Derivative} (double x, int n)=0
+\item 
+\mbox{\Hypertarget{classBasis_aeca5d9d64c5002539cd23177d47182dd}\label{classBasis_aeca5d9d64c5002539cd23177d47182dd}} 
+virtual double {\bfseries evaluate\+Second\+Derivative} (double x, int n)=0
+\item 
+\mbox{\Hypertarget{classBasis_a9417e8a68de155cc36b2b996f1212d8d}\label{classBasis_a9417e8a68de155cc36b2b996f1212d8d}} 
+virtual double {\bfseries basis\+Element} (const int n, Eigen\+::\+Vector\+Xd positions)=0
+\item 
+\mbox{\Hypertarget{classBasis_af5a71ec44284138144868329c82a1e67}\label{classBasis_af5a71ec44284138144868329c82a1e67}} 
+virtual double {\bfseries basis\+Element\+Der} (const int n, const int i, Eigen\+::\+Vector\+Xd positions)=0
+\item 
+\mbox{\Hypertarget{classBasis_a76b31d94c8c6d094a984e858aaa80a96}\label{classBasis_a76b31d94c8c6d094a984e858aaa80a96}} 
+virtual double {\bfseries basis\+Element\+Sec\+Der} (const int n, const int i, Eigen\+::\+Vector\+Xd positions)=0
+\item 
+\mbox{\Hypertarget{classBasis_acd1edb86e6283d3ebfcbbbe80fdad23e}\label{classBasis_acd1edb86e6283d3ebfcbbbe80fdad23e}} 
+virtual double {\bfseries basis\+Element\+Par} (const int n, Eigen\+::\+Vector\+Xd position)=0
+\item 
+\mbox{\Hypertarget{classBasis_aadf0c2c2f0f2439939bf6073165e8fc6}\label{classBasis_aadf0c2c2f0f2439939bf6073165e8fc6}} 
+long long {\bfseries factorial} (const int n)
+\item 
+\mbox{\Hypertarget{classBasis_ac53b653e1ea6333c8e9c5adb50d4992c}\label{classBasis_ac53b653e1ea6333c8e9c5adb50d4992c}} 
+int {\bfseries factorial\+Difference} (const int high, const int low)
+\item 
+\mbox{\Hypertarget{classBasis_a2f9b7baa3b84a7ef99e3780623f78253}\label{classBasis_a2f9b7baa3b84a7ef99e3780623f78253}} 
+int {\bfseries binomial} (const int n, const int p)
+\item 
+\mbox{\Hypertarget{classBasis_ac6fe81f5df6588776c5418f40d26d2dc}\label{classBasis_ac6fe81f5df6588776c5418f40d26d2dc}} 
+void {\bfseries write\+File\+Content\+Into\+Eigen\+Matrix} (std\+::string file\+Name, Eigen\+::\+Matrix\+Xd \&matrix)
+\item 
+\mbox{\Hypertarget{classBasis_a5faba511f810c4416c03fe2a133b213d}\label{classBasis_a5faba511f810c4416c03fe2a133b213d}} 
+std\+::ifstream\+::pos\+\_\+type {\bfseries file\+Length} (std\+::string file\+Name)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classBasis_adc1a10d3e2190bf2674e0b9e27e4856c}\label{classBasis_adc1a10d3e2190bf2674e0b9e27e4856c}} 
+int {\bfseries m\+\_\+number\+Of\+Particles} = 0
+\item 
+\mbox{\Hypertarget{classBasis_a50abb77f1a6328fb0ce52f22a63e8d05}\label{classBasis_a50abb77f1a6328fb0ce52f22a63e8d05}} 
+int {\bfseries m\+\_\+number\+Of\+Dimensions} = 0
+\item 
+\mbox{\Hypertarget{classBasis_a3702a103cf49a18a9b91a9a41685228e}\label{classBasis_a3702a103cf49a18a9b91a9a41685228e}} 
+int {\bfseries m\+\_\+number\+Of\+Orbitals} = 0
+\item 
+\mbox{\Hypertarget{classBasis_ad47fb219c1a0e471b5274d3a10dfb772}\label{classBasis_ad47fb219c1a0e471b5274d3a10dfb772}} 
+Eigen\+::\+Matrix\+Xi {\bfseries m\+\_\+list\+Of\+States}
+\item 
+\mbox{\Hypertarget{classBasis_a5bec33f9f791bdfca35f98fecfb5f7ae}\label{classBasis_a5bec33f9f791bdfca35f98fecfb5f7ae}} 
+class \mbox{\hyperlink{classSystem}{System}} $\ast$ {\bfseries m\+\_\+system} = nullptr
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Basis/basis.\+h\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Basis/basis.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,74 @@
+\hypertarget{classHamiltonian}{}\doxysection{Hamiltonian Class Reference}
+\label{classHamiltonian}\index{Hamiltonian@{Hamiltonian}}
+Inheritance diagram for Hamiltonian\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classHamiltonian}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classHamiltonian_a3982be19f11a02e093751ccdc87d2ec7}\label{classHamiltonian_a3982be19f11a02e093751ccdc87d2ec7}} 
+{\bfseries Hamiltonian} (class \mbox{\hyperlink{classSystem}{System}} $\ast$system)
+\item 
+\mbox{\Hypertarget{classHamiltonian_a979183591fbf9dbaf3cfb3320abc8ed9}\label{classHamiltonian_a979183591fbf9dbaf3cfb3320abc8ed9}} 
+virtual int {\bfseries get\+Global\+Array\+Need} ()=0
+\item 
+\mbox{\Hypertarget{classHamiltonian_aa577d299bfeb3f8d7a12451959e4e66c}\label{classHamiltonian_aa577d299bfeb3f8d7a12451959e4e66c}} 
+virtual std\+::string {\bfseries get\+Label} ()=0
+\item 
+\mbox{\Hypertarget{classHamiltonian_ad5de0673c6a2ce2833921a8281b015b2}\label{classHamiltonian_ad5de0673c6a2ce2833921a8281b015b2}} 
+virtual void {\bfseries initialize} ()=0
+\item 
+\mbox{\Hypertarget{classHamiltonian_a9eac126e030f128a0b8f11dacb46ff1f}\label{classHamiltonian_a9eac126e030f128a0b8f11dacb46ff1f}} 
+virtual double {\bfseries get\+External\+Energy} ()=0
+\item 
+\mbox{\Hypertarget{classHamiltonian_a1ee4291296755d9f228e2f7746d0361d}\label{classHamiltonian_a1ee4291296755d9f228e2f7746d0361d}} 
+virtual double {\bfseries compute\+Local\+Energy} ()=0
+\item 
+\mbox{\Hypertarget{classHamiltonian_a5d4bf80fe175dfa21e39e01ba565d0e3}\label{classHamiltonian_a5d4bf80fe175dfa21e39e01ba565d0e3}} 
+double {\bfseries get\+Interaction\+Energy} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classHamiltonian_a6bdb8af8f94da65fd9e6294f631ccfe3}\label{classHamiltonian_a6bdb8af8f94da65fd9e6294f631ccfe3}} 
+int {\bfseries m\+\_\+number\+Of\+Particles} = 0
+\item 
+\mbox{\Hypertarget{classHamiltonian_ae4f58f4d709f873548f8d4e21db860b4}\label{classHamiltonian_ae4f58f4d709f873548f8d4e21db860b4}} 
+int {\bfseries m\+\_\+number\+Of\+Dimensions} = 0
+\item 
+\mbox{\Hypertarget{classHamiltonian_a5fb1117a2acc7e67ddd201765fe672a1}\label{classHamiltonian_a5fb1117a2acc7e67ddd201765fe672a1}} 
+bool {\bfseries m\+\_\+interaction} = false
+\item 
+\mbox{\Hypertarget{classHamiltonian_a479349699939bbbb5c7400f2fdb11e0b}\label{classHamiltonian_a479349699939bbbb5c7400f2fdb11e0b}} 
+bool {\bfseries m\+\_\+screening} = false
+\item 
+\mbox{\Hypertarget{classHamiltonian_a5b5574ae08385cc0fe15689d16f1a964}\label{classHamiltonian_a5b5574ae08385cc0fe15689d16f1a964}} 
+double {\bfseries m\+\_\+screening\+Strength} = 100
+\item 
+\mbox{\Hypertarget{classHamiltonian_ae0e488d561e0d1ce90398f2c94459ba7}\label{classHamiltonian_ae0e488d561e0d1ce90398f2c94459ba7}} 
+double {\bfseries m\+\_\+dsl} = 100
+\item 
+\mbox{\Hypertarget{classHamiltonian_a926f263fdaa5b2f273033a51cb80c485}\label{classHamiltonian_a926f263fdaa5b2f273033a51cb80c485}} 
+Eigen\+::\+Vector\+Xd {\bfseries m\+\_\+positions}
+\item 
+\mbox{\Hypertarget{classHamiltonian_a00166194f257fe60e23142408f13bb18}\label{classHamiltonian_a00166194f257fe60e23142408f13bb18}} 
+Eigen\+::\+Vector\+Xd {\bfseries m\+\_\+radial\+Vector}
+\item 
+\mbox{\Hypertarget{classHamiltonian_a518b04776821dc11337fe9e5b594771a}\label{classHamiltonian_a518b04776821dc11337fe9e5b594771a}} 
+Eigen\+::\+Matrix\+Xd {\bfseries m\+\_\+distance\+Matrix}
+\item 
+\mbox{\Hypertarget{classHamiltonian_a23b8036ddad3c65eb7df5e67575b3213}\label{classHamiltonian_a23b8036ddad3c65eb7df5e67575b3213}} 
+Eigen\+::\+Matrix\+Xd {\bfseries m\+\_\+parameters}
+\item 
+\mbox{\Hypertarget{classHamiltonian_a540f283fe322eb588fa0637c9083cdf2}\label{classHamiltonian_a540f283fe322eb588fa0637c9083cdf2}} 
+class \mbox{\hyperlink{classSystem}{System}} $\ast$ {\bfseries m\+\_\+system} = nullptr
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Hamiltonians/hamiltonian.\+h\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Hamiltonians/hamiltonian.\+cpp\end{DoxyCompactItemize}

@@ -4,6 +4,7 @@
 
 class Activation
 {
+    /* Activation function class. */
 public:
     Activation(class System *system);
     virtual Eigen::VectorXd evaluate(Eigen::VectorXd x) = 0;

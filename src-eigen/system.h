@@ -12,13 +12,76 @@
 
 class System
 {
+    /* The system class is the primary class of the software.
+     * This is where the parameter loop and Monte Carlo loop
+     * are found. All communication goes from this class.
+     * Additionally, this class stores all the required
+     * information about the system. This includes particle
+     * configurations, parameter values etc.. */
 public:
+    /* Call this function from main.cpp to specify the number
+     * of particles used in the simulation. */
+    void setNumberOfParticles(const int numberOfParticles);
+
+    /* Call this function from main.cpp to specify the number
+     * of dimensions of the system. */
+    void setNumberOfDimensions(const int numberOfDimensions);
+
+    /* Call this function from main.cpp to specify the number
+     * of hidden nodes contained in the hidden layer of the
+     * restricted Boltzmann machine. The default setting is
+     * number of hidden nodes = number of particles. */
+    void setNumberOfHiddenUnits(const int numberOfHiddenUnits);
+
+    /* Call this function from main.cpp to specify the number
+     * of Metropolis cycles used in sampling. The default
+     * setting is M=2^19=524,288. */
+    void setNumberOfMetropolisSteps(const int steps);
+
+    /* Call this function from main.cpp to specify the maximum
+     * number of iterations used in the simulation. Default
+     * setting is 1000. */
+    void setNumberOfIterations(const int numberOfIterations = 1000);
+
+    /* The adaptiveSteps function controls the number of cycles
+     * used in each iteration. If adaptive steps is applied,
+     * this function increases the number of cycles at the
+     * right time. */
     int adaptiveSteps();
+
+    /* The initializeSystem function initializes the system in the
+     * right way. Various objects need to be initialized in the
+     * correct order, which is the task of this function. This lets
+     * the calls being in arbitrary order in main/configuration file. */
     void initializeSystem();
+
+    /* The runMetropolisCycles function contains the Monte Carlo
+     * sampling loop. This is the function can be trivially
+     * parallelized. */
     void runMetropolisCycles();
+
+    /* The checkingConvergence function is responsible for
+     * checking whether the simulation has converged or not. */
     void checkingConvergence();
+
+    /* The setNumberOfFreeDimensions function specifies the
+     * number of free dimensions (the number of particles times
+     * the number of dimensions). This is called automatically
+     * when both the number of particles and number of dimensions
+     * are determined. */
     void setNumberOfFreeDimensions();
+
+    /* The setMaxParameters function speficies the maximum number
+     * of parameters found in a single wave function element. This
+     * is called automatically when all the wave function elements
+     * are specified. */
     void setMaxParameters();
+
+    /* The setGradients function declares the gradient matrix based
+     * on the maximum number of parameters in a single wave function
+     * element and the number of wave function elements. This is
+     * called automatically when all the wave function elements are
+     * specified. */
     void setGradients();
     void setGlobalArraysToCalculate();
     void resetAllArrays();
@@ -27,11 +90,6 @@ public:
     void setAtomicNumber(const int Z);
     void runSimulation();
     void printToTerminal();
-    void setNumberOfParticles(const int numberOfParticles);
-    void setNumberOfDimensions(const int numberOfDimensions);
-    void setNumberOfHiddenUnits(const int numberOfHiddenUnits);
-    void setNumberOfMetropolisSteps(const int steps);
-    void setNumberOfIterations(const int numberOfIterations);
     void setNumberOfElements(const unsigned long numberOfElements);
     void setStepLength(const double stepLength);
     void setEquilibrationFraction(const double equilibrationFraction);

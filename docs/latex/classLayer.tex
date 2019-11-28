@@ -1,0 +1,59 @@
+\hypertarget{classLayer}{}\doxysection{Layer Class Reference}
+\label{classLayer}\index{Layer@{Layer}}
+Inheritance diagram for Layer\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classLayer}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classLayer_aa5f9ef6a0d8fee121692f5f74758ba39}\label{classLayer_aa5f9ef6a0d8fee121692f5f74758ba39}} 
+typedef Eigen\+::\+Matrix$<$ long, 2, 1 $>$ {\bfseries Vector2l}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classLayer_a6a842004666f9555a025d29eefda1280}\label{classLayer_a6a842004666f9555a025d29eefda1280}} 
+{\bfseries Layer} (class \mbox{\hyperlink{classSystem}{System}} $\ast$system)
+\item 
+\mbox{\Hypertarget{classLayer_a551c6f45e5f0babdf5b45d21e5d2622d}\label{classLayer_a551c6f45e5f0babdf5b45d21e5d2622d}} 
+virtual void {\bfseries initialize} ()=0
+\item 
+\mbox{\Hypertarget{classLayer_a25efffd8113a0cddd02b004c359e2f51}\label{classLayer_a25efffd8113a0cddd02b004c359e2f51}} 
+virtual Vector2l {\bfseries get\+Weight\+Dim} ()=0
+\item 
+\mbox{\Hypertarget{classLayer_a7ebebec1770836eae5fab14819278112}\label{classLayer_a7ebebec1770836eae5fab14819278112}} 
+virtual Eigen\+::\+Vector\+Xd {\bfseries evaluate} ()=0
+\item 
+\mbox{\Hypertarget{classLayer_a9db9320d0bb3c203ce78fbf03c1dff8e}\label{classLayer_a9db9320d0bb3c203ce78fbf03c1dff8e}} 
+virtual Eigen\+::\+Vector\+Xd {\bfseries activate} (Eigen\+::\+Vector\+Xd a0)=0
+\item 
+\mbox{\Hypertarget{classLayer_a061e2bf428737b7da0f36f3f9a6a11f4}\label{classLayer_a061e2bf428737b7da0f36f3f9a6a11f4}} 
+virtual Eigen\+::\+Vector\+Xd {\bfseries calculate\+Delta} (Eigen\+::\+Vector\+Xd delta0)=0
+\item 
+\mbox{\Hypertarget{classLayer_a27ab44b0d2b801692c00d3a8f9e9726b}\label{classLayer_a27ab44b0d2b801692c00d3a8f9e9726b}} 
+virtual Eigen\+::\+Matrix\+Xd {\bfseries calculate\+Gradient} ()=0
+\item 
+\mbox{\Hypertarget{classLayer_a28ca197fd194dde8abe4c9f872f842b6}\label{classLayer_a28ca197fd194dde8abe4c9f872f842b6}} 
+virtual void {\bfseries update\+Weights} (Eigen\+::\+Matrix\+Xd W\+New)=0
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classLayer_a96b4da2938f58f88527d4cece9e1d36c}\label{classLayer_a96b4da2938f58f88527d4cece9e1d36c}} 
+Eigen\+::\+Matrix\+Xd {\bfseries m\+\_\+W}
+\item 
+\mbox{\Hypertarget{classLayer_a16109551bb53d61e2de0d56799dcbc39}\label{classLayer_a16109551bb53d61e2de0d56799dcbc39}} 
+class \mbox{\hyperlink{classSystem}{System}} $\ast$ {\bfseries m\+\_\+system} = nullptr
+\item 
+\mbox{\Hypertarget{classLayer_a37567ef516f3db179cb6d4818135bcaa}\label{classLayer_a37567ef516f3db179cb6d4818135bcaa}} 
+class \mbox{\hyperlink{classActivation}{Activation}} $\ast$ {\bfseries m\+\_\+activation} = nullptr
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Layer/layer.\+h\item 
+/home/evenmn/\+V\+M\+C/src-\/eigen/\+Layer/layer.\+cpp\end{DoxyCompactItemize}
