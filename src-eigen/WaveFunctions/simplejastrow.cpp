@@ -166,6 +166,9 @@ void SimpleJastrow::calculateProbabilityRatio(int i_p)
     for (int j_p = i_p; j_p < m_numberOfParticles; j_p++) {
         ratio += m_beta(i_p, j_p) * (m_distanceMatrix(i_p, j_p) - m_distanceMatrixOld(i_p, j_p));
     }
+    //for (int j_p = 0; j_p < i_p; j_p++) {
+    //    ratio += m_beta(j_p, i_p) * (m_distanceMatrix(j_p, i_p) - m_distanceMatrixOld(j_p, i_p));
+    //}
 
     m_probabilityRatio = exp(2 * ratio);
 }
