@@ -23,7 +23,7 @@ void InitialState::calculateDistanceMatrix()
     for (int i = 0; i < m_numberOfParticles; i++) {
         for (int j = i + 1; j < m_numberOfParticles; j++) {
             m_distanceMatrix(i, j) = calculateDistanceMatrixElement(i, j);
-            m_distanceMatrix(j, i) = m_distanceMatrix(i, j);
+            //m_distanceMatrix(j, i) = m_distanceMatrix(i, j);
         }
     }
 }
