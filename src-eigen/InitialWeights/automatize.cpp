@@ -86,6 +86,8 @@ void Automatize::setupInitialWeights()
         m_method = new Constant(m_system, 0.0);
     } else if (m_trialWaveFunction == "PRBM") {
         m_method = new Constant(m_system, 0.0);
+    } else if (m_trialWaveFunction == "SSJ") {
+        m_method = new Randomize(m_system, 0.2);
     } else {
         m_method = new Randomize(m_system, 0.01);
     }

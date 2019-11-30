@@ -280,7 +280,7 @@ private:
     std::vector<class Layer *> m_layers;
     std::vector<int> m_hiddenUnits;
 
-    std::string m_path = "../data/";
+    std::string m_path = "data/";
     std::string m_trialWaveFunction;
     std::string m_configFile = "none";
 

@@ -214,8 +214,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     /* Print output to terminal for an ordinary iteration. */
     m_iter += 1;
     cout << endl;
-    cout << "  -- System info: "
-         << " -- " << endl;
+    cout << "  -- System info: " << " -- " << endl;
     cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
     cout << " Number of particles     : " << m_numberOfParticles << endl;
     cout << " Number of dimensions    : " << m_numberOfDimensions << endl;
@@ -226,18 +225,16 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     cout << " Hamiltonian             : " << m_hamiltonian << endl;
     cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
          << " equilibration)" << endl;
-    //cout << " Data files stored as    : " << generateFileName("{type}", ".dat") << endl;
-    //cout << " Blocking file stored as : " << m_instantEnergyFileName << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Energy                : " << m_averageEnergy;
-    cout << "        (STD : "           << sqrt(m_variance) << " )" << endl;
+    cout << "        (with STD = "           << sqrt(m_variance) << ")" << endl;
     cout << " Kinetic energy        : " << m_averageKineticEnergy;
-    cout << "        (STD : "           << sqrt(m_varianceKinetic) << " )" << endl;
+    cout << "        (with STD = "           << sqrt(m_varianceKinetic) << ")" << endl;
     cout << " External energy       : " << m_averageExternalEnergy;
-    cout << "        (STD : "           << sqrt(m_varianceExternal) << " )" << endl;
+    cout << "        (with STD = "           << sqrt(m_varianceExternal) << ")" << endl;
     cout << " Interaction energy    : " << m_averageInteractionEnergy;
-    cout << "        (STD : "           << sqrt(m_varianceInteraction) << " )" << endl;
+    cout << "        (with STD = "           << sqrt(m_varianceInteraction) << ")" << endl;
     //cout << " Variance              : " << m_variance << endl;
     //cout << " STD                   : " << sqrt(m_variance) << endl;
     cout << " Acceptence Ratio      : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
@@ -397,9 +394,9 @@ void Sampler::openOutputFiles()
 {
     /* Open the generated files to store local energy, electron
      * density, weight etc.. */
-    if (m_rank == 0) {
-        m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(1e6);
-    }
+    //if (m_rank == 0) {
+    //    m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(1e6);
+    //}
     MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     if (m_printParametersToFile && m_rank == 0) {

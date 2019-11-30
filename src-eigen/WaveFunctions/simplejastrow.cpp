@@ -74,7 +74,7 @@ double SimpleJastrow::computeGradient(const int k)
     double derivative = 0;
     for (int j_p = 0; j_p < k_p; j_p++) {
         int j = j_p * m_numberOfDimensions + k_d;
-        derivative += m_beta(k_p, j_p) * m_principalDistance(k, j);
+        derivative -= m_beta(j_p, k_p) * m_principalDistance(j, k);
     }
     for (int j_p = k_p + 1; j_p < m_numberOfParticles; j_p++) {
         int j = j_p * m_numberOfDimensions + k_d;
@@ -91,9 +91,9 @@ double SimpleJastrow::computeLaplacian()
         int k_d = k % m_numberOfDimensions;
         for (int j_p = 0; j_p < k_p; j_p++) {
             int j = j_p * m_numberOfDimensions + k_d;
-            derivative += m_beta(k_p, j_p)
-                          * (1 - m_principalDistance(k, j) * m_principalDistance(k, j))
-                          / m_distanceMatrix(k_p, j_p);
+            derivative += m_beta(j_p, k_p)
+                          * (1 - m_principalDistance(j, k) * m_principalDistance(j, k))
+                          / m_distanceMatrix(j_p, k_p);
         }
         for (int j_p = k_p + 1; j_p < m_numberOfParticles; j_p++) {
             int j = j_p * m_numberOfDimensions + k_d;
@@ -121,12 +121,11 @@ void SimpleJastrow::initializePrincipalDistance()
             int p = int(j / m_numberOfDimensions);
             m_principalDistance(j, j + step) = (m_positions(j) - m_positions(j + step))
                                                / m_distanceMatrix(p, p + n);
-            m_principalDistance(j + step, j) = -m_principalDistance(j, j + step);
         }
     }
 }
 
-void SimpleJastrow::updatePrincipalDistance(int i, int i_p)
+void SimpleJastrow::updatePrincipalDistance(int /*i*/, int /*i_p*/)
 {
     /* Update of the principal distance matrix
      * Arguments:
@@ -134,28 +133,13 @@ void SimpleJastrow::updatePrincipalDistance(int i, int i_p)
      * {int} i:     The changed coordinate
      * {int} i_p:   The moved particle
      */
-    /*
-    int i_d = i % m_numberOfDimensions;
-    for (int j_p = 0; j_p < i_p; j_p++) {
-        int j = i_d + j_p * m_numberOfDimensions;
-        m_principalDistance(i, j) = (m_positions(i) - m_positions(j)) / m_distanceMatrix(i_p, j_p);
-        m_principalDistance(j, i) = -m_principalDistance(i, j);
-    }
-    for (int j_p = i_p + 1; j_p < m_numberOfParticles; j_p++) {
-        int j = i_d + j_p * m_numberOfDimensions;
-        m_principalDistance(i, j) = (m_positions(i) - m_positions(j)) / m_distanceMatrix(i_p, j_p);
-        m_principalDistance(j, i) = -m_principalDistance(i, j);
-    }
-    */
 
-    m_principalDistance = Eigen::MatrixXd::Zero(m_degreesOfFreedom, m_degreesOfFreedom);
     for (int n = 1; n < m_numberOfParticles; n++) {
         int step = n * m_numberOfDimensions;
         for (int j = 0; j < m_degreesOfFreedom - step; j++) {
             int p = int(j / m_numberOfDimensions);
             m_principalDistance(j, j + step) = (m_positions(j) - m_positions(j + step))
                                                / m_distanceMatrix(p, p + n);
-            m_principalDistance(j + step, j) = -m_principalDistance(j, j + step);
         }
     }
 }
@@ -163,7 +147,7 @@ void SimpleJastrow::updatePrincipalDistance(int i, int i_p)
 void SimpleJastrow::calculateProbabilityRatio(int i_p)
 {
     double ratio = 0;
-    for (int j_p = i_p; j_p < m_numberOfParticles; j_p++) {
+    for (int j_p = i_p+1; j_p < m_numberOfParticles; j_p++) {
         ratio += m_beta(i_p, j_p) * (m_distanceMatrix(i_p, j_p) - m_distanceMatrixOld(i_p, j_p));
     }
 

@@ -966,4 +966,15 @@ void System::collectAllLabels()
     testVMC8.push_back("slaterdeterminant");
     testVMC8.push_back("gaussian");
     searchShortning(testVMC8, "VMC", m_trialWaveFunction);
+
+    std::vector<std::string> testSSJ1;
+    testSSJ1.push_back("slaterdeterminant");
+    testSSJ1.push_back("gaussian");
+    testSSJ1.push_back("simplejastrow");
+    searchShortning(testSSJ1, "SSJ", m_trialWaveFunction);
+
+    std::vector<std::string> testSSJ2;
+    testSSJ2.push_back("gaussian");
+    testSSJ2.push_back("simplejastrow");
+    searchShortning(testSSJ2, "SSJ", m_trialWaveFunction);
 }
