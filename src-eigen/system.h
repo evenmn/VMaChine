@@ -105,17 +105,15 @@ public:
                          std::string &allLabels);
 
     void setInteraction(const bool interaction);
+    void computeRadialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
+    void computeSpatialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
+    void computeTwoBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
     void setParameterPrintingTools(const bool printParametersToFile = true);
     void setConvergenceTools(const int numberOfEnergies = 5,
                              const double tolerance = 1e-6);
     void setAdaptiveStepTools(const int rangeOfAdaptiveSteps = 10,
                               const int additionalSteps = 4,
                               const int additionalStepsLastIteration = 8);
-    void setDensityTools(const bool computeOneBodyDensity = false,
-                         const bool computeSpatialOneBodyDensity = false,
-                         const bool computeTwoBodyDensity = false,
-                         const int numberOfBins = 1000,
-                         const double maxRadius = 50);
     void setScreeningTools(const double screeningStrength, const double dsl);
     void dumpEnergyToFile(bool printEnergyFile = true);
     void checkResampling(bool printInstantEnergyFile = true);
@@ -187,9 +185,9 @@ public:
 
     bool getScreening() { return m_screening; }
     bool getInteraction() { return m_interaction; }
-    bool computeOneBodyDensity() { return m_computeOneBodyDensity; }
-    bool computeOneBodyDensity2() { return m_computeOneBodyDensity2; }
-    bool computeTwoBodyDensity() { return m_computeTwoBodyDensity; }
+    bool radialOneBodyDensity() { return m_computeOneBodyDensity; }
+    bool spatialOneBodyDensity() { return m_computeOneBodyDensity2; }
+    bool radialTwoBodyDensity() { return m_computeTwoBodyDensity; }
     bool printEnergyToFile() { return m_printEnergyToFile; }
     bool printParametersToFile() { return m_printParametersToFile; }
     bool doResampling() { return m_doResampling; }
@@ -280,7 +278,7 @@ private:
     std::vector<class Layer *> m_layers;
     std::vector<int> m_hiddenUnits;
 
-    std::string m_path = "../data/";
+    std::string m_path = "data/";
     std::string m_trialWaveFunction;
     std::string m_configFile = "none";
 

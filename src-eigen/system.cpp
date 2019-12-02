@@ -467,18 +467,29 @@ void System::setAdaptiveStepTools(int rangeOfAdaptiveSteps,
     m_additionalStepsLastIter = additionalStepsLastIteration;
 }
 
-void System::setDensityTools(bool computeOneBodyDensity,
-                             bool computeSpatialOneBodyDensity,
-                             bool computeTwoBodyDensity,
-                             int numberOfBins,
-                             double maxRadius)
+void System::computeRadialOneBodyDensity(int numberOfBins, double maxRadius)
 {
-    /* Specify which electron density that should be
-     * dumped to file. The default is to not dump any
-     * electron density to file. */
-    m_computeOneBodyDensity = computeOneBodyDensity;
-    m_computeOneBodyDensity2 = computeSpatialOneBodyDensity;
-    m_computeTwoBodyDensity = computeTwoBodyDensity;
+    /* Compute the radial one-body density. Default number of bins is
+     * 1000, default max radius is 50 given in natural units. */
+    m_computeOneBodyDensity = true;
+    m_numberOfBins = numberOfBins;
+    m_maxRadius = maxRadius;
+}
+
+void System::computeSpatialOneBodyDensity(int numberOfBins, double maxRadius)
+{
+    /* Compute the spatial one-body density. Default number of bins is
+     * 1000 x 1000, default max radius is 50 given in natural units. */
+    m_computeOneBodyDensity2 = true;
+    m_numberOfBins = numberOfBins;
+    m_maxRadius = maxRadius;
+}
+
+void System::computeTwoBodyDensity(int numberOfBins, double maxRadius)
+{
+    /* Compute the radial two-body density. Default number of bins is
+     * 1000, default max radius is 50 given in natural units. */
+    m_computeTwoBodyDensity = true;
     m_numberOfBins = numberOfBins;
     m_maxRadius = maxRadius;
 }
@@ -966,4 +977,15 @@ void System::collectAllLabels()
     testVMC8.push_back("slaterdeterminant");
     testVMC8.push_back("gaussian");
     searchShortning(testVMC8, "VMC", m_trialWaveFunction);
+
+    std::vector<std::string> testSSJ1;
+    testSSJ1.push_back("slaterdeterminant");
+    testSSJ1.push_back("gaussian");
+    testSSJ1.push_back("simplejastrow");
+    searchShortning(testSSJ1, "SSJ", m_trialWaveFunction);
+
+    std::vector<std::string> testSSJ2;
+    testSSJ2.push_back("gaussian");
+    testSSJ2.push_back("simplejastrow");
+    searchShortning(testSSJ2, "SSJ", m_trialWaveFunction);
 }
