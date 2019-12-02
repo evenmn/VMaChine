@@ -24,9 +24,9 @@ Sampler::Sampler(System *system)
     m_numberOfBatches = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch = int(m_stepsWOEqui / m_numberOfBatches);
     m_interaction = m_system->getInteraction();
-    m_computeOneBodyDensity = m_system->computeOneBodyDensity();
-    m_computeOneBodyDensity2 = m_system->computeOneBodyDensity2();
-    m_computeTwoBodyDensity = m_system->computeTwoBodyDensity();
+    m_computeOneBodyDensity = m_system->radialOneBodyDensity();
+    m_computeOneBodyDensity2 = m_system->spatialOneBodyDensity();
+    m_computeTwoBodyDensity = m_system->radialTwoBodyDensity();
     m_printEnergyToFile = m_system->printEnergyToFile();
     m_printInstantEnergyToFile = m_system->doResampling();
     m_printParametersToFile = m_system->printParametersToFile();

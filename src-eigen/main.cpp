@@ -8,13 +8,13 @@ int main(int argc, char *argv[])
     QD->setNumberOfParticles(6);
     QD->setNumberOfDimensions(2);
     QD->setFrequency(1.0);
-    QD->setNumberOfMetropolisSteps(int(pow(2, 17)));
+    QD->setNumberOfMetropolisSteps(int(pow(2, 18)));
 
     QD->setLearningRate(0.05);
     QD->setStepLength(0.05);
 
     QD->checkResampling(true);
-    QD->computeOneBodyDensity();
+    QD->computeRadialOneBodyDensity();
 
     QD->setHamiltonian(new HarmonicOscillator(QD));
 
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
     QD->setBasis(new Hermite(QD));
 
-    QD->setNumberOfIterations(50);
+    QD->setNumberOfIterations(30);
     QD->runSimulation();
     return 0;
 }
