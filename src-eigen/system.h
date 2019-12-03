@@ -36,7 +36,7 @@ public:
     /* Call this function from main.cpp to specify the number
      * of Metropolis cycles used in sampling. The default
      * setting is M=2^19=524,288. */
-    void setNumberOfMetropolisSteps(const int steps);
+    void setNumberOfMetropolisCycles(const int steps);
 
     /* Call this function from main.cpp to specify the maximum
      * number of iterations used in the simulation. Default
@@ -116,7 +116,7 @@ public:
                               const int additionalStepsLastIteration = 8);
     void setScreeningTools(const double screeningStrength, const double dsl);
     void dumpEnergyToFile(bool printEnergyFile = true);
-    void checkResampling(bool printInstantEnergyFile = true);
+    void doBlocking(bool printInstantEnergyFile = true);
     void initializeMPI();
 
     void updateAllParameters(const Eigen::MatrixXd parameters);

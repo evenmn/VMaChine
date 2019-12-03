@@ -211,5 +211,5 @@ if(MPI_LINK_FLAGS)
 endif()
 
 # Add library to make source files visible for doxygen
-add_library(SourceFiles ${SOURCES})
-target_include_directories(SourceFiles PUBLIC .)
+# add_library(SourceFiles ${SOURCES})
+# target_include_directories(SourceFiles PUBLIC .)
