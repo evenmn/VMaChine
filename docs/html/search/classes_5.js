@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fnn_73',['FNN',['../classFNN.html',1,'']]]
+  ['fnn_67',['FNN',['../classFNN.html',1,'']]]
 ];

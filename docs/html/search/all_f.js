@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['sampler_51',['Sampler',['../classSampler.html',1,'']]],
-  ['samsethjastrow_52',['SamsethJastrow',['../classSamsethJastrow.html',1,'']]],
-  ['sgd_53',['SGD',['../classSGD.html',1,'']]],
-  ['sigmoid_54',['Sigmoid',['../classSigmoid.html',1,'']]],
-  ['simplejastrow_55',['SimpleJastrow',['../classSimpleJastrow.html',1,'']]],
-  ['slaterdeterminant_56',['SlaterDeterminant',['../classSlaterDeterminant.html',1,'']]],
-  ['system_57',['System',['../classSystem.html',1,'']]]
+  ['sampler_46',['Sampler',['../classSampler.html',1,'']]],
+  ['sgd_47',['SGD',['../classSGD.html',1,'']]],
+  ['sigmoid_48',['Sigmoid',['../classSigmoid.html',1,'']]],
+  ['simplejastrow_49',['SimpleJastrow',['../classSimpleJastrow.html',1,'']]],
+  ['slaterdeterminant_50',['SlaterDeterminant',['../classSlaterDeterminant.html',1,'']]],
+  ['system_51',['System',['../classSystem.html',1,'']]]
 ];

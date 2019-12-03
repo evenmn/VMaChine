@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['layer_31',['Layer',['../classLayer.html',1,'']]],
-  ['leakyrelu_32',['LeakyReLU',['../classLeakyReLU.html',1,'']]]
+  ['layer_30',['Layer',['../classLayer.html',1,'']]],
+  ['leakyrelu_31',['LeakyReLU',['../classLeakyReLU.html',1,'']]]
 ];

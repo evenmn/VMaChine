@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['wavefunction_58',['WaveFunction',['../classWaveFunction.html',1,'']]]
+  ['wavefunction_52',['WaveFunction',['../classWaveFunction.html',1,'']]]
 ];

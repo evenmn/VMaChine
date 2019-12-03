@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['optimization_95',['Optimization',['../classOptimization.html',1,'']]]
+  ['optimization_88',['Optimization',['../classOptimization.html',1,'']]]
 ];
