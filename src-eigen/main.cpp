@@ -1,6 +1,6 @@
 #include "main.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     // Define system
     System *QD = new System();
@@ -8,12 +8,12 @@ int main(int argc, char *argv[])
     QD->setNumberOfParticles(6);
     QD->setNumberOfDimensions(2);
     QD->setFrequency(1.0);
-    QD->setNumberOfMetropolisSteps(int(pow(2, 18)));
+    QD->setNumberOfMetropolisCycles(int(pow(2, 18)));
 
     QD->setLearningRate(0.05);
     QD->setStepLength(0.05);
 
-    QD->checkResampling(true);
+    QD->doBlocking(true);
     QD->computeRadialOneBodyDensity();
 
     QD->setHamiltonian(new HarmonicOscillator(QD));

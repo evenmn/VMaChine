@@ -336,7 +336,7 @@ void System::setNumberOfHiddenUnits(const int numberOfHiddenUnits)
     m_numberOfHiddenUnits = numberOfHiddenUnits;
 }
 
-void System::setNumberOfMetropolisSteps(const int steps)
+void System::setNumberOfMetropolisCycles(const int steps)
 {
     /* Determine the number of steps used by each process
      * when the equilibriation (burn-in period) is excluded
@@ -508,7 +508,7 @@ void::System::dumpEnergyToFile(bool printEnergyFile) {
     m_printEnergyToFile = printEnergyFile;
 }
 
-void::System::checkResampling(bool printInstantEnergyFile) {
+void::System::doBlocking(bool printInstantEnergyFile) {
     /* Dump the instant energy to file (energies from all
      * the cycles). This will be used in the resampling.
      * Default setting is to print instant file for the
