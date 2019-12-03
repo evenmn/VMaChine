@@ -80,9 +80,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setNumberOfDimensions
 <tr class="memitem:a2303a21e3177f7cde501f737436734bc"><td class="memItemLeft" align="right" valign="top"><a id="a2303a21e3177f7cde501f737436734bc"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setNumberOfHiddenUnits</b> (const int numberOfHiddenUnits)</td></tr>
 <tr class="separator:a2303a21e3177f7cde501f737436734bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3c80a3b8392f66edddf062c59c980a6"><td class="memItemLeft" align="right" valign="top"><a id="ae3c80a3b8392f66edddf062c59c980a6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setNumberOfMetropolisSteps</b> (const int steps)</td></tr>
-<tr class="separator:ae3c80a3b8392f66edddf062c59c980a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51f6796a9d0836ca1b372bf647aa2ab1"><td class="memItemLeft" align="right" valign="top"><a id="a51f6796a9d0836ca1b372bf647aa2ab1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setNumberOfMetropolisCycles</b> (const int steps)</td></tr>
+<tr class="separator:a51f6796a9d0836ca1b372bf647aa2ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa80c50d2a6d836aa44d07ee895fc18b"><td class="memItemLeft" align="right" valign="top"><a id="afa80c50d2a6d836aa44d07ee895fc18b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setNumberOfIterations</b> (const int numberOfIterations=1000)</td></tr>
 <tr class="separator:afa80c50d2a6d836aa44d07ee895fc18b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,6 +164,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>searchShortning</b> (
 <tr class="memitem:a7bf4194897125cb8c9e758772b822e76"><td class="memItemLeft" align="right" valign="top"><a id="a7bf4194897125cb8c9e758772b822e76"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setInteraction</b> (const bool interaction)</td></tr>
 <tr class="separator:a7bf4194897125cb8c9e758772b822e76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2037e17a77b89547c12ce9e7eee24913"><td class="memItemLeft" align="right" valign="top"><a id="a2037e17a77b89547c12ce9e7eee24913"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>computeRadialOneBodyDensity</b> (int numberOfBins=1000, double maxRadius=50)</td></tr>
+<tr class="separator:a2037e17a77b89547c12ce9e7eee24913"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5280dd2decd87ab4bada7ebf5c306d2"><td class="memItemLeft" align="right" valign="top"><a id="aa5280dd2decd87ab4bada7ebf5c306d2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>computeSpatialOneBodyDensity</b> (int numberOfBins=1000, double maxRadius=50)</td></tr>
+<tr class="separator:aa5280dd2decd87ab4bada7ebf5c306d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff31ca9df8889819c79394c86bd9e589"><td class="memItemLeft" align="right" valign="top"><a id="aff31ca9df8889819c79394c86bd9e589"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>computeTwoBodyDensity</b> (int numberOfBins=1000, double maxRadius=50)</td></tr>
+<tr class="separator:aff31ca9df8889819c79394c86bd9e589"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad79e14a3b65f9e52ae12e080de6c4d3f"><td class="memItemLeft" align="right" valign="top"><a id="ad79e14a3b65f9e52ae12e080de6c4d3f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setParameterPrintingTools</b> (const bool printParametersToFile=true)</td></tr>
 <tr class="separator:ad79e14a3b65f9e52ae12e080de6c4d3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,18 +182,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setConvergenceTools</
 <tr class="memitem:a94437af45bd18c2aa9ebf0f24c9784f8"><td class="memItemLeft" align="right" valign="top"><a id="a94437af45bd18c2aa9ebf0f24c9784f8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setAdaptiveStepTools</b> (const int rangeOfAdaptiveSteps=10, const int additionalSteps=4, const int additionalStepsLastIteration=8)</td></tr>
 <tr class="separator:a94437af45bd18c2aa9ebf0f24c9784f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39de138d656d32ecc50bfb6e40e1ae04"><td class="memItemLeft" align="right" valign="top"><a id="a39de138d656d32ecc50bfb6e40e1ae04"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setDensityTools</b> (const bool computeOneBodyDensity=false, const bool computeSpatialOneBodyDensity=false, const bool computeTwoBodyDensity=false, const int numberOfBins=1000, const double maxRadius=50)</td></tr>
-<tr class="separator:a39de138d656d32ecc50bfb6e40e1ae04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a4510268cbe07eb65544d44f592a0e7"><td class="memItemLeft" align="right" valign="top"><a id="a9a4510268cbe07eb65544d44f592a0e7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setScreeningTools</b> (const double screeningStrength, const double dsl)</td></tr>
 <tr class="separator:a9a4510268cbe07eb65544d44f592a0e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00a9379a474b16e626a144568de1afaa"><td class="memItemLeft" align="right" valign="top"><a id="a00a9379a474b16e626a144568de1afaa"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>dumpEnergyToFile</b> (bool printEnergyFile=true)</td></tr>
 <tr class="separator:a00a9379a474b16e626a144568de1afaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af843ce964e1c2b7e7908e846f7b5f2ec"><td class="memItemLeft" align="right" valign="top"><a id="af843ce964e1c2b7e7908e846f7b5f2ec"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>checkResampling</b> (bool printInstantEnergyFile=true)</td></tr>
-<tr class="separator:af843ce964e1c2b7e7908e846f7b5f2ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa21236e8eb6f67284bb86511ee4145df"><td class="memItemLeft" align="right" valign="top"><a id="aa21236e8eb6f67284bb86511ee4145df"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>doBlocking</b> (bool printInstantEnergyFile=true)</td></tr>
+<tr class="separator:aa21236e8eb6f67284bb86511ee4145df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd91eb83847ba4bcd94a08d3f6641aa6"><td class="memItemLeft" align="right" valign="top"><a id="abd91eb83847ba4bcd94a08d3f6641aa6"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>initializeMPI</b> ()</td></tr>
 <tr class="separator:abd91eb83847ba4bcd94a08d3f6641aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -350,15 +356,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>getScreening</b> ()</
 <tr class="memitem:a964891b31d7fba43e79cdb1333b52366"><td class="memItemLeft" align="right" valign="top"><a id="a964891b31d7fba43e79cdb1333b52366"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>getInteraction</b> ()</td></tr>
 <tr class="separator:a964891b31d7fba43e79cdb1333b52366"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e72c16db858aada6031e757aae787eb"><td class="memItemLeft" align="right" valign="top"><a id="a3e72c16db858aada6031e757aae787eb"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeOneBodyDensity</b> ()</td></tr>
-<tr class="separator:a3e72c16db858aada6031e757aae787eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada5e0d007fa7b91460f35d8cb164dead"><td class="memItemLeft" align="right" valign="top"><a id="ada5e0d007fa7b91460f35d8cb164dead"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeOneBodyDensity2</b> ()</td></tr>
-<tr class="separator:ada5e0d007fa7b91460f35d8cb164dead"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a947928fbee8b6223e4441dbdfd9fa6b5"><td class="memItemLeft" align="right" valign="top"><a id="a947928fbee8b6223e4441dbdfd9fa6b5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>computeTwoBodyDensity</b> ()</td></tr>
-<tr class="separator:a947928fbee8b6223e4441dbdfd9fa6b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1541a2974c6b14535028829378c4fb3f"><td class="memItemLeft" align="right" valign="top"><a id="a1541a2974c6b14535028829378c4fb3f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>radialOneBodyDensity</b> ()</td></tr>
+<tr class="separator:a1541a2974c6b14535028829378c4fb3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a064444fa3aeda202014de3f16d98d899"><td class="memItemLeft" align="right" valign="top"><a id="a064444fa3aeda202014de3f16d98d899"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>spatialOneBodyDensity</b> ()</td></tr>
+<tr class="separator:a064444fa3aeda202014de3f16d98d899"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a737bf06b8c43d6c360b4b8029f53f2c1"><td class="memItemLeft" align="right" valign="top"><a id="a737bf06b8c43d6c360b4b8029f53f2c1"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>radialTwoBodyDensity</b> ()</td></tr>
+<tr class="separator:a737bf06b8c43d6c360b4b8029f53f2c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af914206351554d1145c4074b316bce97"><td class="memItemLeft" align="right" valign="top"><a id="af914206351554d1145c4074b316bce97"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>printEnergyToFile</b> ()</td></tr>
 <tr class="separator:af914206351554d1145c4074b316bce97"><td class="memSeparator" colspan="2">&#160;</td></tr>

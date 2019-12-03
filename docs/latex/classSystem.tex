@@ -12,8 +12,8 @@ void {\bfseries set\+Number\+Of\+Dimensions} (const int number\+Of\+Dimensions)
 \mbox{\Hypertarget{classSystem_a2303a21e3177f7cde501f737436734bc}\label{classSystem_a2303a21e3177f7cde501f737436734bc}} 
 void {\bfseries set\+Number\+Of\+Hidden\+Units} (const int number\+Of\+Hidden\+Units)
 \item 
-\mbox{\Hypertarget{classSystem_ae3c80a3b8392f66edddf062c59c980a6}\label{classSystem_ae3c80a3b8392f66edddf062c59c980a6}} 
-void {\bfseries set\+Number\+Of\+Metropolis\+Steps} (const int steps)
+\mbox{\Hypertarget{classSystem_a51f6796a9d0836ca1b372bf647aa2ab1}\label{classSystem_a51f6796a9d0836ca1b372bf647aa2ab1}} 
+void {\bfseries set\+Number\+Of\+Metropolis\+Cycles} (const int steps)
 \item 
 \mbox{\Hypertarget{classSystem_afa80c50d2a6d836aa44d07ee895fc18b}\label{classSystem_afa80c50d2a6d836aa44d07ee895fc18b}} 
 void {\bfseries set\+Number\+Of\+Iterations} (const int number\+Of\+Iterations=1000)
@@ -96,6 +96,15 @@ void {\bfseries search\+Shortning} (const std\+::vector$<$ std\+::string $>$ lab
 \mbox{\Hypertarget{classSystem_a7bf4194897125cb8c9e758772b822e76}\label{classSystem_a7bf4194897125cb8c9e758772b822e76}} 
 void {\bfseries set\+Interaction} (const bool interaction)
 \item 
+\mbox{\Hypertarget{classSystem_a2037e17a77b89547c12ce9e7eee24913}\label{classSystem_a2037e17a77b89547c12ce9e7eee24913}} 
+void {\bfseries compute\+Radial\+One\+Body\+Density} (int number\+Of\+Bins=1000, double max\+Radius=50)
+\item 
+\mbox{\Hypertarget{classSystem_aa5280dd2decd87ab4bada7ebf5c306d2}\label{classSystem_aa5280dd2decd87ab4bada7ebf5c306d2}} 
+void {\bfseries compute\+Spatial\+One\+Body\+Density} (int number\+Of\+Bins=1000, double max\+Radius=50)
+\item 
+\mbox{\Hypertarget{classSystem_aff31ca9df8889819c79394c86bd9e589}\label{classSystem_aff31ca9df8889819c79394c86bd9e589}} 
+void {\bfseries compute\+Two\+Body\+Density} (int number\+Of\+Bins=1000, double max\+Radius=50)
+\item 
 \mbox{\Hypertarget{classSystem_ad79e14a3b65f9e52ae12e080de6c4d3f}\label{classSystem_ad79e14a3b65f9e52ae12e080de6c4d3f}} 
 void {\bfseries set\+Parameter\+Printing\+Tools} (const bool print\+Parameters\+To\+File=true)
 \item 
@@ -105,17 +114,14 @@ void {\bfseries set\+Convergence\+Tools} (const int number\+Of\+Energies=5, cons
 \mbox{\Hypertarget{classSystem_a94437af45bd18c2aa9ebf0f24c9784f8}\label{classSystem_a94437af45bd18c2aa9ebf0f24c9784f8}} 
 void {\bfseries set\+Adaptive\+Step\+Tools} (const int range\+Of\+Adaptive\+Steps=10, const int additional\+Steps=4, const int additional\+Steps\+Last\+Iteration=8)
 \item 
-\mbox{\Hypertarget{classSystem_a39de138d656d32ecc50bfb6e40e1ae04}\label{classSystem_a39de138d656d32ecc50bfb6e40e1ae04}} 
-void {\bfseries set\+Density\+Tools} (const bool compute\+One\+Body\+Density=false, const bool compute\+Spatial\+One\+Body\+Density=false, const bool compute\+Two\+Body\+Density=false, const int number\+Of\+Bins=1000, const double max\+Radius=50)
-\item 
 \mbox{\Hypertarget{classSystem_a9a4510268cbe07eb65544d44f592a0e7}\label{classSystem_a9a4510268cbe07eb65544d44f592a0e7}} 
 void {\bfseries set\+Screening\+Tools} (const double screening\+Strength, const double dsl)
 \item 
 \mbox{\Hypertarget{classSystem_a00a9379a474b16e626a144568de1afaa}\label{classSystem_a00a9379a474b16e626a144568de1afaa}} 
 void {\bfseries dump\+Energy\+To\+File} (bool print\+Energy\+File=true)
 \item 
-\mbox{\Hypertarget{classSystem_af843ce964e1c2b7e7908e846f7b5f2ec}\label{classSystem_af843ce964e1c2b7e7908e846f7b5f2ec}} 
-void {\bfseries check\+Resampling} (bool print\+Instant\+Energy\+File=true)
+\mbox{\Hypertarget{classSystem_aa21236e8eb6f67284bb86511ee4145df}\label{classSystem_aa21236e8eb6f67284bb86511ee4145df}} 
+void {\bfseries do\+Blocking} (bool print\+Instant\+Energy\+File=true)
 \item 
 \mbox{\Hypertarget{classSystem_abd91eb83847ba4bcd94a08d3f6641aa6}\label{classSystem_abd91eb83847ba4bcd94a08d3f6641aa6}} 
 void {\bfseries initialize\+M\+PI} ()
@@ -282,14 +288,14 @@ bool {\bfseries get\+Screening} ()
 \mbox{\Hypertarget{classSystem_a964891b31d7fba43e79cdb1333b52366}\label{classSystem_a964891b31d7fba43e79cdb1333b52366}} 
 bool {\bfseries get\+Interaction} ()
 \item 
-\mbox{\Hypertarget{classSystem_a3e72c16db858aada6031e757aae787eb}\label{classSystem_a3e72c16db858aada6031e757aae787eb}} 
-bool {\bfseries compute\+One\+Body\+Density} ()
+\mbox{\Hypertarget{classSystem_a1541a2974c6b14535028829378c4fb3f}\label{classSystem_a1541a2974c6b14535028829378c4fb3f}} 
+bool {\bfseries radial\+One\+Body\+Density} ()
 \item 
-\mbox{\Hypertarget{classSystem_ada5e0d007fa7b91460f35d8cb164dead}\label{classSystem_ada5e0d007fa7b91460f35d8cb164dead}} 
-bool {\bfseries compute\+One\+Body\+Density2} ()
+\mbox{\Hypertarget{classSystem_a064444fa3aeda202014de3f16d98d899}\label{classSystem_a064444fa3aeda202014de3f16d98d899}} 
+bool {\bfseries spatial\+One\+Body\+Density} ()
 \item 
-\mbox{\Hypertarget{classSystem_a947928fbee8b6223e4441dbdfd9fa6b5}\label{classSystem_a947928fbee8b6223e4441dbdfd9fa6b5}} 
-bool {\bfseries compute\+Two\+Body\+Density} ()
+\mbox{\Hypertarget{classSystem_a737bf06b8c43d6c360b4b8029f53f2c1}\label{classSystem_a737bf06b8c43d6c360b4b8029f53f2c1}} 
+bool {\bfseries radial\+Two\+Body\+Density} ()
 \item 
 \mbox{\Hypertarget{classSystem_af914206351554d1145c4074b316bce97}\label{classSystem_af914206351554d1145c4074b316bce97}} 
 bool {\bfseries print\+Energy\+To\+File} ()

@@ -140,98 +140,118 @@ $(function() {
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">double</span> m_equilibrationFraction = 0;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">double</span> m_omega = 0;</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">double</span> m_variance = 0;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">double</span> m_stdError = 0;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">double</span> m_mseEnergy = 0;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">double</span> m_mseSTD = 0;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">double</span> m_mseVariance = 0;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">double</span> m_varianceKinetic = 0;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">double</span> m_stdErrorKinetic = 0;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">double</span> m_mseEnergyKinetic = 0;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">double</span> m_mseSTDKinetic = 0;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">double</span> m_mseVarianceKinetic = 0;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">double</span> m_varianceExternal = 0;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">double</span> m_stdErrorExternal = 0;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">double</span> m_mseEnergyExternal = 0;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">double</span> m_mseSTDExternal = 0;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">double</span> m_mseVarianceExternal = 0;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">double</span> m_varianceInteraction = 0;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">double</span> m_stdErrorInteraction = 0;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">double</span> m_mseEnergyInteraction = 0;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">double</span> m_mseSTDInteraction = 0;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">double</span> m_mseVarianceInteraction = 0;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">double</span> m_averageKineticEnergy = 0;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">double</span> m_averageExternalEnergy = 0;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">double</span> m_averageInteractionEnergy = 0;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">double</span> m_averageEnergy = 0;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">double</span> m_averageEnergySqrd = 0;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">double</span> m_cumulativeKineticEnergy = 0;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">double</span> m_cumulativeExternalEnergy = 0;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">double</span> m_cumulativeInteractionEnergy = 0;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordtype">double</span> m_cumulativeEnergy = 0;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">double</span> m_cumulativeEnergySqrd = 0;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">double</span> m_kineticEnergy = 0;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordtype">double</span> m_externalEnergy = 0;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">double</span> m_interactionEnergy = 0;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordtype">double</span> m_instantEnergy = 0;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">double</span> m_averageEnergy = 0;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">double</span> m_averageKineticEnergy = 0;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">double</span> m_averageExternalEnergy = 0;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">double</span> m_averageInteractionEnergy = 0;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">double</span> m_averageEnergySqrd = 0;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">double</span> m_averageKineticEnergySqrd = 0;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">double</span> m_averageExternalEnergySqrd = 0;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">double</span> m_averageInteractionEnergySqrd = 0;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">double</span> m_cumulativeEnergy = 0;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">double</span> m_cumulativeKineticEnergy = 0;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">double</span> m_cumulativeExternalEnergy = 0;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">double</span> m_cumulativeInteractionEnergy = 0;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">double</span> m_cumulativeEnergySqrd = 0;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">double</span> m_cumulativeKineticEnergySqrd = 0;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">double</span> m_cumulativeExternalEnergySqrd = 0;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">double</span> m_cumulativeInteractionEnergySqrd = 0;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">double</span> m_instantEnergy = 0;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">double</span> m_kineticEnergy = 0;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">double</span> m_externalEnergy = 0;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">double</span> m_interactionEnergy = 0;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeEnergy = 0;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeKineticEnergy = 0;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeExternalEnergy = 0;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeInteractionEnergy = 0;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeEnergySqrd = 0;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeKineticEnergySqrd = 0;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeExternalEnergySqrd = 0;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeInteractionEnergySqrd = 0;</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeKineticEnergy = 0;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeExternalEnergy = 0;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeInteractionEnergy = 0;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeEnergy = 0;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">double</span> m_totalCumulativeEnergySqrd = 0;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    Eigen::MatrixXd m_totalCumulativeGradients;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    Eigen::MatrixXd m_totalCumulativeGradientsE;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    Eigen::MatrixXd m_averageGradients;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    Eigen::MatrixXd m_averageGradientsE;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    Eigen::MatrixXd m_cumulativeGradients;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    Eigen::MatrixXd m_cumulativeGradientsE;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    Eigen::MatrixXd m_instantGradients;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    std::ofstream m_averageEnergyFile;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    std::ofstream m_averageKineticEnergyFile;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    std::ofstream m_averageExternalEnergyFile;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    std::ofstream m_averageInteractionEnergyFile;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    std::ofstream m_instantEnergyFile;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    std::ofstream m_instantKineticEnergyFile;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    std::ofstream m_instantExternalEnergyFile;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    std::ofstream m_instantInteractionEnergyFile;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    std::ofstream m_parameterFile;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    std::string m_parameterFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::string m_instantEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    std::string m_instantKineticEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    std::string m_instantExternalEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    std::string m_instantInteractionEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    std::string m_path = <span class="stringliteral">&quot;Path not specified&quot;</span>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    std::string m_trialWaveFunction = <span class="stringliteral">&quot;Wave function not found&quot;</span>;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    std::string m_hamiltonian = <span class="stringliteral">&quot;Hamiltonian not found&quot;</span>;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keywordtype">bool</span> m_printEnergyToFile = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordtype">bool</span> m_printInstantEnergyToFile = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordtype">bool</span> m_printParametersToFile = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="comment">// Electron density related stuff</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="keywordtype">bool</span> m_computeOneBodyDensity = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keywordtype">bool</span> m_computeOneBodyDensity2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordtype">bool</span> m_computeTwoBodyDensity = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordtype">int</span> m_numberOfBins = 1000;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">int</span> m_numberOfBinsHalf = m_numberOfBins / 2;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">double</span> m_maxRadius = 10.;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordtype">double</span> m_radialStep = 0.1;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    Eigen::VectorXi m_particlesPerBin;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    Eigen::VectorXi m_totalParticlesPerBin;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    Eigen::MatrixXi m_densityGrid;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    Eigen::MatrixXi m_totalDensityGrid;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    Eigen::MatrixXi m_particlesPerBinPairwise;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    Eigen::MatrixXi m_totalParticlesPerBinPairwise;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    std::ofstream m_oneBodyFile;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    std::ofstream m_oneBodyFile2;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    std::ofstream m_twoBodyFile;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keyword">class </span><a class="code" href="classSystem.html">System</a> *m_system = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;};</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">double</span> m_variance = 0;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">double</span> m_varianceKinetic = 0;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">double</span> m_varianceExternal = 0;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">double</span> m_varianceInteraction = 0;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordtype">double</span> m_stdError = 0;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">double</span> m_stdErrorKinetic = 0;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">double</span> m_stdErrorExternal = 0;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">double</span> m_stdErrorInteraction = 0;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordtype">double</span> m_mseEnergy = 0;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordtype">double</span> m_mseEnergyKinetic = 0;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keywordtype">double</span> m_mseEnergyExternal = 0;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordtype">double</span> m_mseEnergyInteraction = 0;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">double</span> m_mseSTD = 0;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">double</span> m_mseSTDKinetic = 0;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordtype">double</span> m_mseSTDExternal = 0;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">double</span> m_mseSTDInteraction = 0;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordtype">double</span> m_mseVariance = 0;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordtype">double</span> m_mseVarianceKinetic = 0;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordtype">double</span> m_mseVarianceExternal = 0;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordtype">double</span> m_mseVarianceInteraction = 0;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    Eigen::MatrixXd m_totalCumulativeGradients;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    Eigen::MatrixXd m_totalCumulativeGradientsE;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    Eigen::MatrixXd m_averageGradients;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    Eigen::MatrixXd m_averageGradientsE;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    Eigen::MatrixXd m_cumulativeGradients;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    Eigen::MatrixXd m_cumulativeGradientsE;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    Eigen::MatrixXd m_instantGradients;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    std::ofstream m_averageEnergyFile;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    std::ofstream m_averageKineticEnergyFile;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    std::ofstream m_averageExternalEnergyFile;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    std::ofstream m_averageInteractionEnergyFile;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    std::ofstream m_instantEnergyFile;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    std::ofstream m_instantKineticEnergyFile;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    std::ofstream m_instantExternalEnergyFile;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    std::ofstream m_instantInteractionEnergyFile;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    std::ofstream m_parameterFile;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    std::string m_parameterFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    std::string m_instantEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    std::string m_instantKineticEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    std::string m_instantExternalEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    std::string m_instantInteractionEnergyFileName = <span class="stringliteral">&quot;Filename not generated yet&quot;</span>;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    std::string m_path = <span class="stringliteral">&quot;Path not specified&quot;</span>;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    std::string m_trialWaveFunction = <span class="stringliteral">&quot;Wave function not found&quot;</span>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    std::string m_hamiltonian = <span class="stringliteral">&quot;Hamiltonian not found&quot;</span>;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordtype">bool</span> m_printEnergyToFile = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordtype">bool</span> m_printInstantEnergyToFile = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordtype">bool</span> m_printParametersToFile = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="comment">// Electron density related stuff</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keywordtype">bool</span> m_computeOneBodyDensity = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordtype">bool</span> m_computeOneBodyDensity2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">bool</span> m_computeTwoBodyDensity = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">int</span> m_numberOfBins = 1000;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordtype">int</span> m_numberOfBinsHalf = m_numberOfBins / 2;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordtype">double</span> m_maxRadius = 10.;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordtype">double</span> m_radialStep = 0.1;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    Eigen::VectorXi m_particlesPerBin;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    Eigen::VectorXi m_totalParticlesPerBin;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    Eigen::MatrixXi m_densityGrid;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    Eigen::MatrixXi m_totalDensityGrid;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    Eigen::MatrixXi m_particlesPerBinPairwise;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    Eigen::MatrixXi m_totalParticlesPerBinPairwise;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    std::ofstream m_oneBodyFile;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    std::ofstream m_oneBodyFile2;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    std::ofstream m_twoBodyFile;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keyword">class </span><a class="code" href="classSystem.html">System</a> *m_system = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclassSystem_html"><div class="ttname"><a href="classSystem.html">System</a></div><div class="ttdef"><b>Definition:</b> system.h:13</div></div>
 <div class="ttc" id="aclassSampler_html"><div class="ttname"><a href="classSampler.html">Sampler</a></div><div class="ttdef"><b>Definition:</b> sampler.h:17</div></div>
