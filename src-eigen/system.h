@@ -162,7 +162,7 @@ public:
     int getTotalNumberOfParameters() { return m_totalNumberOfParameters; }
     int getMaxParameters() { return m_maxParameters; }
     int getAtomicNumber() { return m_Z; }
-    int getRank() { return m_myRank; }
+    int getRank() { return m_rank; }
     int getNumberOfBins() { return m_numberOfBins; }
 
     int getTotalStepsWOEqui() { return m_totalStepsWOEqui; }
@@ -217,12 +217,12 @@ private:
     int m_totalNumberOfParameters;
     int m_Z;
     int m_numberOfProcesses;
-    int m_myRank;
+    int m_rank;
 
     int m_rangeOfAdaptiveSteps = 10;
     int m_additionalSteps = 4;
     int m_additionalStepsLastIter = 8;
-    int m_lastIteration = 1;
+    int m_numberOfNormalIterations = 1;
     int m_numberOfEnergies = 5;
     int m_numberOfBins = 1000;
     int m_iter = 0;

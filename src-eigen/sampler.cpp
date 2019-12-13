@@ -227,18 +227,18 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
          << " equilibration)" << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
-    cout << " Energy                : " << m_averageEnergy;
+    cout << " Total energy            : " << m_averageEnergy;
     cout << "        (with STD = "           << sqrt(m_variance) << ")" << endl;
-    cout << " Kinetic energy        : " << m_averageKineticEnergy;
+    cout << " Kinetic energy          : " << m_averageKineticEnergy;
     cout << "        (with STD = "           << sqrt(m_varianceKinetic) << ")" << endl;
-    cout << " External energy       : " << m_averageExternalEnergy;
+    cout << " External energy         : " << m_averageExternalEnergy;
     cout << "        (with STD = "           << sqrt(m_varianceExternal) << ")" << endl;
-    cout << " Interaction energy    : " << m_averageInteractionEnergy;
+    cout << " Interaction energy      : " << m_averageInteractionEnergy;
     cout << "        (with STD = "           << sqrt(m_varianceInteraction) << ")" << endl;
-    //cout << " Variance              : " << m_variance << endl;
-    //cout << " STD                   : " << sqrt(m_variance) << endl;
-    cout << " Acceptence Ratio      : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
-    cout << " CPU Time              : " << time << endl;
+    //cout << " Variance                : " << m_variance << endl;
+    //cout << " STD                     : " << sqrt(m_variance) << endl;
+    cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
+    cout << " CPU Time                : " << time << endl;
     cout << endl;
 }
 
@@ -249,18 +249,18 @@ void Sampler::printFinalOutputToTerminal()
     std::cout << std::fixed;
     std::cout << std::setprecision(10);
     cout << "  ===  Final results:  === " << endl;
-    cout << " Energy                : " << m_averageEnergy;
+    cout << " Energy                  : " << m_averageEnergy;
     cout << " (with STD = " << m_stdError << ")" << endl;
-    cout << " Kinetic energy        : " << m_averageKineticEnergy
+    cout << " Kinetic energy          : " << m_averageKineticEnergy
          << " (with STD = " << m_stdErrorKinetic << ")" << endl;
-    cout << " External energy       : " << m_averageExternalEnergy
+    cout << " External energy         : " << m_averageExternalEnergy
          << " (with STD = " << m_stdErrorExternal << ")" << endl;
-    cout << " Interaction energy    : " << m_averageInteractionEnergy
+    cout << " Interaction energy      : " << m_averageInteractionEnergy
          << " (with STD = " << m_stdErrorInteraction << ")" << endl;
-    //cout << " Variance              : " << m_variance << " (with MSE = " << m_mseVariance << ")"
+    //cout << " Variance                : " << m_variance << " (with MSE = " << m_mseVariance << ")"
     //     << endl;
-    //cout << " STD                   : " << m_stdError << " (with MSE = " << m_mseSTD << ")" << endl;
-    cout << " Acceptence Ratio      : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
+    //cout << " STD                     : " << m_stdError << " (with MSE = " << m_mseSTD << ")" << endl;
+    cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
     cout << endl;
 }
 

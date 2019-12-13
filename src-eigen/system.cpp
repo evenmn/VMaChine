@@ -10,7 +10,7 @@ void System::initializeMPI()
     if (!initialized)
         MPI_Init(nullptr, nullptr);
     MPI_Comm_size(MPI_COMM_WORLD, &m_numberOfProcesses);
-    MPI_Comm_rank(MPI_COMM_WORLD, &m_myRank);
+    MPI_Comm_rank(MPI_COMM_WORLD, &m_rank);
 }
 
 void System::initializeSystem()
@@ -46,7 +46,7 @@ void System::runSimulation()
     /* Run simulation specified in main/configuration file.
      * This is the main loop in VMC, where we update the parameters. */
     initializeSystem();
-    m_lastIteration = m_numberOfIterations - m_rangeOfAdaptiveSteps - 1;
+    m_numberOfNormalIterations = m_numberOfIterations - m_rangeOfAdaptiveSteps - 1;
     for (m_iter = 0; m_iter < m_numberOfIterations; m_iter++) {
         if (m_applyAdaptiveSteps) {
             m_stepsWOEqui = m_initialStepsWOEqui * adaptiveSteps();
@@ -54,6 +54,7 @@ void System::runSimulation()
             m_totalStepsWOEqui = m_initialTotalStepsWOEqui * adaptiveSteps();
             m_totalStepsWEqui = m_totalStepsWOEqui + m_totalEquilibriationSteps;
         }
+        //std::cout << adaptiveSteps() << std::endl;
         m_sampler->setNumberOfSteps(m_stepsWOEqui, m_totalStepsWOEqui, m_totalStepsWEqui);
         double startTime = MPI_Wtime();
         runMetropolisCycles();
@@ -61,27 +62,28 @@ void System::runSimulation()
         double time = endTime - startTime;
 
         MPI_Reduce(&time, &m_totalTime, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-        if (m_iter < m_lastIteration) {
+        if (m_iter < m_numberOfNormalIterations) {
             m_globalTime += m_totalTime;
         }
         m_sampler->computeTotals();
 
-        if (m_myRank == 0) {
+        if (m_rank == 0) {
             m_sampler->computeAverages();
             m_parameters -= m_optimization->updateParameters();
         }
         m_sampler->printParametersToFile();
         m_sampler->printEnergyToFile();
-        if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
+        if (m_iter == m_numberOfNormalIterations + m_rangeOfAdaptiveSteps) {
             m_sampler->printOneBodyDensityToFile();
             m_sampler->printOneBodyDensity2ToFile();
             m_sampler->printTwoBodyDensityToFile();
         }
         printToTerminal();
 
-        if (m_checkConvergence && m_myRank == 0) {
+        if (m_checkConvergence && m_rank == 0) {
             checkingConvergence();
         }
+        MPI_Bcast(&m_numberOfNormalIterations, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         MPI_Bcast(m_parameters.data(),
                   int(m_numberOfElements * m_maxParameters),
                   MPI_DOUBLE,
@@ -103,7 +105,7 @@ void System::runMetropolisCycles()
         m_radialVector = m_metropolis->updateRadialVector();
         if (i >= m_equilibriationSteps) {
             m_sampler->sample(acceptedStep, i);
-            if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
+            if (m_iter == m_numberOfNormalIterations + m_rangeOfAdaptiveSteps) {
                 m_sampler->printInstantValuesToFile();
                 m_sampler->computeOneBodyDensity(m_radialVector);
                 m_sampler->computeTwoBodyDensity(m_radialVector);
@@ -116,20 +118,20 @@ void System::runMetropolisCycles()
 void System::printToTerminal()
 {
     /* Call this function to print to terminal */
-    if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
+    if (m_iter == m_numberOfNormalIterations + m_rangeOfAdaptiveSteps) {
         m_sampler->closeOutputFiles();
-        if (m_myRank == 0) {
+        if (m_rank == 0) {
             m_sampler->doResampling();
             m_sampler->printFinalOutputToTerminal();
             std::cout << std::endl;
-            std::cout << "Average CPU time: " << m_globalTime / m_lastIteration << std::endl;
-            //std::cout << "Finalized successfully" << std::endl;
+            std::cout << "Average CPU time: " << m_globalTime / m_numberOfNormalIterations
+                      << std::endl;
         }
 
         MPI_Finalize();
         exit(0);
     } else {
-        if (m_myRank == 0) {
+        if (m_rank == 0) {
             m_sampler->printOutputToTerminal(m_numberOfIterations, m_totalTime);
         }
     }
@@ -143,7 +145,7 @@ void System::checkingConvergence()
     if (fabs(m_energies(0) - m_energies(m_numberOfEnergies - 1)) < m_tolerance) {
         std::cout << "The system has converged! Let's run one more cycle to collect data"
                   << std::endl;
-        m_lastIteration = m_iter + 1;
+        m_numberOfNormalIterations = m_iter + 1;
     }
 }
 
@@ -151,9 +153,10 @@ int System::adaptiveSteps()
 {
     /* Is responsible for the adaptive steps */
     int stepRatio = 1;
-    if (m_iter == m_lastIteration + m_rangeOfAdaptiveSteps) {
+    if (m_iter == m_numberOfNormalIterations + m_rangeOfAdaptiveSteps) {
         stepRatio = int(pow(2, m_additionalStepsLastIter));
-    } else if (m_iter >= m_lastIteration) {
+
+    } else if (m_iter >= m_numberOfNormalIterations) {
         stepRatio = int(pow(2, m_additionalSteps));
     }
     return stepRatio;
@@ -342,7 +345,7 @@ void System::setNumberOfMetropolisCycles(const int steps)
      * when the equilibriation (burn-in period) is excluded
      * (a power of 2) and when it is included. */
     m_totalStepsWOEqui = steps;
-    if (m_myRank == 0) {
+    if (m_rank == 0) {
         m_stepsWOEqui = steps / m_numberOfProcesses + steps % m_numberOfProcesses;
     } else {
         m_stepsWOEqui = steps / m_numberOfProcesses;
