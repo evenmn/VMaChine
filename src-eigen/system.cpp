@@ -54,7 +54,6 @@ void System::runSimulation()
             m_totalStepsWOEqui = m_initialTotalStepsWOEqui * adaptiveSteps();
             m_totalStepsWEqui = m_totalStepsWOEqui + m_totalEquilibriationSteps;
         }
-        //std::cout << adaptiveSteps() << std::endl;
         m_sampler->setNumberOfSteps(m_stepsWOEqui, m_totalStepsWOEqui, m_totalStepsWEqui);
         double startTime = MPI_Wtime();
         runMetropolisCycles();
@@ -124,7 +123,7 @@ void System::printToTerminal()
             m_sampler->doResampling();
             m_sampler->printFinalOutputToTerminal();
             std::cout << std::endl;
-            std::cout << "Average CPU time: " << m_globalTime / m_numberOfNormalIterations
+            std::cout << "Average CPU time before convergence: " << m_globalTime / m_numberOfNormalIterations
                       << std::endl;
         }
 
@@ -146,6 +145,7 @@ void System::checkingConvergence()
         std::cout << "The system has converged! Let's run one more cycle to collect data"
                   << std::endl;
         m_numberOfNormalIterations = m_iter + 1;
+        m_checkConvergence = false;
     }
 }
 
@@ -394,6 +394,7 @@ void System::setEquilibrationFraction(const double equilibrationFraction)
     /* Set equilibriation fraction (burn-in period). */
     assert(equilibrationFraction >= 0);
     m_equilibrationFraction = equilibrationFraction;
+    setNumberOfMetropolisCycles(m_totalStepsWOEqui);
 }
 
 void System::setFrequency(const double omega)

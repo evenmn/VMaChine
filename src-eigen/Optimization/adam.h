@@ -13,7 +13,7 @@ public:
 
 private:
     int m_numberOfBatches = 10;
-    double m_beta1 = 0.9;
+    double m_beta1 = 0.89;
     double m_beta2 = 0.999;
     double m_epsilon = 1e-8;
     int m_step = 0;

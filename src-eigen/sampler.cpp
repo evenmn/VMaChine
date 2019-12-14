@@ -214,6 +214,8 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     /* Print output to terminal for an ordinary iteration. */
     m_iter += 1;
     cout << endl;
+    cout << std::fixed;
+    cout << std::setprecision(6);
     cout << "  -- System info: " << " -- " << endl;
     cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
     cout << " Number of particles     : " << m_numberOfParticles << endl;
@@ -224,7 +226,7 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     cout << " Trial wave function     : " << m_trialWaveFunction << endl;
     cout << " Hamiltonian             : " << m_hamiltonian << endl;
     cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
-         << " equilibration)" << endl;
+         << " after burn-in)" << endl;
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Total energy            : " << m_averageEnergy;
@@ -246,8 +248,8 @@ void Sampler::printFinalOutputToTerminal()
 {
     /* Print output to terminal for final iteration. */
     cout << endl;
-    std::cout << std::fixed;
-    std::cout << std::setprecision(10);
+    cout << std::fixed;
+    cout << std::setprecision(10);
     cout << "  ===  Final results:  === " << endl;
     cout << " Energy                  : " << m_averageEnergy;
     cout << " (with STD = " << m_stdError << ")" << endl;
