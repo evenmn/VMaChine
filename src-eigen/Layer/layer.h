@@ -1,5 +1,5 @@
 #pragma once
-#include "../Eigen/Dense"
+#include <Eigen/Dense>
 #include <iostream>
 
 class Layer
@@ -8,9 +8,9 @@ public:
     typedef Eigen::Matrix<long, 2, 1> Vector2l;
 
     Layer(class System *system);
-    virtual void initialize() = 0;
+    virtual int getNumberOfUnits() = 0;
     virtual Vector2l getWeightDim() = 0;
-    virtual Eigen::VectorXd evaluate() = 0;
+    virtual void initialize(int numberOfUnitsInPreviousLayer) = 0;
     virtual Eigen::VectorXd activate(Eigen::VectorXd a0) = 0;
     virtual Eigen::VectorXd calculateDelta(Eigen::VectorXd delta0) = 0;
     virtual Eigen::MatrixXd calculateGradient() = 0;

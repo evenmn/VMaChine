@@ -12,13 +12,16 @@ void FNN::setConstants(const int elementNumber)
     m_elementNumber = elementNumber;
     m_degreesOfFreedom = m_system->getNumberOfFreeDimensions();
     m_omega = m_system->getFrequency();
-    m_layers = m_system->getLayers();
-    //m_activationFunctions = m_system->getActivationFunctions();
-    m_units = m_system->getHiddenUnits();
-    m_units.insert(m_units.begin(), m_degreesOfFreedom);    // Add input layer
-    m_units.push_back(1);                                   // Add output layer
-    m_activationFunctions.push_back(new Sigmoid(m_system)); // Add activation on output
-    m_numberOfParameters = m_numberOfHiddenUnits * (1 + m_degreesOfFreedom);
+    m_layers2 = m_system->getLayers();
+
+    // Set up weight matrices
+    int h0 = m_layers2[0]->getNumberOfUnits();
+    for(unsigned long i = 0; i < m_layers2.size()-1; i++) {
+        m_layers2[i+1]->initialize(h0);
+        int h1 = m_layers2[i+1]->getNumberOfUnits();
+        m_numberOfParameters += (h0 + 1) * h1;
+        h0 = h1;
+    }
 }
 
 void FNN::initializeArrays(const Eigen::VectorXd positions,
@@ -31,8 +34,8 @@ void FNN::initializeArrays(const Eigen::VectorXd positions,
 
 double FNN::evaluate(Eigen::VectorXd position) {
     Eigen::VectorXd a = position;
-    for(auto &i : m_layers) {
-        a = i->activate(a);
+    for(unsigned long i = 0; i < m_layers2.size()-1; i++) {
+        a = m_layers2[i+1]->activate(a);
     }
     return a(0);
 }
@@ -66,12 +69,13 @@ void FNN::resetArrays()
 void FNN::updateParameters(const Eigen::MatrixXd parameters)
 {
     int cumulativeStart = 0;
-    for(auto &i : m_layers) {
-        Layer::Vector2l size = i->getWeightDim();
-        cumulativeStart += size.prod();
-        Eigen::MatrixXd WFlatten = parameters.row(m_elementNumber)
+    for(unsigned long i = 0; i < m_layers2.size()-1; i++) {
+        Layer::Vector2l size = m_layers2[i+1]->getWeightDim();
+        Eigen::VectorXd WFlatten = parameters.row(m_elementNumber)
                                        .segment(cumulativeStart, size.prod());
-        i->updateWeights(WaveFunction::reshape(WFlatten, size(0), size(1)));
+        Eigen::MatrixXd W = WaveFunction::reshape(WFlatten, size(0), size(1));
+        m_layers2[i+1]->updateWeights(W);
+        cumulativeStart += size.prod();
     }
 }
 
@@ -93,13 +97,17 @@ double FNN::computeLaplacian()
 Eigen::VectorXd FNN::computeParameterGradient()
 {
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
-
+    /*
     int cumulativeStart = 0;
-    for (auto &i : m_layers) {
-        Layer::Vector2l size = i->getWeightDim();
-        cumulativeStart += size.prod();
-        Eigen::MatrixXd W = i->calculateGradient();
+    for (unsigned long i = 0; i < m_layers2.size()-1; i++) {
+        Layer::Vector2l size = m_layers2[i+1]->getWeightDim();
+        std::cout << size.transpose() << std::endl;
+        m_layers2[i+1]->calculateDelta()
+        Eigen::MatrixXd W = m_layers2[i+1]->calculateGradient();
+        std::cout << W << std::endl;
         m_gradients.segment(cumulativeStart, size.prod()) = WaveFunction::flatten(W);
+        cumulativeStart += size.prod();
     }
+    */
     return m_gradients;
 }

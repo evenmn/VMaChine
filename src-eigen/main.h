@@ -12,6 +12,7 @@
 #include "WaveFunctions/simplejastrow.h"
 #include "WaveFunctions/slaterdeterminant.h"
 #include "WaveFunctions/wavefunction.h"
+#include "WaveFunctions/fnn.h"
 
 #include "Activation/activation.h"
 #include "Activation/elu.h"
@@ -21,6 +22,7 @@
 #include "Activation/sigmoid.h"
 
 #include "Layer/dense.h"
+#include "Layer/input.h"
 #include "Layer/layer.h"
 
 #include "Hamiltonians/atomicnucleus.h"

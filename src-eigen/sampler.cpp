@@ -408,12 +408,12 @@ void Sampler::openOutputFiles()
     if (m_printEnergyToFile && m_rank == 0) {
         std::string averageEnergyFileName = generateFileName("energy", ".dat");
         m_averageEnergyFile.open(averageEnergyFileName);
-        std::string averageKineticEnergyFileName = generateFileName("kineticEnergy", ".dat");
-        m_averageEnergyFile.open(averageEnergyFileName);
-        std::string averageExternalEnergyFileName = generateFileName("externalEnergy", ".dat");
-        m_averageEnergyFile.open(averageEnergyFileName);
-        std::string averageInteractionEnergyFileName = generateFileName("interactionEnergy", ".dat");
-        m_averageEnergyFile.open(averageEnergyFileName);
+        std::string averageKineticEnergyFileName = generateFileName("energy", "_kin.dat");
+        m_averageKineticEnergyFile.open(averageKineticEnergyFileName);
+        std::string averageExternalEnergyFileName = generateFileName("energy", "_ext.dat");
+        m_averageExternalEnergyFile.open(averageExternalEnergyFileName);
+        std::string averageInteractionEnergyFileName = generateFileName("energy", "_int.dat");
+        m_averageInteractionEnergyFile.open(averageInteractionEnergyFileName);
     }
     if (m_computeOneBodyDensity && m_rank == 0) {
         std::string oneBodyFileName = generateFileName("onebody", ".dat");

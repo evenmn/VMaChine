@@ -4,21 +4,19 @@
 class Input : public Layer
 {
 public:
-    Input(class System *system, int h_0, int h_1, class Activation *activation);
-    void initialize();
+    Input(class System *system, int numberOfUnits);
+    int getNumberOfUnits() { return m_numberOfUnits; }
     Eigen::VectorXd evaluate();
     Eigen::VectorXd activate(Eigen::VectorXd a0);
     Eigen::VectorXd calculateDelta(Eigen::VectorXd delta0);
     Eigen::MatrixXd calculateGradient();
     void updateWeights(Eigen::MatrixXd m_WNew);
+    void initialize(int numberOfUnitsInPreviousLayer);
     Vector2l getWeightDim();
 
 private:
-    int m_h0 = 0;
-    int m_h1 = 0;
+    int m_numberOfUnits = 0;
 
-    Eigen::VectorXd m_z;
-    Eigen::VectorXd m_a;
-    Eigen::VectorXd m_a0;
+    Eigen::VectorXd m_x;
     Eigen::VectorXd m_delta;
 };

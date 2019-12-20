@@ -1,12 +1,11 @@
 #include "dense.h"
 #include "../Activation/activation.h"
 
-Dense::Dense(System *system, int h0, int h1, Activation *activation)
+Dense::Dense(System *system, int numberOfUnits, Activation *activation)
     : Layer(system)
 {
     m_system = system;
-    m_h0 = h0;
-    m_h1 = h1;
+    m_numberOfUnits = numberOfUnits;
     m_activation = activation;
     //initialize();
 }
@@ -16,9 +15,10 @@ void Dense::updateWeights(Eigen::MatrixXd WNew)
     m_W = WNew;
 }
 
-void Dense::initialize()
+void Dense::initialize(int numberOfUnitsInPreviousLayer)
 {
-    m_W = Eigen::MatrixXd::Random(m_h0 + 1, m_h1); // Add bias weights
+    m_numberOfUnitsInPreviousLayer = numberOfUnitsInPreviousLayer;
+    m_W = Eigen::MatrixXd::Random(numberOfUnitsInPreviousLayer + 1, m_numberOfUnits); // Add bias weights
 }
 
 Layer::Vector2l Dense::getWeightDim() {
@@ -30,14 +30,14 @@ Layer::Vector2l Dense::getWeightDim() {
 
 Eigen::VectorXd Dense::evaluate()
 {
-    m_z = m_a0 * m_W;
+    m_z = m_a0.transpose() * m_W;
     return m_z;
 }
 
 Eigen::VectorXd Dense::activate(Eigen::VectorXd a0)
 {
-    m_a0 = Eigen::VectorXd::Ones(m_h0 + 1); // Add bias unit
-    m_a0.tail(m_h0) = a0;
+    m_a0 = Eigen::VectorXd::Ones(m_numberOfUnitsInPreviousLayer + 1); // Add bias unit
+    m_a0.tail(m_numberOfUnitsInPreviousLayer) = a0;
     evaluate();
     m_a = m_activation->evaluate(m_z);
     return m_a;

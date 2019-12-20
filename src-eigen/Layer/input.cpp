@@ -1,24 +1,17 @@
 #include "input.h"
 #include "../Activation/activation.h"
 
-Input::Input(System *system, int h0, int h1, Activation *activation)
+Input::Input(System *system, int numberOfUnits)
     : Layer(system)
 {
     m_system = system;
-    m_h0 = h0;
-    m_h1 = h1;
-    m_activation = activation;
+    m_numberOfUnits = numberOfUnits;
     //initialize();
 }
 
 void Input::updateWeights(Eigen::MatrixXd WNew)
 {
     m_W = WNew;
-}
-
-void Input::initialize()
-{
-    m_W = Eigen::MatrixXd::Random(m_h0 + 1, m_h1); // Add bias weights
 }
 
 Layer::Vector2l Input::getWeightDim()
@@ -29,30 +22,26 @@ Layer::Vector2l Input::getWeightDim()
     return size;
 }
 
-Eigen::VectorXd Input::evaluate()
+void Input::initialize(int numberOfUnitsInPreviousLayer)
 {
-    m_z = m_a0 * m_W;
-    return m_z;
+    int g = numberOfUnitsInPreviousLayer;
 }
 
 Eigen::VectorXd Input::activate(Eigen::VectorXd a0)
 {
-    m_a0 = Eigen::VectorXd::Ones(m_h0 + 1); // Add bias unit
-    m_a0.tail(m_h0) = a0;
-    evaluate();
-    m_a = m_activation->evaluate(m_z);
-    return m_a;
+    m_x = a0;
+    return m_x;
 }
 
 Eigen::VectorXd Input::calculateDelta(Eigen::VectorXd delta1)
 {
-    Eigen::VectorXd df = m_activation->gradient(m_z);
+    Eigen::VectorXd df = m_activation->gradient(m_x);
     m_delta = df.cwiseProduct(m_W * delta1);
     return m_delta;
 }
 
 Eigen::MatrixXd Input::calculateGradient()
 {
-    Eigen::MatrixXd dC = m_a0 * m_delta.transpose();
+    Eigen::MatrixXd dC = m_x * m_delta.transpose();
     return dC;
 }

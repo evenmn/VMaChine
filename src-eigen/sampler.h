@@ -1,11 +1,13 @@
 #pragma once
-#include "Eigen/Dense"
+
 #include "Hamiltonians/hamiltonian.h"
 #include "Optimization/optimization.h"
 #include "RNG/rng.h"
 #include "WaveFunctions/wavefunction.h"
 #include "block/c++/blocker.h"
 #include "system.h"
+
+#include <Eigen/Dense>
 #include <cmath>
 #include <cstdio>
 #include <fstream>

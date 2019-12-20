@@ -33,7 +33,7 @@ public:
     double evaluate(Eigen::VectorXd position);
 
 private:
-    int m_numberOfParameters = 1;
+    int m_numberOfParameters = 0;
     int m_globalArrayNeed = 0;
     int m_elementNumber = 0;
     int m_numberOfHiddenUnits = 5;
@@ -53,6 +53,7 @@ private:
 
     std::vector<Eigen::MatrixXd> m_weights;
     std::vector<class Layer *> m_layers;
+    std::vector<class Layer *> m_layers2;
     std::vector<class Activation *> m_activationFunctions;
     std::vector<int> m_units;
 

@@ -6,8 +6,8 @@
 #include <mpi.h>
 #include <string>
 #include <vector>
+#include <Eigen/Dense>
 
-#include "Eigen/Dense"
 #include "main.h"
 
 class System
@@ -108,14 +108,14 @@ public:
     void computeRadialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
     void computeSpatialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
     void computeTwoBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
-    void setParameterPrintingTools(const bool printParametersToFile = true);
+    void dumpEnergyToFile(bool printEnergyFile = true);
+    void dumpParametersToFile(const bool printParametersToFile = true);
     void setConvergenceTools(const int numberOfEnergies = 5,
                              const double tolerance = 1e-6);
     void setAdaptiveStepTools(const int rangeOfAdaptiveSteps = 10,
                               const int additionalSteps = 4,
                               const int additionalStepsLastIteration = 8);
     void setScreeningTools(const double screeningStrength, const double dsl);
-    void dumpEnergyToFile(bool printEnergyFile = true);
     void doBlocking(bool printInstantEnergyFile = true);
     void initializeMPI();
 
@@ -203,6 +203,7 @@ public:
     std::string getTrialWaveFunction() { return m_trialWaveFunction; }
 
     std::vector<class WaveFunction *> getWaveFunctionElements() { return m_waveFunctionElements; }
+    std::vector<class Activation *> getActivationFunctions() { return m_activationFunctions; }
     std::vector<class Layer *> getLayers() { return m_layers; }
     std::vector<int> getHiddenUnits() { return m_hiddenUnits; }
 
@@ -276,6 +277,7 @@ private:
 
     std::vector<class WaveFunction *> m_waveFunctionElements;
     std::vector<class Layer *> m_layers;
+    std::vector<class Activation *> m_activationFunctions;
     std::vector<int> m_hiddenUnits;
 
     std::string m_path = "data/";

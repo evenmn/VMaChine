@@ -20,7 +20,8 @@ void System::initializeSystem()
      * which is the task of this function. This lets the calls be in arbitrary
      * order in main/configuration file */
     initializeMPI();
-    //addDenseLayer(1, new Sigmoid(this));
+    setInputLayer(m_degreesOfFreedom);      // Add input layer
+    addDenseLayer(1, new Sigmoid(this));    // Add output layer
     m_hamiltonian->initialize();
     m_basis->initialize();
     setAllConstants();
@@ -34,7 +35,6 @@ void System::initializeSystem()
     m_distanceMatrix = m_initialState->getDistanceMatrix();
     m_radialVector = m_initialState->getRadialVector();
     m_metropolis->initialize();
-
     parser(m_configFile);
 
     m_sampler = new Sampler(this);
@@ -520,7 +520,7 @@ void::System::doBlocking(bool printInstantEnergyFile) {
     m_doResampling = printInstantEnergyFile;
 }
 
-void System::setParameterPrintingTools(bool printParametersToFile)
+void System::dumpParametersToFile(bool printParametersToFile)
 {
     /* Print parameters to file after each iterations. Makes it
      * possible to start where the previous simulation ended.
@@ -568,18 +568,16 @@ void System::setInputLayer(int numberOfUnits)
 {
     /* Set the input layer when a feed-forward neural network
      * (FNN) is used as a trial wave function element. */
-    //m_hiddenUnits.push_back(numberOfUnits);
-    //m_layer.push_back(new Input(this, m_hiddenUnits(0));
+    //m_hiddenUnits.insert(m_hiddenUnits.begin(), numberOfUnits);
+    m_layers.insert(m_layers.begin(), new Input(this, numberOfUnits));
 }
 
 void System::addDenseLayer(int numberOfUnits, Activation *activation)
 {
     /* Add dense layer to a feed-forward neural network. */
-    m_hiddenUnits.push_back(numberOfUnits);
-    m_layers.push_back(new Dense(this,
-                                 m_hiddenUnits.at(m_hiddenUnits.size() - 2),
-                                 m_hiddenUnits.at(m_hiddenUnits.size() - 1),
-                                 activation));
+    //m_hiddenUnits.push_back(numberOfUnits);
+    //m_activationFunctions.push_back(activation);
+    m_layers.push_back(new Dense(this, numberOfUnits, activation));
     setNumberOfElements(m_waveFunctionElements.size());
 }
 
@@ -992,4 +990,8 @@ void System::collectAllLabels()
     testSSJ2.push_back("gaussian");
     testSSJ2.push_back("simplejastrow");
     searchShortning(testSSJ2, "SSJ", m_trialWaveFunction);
+
+    std::vector<std::string> testFNN;
+    testFNN.push_back("fnn");
+    searchShortning(testFNN, "FNN", m_trialWaveFunction);
 }
