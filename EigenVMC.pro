@@ -1,12 +1,14 @@
 TEMPLATE = app
 CONFIG += console c++17
 CONFIG -= app_bundle
-CONFIG -= qt
+CONFIG += qt
 LIBS += -llapack -lblas
 
-QT += widgets
 QT += core
 QT += charts
+# greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+# target.path = $$/home/evenmn/VMaChine/src-eigen/
 
 # Remove possible other optimization flags
 QMAKE_CXXFLAGS_RELEASE -= -O
@@ -39,6 +41,7 @@ SOURCES += src-eigen/main.cpp \
     src-eigen/Layer/dense.cpp \
     src-eigen/Layer/input.cpp \
     src-eigen/Layer/layer.cpp \
+    src-eigen/Plotter/plotter.cpp \
     src-eigen/WaveFunctions/doubleproduct.cpp \
     src-eigen/WaveFunctions/drbmproduct.cpp \
     src-eigen/WaveFunctions/fnn.cpp \

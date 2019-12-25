@@ -163,6 +163,7 @@ else()
         src-eigen/WaveFunctions/simplejastrow.cpp
         src-eigen/WaveFunctions/rbmgaussian.cpp
         src-eigen/WaveFunctions/rbmproduct.cpp
+        src-eigen/WaveFunctions/fnn.cpp
         src-eigen/block/c++/blocker.cpp
     )
 endif()

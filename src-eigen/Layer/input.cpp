@@ -22,14 +22,29 @@ Layer::Vector2l Input::getWeightDim()
     return size;
 }
 
-void Input::initialize(int numberOfUnitsInPreviousLayer)
+void Input::initialize(int numberOfUnitsInPreviousLayer, double factor)
 {
     int g = numberOfUnitsInPreviousLayer;
 }
 
-Eigen::VectorXd Input::activate(Eigen::VectorXd a0)
+Eigen::VectorXd Input::evaluate(Eigen::VectorXd a0)
 {
     m_x = a0;
+    return m_x;
+}
+
+Eigen::VectorXd Input::activate()
+{
+    return m_x;
+}
+
+Eigen::VectorXd Input::activateDer()
+{
+    return m_x;
+}
+
+Eigen::VectorXd Input::activateSecDer()
+{
     return m_x;
 }
 

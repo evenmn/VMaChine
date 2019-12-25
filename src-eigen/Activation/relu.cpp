@@ -21,9 +21,8 @@ Eigen::VectorXd ReLU::gradient(Eigen::VectorXd x)
 {
     /* Evaluate the derivative (gradient) of the
      * ReLU activation function at point x. */
-    Eigen::VectorXd zeros = Eigen::VectorXd::Zero(x.size());
     Eigen::VectorXd ones = Eigen::VectorXd::Ones(x.size());
-    return (x.array() > 0).select(m_a * ones, zeros);
+    return (x.array() > 0).select(ones, m_a * ones);
 }
 
 Eigen::VectorXd ReLU::laplacian(Eigen::VectorXd x)

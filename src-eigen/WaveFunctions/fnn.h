@@ -43,6 +43,9 @@ private:
     double m_probabilityRatio = 0;
     double m_probabilityRatioOld = 0;
 
+    double m_out = 0;
+    double m_outOld = 0;
+
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
 

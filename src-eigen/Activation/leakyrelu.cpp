@@ -21,9 +21,8 @@ Eigen::VectorXd LeakyReLU::gradient(Eigen::VectorXd x)
 {
     /* Evaluate the derivative (gradient) of the LeakyReLU
      * activation function at point x. */
-    Eigen::VectorXd zeros = Eigen::VectorXd::Zero(x.size());
     Eigen::VectorXd ones = Eigen::VectorXd::Ones(x.size());
-    return (x.array() > 0).select(m_a * ones, zeros);
+    return (x.array() > 0).select(ones, m_a * ones);
 }
 
 Eigen::VectorXd LeakyReLU::laplacian(Eigen::VectorXd x)

@@ -15,10 +15,10 @@ void Dense::updateWeights(Eigen::MatrixXd WNew)
     m_W = WNew;
 }
 
-void Dense::initialize(int numberOfUnitsInPreviousLayer)
+void Dense::initialize(int numberOfUnitsInPreviousLayer, double factor)
 {
     m_numberOfUnitsInPreviousLayer = numberOfUnitsInPreviousLayer;
-    m_W = Eigen::MatrixXd::Random(numberOfUnitsInPreviousLayer + 1, m_numberOfUnits); // Add bias weights
+    m_W = factor * Eigen::MatrixXd::Random(numberOfUnitsInPreviousLayer + 1, m_numberOfUnits); // Add bias weights
 }
 
 Layer::Vector2l Dense::getWeightDim() {
@@ -28,25 +28,47 @@ Layer::Vector2l Dense::getWeightDim() {
     return size;
 }
 
-Eigen::VectorXd Dense::evaluate()
+/*
+Eigen::VectorXd Dense::evaluate(Eigen::VectorXd a0) {
+    m_a0 = Eigen::VectorXd::Ones(m_numberOfUnitsInPreviousLayer + 1); // Add bias unit
+    m_a0.tail(m_numberOfUnitsInPreviousLayer) = a0;
+    netOutput(m_a0);
+    activate();
+    activateDer();
+    activateSecDer();
+    return m_a;
+}
+*/
+
+Eigen::VectorXd Dense::evaluate(Eigen::VectorXd a0)
 {
+    m_a0 = Eigen::VectorXd::Ones(m_numberOfUnitsInPreviousLayer + 1); // Add bias unit
+    m_a0.tail(m_numberOfUnitsInPreviousLayer) = a0;
     m_z = m_a0.transpose() * m_W;
     return m_z;
 }
 
-Eigen::VectorXd Dense::activate(Eigen::VectorXd a0)
+Eigen::VectorXd Dense::activate()
 {
-    m_a0 = Eigen::VectorXd::Ones(m_numberOfUnitsInPreviousLayer + 1); // Add bias unit
-    m_a0.tail(m_numberOfUnitsInPreviousLayer) = a0;
-    evaluate();
     m_a = m_activation->evaluate(m_z);
     return m_a;
 }
 
+Eigen::VectorXd Dense::activateDer() {
+    m_da = m_activation->gradient(m_z);
+    return m_da;
+}
+
+Eigen::VectorXd Dense::activateSecDer() {
+    m_dda = m_activation->laplacian(m_z);
+    return m_dda;
+}
+
 Eigen::VectorXd Dense::calculateDelta(Eigen::VectorXd delta1)
 {
-    Eigen::VectorXd df = m_activation->gradient(m_z);
-    m_delta = df.cwiseProduct(m_W * delta1);
+    Eigen::VectorXd da = m_da.tail(m_numberOfUnits);
+    Eigen::VectorXd delta = delta1.tail(m_numberOfUnits);
+    m_delta = m_W * da.cwiseProduct(delta);
     return m_delta;
 }
 
