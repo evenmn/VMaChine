@@ -748,8 +748,8 @@ void System::parser(const std::string configFile)
                     } else if (key == "initialWeights") {
                         if (value == "automatize") {
                             setInitialWeights(new Automatize(this));
-                        } else if (value == "randomize") {
-                            setInitialWeights(new Randomize(this, 0.1));
+                        } else if (value == "randomuniform") {
+                            setInitialWeights(new RandomUniformWeights(this, 0.1));
                         } else if (value == "constant") {
                             setInitialWeights(new Constant(this, 1.0));
                         } else {

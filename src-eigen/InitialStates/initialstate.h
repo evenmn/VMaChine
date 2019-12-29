@@ -1,5 +1,7 @@
 #pragma once
 #include <Eigen/Dense>
+#include <cassert>
+#include <iostream>
 
 class InitialState
 {

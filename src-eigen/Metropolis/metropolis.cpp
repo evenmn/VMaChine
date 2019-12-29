@@ -22,11 +22,9 @@ void Metropolis::calculateDistanceMatrixCross(const int particle)
 {
     for (int i = 0; i < particle; i++) {
         m_distanceMatrix(i, particle) = calculateDistanceMatrixElement(particle, i);
-        //m_distanceMatrix(particle, i) = m_distanceMatrix(i, particle);
     }
     for (int i = particle+1; i < m_numberOfParticles; i++) {
         m_distanceMatrix(particle, i) = calculateDistanceMatrixElement(particle, i);
-        //m_distanceMatrix(i, particle) = m_distanceMatrix(particle, i);
     }
 }
 

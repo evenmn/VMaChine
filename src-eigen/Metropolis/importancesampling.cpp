@@ -1,10 +1,8 @@
 #include "importancesampling.h"
 #include "../InitialStates/initialstate.h"
-#include "../RNG/mersennetwister.h"
+#include "../RNG/rng.h"
 #include "../WaveFunctions/wavefunction.h"
 #include "../system.h"
-#include <cassert>
-#include <iostream>
 
 ImportanceSampling::ImportanceSampling(System *system)
     : Metropolis(system)

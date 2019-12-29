@@ -23,19 +23,21 @@ void InitialState::calculateDistanceMatrix()
     for (int i = 0; i < m_numberOfParticles; i++) {
         for (int j = i + 1; j < m_numberOfParticles; j++) {
             m_distanceMatrix(i, j) = calculateDistanceMatrixElement(i, j);
-            //m_distanceMatrix(j, i) = m_distanceMatrix(i, j);
+        }
+        for (int j = 0; j < i; j++) {
+            m_distanceMatrix(j, i) = calculateDistanceMatrixElement(j, i);
         }
     }
 }
 
 double InitialState::calculateRadialVectorElement(int particle)
 {
-    double sqrtElementWise = 0;
+    double sqrdElementWise = 0;
     int part = particle * m_numberOfDimensions;
     for (int d = 0; d < m_numberOfDimensions; d++) {
-        sqrtElementWise += m_positions(part + d) * m_positions(part + d);
+        sqrdElementWise += m_positions(part + d) * m_positions(part + d);
     }
-    return sqrt(sqrtElementWise);
+    return sqrt(sqrdElementWise);
 }
 
 void InitialState::calculateRadialVector()

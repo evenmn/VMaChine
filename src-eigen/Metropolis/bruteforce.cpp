@@ -3,8 +3,6 @@
 #include "../RNG/rng.h"
 #include "../WaveFunctions/wavefunction.h"
 #include "../system.h"
-#include <cassert>
-#include <iostream>
 
 BruteForce::BruteForce(System *system)
     : Metropolis(system)

@@ -1,7 +1,5 @@
 #include "constant.h"
 #include "../system.h"
-#include <cassert>
-#include <iostream>
 
 Constant::Constant(System *system, const double factor)
     : InitialWeights(system)

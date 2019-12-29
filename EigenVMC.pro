@@ -38,6 +38,8 @@ SOURCES += src-eigen/main.cpp \
     src-eigen/Activation/purelinear.cpp \
     src-eigen/Activation/relu.cpp \
     src-eigen/Activation/sigmoid.cpp \
+    src-eigen/InitialWeights/randomnormal.cpp \
+    src-eigen/InitialWeights/randomuniform.cpp \
     src-eigen/Layer/dense.cpp \
     src-eigen/Layer/input.cpp \
     src-eigen/Layer/layer.cpp \
@@ -56,7 +58,6 @@ SOURCES += src-eigen/main.cpp \
     src-eigen/InitialStates/randomuniform.cpp \
     src-eigen/InitialStates/randomnormal.cpp \
     src-eigen/InitialWeights/initialweights.cpp \
-    src-eigen/InitialWeights/randomize.cpp \
     src-eigen/InitialWeights/constant.cpp \
     src-eigen/InitialWeights/automatize.cpp \
     src-eigen/Metropolis/metropolis.cpp \
@@ -96,6 +97,8 @@ HEADERS += \
     src-eigen/Activation/purelinear.h \
     src-eigen/Activation/relu.h \
     src-eigen/Activation/sigmoid.h \
+    src-eigen/InitialWeights/randomnormal.h \
+    src-eigen/InitialWeights/randomuniform.h \
     src-eigen/Layer/dense.h \
     src-eigen/Layer/input.h \
     src-eigen/Layer/layer.h \
@@ -114,7 +117,6 @@ HEADERS += \
     src-eigen/InitialStates/randomuniform.h \
     src-eigen/InitialStates/randomnormal.h \
     src-eigen/InitialWeights/initialweights.h \
-    src-eigen/InitialWeights/randomize.h \
     src-eigen/InitialWeights/constant.h \
     src-eigen/InitialWeights/automatize.h \
     src-eigen/Metropolis/metropolis.h \

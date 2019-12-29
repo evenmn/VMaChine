@@ -28,18 +28,6 @@ Layer::Vector2l Dense::getWeightDim() {
     return size;
 }
 
-/*
-Eigen::VectorXd Dense::evaluate(Eigen::VectorXd a0) {
-    m_a0 = Eigen::VectorXd::Ones(m_numberOfUnitsInPreviousLayer + 1); // Add bias unit
-    m_a0.tail(m_numberOfUnitsInPreviousLayer) = a0;
-    netOutput(m_a0);
-    activate();
-    activateDer();
-    activateSecDer();
-    return m_a;
-}
-*/
-
 Eigen::VectorXd Dense::evaluate(Eigen::VectorXd a0)
 {
     m_a0 = Eigen::VectorXd::Ones(m_numberOfUnitsInPreviousLayer + 1); // Add bias unit

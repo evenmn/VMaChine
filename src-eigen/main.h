@@ -45,7 +45,7 @@
 #include "InitialWeights/automatize.h"
 #include "InitialWeights/constant.h"
 #include "InitialWeights/initialweights.h"
-#include "InitialWeights/randomize.h"
+#include "InitialWeights/randomuniform.h"
 
 #include "Metropolis/bruteforce.h"
 #include "Metropolis/importancesampling.h"

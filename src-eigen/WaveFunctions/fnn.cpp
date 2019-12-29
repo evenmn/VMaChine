@@ -38,6 +38,8 @@ double FNN::evaluate(Eigen::VectorXd position) {
     for(unsigned long i = 1; i < m_layers2.size(); i++) {
         m_layers2[i]->evaluate(a);
         a = m_layers2[i]->activate();
+        //std::cout << a << std::endl;
+        //std::cout << std::endl;
         m_layers2[i]->activateDer();
         m_layers2[i]->activateSecDer();
     }
@@ -124,9 +126,10 @@ double FNN::computeLaplacian()
 Eigen::VectorXd FNN::computeParameterGradient()
 {
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
-    //Eigen::VectorXd da2 = m_layers2[2]->getDA();
-    //Eigen::VectorXd a1 = m_layers2[1]->getA();
-    //m_gradients.head(5) = a1 * da2.transpose() / m_out;
+    Eigen::VectorXd da2 = m_layers2[2]->getDA();
+    Eigen::VectorXd a1 = m_layers2[1]->getA();
+
+    m_gradients.head(5) = a1 * da2.transpose() / m_out;
 
 
     /*

@@ -1,4 +1,6 @@
 #pragma once
+#include <cassert>
+#include <iostream>
 #include <Eigen/Dense>
 
 class Metropolis

@@ -63,7 +63,7 @@ if(armadillo)
         src-arma/InitialStates/randomnormal.cpp
         src-arma/Hamiltonians/atomicnucleus.cpp
         src-arma/InitialWeights/initialweights.cpp
-        src-arma/InitialWeights/randomize.cpp
+        src-arma/InitialWeights/randomuniform.cpp
         src-arma/InitialWeights/automatize.cpp
         src-arma/Metropolis/metropolis.cpp
         src-arma/Metropolis/bruteforce.cpp
@@ -133,7 +133,8 @@ else()
         src-eigen/InitialStates/randomnormal.cpp
         src-eigen/Hamiltonians/atomicnucleus.cpp
         src-eigen/InitialWeights/initialweights.cpp
-        src-eigen/InitialWeights/randomize.cpp
+        src-eigen/InitialWeights/randomuniform.cpp
+        src-eigen/InitialWeights/randomnormal.cpp
         src-eigen/InitialWeights/automatize.cpp
         src-eigen/Layer/layer.cpp
         src-eigen/Layer/dense.cpp

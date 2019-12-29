@@ -2,9 +2,9 @@
 #include "../Optimization/optimization.h"
 #include "../system.h"
 #include "constant.h"
-#include "randomize.h"
+#include "randomuniform.h"
+#include "randomnormal.h"
 #include <fstream>
-#include <iostream>
 
 Automatize::Automatize(System *system)
     : InitialWeights(system)
@@ -79,21 +79,22 @@ void Automatize::setupInitialWeights()
     if (m_trialWaveFunction == "VMC") {
         m_method = new Constant(m_system, 1.0);
     } else if (m_trialWaveFunction == "RBM") {
-        m_method = new Randomize(m_system, 0.2);
+        m_method = new RandomUniformWeights(m_system, 0.2);
     } else if (m_trialWaveFunction == "RBMSJ") {
-        m_method = new Randomize(m_system, 0.2);
+        m_method = new RandomUniformWeights(m_system, 0.2);
     } else if (m_trialWaveFunction == "RBMPJ") {
         m_method = new Constant(m_system, 0.0);
     } else if (m_trialWaveFunction == "PRBM") {
         m_method = new Constant(m_system, 0.0);
     } else if (m_trialWaveFunction == "SSJ") {
-        m_method = new Randomize(m_system, 0.2);
+        m_method = new RandomUniformWeights(m_system, 0.2);
+    } else if (m_trialWaveFunction == "FNN") {
+        m_method = new RandomNormalWeights(m_system, 0.000001);
     } else {
-        m_method = new Randomize(m_system, 0.01);
+        m_method = new RandomUniformWeights(m_system, 0.01);
     }
     m_method->setupInitialWeights();
     m_parameters = m_method->getParameters();
-    //}
     m_system->updateAllParameters(m_parameters);
 }
 
