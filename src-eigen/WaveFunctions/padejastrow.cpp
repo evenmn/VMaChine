@@ -1,8 +1,6 @@
 #include "padejastrow.h"
 #include "../system.h"
 #include "wavefunction.h"
-#include <cassert>
-#include <iostream>
 
 PadeJastrow::PadeJastrow(System *system)
     : WaveFunction(system)

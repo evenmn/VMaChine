@@ -1,8 +1,6 @@
 #include "rbmproduct.h"
 #include "../system.h"
 #include "wavefunction.h"
-#include <cassert>
-#include <iostream>
 
 RBMProduct::RBMProduct(System *system)
     : WaveFunction(system)

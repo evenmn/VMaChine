@@ -21,7 +21,7 @@ void System::initializeSystem()
      * order in main/configuration file */
     initializeMPI();
     setInputLayer(m_degreesOfFreedom);      // Add input layer
-    addDenseLayer(1, new Sigmoid(this));    // Add output layer
+    setOutputLayer(new PureLinear(this));    // Add output layer
     m_hamiltonian->initialize();
     m_basis->initialize();
     setAllConstants();
@@ -568,16 +568,20 @@ void System::setInputLayer(int numberOfUnits)
 {
     /* Set the input layer when a feed-forward neural network
      * (FNN) is used as a trial wave function element. */
-    //m_hiddenUnits.insert(m_hiddenUnits.begin(), numberOfUnits);
     m_layers.insert(m_layers.begin(), new Input(this, numberOfUnits));
 }
 
 void System::addDenseLayer(int numberOfUnits, Activation *activation)
 {
     /* Add dense layer to a feed-forward neural network. */
-    //m_hiddenUnits.push_back(numberOfUnits);
-    //m_activationFunctions.push_back(activation);
     m_layers.push_back(new Dense(this, numberOfUnits, activation));
+    setNumberOfElements(m_waveFunctionElements.size());
+}
+
+void System::setOutputLayer(Activation *activation)
+{
+    /* Add dense layer to a feed-forward neural network. */
+    m_layers.push_back(new Output(this, activation));
     setNumberOfElements(m_waveFunctionElements.size());
 }
 

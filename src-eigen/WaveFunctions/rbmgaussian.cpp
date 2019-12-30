@@ -1,7 +1,5 @@
 #include "rbmgaussian.h"
 #include "../system.h"
-#include <cassert>
-#include <iostream>
 
 RBMGaussian::RBMGaussian(System *system)
     : WaveFunction(system)

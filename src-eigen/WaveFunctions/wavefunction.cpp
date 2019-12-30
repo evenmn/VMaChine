@@ -1,5 +1,4 @@
 #include "wavefunction.h"
-#include <iostream>
 
 WaveFunction::WaveFunction(System *system)
 {

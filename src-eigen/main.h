@@ -21,9 +21,10 @@
 #include "Activation/relu.h"
 #include "Activation/sigmoid.h"
 
+#include "Layer/layer.h"
 #include "Layer/dense.h"
 #include "Layer/input.h"
-#include "Layer/layer.h"
+#include "Layer/output.h"
 
 #include "Hamiltonians/atomicnucleus.h"
 #include "Hamiltonians/doublewell.h"
@@ -46,6 +47,7 @@
 #include "InitialWeights/constant.h"
 #include "InitialWeights/initialweights.h"
 #include "InitialWeights/randomuniform.h"
+#include "InitialWeights/randomnormal.h"
 
 #include "Metropolis/bruteforce.h"
 #include "Metropolis/importancesampling.h"

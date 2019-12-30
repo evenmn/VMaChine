@@ -11,14 +11,13 @@ public:
     Eigen::VectorXd getDDA() { return m_dda; }
     Eigen::MatrixXd getWeights() { return m_W; }
     class Activation *getActivation() { return m_activation; }
-    Eigen::VectorXd evaluate(Eigen::VectorXd a0);
+    Eigen::VectorXd evaluate(Eigen::VectorXd x);
     Eigen::VectorXd activate();
     Eigen::VectorXd activateDer();
     Eigen::VectorXd activateSecDer();
     Eigen::VectorXd calculateDelta(Eigen::VectorXd delta1);
-    Eigen::MatrixXd calculateGradient();
     void updateWeights(Eigen::MatrixXd m_WNew);
-    void initialize(int numberOfUnitsInPreviousLayer, double factor=0.01);
+    void initialize(int numberOfUnitsInPreviousLayer);
     Vector2l getWeightDim();
 
 private:

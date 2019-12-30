@@ -1,10 +1,10 @@
 #pragma once
 #include "layer.h"
 
-class Dense : public Layer
+class Output : public Layer
 {
 public:
-    Dense(class System *system, int numberOfUnits, class Activation *activation);
+    Output(class System *system, class Activation *activation);
     int getNumberOfUnits() { return m_numberOfUnits; }
     Eigen::VectorXd getA() { return m_a; }
     Eigen::VectorXd getDA() { return m_da; }
@@ -19,7 +19,6 @@ public:
     Eigen::VectorXd calculateDelta(Eigen::VectorXd delta1);
     void updateWeights(Eigen::MatrixXd m_WNew);
     Vector2l getWeightDim();
-    Eigen::MatrixXd calculateParameterGradient();
 
 private:
     int m_numberOfUnits = 0;

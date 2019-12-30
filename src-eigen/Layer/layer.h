@@ -15,13 +15,12 @@ public:
     virtual Eigen::MatrixXd getWeights() = 0;
     virtual class Activation *getActivation() = 0;
     virtual Vector2l getWeightDim() = 0;
-    virtual void initialize(int numberOfUnitsInPreviousLayer, double factor=0.01) = 0;
+    virtual void initialize(int numberOfUnitsInPreviousLayer) = 0;
     virtual Eigen::VectorXd evaluate(Eigen::VectorXd a0) = 0;
     virtual Eigen::VectorXd activate() = 0;
     virtual Eigen::VectorXd activateDer() = 0;
     virtual Eigen::VectorXd activateSecDer() = 0;
     virtual Eigen::VectorXd calculateDelta(Eigen::VectorXd delta1) = 0;
-    virtual Eigen::MatrixXd calculateGradient() = 0;
     virtual void updateWeights(Eigen::MatrixXd WNew) = 0;
 
     virtual ~Layer() = 0;

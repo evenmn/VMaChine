@@ -230,13 +230,13 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     cout << endl;
     cout << "  -- Results -- " << endl;
     cout << " Total energy            : " << m_averageEnergy;
-    cout << "        (with STD = "           << sqrt(m_variance) << ")" << endl;
+    cout << "        (with STD = "           << m_stdError << ")" << endl;
     cout << " Kinetic energy          : " << m_averageKineticEnergy;
-    cout << "        (with STD = "           << sqrt(m_varianceKinetic) << ")" << endl;
+    cout << "        (with STD = "           << m_stdErrorKinetic << ")" << endl;
     cout << " External energy         : " << m_averageExternalEnergy;
-    cout << "        (with STD = "           << sqrt(m_varianceExternal) << ")" << endl;
+    cout << "        (with STD = "           << m_stdErrorExternal << ")" << endl;
     cout << " Interaction energy      : " << m_averageInteractionEnergy;
-    cout << "        (with STD = "           << sqrt(m_varianceInteraction) << ")" << endl;
+    cout << "        (with STD = "           << m_stdErrorInteraction << ")" << endl;
     //cout << " Variance                : " << m_variance << endl;
     //cout << " STD                     : " << sqrt(m_variance) << endl;
     cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
@@ -251,7 +251,7 @@ void Sampler::printFinalOutputToTerminal()
     cout << std::fixed;
     cout << std::setprecision(10);
     cout << "  ===  Final results:  === " << endl;
-    cout << " Energy                  : " << m_averageEnergy;
+    cout << " Total energy            : " << m_averageEnergy;
     cout << " (with STD = " << m_stdError << ")" << endl;
     cout << " Kinetic energy          : " << m_averageKineticEnergy
          << " (with STD = " << m_stdErrorKinetic << ")" << endl;

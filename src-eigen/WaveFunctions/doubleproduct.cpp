@@ -1,8 +1,6 @@
 #include "doubleproduct.h"
 #include "../system.h"
 #include "wavefunction.h"
-#include <cassert>
-#include <iostream>
 
 DoubleProduct::DoubleProduct(System *system)
     : WaveFunction(system)

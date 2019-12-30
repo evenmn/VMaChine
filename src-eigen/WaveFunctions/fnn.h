@@ -1,6 +1,5 @@
 #pragma once
 #include "../Activation/activation.h"
-#include "../Activation/sigmoid.h"
 #include "../Layer/layer.h"
 #include "wavefunction.h"
 #include <vector>
@@ -36,10 +35,6 @@ private:
     int m_numberOfParameters = 0;
     int m_globalArrayNeed = 0;
     int m_elementNumber = 0;
-    int m_numberOfHiddenUnits = 5;
-
-    double m_omega = 0;
-    double m_omegalpha = 0;
     double m_probabilityRatio = 0;
     double m_probabilityRatioOld = 0;
 
@@ -49,16 +44,9 @@ private:
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
 
-    Eigen::MatrixXd m_W1;
-    Eigen::VectorXd m_W2;
-
     Eigen::VectorXd m_gradients;
 
-    std::vector<Eigen::MatrixXd> m_weights;
-    std::vector<class Layer *> m_layers;
     std::vector<class Layer *> m_layers2;
-    std::vector<class Activation *> m_activationFunctions;
-    std::vector<int> m_units;
 
     std::string m_label = "fnn";
 };

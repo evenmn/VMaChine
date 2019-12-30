@@ -143,6 +143,7 @@ public:
     void setWaveFunctionElement(WaveFunction *waveFunction);
     void setInputLayer(int numberOfUnits);
     void addDenseLayer(int numberOfUnits, Activation *activation);
+    void setOutputLayer(Activation *activation);
 
     class WaveFunction *getWaveFunction() { return m_waveFunction; }
     class Hamiltonian *getHamiltonian() { return m_hamiltonian; }
@@ -203,9 +204,9 @@ public:
     std::string getTrialWaveFunction() { return m_trialWaveFunction; }
 
     std::vector<class WaveFunction *> getWaveFunctionElements() { return m_waveFunctionElements; }
-    std::vector<class Activation *> getActivationFunctions() { return m_activationFunctions; }
+    //std::vector<class Activation *> getActivationFunctions() { return m_activationFunctions; }
     std::vector<class Layer *> getLayers() { return m_layers; }
-    std::vector<int> getHiddenUnits() { return m_hiddenUnits; }
+    //std::vector<int> getHiddenUnits() { return m_hiddenUnits; }
 
 private:
     int m_numberOfParticles;
@@ -277,8 +278,8 @@ private:
 
     std::vector<class WaveFunction *> m_waveFunctionElements;
     std::vector<class Layer *> m_layers;
-    std::vector<class Activation *> m_activationFunctions;
-    std::vector<int> m_hiddenUnits;
+    //std::vector<class Activation *> m_activationFunctions;
+    //std::vector<int> m_hiddenUnits;
 
     std::string m_path = "data/";
     std::string m_trialWaveFunction;

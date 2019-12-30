@@ -6,7 +6,6 @@ Input::Input(System *system, int numberOfUnits)
 {
     m_system = system;
     m_numberOfUnits = numberOfUnits;
-    //initialize();
 }
 
 void Input::updateWeights(Eigen::MatrixXd WNew)
@@ -22,30 +21,31 @@ Layer::Vector2l Input::getWeightDim()
     return size;
 }
 
-void Input::initialize(int numberOfUnitsInPreviousLayer, double factor)
+void Input::initialize(int /*numberOfUnitsInPreviousLayer*/)
 {
-    int g = numberOfUnitsInPreviousLayer;
+    m_a = Eigen::VectorXd::Ones(m_numberOfUnits + 1);
 }
 
-Eigen::VectorXd Input::evaluate(Eigen::VectorXd a0)
+Eigen::VectorXd Input::evaluate(Eigen::VectorXd x)
 {
-    m_x = a0;
+    m_x = x;
     return m_x;
 }
 
 Eigen::VectorXd Input::activate()
 {
-    return m_x;
+    m_a.tail(m_numberOfUnits) = m_x;
+    return m_a;
 }
 
 Eigen::VectorXd Input::activateDer()
 {
-    return m_x;
+    return Eigen::VectorXd::Zero(m_numberOfUnits + 1);
 }
 
 Eigen::VectorXd Input::activateSecDer()
 {
-    return m_x;
+    return Eigen::VectorXd::Zero(m_numberOfUnits + 1);
 }
 
 Eigen::VectorXd Input::calculateDelta(Eigen::VectorXd delta1)
@@ -53,10 +53,4 @@ Eigen::VectorXd Input::calculateDelta(Eigen::VectorXd delta1)
     Eigen::VectorXd df = m_activation->gradient(m_x);
     m_delta = df.cwiseProduct(m_W * delta1);
     return m_delta;
-}
-
-Eigen::MatrixXd Input::calculateGradient()
-{
-    Eigen::MatrixXd dC = m_x * m_delta.transpose();
-    return dC;
 }

@@ -1,8 +1,6 @@
 #include "slaterdeterminant.h"
 #include "../Basis/basis.h"
 #include "../system.h"
-#include <cassert>
-#include <iostream>
 
 SlaterDeterminant::SlaterDeterminant(System *system)
     : WaveFunction(system)

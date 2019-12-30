@@ -1,7 +1,5 @@
 #include "partlyrestricted.h"
 #include "../system.h"
-#include <cassert>
-#include <iostream>
 
 PartlyRestricted::PartlyRestricted(System *system)
     : WaveFunction(system)

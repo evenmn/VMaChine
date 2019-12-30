@@ -89,7 +89,7 @@ void Automatize::setupInitialWeights()
     } else if (m_trialWaveFunction == "SSJ") {
         m_method = new RandomUniformWeights(m_system, 0.2);
     } else if (m_trialWaveFunction == "FNN") {
-        m_method = new RandomNormalWeights(m_system, 0.000001);
+        m_method = new RandomNormalWeights(m_system, 1);
     } else {
         m_method = new RandomUniformWeights(m_system, 0.01);
     }

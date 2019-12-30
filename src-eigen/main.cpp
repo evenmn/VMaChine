@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     QD->setNumberOfMetropolisCycles(int(pow(2, 19)));
 
     QD->setInteraction(false);
-    QD->setLearningRate(0.3);
+    QD->setLearningRate(0.05);
     QD->setStepLength(0.1);
 
     QD->dumpEnergyToFile();
@@ -25,9 +25,10 @@ int main(int argc, char **argv)
     QD->setWaveFunctionElement(new FNN(QD));
     //QD->setWaveFunctionElement(new Gaussian(QD));
 
-    QD->addDenseLayer(5, new ReLU(QD));
+    QD->addDenseLayer(4, new ReLU(QD));
 
-    //QD->setMetropolis(new BruteForce(QD));
+    QD->setInitialWeights(new RandomNormalWeights(QD, 5));
+    QD->setOptimization(new GradientDescent(QD));
 
     QD->setConvergenceTools(4, 1e-4);
     QD->setAdaptiveStepTools(10, 2, 2);

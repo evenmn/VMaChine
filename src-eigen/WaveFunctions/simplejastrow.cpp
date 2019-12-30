@@ -1,8 +1,6 @@
 #include "simplejastrow.h"
 #include "../system.h"
 #include "wavefunction.h"
-#include <cassert>
-#include <iostream>
 
 SimpleJastrow::SimpleJastrow(System *system)
     : WaveFunction(system)

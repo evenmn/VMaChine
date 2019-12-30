@@ -1,7 +1,5 @@
 #include "gaussian.h"
 #include "../system.h"
-#include <cassert>
-#include <iostream>
 
 Gaussian::Gaussian(System *system)
     : WaveFunction(system)

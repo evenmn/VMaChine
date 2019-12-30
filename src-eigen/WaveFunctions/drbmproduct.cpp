@@ -1,8 +1,6 @@
 #include "drbmproduct.h"
 #include "../system.h"
 #include "wavefunction.h"
-#include <cassert>
-#include <iostream>
 
 DRBMProduct::DRBMProduct(System *system, int numberOfLayers)
     : WaveFunction(system)

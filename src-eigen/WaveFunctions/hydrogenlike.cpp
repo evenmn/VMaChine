@@ -1,7 +1,6 @@
 #include "hydrogenlike.h"
 #include "../system.h"
 #include "wavefunction.h"
-#include <cassert>
 
 HydrogenLike::HydrogenLike(System *system)
     : WaveFunction(system)
