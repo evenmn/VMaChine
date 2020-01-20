@@ -54,7 +54,6 @@
 #include "Metropolis/metropolis.h"
 
 #include "Optimization/adam.h"
-#include "Optimization/barzilaiborwein.h"
 #include "Optimization/gradientdescent.h"
 #include "Optimization/optimization.h"
 #include "Optimization/sgd.h"

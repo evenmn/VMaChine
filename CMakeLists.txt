@@ -139,6 +139,7 @@ else()
         src-eigen/Layer/layer.cpp
         src-eigen/Layer/dense.cpp
         src-eigen/Layer/input.cpp
+        src-eigen/Layer/output.cpp
         src-eigen/Metropolis/metropolis.cpp
         src-eigen/Metropolis/bruteforce.cpp
         src-eigen/Metropolis/importancesampling.cpp

@@ -43,7 +43,7 @@ SOURCES += src-eigen/main.cpp \
     src-eigen/Layer/dense.cpp \
     src-eigen/Layer/input.cpp \
     src-eigen/Layer/layer.cpp \
-    src-eigen/Plotter/plotter.cpp \
+    src-eigen/Layer/output.cpp \
     src-eigen/WaveFunctions/doubleproduct.cpp \
     src-eigen/WaveFunctions/drbmproduct.cpp \
     src-eigen/WaveFunctions/fnn.cpp \
@@ -102,6 +102,7 @@ HEADERS += \
     src-eigen/Layer/dense.h \
     src-eigen/Layer/input.h \
     src-eigen/Layer/layer.h \
+    src-eigen/Layer/output.h \
     src-eigen/WaveFunctions/doubleproduct.h \
     src-eigen/WaveFunctions/drbmproduct.h \
     src-eigen/WaveFunctions/fnn.h \
