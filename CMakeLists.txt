@@ -136,6 +136,7 @@ else()
         src-eigen/InitialWeights/randomuniform.cpp
         src-eigen/InitialWeights/randomnormal.cpp
         src-eigen/InitialWeights/automatize.cpp
+        src-eigen/InitialWeights/customized.cpp
         src-eigen/Layer/layer.cpp
         src-eigen/Layer/dense.cpp
         src-eigen/Layer/input.cpp

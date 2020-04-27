@@ -48,6 +48,7 @@
 #include "InitialWeights/initialweights.h"
 #include "InitialWeights/randomuniform.h"
 #include "InitialWeights/randomnormal.h"
+#include "InitialWeights/customized.h"
 
 #include "Metropolis/bruteforce.h"
 #include "Metropolis/importancesampling.h"

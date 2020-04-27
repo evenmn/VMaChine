@@ -21,7 +21,7 @@ void System::initializeSystem()
      * order in main/configuration file */
     initializeMPI();
     setInputLayer(m_degreesOfFreedom);      // Add input layer
-    setOutputLayer(new PureLinear(this));    // Add output layer
+    setOutputLayer(new Sigmoid(this));    // Add output layer
     m_hamiltonian->initialize();
     m_basis->initialize();
     setAllConstants();

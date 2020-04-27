@@ -13,7 +13,13 @@ void FNN::setConstants(const int elementNumber)
 
     // Set up weight matrices
     int h0 = m_layers2[0]->getNumberOfUnits();
-    m_layers2[0]->initialize(h0);
+    m_layers2[0]->initialize(0);
+    //int h1 = m_layers2[1]->getNumberOfUnits();
+    //m_layers2[1]->initialize(h0);
+    //int h2 = m_layers2[2]->getNumberOfUnits();
+    //m_layers2[2]->initialize(h1);
+    //m_numberOfParameters += (h0 + 1) * h1;
+    //m_numberOfParameters += (h1 + 1) * h2;
     for(unsigned long l = 1; l < m_layers2.size(); l++) {
         m_layers2[l]->initialize(h0);
         int h1 = m_layers2[l]->getNumberOfUnits();
@@ -32,6 +38,7 @@ void FNN::initializeArrays(const Eigen::VectorXd positions,
 }
 
 double FNN::evaluate(Eigen::VectorXd position) {
+    //std::cout << "evaluate1" << std::endl;
     Eigen::VectorXd a = position;
     for(unsigned long l = 0; l < m_layers2.size(); l++) {
         m_layers2[l]->evaluate(a);
@@ -39,6 +46,7 @@ double FNN::evaluate(Eigen::VectorXd position) {
         m_layers2[l]->activateDer();
         m_layers2[l]->activateSecDer();
     }
+    //std::cout << "evaluate2" << std::endl;
     return a(0);
 }
 
@@ -52,9 +60,11 @@ void FNN::updateArrays(const Eigen::VectorXd positions,
                        const Eigen::MatrixXd /*distanceMatrix*/,
                        const int changedCoord)
 {
+    //std::cout << "updateArrays1" << std::endl;
     m_positions = positions;
     m_out = evaluate(positions);
     updateProbabilityRatio(changedCoord);
+    //std::cout << "updateArrays2" << std::endl;
 }
 
 void FNN::setArrays()
@@ -73,6 +83,7 @@ void FNN::resetArrays()
 
 void FNN::updateParameters(const Eigen::MatrixXd parameters)
 {
+    //std::cout << "updateParameters1" << std::endl;
     int cumulativeStart = 0;
     for(unsigned long i = 0; i < m_layers2.size()-1; i++) {
         Layer::Vector2l size = m_layers2[i+1]->getWeightDim();
@@ -82,6 +93,7 @@ void FNN::updateParameters(const Eigen::MatrixXd parameters)
         m_layers2[i+1]->updateWeights(W);
         cumulativeStart += size.prod();
     }
+    //std::cout << "updateParameters2" << std::endl;
 }
 
 double FNN::evaluateRatio()
@@ -91,16 +103,32 @@ double FNN::evaluateRatio()
 
 double FNN::computeGradient(const int k)
 {
+    //std::cout << "computeGradient1" << std::endl;
+    //Eigen::VectorXd delta = Eigen::VectorXd::Ones(1);
+    //for(unsigned long l = m_layers2.size()-1; l > 0; l--) {
+    //    delta = m_layers2[l]->calculateDelta(delta);
+    //}
+    //return delta(k) / m_out;
 
-    Eigen::VectorXd delta = Eigen::VectorXd::Ones(1);
-    for(unsigned long l = m_layers2.size()-1; l > 0; l--) {
-        delta = m_layers2[l]->calculateDelta(delta);
+    Eigen::VectorXd da1 = m_layers2[1]->getDA();
+    Eigen::VectorXd da2 = m_layers2[2]->getDA();
+    Eigen::MatrixXd w1 = m_layers2[1]->getWeights();
+    Eigen::MatrixXd w2 = m_layers2[2]->getWeights();
+
+    double gradient = 0;
+    for(int i=0; i < da1.size() - 1; i++) {
+        for(int j=0; j < da2.size() - 1; j++){
+            gradient += da2(j) * da1(i) * w2(i, j) * w1(k, i);
+        }
     }
-    return delta(k) / m_out;
+    //return gradient / m_out;
+    //std::cout << "computeGradient2" << std::endl;
+    return 0;
 }
 
 double FNN::computeLaplacian()
 {
+    //std::cout << "computeLaplacian1" << std::endl;
     Eigen::VectorXd da1 = m_layers2[1]->getDA();
     Eigen::VectorXd dda1 = m_layers2[1]->getDDA();
     Eigen::VectorXd da2 = m_layers2[2]->getDA();
@@ -114,30 +142,41 @@ double FNN::computeLaplacian()
         for(int j=0; j < dda2.size() - 1; j++) {
             for(int h=0; h < da1.size() - 1; h++) {
                 laplacian += dda2(j) * da1(h) * w1(k, h) * w2(h, j) * da1(h) * w1(k, h) * w2(h, j);
-                laplacian += da2(j) * dda1(h) * w1(k, h) * w2(h, j) * w1(k, h) * w2(h, j);
+                laplacian += da2(j) * dda1(h) * w1(k, h) * w2(h, j) * w1(k, h);
             }
         }
-        gradientSqrd += computeGradient(k) * computeGradient(k);
+        double compGradient = computeGradient(k);
+        gradientSqrd += compGradient * compGradient;
     }
-    return laplacian / m_out - gradientSqrd;
+    //std::cout << laplacian << std::endl;
+    //std::cout << gradientSqrd << std::endl;
+    //std::cout << std::endl;
+    //std::cout << "computeLaplacian2" << std::endl;
+    return laplacian / m_out - gradientSqrd / (m_out * m_out);
 }
 
 Eigen::VectorXd FNN::computeParameterGradient()
 {
+    //std::cout << "computeParameterGradient1" << std::endl;
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
 
-    Eigen::VectorXd delta = Eigen::VectorXd::Ones(1);
-    int cumulativeStart = 0;
-    for (unsigned long l = m_layers2.size()-1; l > 0; l--) {
-        Layer::Vector2l size = m_layers2[l]->getWeightDim();
-        Eigen::VectorXd da = m_layers2[l]->getDA().tail(size(1));
-        Eigen::VectorXd a0 = m_layers2[l-1]->getA();
-        Eigen::MatrixXd dW = delta.cwiseProduct(da) * a0.transpose() / m_out;
-        m_gradients.segment(cumulativeStart, size.prod()) = WaveFunction::flatten(dW);
-        delta = m_layers2[l]->calculateDelta(delta);
-        cumulativeStart += size.prod();
-    }
 
+
+//    Eigen::VectorXd delta = Eigen::VectorXd::Ones(1);
+//    int cumulativeStart = 0;
+//    for (unsigned long l = m_layers2.size()-1; l > 0; l--) {
+//        Layer::Vector2l size = m_layers2[l]->getWeightDim();
+//        Eigen::VectorXd da = m_layers2[l]->getDA().tail(size(1));
+//        Eigen::VectorXd a0 = m_layers2[l-1]->getA();
+//        Eigen::MatrixXd dW = delta.cwiseProduct(da) * a0.transpose() / m_out;
+//        std::cout << dW << std::endl;
+//        m_gradients.segment(cumulativeStart, size.prod()) = WaveFunction::flatten(dW);
+//        std::cout << WaveFunction::flatten(dW) << std::endl;
+//        std::cout << "\n\n\n\n\n" << std::endl;
+//        delta = m_layers2[l]->calculateDelta(delta);
+//        cumulativeStart += size.prod();
+//    }
     m_gradients = Eigen::VectorXd::Zero(m_system->getMaxParameters());
+    //std::cout << "computeParameterGradient2" << std::endl;
     return m_gradients;
 }

@@ -38,6 +38,7 @@ SOURCES += src-eigen/main.cpp \
     src-eigen/Activation/purelinear.cpp \
     src-eigen/Activation/relu.cpp \
     src-eigen/Activation/sigmoid.cpp \
+    src-eigen/InitialWeights/customized.cpp \
     src-eigen/InitialWeights/randomnormal.cpp \
     src-eigen/InitialWeights/randomuniform.cpp \
     src-eigen/Layer/dense.cpp \
@@ -97,6 +98,7 @@ HEADERS += \
     src-eigen/Activation/purelinear.h \
     src-eigen/Activation/relu.h \
     src-eigen/Activation/sigmoid.h \
+    src-eigen/InitialWeights/customized.h \
     src-eigen/InitialWeights/randomnormal.h \
     src-eigen/InitialWeights/randomuniform.h \
     src-eigen/Layer/dense.h \
