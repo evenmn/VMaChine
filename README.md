@@ -24,18 +24,13 @@ MPI is also avaliable on other platforms.
 
 #### Eigen
 Eigen is a C++ template library for linear algebra operations. See
-[http://eigen.tuxfamily.org/](http://eigen.tuxfamily.org/) for installation details. Copy source directory to VMaChine:
-
-```bash
-cp -r Eigen ~/VMaChine/src/
-```
+[http://eigen.tuxfamily.org/](http://eigen.tuxfamily.org/) for installation details.
 
 #### Blocker
 Blocker is an auto blocking package developed by Marius Jonsson, which is our preferred resampling tool. To get the package, go to [https://github.com/computative/block](https://github.com/computative/block) and clone the repository:
 
 ```bash
 git clone https://github.com/computative/block.git
-mv block ~/VMaChine/src/
 ```
 
 ## Install
@@ -43,6 +38,12 @@ VMaChine can be installed by cloning this repository. This is preferably done in
 ```bash
 cd
 git clone https://github.com/evenmn/VMaChine.git
+```
+Then copy Eigen header files and blocker files to VMaChine:
+```bash
+cd ~/Download/eigen-3.3.9   # insert correct path here
+cp -r Eigen ~/VMaChine/src/
+mv ~/block ~/VMaChine/src/
 ```
 
 ## Build
