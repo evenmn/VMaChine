@@ -99,7 +99,7 @@ The advantage of this is that we can change parameters without compiling the cod
 ```c++
 QD->initializeFromConfig(argc, argv);
 ```
-to ```main.cpp```. An example on such a config file is found in [config](config).
+to ```main.cpp```. An example on such a config file is found in [config](examples/config).
 
 
 #### From ```main.cpp```
