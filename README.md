@@ -1,5 +1,4 @@
 # VMaChine
-----------------------
 VMaChine is a general variational Monte Carlo (VMC) solver written in object-oriented C++. It was implemented with focus on quantum dot systems, and standard trial wave functions (Hermite functions) are implemented. However, we primary aim of examining trial wave functions where a less amount of physical intuition is required. Therefore, several trial wave functions based on neural networks and machine learning are also included, hence VMaChine. The code is also largely parallelizable and is made to be fast.
 
 ## What's new?
@@ -38,7 +37,6 @@ Blocker is an auto blocking package developed by Marius Jonsson, which is our pr
 git clone https://github.com/computative/block.git
 mv block ~/VMaChine/src/
 ```
--------------------
 
 ## Install
 VMaChine can be installed by cloning this repository. This is preferably done in the home directory:
@@ -46,8 +44,6 @@ VMaChine can be installed by cloning this repository. This is preferably done in
 cd
 git clone https://github.com/evenmn/VMaChine.git
 ```
-
--------------------
 
 ## Build
 The code can be compiled by either CMake or QMake
@@ -136,8 +132,6 @@ int main(int argc, char** argv)
 ```
 We first define the physical system and then we define method-related tools. ```main.h``` needs to be included in order to pass the objects ```HarmonicOscillator(QD)```, ```Hermite(QD)``` and so on. Apart from the system declaration and simulation call, the order of calls is irrelevant. Everything that is not specified in ```main.cpp``` will stay by the default.
 
--------------------
-
 ## Analyze results
 ### Energy and blocking results
 The current energy is printed to the terminal for every iteration, together with the estimated variance, standard deviation, acceptence ratio and CPU time. _System info_ presents the settings used for the current run.
@@ -157,8 +151,6 @@ The one-body density is calculated during the last iteration by default, and the
 python3 scripts/plot_ob_density.py
 ```
 which again supports multiple files. Remember to set the correct number of dimensions inside the script!
-
--------------------
 
 ## Licence
 [MIT](https://choosealicense.com/licenses/mit/)
