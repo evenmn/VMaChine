@@ -19,22 +19,24 @@ int main(int argc, char **argv)
     QD->setHamiltonian(new HarmonicOscillator(QD));
 
     // Define trial wave function ansatz
-    //QD->setWaveFunctionElement(new SlaterDeterminant(QD));
+    QD->setWaveFunctionElement(new SlaterDeterminant(QD));
     //QD->setWaveFunctionElement(new RBMProduct(QD));
     //QD->setWaveFunctionElement(new RBMGaussian(QD));
-    QD->setWaveFunctionElement(new FNN(QD));
-    //QD->setWaveFunctionElement(new Gaussian(QD));
+    //QD->setWaveFunctionElement(new FNN(QD));
+    QD->setWaveFunctionElement(new Gaussian(QD));
 
-    QD->addDenseLayer(25, new ReLU(QD));
+    //QD->addDenseLayer(25, new ReLU(QD));
 
-    QD->setInitialWeights(new Customized(QD));
-    QD->setOptimization(new GradientDescent(QD));
+    //QD->setInitialWeights(new Customized(QD));
+    //QD->setOptimization(new GradientDescent(QD));
 
     QD->setConvergenceTools(4, 1e-4);
     QD->setAdaptiveStepTools(10, 2, 2);
     QD->setEquilibrationFraction(0.001);
 
     QD->setNumberOfIterations(100);
+
+    QD->initializeFromConfig(argc, argv);
     QD->runSimulation();
     return 0;
 }

@@ -1,4 +1,0 @@
-#ifndef NQSJASTROW4_H
-#define NQSJASTROW4_H
-
-#endif // NQSJASTROW4_H

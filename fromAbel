@@ -1,3 +1,0 @@
-#!/bin/bash
-
-rsync -chavzP evenmn@abel.uio.no:master/VMC/data /home/evenmn/VMC
