@@ -213,44 +213,57 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
 {
     /* Print output to terminal for an ordinary iteration. */
     m_iter += 1;
-    cout << endl;
+    //cout << endl;
     cout << std::fixed;
-    cout << std::setprecision(6);
-    cout << "  -- System info: " << " -- " << endl;
-    cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
-    cout << " Number of particles     : " << m_numberOfParticles << endl;
-    cout << " Number of dimensions    : " << m_numberOfDimensions << endl;
-    cout << " Number of processes     : " << m_numberOfProcesses << endl;
-    cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
-    cout << " Oscillator frequency    : " << m_omega << endl;
-    cout << " Trial wave function     : " << m_trialWaveFunction << endl;
-    cout << " Hamiltonian             : " << m_hamiltonian << endl;
-    cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
-         << " after burn-in)" << endl;
-    cout << endl;
-    cout << "  -- Results -- " << endl;
-    cout << " Total energy            : " << m_averageEnergy;
-    cout << "        (with STD = "           << m_stdError << ")" << endl;
-    cout << " Kinetic energy          : " << m_averageKineticEnergy;
-    cout << "        (with STD = "           << m_stdErrorKinetic << ")" << endl;
-    cout << " External energy         : " << m_averageExternalEnergy;
-    cout << "        (with STD = "           << m_stdErrorExternal << ")" << endl;
-    cout << " Interaction energy      : " << m_averageInteractionEnergy;
-    cout << "        (with STD = "           << m_stdErrorInteraction << ")" << endl;
+    cout << std::setprecision(8);
+    cout << m_iter << "  "
+         << m_averageEnergy << "  "
+         << m_stdError << "  "
+         << m_averageKineticEnergy << "  "
+         << m_stdErrorKinetic << "  "
+         << m_averageExternalEnergy << "  "
+         << m_stdErrorExternal << "  "
+         << m_averageInteractionEnergy << "  "
+         << m_stdErrorInteraction << "  "
+         << double(m_totalAcceptence) / m_totalStepsWOEqui << "  "
+         << time << std::endl;
+
+    //cout << "  -- System info: " << " -- " << endl;
+    //cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
+    //cout << " Number of particles     : " << m_numberOfParticles << endl;
+    //cout << " Number of dimensions    : " << m_numberOfDimensions << endl;
+    //cout << " Number of processes     : " << m_numberOfProcesses << endl;
+    //cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
+    //cout << " Oscillator frequency    : " << m_omega << endl;
+    //cout << " Trial wave function     : " << m_trialWaveFunction << endl;
+    //cout << " Hamiltonian             : " << m_hamiltonian << endl;
+    //cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
+    //     << " after burn-in)" << endl;
+    //cout << endl;
+    //cout << "  -- Results -- " << endl;
+    //cout << " Total energy            : " << m_averageEnergy;
+    //cout << "        (with STD = "           << m_stdError << ")" << endl;
+    //cout << " Kinetic energy          : " << m_averageKineticEnergy;
+    //cout << "        (with STD = "           << m_stdErrorKinetic << ")" << endl;
+    //cout << " External energy         : " << m_averageExternalEnergy;
+    //cout << "        (with STD = "           << m_stdErrorExternal << ")" << endl;
+    //cout << " Interaction energy      : " << m_averageInteractionEnergy;
+    //cout << "        (with STD = "           << m_stdErrorInteraction << ")" << endl;
     //cout << " Variance                : " << m_variance << endl;
     //cout << " STD                     : " << sqrt(m_variance) << endl;
-    cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
-    cout << " CPU Time                : " << time << endl;
-    cout << endl;
+    //cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
+    //cout << " CPU Time                : " << time << endl;
+    //cout << endl;
 }
 
-void Sampler::printFinalOutputToTerminal()
+void Sampler::printFinalOutputToTerminal(std::chrono::system_clock::time_point start)
 {
     /* Print output to terminal for final iteration. */
     cout << endl;
     cout << std::fixed;
     cout << std::setprecision(10);
-    cout << "  ===  Final results:  === " << endl;
+    cout << "               Final results" << endl;
+    cout << "==============================================" << endl;
     cout << " Total energy            : " << m_averageEnergy;
     cout << " (with STD = " << m_stdError << ")" << endl;
     cout << " Kinetic energy          : " << m_averageKineticEnergy
@@ -264,6 +277,13 @@ void Sampler::printFinalOutputToTerminal()
     //cout << " STD                     : " << m_stdError << " (with MSE = " << m_mseSTD << ")" << endl;
     cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
     cout << endl;
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    cout << "Finished computation at " << std::ctime(&end_time)
+         << "Elapsed time: " << elapsed_seconds.count() << "s\n";
 }
 
 void Sampler::doResampling()
@@ -374,24 +394,6 @@ void Sampler::appendInstantFiles(const std::string extension)
     }
 }
 
-std::string Sampler::generateFileName(std::string name, std::string extension)
-{
-    /* Generate filename and path of dumped files, including
-     * local energy, electron density and weights. */
-    std::string fileName = m_path;
-    fileName += "int" + std::to_string(m_interaction) + "/";
-    fileName += m_hamiltonian + "/";
-    fileName += name + "/";
-    fileName += m_trialWaveFunction + "/";
-    fileName += std::to_string(m_numberOfDimensions) + "D/";
-    fileName += std::to_string(m_numberOfParticles) + "P/";
-    fileName += std::to_string(m_omega) + "w/";
-    fileName += m_system->getOptimization()->getLabel();
-    fileName += "_MC" + std::to_string(m_initialTotalStepsWOEqui);
-    fileName += extension;
-    return fileName;
-}
-
 void Sampler::openOutputFiles()
 {
     /* Open the generated files to store local energy, electron
@@ -402,29 +404,29 @@ void Sampler::openOutputFiles()
     MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     if (m_printParametersToFile && m_rank == 0) {
-        m_parameterFileName = generateFileName("weights", ".dat");
+        m_parameterFileName = m_path + "weights.dat";
         m_parameterFile.open(m_parameterFileName);
     }
     if (m_printEnergyToFile && m_rank == 0) {
-        std::string averageEnergyFileName = generateFileName("energy", ".dat");
+        std::string averageEnergyFileName = m_path + "energy.dat";
         m_averageEnergyFile.open(averageEnergyFileName);
-        std::string averageKineticEnergyFileName = generateFileName("energy", "_kin.dat");
+        std::string averageKineticEnergyFileName = m_path + "kinetic.dat";
         m_averageKineticEnergyFile.open(averageKineticEnergyFileName);
-        std::string averageExternalEnergyFileName = generateFileName("energy", "_ext.dat");
+        std::string averageExternalEnergyFileName = m_path + "external.dat";
         m_averageExternalEnergyFile.open(averageExternalEnergyFileName);
-        std::string averageInteractionEnergyFileName = generateFileName("energy", "_int.dat");
+        std::string averageInteractionEnergyFileName = m_path + "interaction.dat";
         m_averageInteractionEnergyFile.open(averageInteractionEnergyFileName);
     }
     if (m_computeOneBodyDensity && m_rank == 0) {
-        std::string oneBodyFileName = generateFileName("onebody", ".dat");
+        std::string oneBodyFileName = m_path + "onebody.dat";
         m_oneBodyFile.open(oneBodyFileName);
     }
     if (m_computeOneBodyDensity2 && m_rank == 0) {
-        std::string oneBodyFileName2 = generateFileName("onebody2", ".dat");
+        std::string oneBodyFileName2 = m_path + "onebody2.dat";
         m_oneBodyFile2.open(oneBodyFileName2);
     }
     if (m_computeTwoBodyDensity && m_rank == 0) {
-        std::string twoBodyFileName = generateFileName("twobody", ".dat");
+        std::string twoBodyFileName = m_path + "twobody.dat";
         m_twoBodyFile.open(twoBodyFileName);
     }
     if (m_printInstantEnergyToFile) {
@@ -463,7 +465,7 @@ void Sampler::printParametersToFile()
 {
     /* Print parameters to file. */
     if (m_printParametersToFile && m_rank == 0) {
-        std::string parameterFileName = generateFileName("weights", ".dat");
+        std::string parameterFileName = m_path + "weights.dat";
         m_parameterFile.open(parameterFileName);
         m_parameterFile << m_system->getWeights() << endl;
         m_parameterFile.close();

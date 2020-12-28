@@ -1,5 +1,18 @@
 #include "system.h"
 
+void System::printLogo()
+{
+    /* Print system information to terminal */
+    std::cout << "__      ____  __          _____ _    _ _____ _   _ ______ " << std::endl;
+    std::cout << "\\ \\    / /  \\/  |   /\\   / ____| |  | |_   _| \\ | |  ____|" << std::endl;
+    std::cout << " \\ \\  / /| \\  / |  /  \\ | |    | |__| | | | |  \\| | |__   " << std::endl;
+    std::cout << "  \\ \\/ / | |\\/| | / /\\ \\| |    |  __  | | | | . ` |  __|  " << std::endl;
+    std::cout << "   \\  /  | |  | |/ ____ \\ |____| |  | |_| |_| |\\  | |____ " << std::endl;
+    std::cout << "    \\/   |_|  |_/_/    \\_\\_____|_|  |_|_____|_| \\_|______|" << std::endl;
+    std::cout << "==========================================================" << std::endl;
+    std::cout << std::endl;
+}
+
 void System::initializeMPI()
 {
     /* Initialize MPI based on command line arguments.
@@ -42,11 +55,105 @@ void System::initializeSystem()
     m_sampler->openOutputFiles();
 }
 
+void System::printInitialInformation()
+{
+    m_start = std::chrono::system_clock::now();
+    std::time_t start_time = std::chrono::system_clock::to_time_t(m_start);
+    std::cout << "Started computation at " << std::ctime(&start_time)
+              << "Running on " << m_numberOfProcesses << " CPU threads using OpenMPI" << std::endl;
+    std::cout << "Simulation is run from the directory: " << m_path << std::endl;
+}
+
+void System::printSystemInformation()
+{
+    /* Print system information to terminal */
+    std::cout << std::fixed;
+    std::cout << std::boolalpha;
+    std::cout << std::setprecision(6);
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "             SYSTEM INFORMATION" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    std::cout << "Number of particles:      " << m_numberOfParticles << std::endl;
+    std::cout << "Number of dimensions:     " << m_numberOfDimensions << std::endl;
+    std::cout << "Interaction:              " << m_interaction << std::endl;
+    std::cout << "Hamiltonian:              " << m_hamiltonian << std::endl;
+    std::cout << "Initial state:            " << m_initialState << std::endl;
+    std::cout << "Oscillator frequency:     " << m_omega << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "           WAVE FUNCTION INFORMATION" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    for (int i = 0; i < m_numberOfElements; i++) {
+        std::cout << "Element " << i << ":                " << m_waveFunctionElements[unsigned(i)] << std::endl;
+    }
+    std::cout << "Basis:                    " << m_basis << std::endl;
+    std::cout << "Initial parameters:       " << m_initialWeights << std::endl;
+    std::cout << "Number of parameters:     " << this->getTotalNumberOfParameters() << std::endl;
+    std::cout << "Number of hidden nodes:   " << m_numberOfHiddenUnits << std::endl;
+    std::cout << "Print parameters to file: " << m_printParametersToFile << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "            SIMULATION INFORMATION" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    std::cout << "Max number of iterations: " << m_numberOfIterations << std::endl;
+    std::cout << "Number of MC cycles:      " << m_totalStepsWOEqui << std::endl;
+    std::cout << "Number of burn-in cycles: " << m_equilibriationSteps << std::endl;
+    std::cout << "Learning rate:            " << m_eta << std::endl;
+    std::cout << "Step length:              " << m_stepLength << std::endl;
+    std::cout << "Equilibration fraction:   " << m_equilibrationFraction << std::endl;
+    std::cout << "Sampling:                 " << m_metropolis << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "               ELECTRON DENSITY" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    std::cout << "Compute radial one-body density:  " << m_computeOneBodyDensity << std::endl;
+    std::cout << "Compute spatial one-body density: " << m_computeOneBodyDensity2 << std::endl;
+    std::cout << "Compute radial two-body density:  " << m_computeTwoBodyDensity << std::endl;
+    std::cout << "Max radius of electron density:   " << m_maxRadius << std::endl;
+    std::cout << "Number of bins in each direction: " << m_numberOfBins << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "                  RESAMPLING" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    std::cout << "Do resampling:            " << m_doResampling << std::endl;
+    std::cout << "Print energies to file:   " << m_printEnergyToFile << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "                  CONVERGENCE" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    std::cout << "Check convergence:        " << m_checkConvergence << std::endl;
+    std::cout << "Tolerance:                " << m_tolerance << std::endl;
+    std::cout << "Number of energies:       " << m_numberOfEnergies << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "                 ADAPTIVE STEPS" << std::endl;
+    std::cout << "==============================================" << std::endl;
+    std::cout << "Apply adaptive steps:       " << m_applyAdaptiveSteps << std::endl;
+    std::cout << "Range of adaptive steps:    " << m_rangeOfAdaptiveSteps << std::endl;
+    std::cout << "Additional steps:           " << m_additionalSteps << std::endl;
+    std::cout << "Additional steps last iter: " << m_additionalStepsLastIter << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+}
+
+void System::printHeaderLine()
+{
+    std::cout << "Step  " << "Energy  " << "Energy_STD  " << "Kinetic  "
+              << "Kinetic_STD  " << "External  " << "External_STD  "
+              << "Interaction  " << "Interaction_STD  " << "Acceptence  "
+              << "CPU_time" << std::endl;
+}
+
 void System::runSimulation()
 {
     /* Run simulation specified in main/configuration file.
      * This is the main loop in VMC, where we update the parameters. */
+    printLogo();
+    printInitialInformation();
     initializeSystem();
+    printSystemInformation();
+    printHeaderLine();
     m_numberOfNormalIterations = m_numberOfIterations - m_rangeOfAdaptiveSteps - 1;
     for (m_iter = 0; m_iter < m_numberOfIterations; m_iter++) {
         if (m_applyAdaptiveSteps) {
@@ -122,7 +229,7 @@ void System::printToTerminal()
         m_sampler->closeOutputFiles();
         if (m_rank == 0) {
             m_sampler->doResampling();
-            m_sampler->printFinalOutputToTerminal();
+            m_sampler->printFinalOutputToTerminal(m_start);
             std::cout << std::endl;
             std::cout << "Average CPU time before convergence: " << m_globalTime / m_numberOfNormalIterations
                       << std::endl;
@@ -681,39 +788,42 @@ void System::parser(const std::string configFile)
                         m_omega = std::stod(value);
                         m_stepLength = 0.1 / sqrt(m_omega);
                         m_sigma = 1.0 / sqrt(m_omega);
+                    } else if (key == "atomicNumber") {
+                        m_Z = std::stoi(value);
                     } else if (key == "learningRate") {
                         m_eta = std::stod(value);
                     } else if (key == "maxRadius") {
                         m_maxRadius = std::stod(value);
                     } else if (key == "numIterations") {
                         m_numberOfIterations = std::stoi(value);
+                    } else if (key == "equilibration") {
+                        setEquilibrationFraction(std::stod(value));
                     } else if (key == "numSteps") {
-                        m_initialTotalStepsWOEqui = std::stoi(value);
+                        setNumberOfMetropolisCycles(std::stoi(value));
                     } else if (key == "numHiddenNodes") {
                         m_numberOfHiddenUnits = std::stoi(value);
                     } else if (key == "totalSpin") {
                         m_totalSpin = std::stod(value);
                     } else if (key == "stepLength") {
                         m_stepLength = std::stod(value);
-                    } else if (key == "equilibration") {
-                        m_equilibrationFraction = std::stod(value);
                     } else if (key == "interaction") {
-                        m_interaction = std::stoi(value);
-                        // istringstream(value) >> std::boolalpha >> m_interaction;
+                        std::istringstream(value) >> std::boolalpha >> m_interaction;
                     } else if (key == "checkConvergence") {
-                        m_checkConvergence = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_checkConvergence;
                     } else if (key == "applyAdaptiveSteps") {
-                        m_applyAdaptiveSteps = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_applyAdaptiveSteps;
                     } else if (key == "computeOneBodyDensity") {
-                        m_computeOneBodyDensity = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_computeOneBodyDensity;
+                    } else if (key == "computeOneBodyDensity2") {
+                        std::istringstream(value) >> std::boolalpha >> m_computeOneBodyDensity2;
                     } else if (key == "computeTwoBodyDensity") {
-                        m_computeTwoBodyDensity = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_computeTwoBodyDensity;
                     } else if (key == "printEnergyToFile") {
-                        m_printEnergyToFile = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_printEnergyToFile;
                     } else if (key == "printParametersToFile") {
-                        m_printParametersToFile = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_printParametersToFile;
                     } else if (key == "doResampling") {
-                        m_doResampling = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_doResampling;
                     } else if (key == "path") {
                         m_path = value;
                     } else if (key == "numberOfEnergies") {
@@ -733,6 +843,8 @@ void System::parser(const std::string configFile)
                             setBasis(new Hermite(this));
                         } else if (value == "hermiteExpansion") {
                             setBasis(new HermiteExpansion(this));
+                        } else if (value == "hydrogenOrbital") {
+                            setBasis(new HydrogenOrbital(this));
                         } else {
                             std::cout << value << " is not a known basis" << std::endl;
                             MPI_Finalize();
@@ -743,6 +855,8 @@ void System::parser(const std::string configFile)
                             setHamiltonian(new HarmonicOscillator(this));
                         } else if (value == "doubleWell") {
                             setHamiltonian(new DoubleWell(this, 2));
+                        } else if (value == "atomicNucleus") {
+                            setHamiltonian(new AtomicNucleus(this));
                         } else {
                             std::cout << value << " is not a known Hamiltonian" << std::endl;
                             MPI_Finalize();
@@ -839,6 +953,8 @@ void System::parser(const std::string configFile)
                             setWaveFunctionElement(new class RBMGaussian(this));
                         } else if (value == "RBMProduct") {
                             setWaveFunctionElement(new class RBMProduct(this));
+                        } else if (value == "hydrogenLike") {
+                            setWaveFunctionElement(new class HydrogenLike(this));
                         } else {
                             std::cerr << "Wave function element does not exist" << std::endl;
                             MPI_Abort(MPI_COMM_WORLD, 143);
