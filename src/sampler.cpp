@@ -386,24 +386,6 @@ void Sampler::appendInstantFiles(const std::string extension)
     }
 }
 
-std::string Sampler::generateFileName(std::string name, std::string extension)
-{
-    /* Generate filename and path of dumped files, including
-     * local energy, electron density and weights. */
-    std::string fileName = m_path;
-    fileName += "int" + std::to_string(m_interaction) + "/";
-    fileName += m_hamiltonian + "/";
-    fileName += name + "/";
-    fileName += m_trialWaveFunction + "/";
-    fileName += std::to_string(m_numberOfDimensions) + "D/";
-    fileName += std::to_string(m_numberOfParticles) + "P/";
-    fileName += std::to_string(m_omega) + "w/";
-    fileName += m_system->getOptimization()->getLabel();
-    fileName += "_MC" + std::to_string(m_initialTotalStepsWOEqui);
-    fileName += extension;
-    return fileName;
-}
-
 void Sampler::openOutputFiles()
 {
     /* Open the generated files to store local energy, electron
@@ -414,29 +396,29 @@ void Sampler::openOutputFiles()
     MPI_Bcast(&m_instantNumber, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     if (m_printParametersToFile && m_rank == 0) {
-        m_parameterFileName = generateFileName("weights", ".dat");
+        m_parameterFileName = m_path + "weights.dat";
         m_parameterFile.open(m_parameterFileName);
     }
     if (m_printEnergyToFile && m_rank == 0) {
-        std::string averageEnergyFileName = generateFileName("energy", ".dat");
+        std::string averageEnergyFileName = m_path + "energy.dat";
         m_averageEnergyFile.open(averageEnergyFileName);
-        std::string averageKineticEnergyFileName = generateFileName("energy", "_kin.dat");
+        std::string averageKineticEnergyFileName = m_path + "kinetic.dat";
         m_averageKineticEnergyFile.open(averageKineticEnergyFileName);
-        std::string averageExternalEnergyFileName = generateFileName("energy", "_ext.dat");
+        std::string averageExternalEnergyFileName = m_path + "external.dat";
         m_averageExternalEnergyFile.open(averageExternalEnergyFileName);
-        std::string averageInteractionEnergyFileName = generateFileName("energy", "_int.dat");
+        std::string averageInteractionEnergyFileName = m_path + "interaction.dat";
         m_averageInteractionEnergyFile.open(averageInteractionEnergyFileName);
     }
     if (m_computeOneBodyDensity && m_rank == 0) {
-        std::string oneBodyFileName = generateFileName("onebody", ".dat");
+        std::string oneBodyFileName = m_path + "onebody.dat";
         m_oneBodyFile.open(oneBodyFileName);
     }
     if (m_computeOneBodyDensity2 && m_rank == 0) {
-        std::string oneBodyFileName2 = generateFileName("onebody2", ".dat");
+        std::string oneBodyFileName2 = m_path + "onebody2.dat";
         m_oneBodyFile2.open(oneBodyFileName2);
     }
     if (m_computeTwoBodyDensity && m_rank == 0) {
-        std::string twoBodyFileName = generateFileName("twobody", ".dat");
+        std::string twoBodyFileName = m_path + "twobody.dat";
         m_twoBodyFile.open(twoBodyFileName);
     }
     if (m_printInstantEnergyToFile) {
@@ -475,7 +457,7 @@ void Sampler::printParametersToFile()
 {
     /* Print parameters to file. */
     if (m_printParametersToFile && m_rank == 0) {
-        std::string parameterFileName = generateFileName("weights", ".dat");
+        std::string parameterFileName = m_path + "weights.dat";
         m_parameterFile.open(parameterFileName);
         m_parameterFile << m_system->getWeights() << endl;
         m_parameterFile.close();
