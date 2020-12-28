@@ -59,6 +59,7 @@ void System::printSystemInformation()
 {
     /* Print system information to terminal */
     std::cout << std::fixed;
+    std::cout << std::boolalpha;
     std::cout << std::setprecision(6);
     std::cout << std::endl;
     std::cout << std::endl;
@@ -805,24 +806,23 @@ void System::parser(const std::string configFile)
                     } else if (key == "stepLength") {
                         m_stepLength = std::stod(value);
                     } else if (key == "interaction") {
-                        m_interaction = std::stoi(value);
-                        // istringstream(value) >> std::boolalpha >> m_interaction;
+                        std::istringstream(value) >> std::boolalpha >> m_interaction;
                     } else if (key == "checkConvergence") {
-                        m_checkConvergence = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_checkConvergence;
                     } else if (key == "applyAdaptiveSteps") {
-                        m_applyAdaptiveSteps = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_applyAdaptiveSteps;
                     } else if (key == "computeOneBodyDensity") {
-                        m_computeOneBodyDensity = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_computeOneBodyDensity;
                     } else if (key == "computeOneBodyDensity2") {
-                        m_computeOneBodyDensity2 = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_computeOneBodyDensity2;
                     } else if (key == "computeTwoBodyDensity") {
-                        m_computeTwoBodyDensity = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_computeTwoBodyDensity;
                     } else if (key == "printEnergyToFile") {
-                        m_printEnergyToFile = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_printEnergyToFile;
                     } else if (key == "printParametersToFile") {
-                        m_printParametersToFile = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_printParametersToFile;
                     } else if (key == "doResampling") {
-                        m_doResampling = std::stoi(value);
+                        std::istringstream(value) >> std::boolalpha >> m_doResampling;
                     } else if (key == "path") {
                         m_path = value;
                     } else if (key == "numberOfEnergies") {
