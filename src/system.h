@@ -83,6 +83,10 @@ public:
      * element and the number of wave function elements. This is
      * called automatically when all the wave function elements are
      * specified. */
+    void printLogo();
+    void printInitialInformation();
+    void printSystemInformation();
+    void printHeaderLine();
     void setGradients();
     void setGlobalArraysToCalculate();
     void resetAllArrays();
@@ -287,6 +291,8 @@ private:
     bool m_calculateRadialVector = false;
     bool m_screening = false;
 
+    std::chrono::system_clock::time_point m_start;
+
     class WaveFunction *m_waveFunction = nullptr;
     class Hamiltonian *m_hamiltonian = new HarmonicOscillator(this);
     class Basis *m_basis = new Hermite(this);
@@ -302,7 +308,7 @@ private:
     //std::vector<class Activation *> m_activationFunctions;
     //std::vector<int> m_hiddenUnits;
 
-    std::string m_path = "data/";
+    std::string m_path = "";
     std::string m_trialWaveFunction;
     std::string m_configFile = "none";
 

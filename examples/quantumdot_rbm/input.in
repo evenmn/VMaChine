@@ -1,0 +1,20 @@
+# system
+numParticles: 2
+numDimensions: 2
+hamiltonian: harmonicOscillator
+omega: 1.0
+interaction: true
+
+# wave function
+waveFunctionElement: slaterDeterminant
+waveFunctionElement: RBMGaussian
+waveFunctionElement: RBMProduct
+basis: hermite
+numHiddenNodes: 2
+
+# simulation
+numIterations: 100
+numSteps: 131072
+learningRate: 0.1
+stepLength: 0.1
+printEnergyToFile: true
