@@ -1,12 +1,23 @@
-# comment
-numParticles: 2
-numDimensions: 2
-numIterations: 5000
-maxRadius: 50
-learningRate: 0.1
+# system
+numParticles: 8
+numDimensions: 3
+hamiltonian: harmonicOscillator
 omega: 1.0
 interaction: 0
+
+# wave function
 waveFunctionElement: slaterDeterminant
 waveFunctionElement: gaussian
-initialWeights: automatize
 basis: hermite
+initialWeights: automatize
+
+# simulation
+numIterations: 5000
+numSteps: 524812
+learningRate: 0.1
+stepLength: 0.1
+equilibration: 0.001
+
+# electron density
+maxRadius: 50
+printEnergyToFile: 1

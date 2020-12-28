@@ -695,7 +695,7 @@ void System::parser(const std::string configFile)
                         m_totalSpin = std::stod(value);
                     } else if (key == "stepLength") {
                         m_stepLength = std::stod(value);
-                    } else if (key == "equilibriation") {
+                    } else if (key == "equilibration") {
                         m_equilibrationFraction = std::stod(value);
                     } else if (key == "interaction") {
                         m_interaction = std::stoi(value);
