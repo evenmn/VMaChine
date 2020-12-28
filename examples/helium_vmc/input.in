@@ -1,0 +1,18 @@
+# system
+numParticles: 2
+numDimensions: 3
+atomicNumber: 2
+hamiltonian: atomicNucleus
+interaction: true
+
+# wave function
+waveFunctionElement: slaterDeterminant
+waveFunctionElement: padeJastrow
+basis: hydrogenOrbital
+
+# simulation
+numIterations: 100
+numSteps: 131072
+learningRate: 0.1
+stepLength: 0.1
+printEnergyToFile: true
