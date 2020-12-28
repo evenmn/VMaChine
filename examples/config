@@ -1,20 +1,21 @@
 # system
-numParticles: 8
-numDimensions: 3
+numParticles: 2
+numDimensions: 2
 hamiltonian: harmonicOscillator
 omega: 1.0
-interaction: 0
+interaction: 1
 
 # wave function
 waveFunctionElement: slaterDeterminant
 waveFunctionElement: gaussian
+waveFunctionElement: padeJastrow
 basis: hermite
 initialWeights: automatize
 
 # simulation
 numIterations: 5000
 numSteps: 524812
-learningRate: 0.1
+learningRate: 0.01
 stepLength: 0.1
 equilibration: 0.001
 
