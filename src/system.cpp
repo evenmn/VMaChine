@@ -1,5 +1,18 @@
 #include "system.h"
 
+void System::printLogo()
+{
+    /* Print system information to terminal */
+    std::cout << "__      ____  __          _____ _    _ _____ _   _ ______ " << std::endl;
+    std::cout << "\\ \\    / /  \\/  |   /\\   / ____| |  | |_   _| \\ | |  ____|" << std::endl;
+    std::cout << " \\ \\  / /| \\  / |  /  \\ | |    | |__| | | | |  \\| | |__   " << std::endl;
+    std::cout << "  \\ \\/ / | |\\/| | / /\\ \\| |    |  __  | | | | . ` |  __|  " << std::endl;
+    std::cout << "   \\  /  | |  | |/ ____ \\ |____| |  | |_| |_| |\\  | |____ " << std::endl;
+    std::cout << "    \\/   |_|  |_/_/    \\_\\_____|_|  |_|_____|_| \\_|______|" << std::endl;
+    std::cout << "==========================================================" << std::endl;
+    std::cout << std::endl;
+}
+
 void System::initializeMPI()
 {
     /* Initialize MPI based on command line arguments.
@@ -42,11 +55,47 @@ void System::initializeSystem()
     m_sampler->openOutputFiles();
 }
 
+void System::printSystemInformation()
+{
+    /* Print system information to terminal */
+    std::cout << std::endl;
+    std::cout << "#############################################" << std::endl;
+    std::cout << "### =====    SYSTEM INFORMATION     ===== ###" << std::endl;
+    std::cout << "#############################################" << std::endl;
+    std::cout << "Number of particles:      " << m_numberOfParticles << std::endl;
+    std::cout << "Number of dimensions:     " << m_numberOfDimensions << std::endl;
+    std::cout << "Interaction:              " << m_interaction << std::endl;
+    std::cout << "Hamiltonian:              " << m_hamiltonian << std::endl;
+    std::cout << "Initial state:            " << m_initialState << std::endl;
+    std::cout << std::endl;
+    std::cout << "#############################################" << std::endl;
+    std::cout << "### ===== WAVE FUNCTION INFORMATION ===== ###" << std::endl;
+    std::cout << "#############################################" << std::endl;
+    for (int i = 0; i < m_numberOfElements; i++) {
+        std::cout << "Element " << i << ":                " << m_waveFunctionElements[unsigned(i)] << std::endl;
+    }
+    std::cout << "Basis:                    " << m_basis << std::endl;
+    std::cout << "Initial parameters:       " << m_initialWeights << std::endl;
+    std::cout << std::endl;
+    std::cout << "#############################################" << std::endl;
+    std::cout << "### =====  SIMULATION INFORMATION   ===== ###" << std::endl;
+    std::cout << "#############################################" << std::endl;
+    std::cout << "Max number of iterations: " << m_numberOfIterations << std::endl;
+    std::cout << "Number of MPI threads:    " << m_numberOfProcesses << std::endl;
+    std::cout << std::endl;
+
+}
+
 void System::runSimulation()
 {
     /* Run simulation specified in main/configuration file.
      * This is the main loop in VMC, where we update the parameters. */
-    initializeSystem();
+     printLogo();
+     auto start = std::chrono::system_clock::now();
+     std::time_t start_time = std::chrono::system_clock::to_time_t(start);
+     std::cout << "Started computation at " << std::ctime(&start_time) << std::endl;
+     initializeSystem();
+     printSystemInformation();
     m_numberOfNormalIterations = m_numberOfIterations - m_rangeOfAdaptiveSteps - 1;
     for (m_iter = 0; m_iter < m_numberOfIterations; m_iter++) {
         if (m_applyAdaptiveSteps) {
@@ -92,6 +141,12 @@ void System::runSimulation()
         MPI_Barrier(MPI_COMM_WORLD);
         updateAllParameters(m_parameters);
     }
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "Finished computation at " << std::ctime(&end_time)
+              << "Elapsed time: " << elapsed_seconds.count() << "s\n";
 }
 
 void System::runMetropolisCycles()

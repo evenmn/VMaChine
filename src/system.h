@@ -83,6 +83,8 @@ public:
      * element and the number of wave function elements. This is
      * called automatically when all the wave function elements are
      * specified. */
+    void printLogo();
+    void printSystemInformation();
     void setGradients();
     void setGlobalArraysToCalculate();
     void resetAllArrays();
