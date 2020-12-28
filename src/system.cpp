@@ -20,6 +20,7 @@ void System::initializeSystem()
      * which is the task of this function. This lets the calls be in arbitrary
      * order in main/configuration file */
     initializeMPI();
+    parser(m_configFile);
     setInputLayer(m_degreesOfFreedom);      // Add input layer
     setOutputLayer(new Sigmoid(this));    // Add output layer
     m_hamiltonian->initialize();
@@ -35,7 +36,7 @@ void System::initializeSystem()
     m_distanceMatrix = m_initialState->getDistanceMatrix();
     m_radialVector = m_initialState->getRadialVector();
     m_metropolis->initialize();
-    parser(m_configFile);
+    //parser(m_configFile);
 
     m_sampler = new Sampler(this);
     m_sampler->openOutputFiles();
@@ -652,15 +653,24 @@ void System::parser(const std::string configFile)
     infile.open(configFile.c_str());
     if (!infile.is_open() && m_args >= 2) {
         perror("File not found");
+        MPI_Abort(MPI_COMM_WORLD, 143);
     }
     else {
         std::string line;
         while (std::getline(infile, line)) {
             std::istringstream is_line(line);
             std::string key;
-            if (std::getline(is_line, key, ':')) {
+            if (line.empty()) {
+                /* Continue if line is blank */
+                continue;
+            } else if (line.rfind("#", 0) == 0) {
+                /* Continue if line starts with '#' */
+                continue;
+            } else if (std::getline(is_line, key, ':')) {
+                key = trim(key);
                 std::string value;
                 if (std::getline(is_line, value)) {
+                    value = trim(value);
                     if (key == "numParticles") {
                         m_numberOfParticles = std::stoi(value);
                         m_numberOfHiddenUnits = m_numberOfParticles;
@@ -689,6 +699,7 @@ void System::parser(const std::string configFile)
                         m_equilibrationFraction = std::stod(value);
                     } else if (key == "interaction") {
                         m_interaction = std::stoi(value);
+                        // istringstream(value) >> std::boolalpha >> m_interaction;
                     } else if (key == "checkConvergence") {
                         m_checkConvergence = std::stoi(value);
                     } else if (key == "applyAdaptiveSteps") {
@@ -809,14 +820,37 @@ void System::parser(const std::string configFile)
                             waveFunctionElements.push_back(new class RBMProduct(this));
                             waveFunctionElements.push_back(new class PartlyRestricted(this));
                         } else {
-                            std::cout << value << " is not a known wave function configuration"
+                            std::cout << "Error: " << value << " is not a known wave function configuration"
                                       << std::endl;
                             MPI_Finalize();
                             exit(0);
                         }
                         setWaveFunctionElements(waveFunctionElements);
+                    } else if (key == "waveFunctionElement") {
+                        if (value == "gaussian") {
+                            setWaveFunctionElement(new class Gaussian(this));
+                        } else if (value == "slaterDeterminant") {
+                            setWaveFunctionElement(new class SlaterDeterminant(this));
+                        } else if (value == "padeJastrow") {
+                            setWaveFunctionElement(new class PadeJastrow(this));
+                        } else if (value == "simpleJastrow") {
+                            setWaveFunctionElement(new class SimpleJastrow(this));
+                        } else if (value == "RBMGaussian") {
+                            setWaveFunctionElement(new class RBMGaussian(this));
+                        } else if (value == "RBMProduct") {
+                            setWaveFunctionElement(new class RBMProduct(this));
+                        } else {
+                            std::cerr << "Wave function element does not exist" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
+                        }
+                    } else {
+                      std::cerr << "Invalid key is passed to configuration file" << std::endl;
+                      MPI_Abort(MPI_COMM_WORLD, 143);
                     }
                 }
+            } else {
+                std::cerr << "Invalid key is passed to configuration file" << std::endl;
+                MPI_Abort(MPI_COMM_WORLD, 143);
             }
         }
     }

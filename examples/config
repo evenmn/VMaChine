@@ -1,6 +1,12 @@
+# comment
 numParticles: 2
 numDimensions: 2
 numIterations: 5000
 maxRadius: 50
 learningRate: 0.1
 omega: 1.0
+interaction: 0
+waveFunctionElement: slaterDeterminant
+waveFunctionElement: gaussian
+initialWeights: automatize
+basis: hermite
