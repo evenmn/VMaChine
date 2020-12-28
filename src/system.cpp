@@ -55,6 +55,15 @@ void System::initializeSystem()
     m_sampler->openOutputFiles();
 }
 
+void System::printInitialInformation()
+{
+    m_start = std::chrono::system_clock::now();
+    std::time_t start_time = std::chrono::system_clock::to_time_t(m_start);
+    std::cout << "Started computation at " << std::ctime(&start_time)
+              << "Running on " << m_numberOfProcesses << " CPU threads using OpenMPI" << std::endl;
+    std::cout << "Simulation is run from the directory: " << m_path << std::endl;
+}
+
 void System::printSystemInformation()
 {
     /* Print system information to terminal */
@@ -141,11 +150,7 @@ void System::runSimulation()
     /* Run simulation specified in main/configuration file.
      * This is the main loop in VMC, where we update the parameters. */
     printLogo();
-    auto start = std::chrono::system_clock::now();
-    std::time_t start_time = std::chrono::system_clock::to_time_t(start);
-    std::cout << "Started computation at " << std::ctime(&start_time)
-              << "Running on " << m_numberOfProcesses << " CPU threads using OpenMPI" << std::endl;
-    std::cout << "Simulation is run from the directory: " << m_path << std::endl;
+    printInitialInformation();
     initializeSystem();
     printSystemInformation();
     printHeaderLine();
@@ -194,12 +199,6 @@ void System::runSimulation()
         MPI_Barrier(MPI_COMM_WORLD);
         updateAllParameters(m_parameters);
     }
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
-    std::cout << "Finished computation at " << std::ctime(&end_time)
-              << "Elapsed time: " << elapsed_seconds.count() << "s\n";
 }
 
 void System::runMetropolisCycles()
@@ -230,7 +229,7 @@ void System::printToTerminal()
         m_sampler->closeOutputFiles();
         if (m_rank == 0) {
             m_sampler->doResampling();
-            m_sampler->printFinalOutputToTerminal();
+            m_sampler->printFinalOutputToTerminal(m_start);
             std::cout << std::endl;
             std::cout << "Average CPU time before convergence: " << m_globalTime / m_numberOfNormalIterations
                       << std::endl;
@@ -789,6 +788,8 @@ void System::parser(const std::string configFile)
                         m_omega = std::stod(value);
                         m_stepLength = 0.1 / sqrt(m_omega);
                         m_sigma = 1.0 / sqrt(m_omega);
+                    } else if (key == "atomicNumber") {
+                        m_Z = std::stoi(value);
                     } else if (key == "learningRate") {
                         m_eta = std::stod(value);
                     } else if (key == "maxRadius") {
@@ -842,6 +843,8 @@ void System::parser(const std::string configFile)
                             setBasis(new Hermite(this));
                         } else if (value == "hermiteExpansion") {
                             setBasis(new HermiteExpansion(this));
+                        } else if (value == "hydrogenOrbital") {
+                            setBasis(new HydrogenOrbital(this));
                         } else {
                             std::cout << value << " is not a known basis" << std::endl;
                             MPI_Finalize();
@@ -852,6 +855,8 @@ void System::parser(const std::string configFile)
                             setHamiltonian(new HarmonicOscillator(this));
                         } else if (value == "doubleWell") {
                             setHamiltonian(new DoubleWell(this, 2));
+                        } else if (value == "atomicNucleus") {
+                            setHamiltonian(new AtomicNucleus(this));
                         } else {
                             std::cout << value << " is not a known Hamiltonian" << std::endl;
                             MPI_Finalize();
@@ -948,6 +953,8 @@ void System::parser(const std::string configFile)
                             setWaveFunctionElement(new class RBMGaussian(this));
                         } else if (value == "RBMProduct") {
                             setWaveFunctionElement(new class RBMProduct(this));
+                        } else if (value == "hydrogenLike") {
+                            setWaveFunctionElement(new class HydrogenLike(this));
                         } else {
                             std::cerr << "Wave function element does not exist" << std::endl;
                             MPI_Abort(MPI_COMM_WORLD, 143);

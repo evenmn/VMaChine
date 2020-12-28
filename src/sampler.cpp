@@ -256,13 +256,14 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     //cout << endl;
 }
 
-void Sampler::printFinalOutputToTerminal()
+void Sampler::printFinalOutputToTerminal(std::chrono::system_clock::time_point start)
 {
     /* Print output to terminal for final iteration. */
     cout << endl;
     cout << std::fixed;
     cout << std::setprecision(10);
-    cout << "  ===  Final results:  === " << endl;
+    cout << "               Final results" << endl;
+    cout << "==============================================" << endl;
     cout << " Total energy            : " << m_averageEnergy;
     cout << " (with STD = " << m_stdError << ")" << endl;
     cout << " Kinetic energy          : " << m_averageKineticEnergy
@@ -276,6 +277,13 @@ void Sampler::printFinalOutputToTerminal()
     //cout << " STD                     : " << m_stdError << " (with MSE = " << m_mseSTD << ")" << endl;
     cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
     cout << endl;
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    cout << "Finished computation at " << std::ctime(&end_time)
+         << "Elapsed time: " << elapsed_seconds.count() << "s\n";
 }
 
 void Sampler::doResampling()

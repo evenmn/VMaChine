@@ -11,6 +11,7 @@
 #include <cmath>
 #include <cstdio>
 #include <fstream>
+#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <mpi.h>
@@ -22,7 +23,7 @@ public:
     Sampler(class System *system);
     void sample(const bool acceptedStep, const int stepNumber);
     void printOutputToTerminal(const int maxIter, const double time);
-    void printFinalOutputToTerminal();
+    void printFinalOutputToTerminal(std::chrono::system_clock::time_point start);
     void openOutputFiles();
     void printEnergyToFile();
     void printParametersToFile();
