@@ -757,7 +757,7 @@ void System::parser(const std::string configFile)
                     } else if (key == "numIterations") {
                         m_numberOfIterations = std::stoi(value);
                     } else if (key == "numSteps") {
-                        m_initialTotalStepsWOEqui = std::stoi(value);
+                        setNumberOfMetropolisCycles(std::stoi(value));
                     } else if (key == "numHiddenNodes") {
                         m_numberOfHiddenUnits = std::stoi(value);
                     } else if (key == "totalSpin") {
