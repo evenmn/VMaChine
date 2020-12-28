@@ -99,8 +99,8 @@ set(TESTSOURCES
     tests/test_basis.cpp
 )
 
-set(TEST_EXECUTABLE VMaChineTests)
-set(PROJECT_EXECUTABLE VMaChine)
+set(TEST_EXECUTABLE vmachinetest)
+set(PROJECT_EXECUTABLE vmachine)
 
 
 # Add executable file VMaChine
