@@ -3,13 +3,13 @@
 int main(int argc, char **argv)
 {
     // Define system
-    System *QD = new System();
+    System *base = new System();
 
-    QD->setNumberOfParticles(2);
-    QD->setNumberOfDimensions(2);
-    QD->setEquilibrationFraction(0.001);
+    base->setNumberOfParticles(2);
+    base->setNumberOfDimensions(2);
+    base->setEquilibrationFraction(0.001);
 
-    QD->initializeFromConfig(argc, argv);
-    QD->runSimulation();
+    base->initializeFromConfig(argc, argv);
+    base->runSimulation();
     return 0;
 }
