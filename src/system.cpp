@@ -58,6 +58,8 @@ void System::initializeSystem()
 void System::printSystemInformation()
 {
     /* Print system information to terminal */
+    std::cout << std::fixed;
+    std::cout << std::setprecision(6);
     std::cout << std::endl;
     std::cout << "#############################################" << std::endl;
     std::cout << "### =====    SYSTEM INFORMATION     ===== ###" << std::endl;
@@ -67,6 +69,7 @@ void System::printSystemInformation()
     std::cout << "Interaction:              " << m_interaction << std::endl;
     std::cout << "Hamiltonian:              " << m_hamiltonian << std::endl;
     std::cout << "Initial state:            " << m_initialState << std::endl;
+    std::cout << "Oscillator frequency:     " << m_omega << std::endl;
     std::cout << std::endl;
     std::cout << "#############################################" << std::endl;
     std::cout << "### ===== WAVE FUNCTION INFORMATION ===== ###" << std::endl;
@@ -76,26 +79,37 @@ void System::printSystemInformation()
     }
     std::cout << "Basis:                    " << m_basis << std::endl;
     std::cout << "Initial parameters:       " << m_initialWeights << std::endl;
+    std::cout << "Number of parameters:     " << this->getTotalNumberOfParameters() << std::endl;
     std::cout << std::endl;
     std::cout << "#############################################" << std::endl;
     std::cout << "### =====  SIMULATION INFORMATION   ===== ###" << std::endl;
     std::cout << "#############################################" << std::endl;
     std::cout << "Max number of iterations: " << m_numberOfIterations << std::endl;
     std::cout << "Number of MPI threads:    " << m_numberOfProcesses << std::endl;
+    std::cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui << " after burn-in)" << std::endl;
     std::cout << std::endl;
 
+}
+
+void System::printHeaderLine()
+{
+    std::cout << "Step  " << "Energy  " << "Energy_STD  " << "Kinetic  "
+              << "Kinetic_STD  " << "External  " << "External_STD  "
+              << "Interaction  " << "Interaction_STD  " << "Acceptence  "
+              << "CPU_time" << std::endl;
 }
 
 void System::runSimulation()
 {
     /* Run simulation specified in main/configuration file.
      * This is the main loop in VMC, where we update the parameters. */
-     printLogo();
-     auto start = std::chrono::system_clock::now();
-     std::time_t start_time = std::chrono::system_clock::to_time_t(start);
-     std::cout << "Started computation at " << std::ctime(&start_time) << std::endl;
-     initializeSystem();
-     printSystemInformation();
+    printLogo();
+    auto start = std::chrono::system_clock::now();
+    std::time_t start_time = std::chrono::system_clock::to_time_t(start);
+    std::cout << "Started computation at " << std::ctime(&start_time) << std::endl;
+    initializeSystem();
+    printSystemInformation();
+    printHeaderLine();
     m_numberOfNormalIterations = m_numberOfIterations - m_rangeOfAdaptiveSteps - 1;
     for (m_iter = 0; m_iter < m_numberOfIterations; m_iter++) {
         if (m_applyAdaptiveSteps) {

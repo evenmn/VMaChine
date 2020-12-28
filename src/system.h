@@ -85,6 +85,7 @@ public:
      * specified. */
     void printLogo();
     void printSystemInformation();
+    void printHeaderLine();
     void setGradients();
     void setGlobalArraysToCalculate();
     void resetAllArrays();

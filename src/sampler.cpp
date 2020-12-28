@@ -213,35 +213,47 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
 {
     /* Print output to terminal for an ordinary iteration. */
     m_iter += 1;
-    cout << endl;
+    //cout << endl;
     cout << std::fixed;
-    cout << std::setprecision(6);
-    cout << "  -- System info: " << " -- " << endl;
-    cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
-    cout << " Number of particles     : " << m_numberOfParticles << endl;
-    cout << " Number of dimensions    : " << m_numberOfDimensions << endl;
-    cout << " Number of processes     : " << m_numberOfProcesses << endl;
-    cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
-    cout << " Oscillator frequency    : " << m_omega << endl;
-    cout << " Trial wave function     : " << m_trialWaveFunction << endl;
-    cout << " Hamiltonian             : " << m_hamiltonian << endl;
-    cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
-         << " after burn-in)" << endl;
-    cout << endl;
-    cout << "  -- Results -- " << endl;
-    cout << " Total energy            : " << m_averageEnergy;
-    cout << "        (with STD = "           << m_stdError << ")" << endl;
-    cout << " Kinetic energy          : " << m_averageKineticEnergy;
-    cout << "        (with STD = "           << m_stdErrorKinetic << ")" << endl;
-    cout << " External energy         : " << m_averageExternalEnergy;
-    cout << "        (with STD = "           << m_stdErrorExternal << ")" << endl;
-    cout << " Interaction energy      : " << m_averageInteractionEnergy;
-    cout << "        (with STD = "           << m_stdErrorInteraction << ")" << endl;
+    cout << std::setprecision(8);
+    cout << m_iter << "  "
+         << m_averageEnergy << "  "
+         << m_stdError << "  "
+         << m_averageKineticEnergy << "  "
+         << m_stdErrorKinetic << "  "
+         << m_averageExternalEnergy << "  "
+         << m_stdErrorExternal << "  "
+         << m_averageInteractionEnergy << "  "
+         << m_stdErrorInteraction << "  "
+         << double(m_totalAcceptence) / m_totalStepsWOEqui << "  "
+         << time << std::endl;
+
+    //cout << "  -- System info: " << " -- " << endl;
+    //cout << " Iteration progress      : " << m_iter << "/" << maxIter << endl;
+    //cout << " Number of particles     : " << m_numberOfParticles << endl;
+    //cout << " Number of dimensions    : " << m_numberOfDimensions << endl;
+    //cout << " Number of processes     : " << m_numberOfProcesses << endl;
+    //cout << " Number of parameters    : " << m_system->getTotalNumberOfParameters() << endl;
+    //cout << " Oscillator frequency    : " << m_omega << endl;
+    //cout << " Trial wave function     : " << m_trialWaveFunction << endl;
+    //cout << " Hamiltonian             : " << m_hamiltonian << endl;
+    //cout << " # Monte Carlo Cycles    : " << m_totalStepsWEqui << " (" << m_totalStepsWOEqui
+    //     << " after burn-in)" << endl;
+    //cout << endl;
+    //cout << "  -- Results -- " << endl;
+    //cout << " Total energy            : " << m_averageEnergy;
+    //cout << "        (with STD = "           << m_stdError << ")" << endl;
+    //cout << " Kinetic energy          : " << m_averageKineticEnergy;
+    //cout << "        (with STD = "           << m_stdErrorKinetic << ")" << endl;
+    //cout << " External energy         : " << m_averageExternalEnergy;
+    //cout << "        (with STD = "           << m_stdErrorExternal << ")" << endl;
+    //cout << " Interaction energy      : " << m_averageInteractionEnergy;
+    //cout << "        (with STD = "           << m_stdErrorInteraction << ")" << endl;
     //cout << " Variance                : " << m_variance << endl;
     //cout << " STD                     : " << sqrt(m_variance) << endl;
-    cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
-    cout << " CPU Time                : " << time << endl;
-    cout << endl;
+    //cout << " Acceptence Ratio        : " << double(m_totalAcceptence) / m_totalStepsWOEqui << endl;
+    //cout << " CPU Time                : " << time << endl;
+    //cout << endl;
 }
 
 void Sampler::printFinalOutputToTerminal()
