@@ -149,11 +149,15 @@ void System::runSimulation()
 {
     /* Run simulation specified in main/configuration file.
      * This is the main loop in VMC, where we update the parameters. */
-    printLogo();
-    printInitialInformation();
+    if (m_rank == 0) {
+        printLogo();
+        printInitialInformation();
+    }
     initializeSystem();
-    printSystemInformation();
-    printHeaderLine();
+    if (m_rank == 0) {
+        printSystemInformation();
+        printHeaderLine();
+    }
     m_numberOfNormalIterations = m_numberOfIterations - m_rangeOfAdaptiveSteps - 1;
     for (m_iter = 0; m_iter < m_numberOfIterations; m_iter++) {
         if (m_applyAdaptiveSteps) {
