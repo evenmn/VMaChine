@@ -1,7 +1,22 @@
 # VMaChine
 VMaChine is a general variational Monte Carlo (VMC) solver written in object-oriented C++. It was implemented with focus on quantum dot systems, and standard trial wave functions (Hermite functions) are implemented. However, we primary aim of examining trial wave functions where a less amount of physical intuition is required. Therefore, several trial wave functions based on neural networks and machine learning are also included, hence VMaChine. The code is also largely parallelizable and is made to be fast.
 
+## Basic usage
+After compiling the code, a configuration file ```input.in``` is run by
+```bash
+vmachine input.in
+```
+on a single thread or
+```bash
+mpirun -n 4 vmachine input.in
+```
+on 4 CPUs (might be any number).
+
 ## What's new?
+
+#### Update 2020-12-28
+- The log (printed to the terminal by default) is now more readable both for a human eye and for the computer
+- Examples added
 
 #### Update 2020-12-27
 - Fixed bug in CMakeLists.txt
@@ -50,7 +65,7 @@ mv ~/block ~/VMaChine/src/
 The code can be compiled by either CMake or QMake
 
 #### CMake (recommended)
-Build VMaChine in the standard CMake way:
+Build VMaChine in the usual CMake way:
 ```bash
 mkdir build
 cd build
@@ -68,70 +83,36 @@ echo "export PATH=~/VMaChine/build:\$PATH" >> ~/.bashrc
 
 The project can then be run in QT-creator using ```ctrl``` + ```R```.
 
-##### Parallel processing using QT-creator
-To run in parallel,  add an MPI executable. Go to ```Projects-> Run-> Add-> Custom Executable```. Then set
-- Executable: ```/usr/bin/mpirun``` (or whatever ```which mpirun``` returns)
-- Command line arguments: ```-n 4 VMaChine```
-- Working directory: ```/where/the/executable/is```
-
-This setup will run 4 parallel processes. The configuration window should look similar to this
-![Run settings](screenshots/run_settings.png)
-
 -------------------
 
-## Setting up system
-The parameters can be set in two different ways:
+## Running simulation
+The desired simulation parameters are specified in a configuration file. A typical configuration file can be found in [input.in](examples/quantumdot_vmc/input.in):
 
-1. They can be specified in a configuration file (standard)
-2. They can be set by editing ```main.cpp``` (requires the code to be recompiled every time changes are made, and is therefore usually not recommended)
-
-In general, the settings from the config file overwrite the setting in ```main.cpp```, which again overwrites the default settings found in ```system.h```.
-
-#### From configuration file
-The configuration file, ```config```, needs to be passed as an argument when running the code,
 ```bash
-mpirun -n 4 VMaChine config
+# system
+numParticles: 2
+numDimensions: 2
+hamiltonian: harmonicOscillator
+omega: 1.0
+interaction: true
+
+# wave function
+waveFunctionElement: slaterDeterminant
+waveFunctionElement: gaussian
+waveFunctionElement: padeJastrow
+basis: hermite
+
+# simulation
+numIterations: 100
+numSteps: 131072
+learningRate: 0.1
+stepLength: 0.1
+printEnergyToFile: true
 ```
-The advantage of this is that we can change parameters without compiling the code again, which allows us to run multiple simulations in parallel. In particular, this is beneficial when running large simulations on computer clusters. To tell the program to access the config file, simply add
-```c++
-QD->initializeFromConfig(argc, argv);
+The configuration file is simply run by
+```bash
+vmachine input.in
 ```
-to ```main.cpp```. An example on such a config file is found in [config](examples/config).
-
-
-#### From ```main.cpp```
-From ```main.cpp```, all possible settings can be specified. Below, we present a minimalistic example on how it may look like for a two-dimensional quantum dot system with 6 electrons and frequency 1. We choose a Slater-Jastrow wave function as our trial wave function.
-``` c++
-#include "main.h"
-
-int main(int argc, char** argv)
-{
-    // Define system
-    System *QD = new System();
-
-    QD->setNumberOfParticles(6);
-    QD->setNumberOfDimensions(2);
-    QD->setFrequency(1.0);
-    QD->setInteraction(true);
-
-    QD->setLearningRate(0.1);
-    QD->setStepLength(0.05);
-    QD->setNumberOfMetropolisSteps(int(pow(2, 20)));
-
-    QD->setHamiltonian(new HarmonicOscillator(QD));
-
-    // Define trial wave function
-    QD->setBasis(new Hermite(QD));
-    QD->setWaveFunctionElement(new Gaussian(QD));
-    QD->setWaveFunctionElement(new SlaterDeterminant(QD));
-    QD->setWaveFunctionElement(new PadeJastrow(QD));
-
-    QD->setNumberOfIterations(1000);
-    QD->runSimulation();
-    return 0;
-}
-```
-We first define the physical system and then we define method-related tools. ```main.h``` needs to be included in order to pass the objects ```HarmonicOscillator(QD)```, ```Hermite(QD)``` and so on. Apart from the system declaration and simulation call, the order of calls is irrelevant. Everything that is not specified in ```main.cpp``` will stay by the default.
 
 ## Analyze results
 ### Energy and blocking results
