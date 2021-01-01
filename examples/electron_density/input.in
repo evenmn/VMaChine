@@ -1,9 +1,23 @@
+# This is a VMaChine configuration file where
+# a two-dimensional quantum dot consisting of
+# two electrons is simulated. The trial wave 
+# function used is a Gaussian with a Padé-Jastrow
+# factor. The Slater determinant is
+# only needed when increasing the number of
+# particles. The radial one-body density is 
+# computed and written to the file "onebody.dat".
+# The number of Metropolis steps, numSteps, has
+# to be set such that numSteps=2^N where N is an
+# integer in order to resample efficiently. 
+# Here N=17.
+
+
 # system
 numParticles: 2
 numDimensions: 2
 hamiltonian: harmonicOscillator
 omega: 1.0
-interaction: true
+interactionStyle: coulomb
 
 # wave function
 waveFunctionElement: slaterDeterminant
@@ -19,8 +33,8 @@ stepLength: 0.1
 printEnergyToFile: true
 
 # electron density
-maxRadius: 50
-numberOfBins: 500
+maxRadius: 3
+numberOfBins: 100
 computeOneBodyDensity: true
 computeTwoBodyDensity: false
 computeOneBodyDensity2: false

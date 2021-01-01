@@ -50,6 +50,10 @@
 #include "InitialWeights/randomnormal.h"
 #include "InitialWeights/customized.h"
 
+#include "Interaction/interaction.h"
+#include "Interaction/nointeraction.h"
+#include "Interaction/coulomb.h"
+
 #include "Metropolis/bruteforce.h"
 #include "Metropolis/importancesampling.h"
 #include "Metropolis/metropolis.h"

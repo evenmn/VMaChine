@@ -49,6 +49,7 @@ void System::initializeSystem()
     m_distanceMatrix = m_initialState->getDistanceMatrix();
     m_radialVector = m_initialState->getRadialVector();
     m_metropolis->initialize();
+    m_interactionStyle->initialize();
     //parser(m_configFile);
 
     m_sampler = new Sampler(this);
@@ -76,7 +77,7 @@ void System::printSystemInformation()
     std::cout << "==============================================" << std::endl;
     std::cout << "Number of particles:      " << m_numberOfParticles << std::endl;
     std::cout << "Number of dimensions:     " << m_numberOfDimensions << std::endl;
-    std::cout << "Interaction:              " << m_interaction << std::endl;
+    std::cout << "Interaction style:        " << m_interactionStyle << std::endl;
     std::cout << "Hamiltonian:              " << m_hamiltonian << std::endl;
     std::cout << "Initial state:            " << m_initialState << std::endl;
     std::cout << "Oscillator frequency:     " << m_omega << std::endl;
@@ -374,11 +375,9 @@ void System::setGlobalArraysToCalculate()
         int need = p->getGlobalArrayNeed();
         if (need == 1) {
             m_calculateDistanceMatrix = true;
-        }
-        if (need == 2) {
+        } else if (need == 2) {
             m_calculateRadialVector = true;
-        }
-        if (need == 3) {
+        } else if (need == 3) {
             m_calculateDistanceMatrix = true;
             m_calculateRadialVector = true;
         }
@@ -387,11 +386,18 @@ void System::setGlobalArraysToCalculate()
     int need = m_hamiltonian->getGlobalArrayNeed();
     if (need == 1) {
         m_calculateDistanceMatrix = true;
-    }
-    if (need == 2) {
+    } else if (need == 2) {
+        m_calculateRadialVector = true;
+    } else if (need == 3) {
+        m_calculateDistanceMatrix = true;
         m_calculateRadialVector = true;
     }
-    if (need == 3) {
+    need = m_interactionStyle->getGlobalArrayNeed();
+    if (need == 1) {
+        m_calculateDistanceMatrix = true;
+    } else if (need == 2) {
+        m_calculateRadialVector = true;
+    } else if (need == 3) {
         m_calculateDistanceMatrix = true;
         m_calculateRadialVector = true;
     }
@@ -552,13 +558,6 @@ void System::setWidth(const double sigma)
     m_sigma = sigma;
 }
 
-void System::setInteraction(const bool interaction)
-{
-    /* Decided whether or not the electrons should be
-     * interacting. */
-    m_interaction = interaction;
-}
-
 void System::setConvergenceTools(int numberOfEnergies, double tolerance)
 {
     /* Specify convergence. Convergence is enabled when
@@ -716,6 +715,12 @@ void System::setInitialWeights(InitialWeights *initialWeights)
     m_initialWeights = initialWeights;
 }
 
+void System::setInteractionStyle(Interaction *interaction)
+{
+    /* set itneraction style */
+    m_interactionStyle = interaction;
+}
+
 void System::setMetropolis(Metropolis *metropolis)
 {
     /* Specify sampling algorithm.
@@ -810,8 +815,6 @@ void System::parser(const std::string configFile)
                         m_totalSpin = std::stod(value);
                     } else if (key == "stepLength") {
                         m_stepLength = std::stod(value);
-                    } else if (key == "interaction") {
-                        std::istringstream(value) >> std::boolalpha >> m_interaction;
                     } else if (key == "checkConvergence") {
                         std::istringstream(value) >> std::boolalpha >> m_checkConvergence;
                     } else if (key == "applyAdaptiveSteps") {
@@ -962,6 +965,15 @@ void System::parser(const std::string configFile)
                         } else {
                             std::cerr << "Wave function element does not exist" << std::endl;
                             MPI_Abort(MPI_COMM_WORLD, 143);
+                        }
+                    } else if (key == "interactionStyle") {
+                        if (value == "noInteraction") {
+                            setInteractionStyle(new class NoInteraction(this));
+                        } else if (value == "coulomb") {
+                            setInteractionStyle(new class Coulomb(this));
+                        } else {
+                          std::cerr << "Interaction style does not exist" << std::endl;
+                          MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else {
                       std::cerr << "Invalid key is passed to configuration file" << std::endl;

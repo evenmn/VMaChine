@@ -23,7 +23,6 @@ Sampler::Sampler(System *system)
     m_omega = m_system->getFrequency();
     m_numberOfBatches = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch = int(m_stepsWOEqui / m_numberOfBatches);
-    m_interaction = m_system->getInteraction();
     m_computeOneBodyDensity = m_system->radialOneBodyDensity();
     m_computeOneBodyDensity2 = m_system->spatialOneBodyDensity();
     m_computeTwoBodyDensity = m_system->radialTwoBodyDensity();
@@ -60,7 +59,7 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber)
     }
     m_kineticEnergy = m_system->getKineticEnergy();
     m_externalEnergy = m_system->getHamiltonian()->getExternalEnergy();
-    m_interactionEnergy = m_system->getHamiltonian()->getInteractionEnergy();
+    m_interactionEnergy = m_system->getInteractionStyle()->getInteractionEnergy();
     m_instantEnergy = m_kineticEnergy + m_externalEnergy + m_interactionEnergy;
     m_instantGradients = m_system->getAllParameterGradients();
 

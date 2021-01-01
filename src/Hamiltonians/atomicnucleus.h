@@ -9,7 +9,6 @@ public:
     std::string getLabel() { return m_label; }
 
     void initialize();
-    double computeLocalEnergy();
     double getExternalEnergy();
 
 private:

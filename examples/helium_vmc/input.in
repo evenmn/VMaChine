@@ -1,9 +1,20 @@
+# This is a VMaChine configuration file where
+# a helium atom is simulated. The trial wave 
+# function used is a Slater determinant with
+# a hydrogen-like orbital basis.
+# The number of Metropolis steps, numSteps, has
+# to be set such that numSteps=2^N where N is an
+# integer in order to resample efficiently.
+# Here N=17.
+
+
+
 # system
 numParticles: 2
 numDimensions: 3
 atomicNumber: 2
 hamiltonian: atomicNucleus
-interaction: true
+interactionStyle: coulomb
 
 # wave function
 waveFunctionElement: slaterDeterminant

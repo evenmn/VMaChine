@@ -25,6 +25,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/Hamiltonians
     ${PROJECT_SOURCE_DIR}/src/InitialStates
     ${PROJECT_SOURCE_DIR}/src/InitialWeights
+    ${PROJECT_SOURCE_DIR}/src/Interaction
     ${PROJECT_SOURCE_DIR}/src/Layer
     ${PROJECT_SOURCE_DIR}/src/Metropolis
     ${PROJECT_SOURCE_DIR}/src/Optimization
@@ -61,6 +62,9 @@ set(SOURCES
     src/InitialWeights/randomnormal.cpp
     src/InitialWeights/automatize.cpp
     src/InitialWeights/customized.cpp
+    src/Interaction/interaction.cpp
+    src/Interaction/nointeraction.cpp
+    src/Interaction/coulomb.cpp
     src/Layer/layer.cpp
     src/Layer/dense.cpp
     src/Layer/input.cpp
