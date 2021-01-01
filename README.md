@@ -14,6 +14,9 @@ on 4 CPUs (might be any number).
 
 ## What's new?
 
+#### Update 2021-01-01
+- An interaction class is added. The old style "interaction: true" is now superseded by "interactionStyle: coulomb".
+
 #### Update 2020-12-28
 - The log (printed to the terminal by default) is now more readable both for a human eye and for the computer
 - Examples added
