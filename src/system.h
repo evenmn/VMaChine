@@ -109,7 +109,6 @@ public:
                          const std::string newLabel,
                          std::string &allLabels);
 
-    void setInteraction(const bool interaction);
     void computeRadialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
     void computeSpatialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
     void computeTwoBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
@@ -192,7 +191,6 @@ public:
     double getDSL() { return m_dsl; }
 
     bool getScreening() { return m_screening; }
-    bool getInteraction() { return m_interaction; }
     bool radialOneBodyDensity() { return m_computeOneBodyDensity; }
     bool spatialOneBodyDensity() { return m_computeOneBodyDensity2; }
     bool radialTwoBodyDensity() { return m_computeTwoBodyDensity; }
@@ -280,7 +278,6 @@ private:
     double m_stepLength = 0.05;
     double m_eta = 0.1;
 
-    bool m_interaction = true;
     bool m_checkConvergence = false;
     bool m_applyAdaptiveSteps = false;
     bool m_computeOneBodyDensity = false;

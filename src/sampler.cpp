@@ -23,7 +23,6 @@ Sampler::Sampler(System *system)
     m_omega = m_system->getFrequency();
     m_numberOfBatches = m_system->getOptimization()->getNumberOfBatches();
     m_numberOfStepsPerBatch = int(m_stepsWOEqui / m_numberOfBatches);
-    m_interaction = m_system->getInteraction();
     m_computeOneBodyDensity = m_system->radialOneBodyDensity();
     m_computeOneBodyDensity2 = m_system->spatialOneBodyDensity();
     m_computeTwoBodyDensity = m_system->radialTwoBodyDensity();

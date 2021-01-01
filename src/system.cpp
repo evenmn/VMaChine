@@ -77,7 +77,7 @@ void System::printSystemInformation()
     std::cout << "==============================================" << std::endl;
     std::cout << "Number of particles:      " << m_numberOfParticles << std::endl;
     std::cout << "Number of dimensions:     " << m_numberOfDimensions << std::endl;
-    std::cout << "Interaction:              " << m_interaction << std::endl;
+    std::cout << "Interaction style:        " << m_interactionStyle << std::endl;
     std::cout << "Hamiltonian:              " << m_hamiltonian << std::endl;
     std::cout << "Initial state:            " << m_initialState << std::endl;
     std::cout << "Oscillator frequency:     " << m_omega << std::endl;
@@ -375,11 +375,9 @@ void System::setGlobalArraysToCalculate()
         int need = p->getGlobalArrayNeed();
         if (need == 1) {
             m_calculateDistanceMatrix = true;
-        }
-        if (need == 2) {
+        } else if (need == 2) {
             m_calculateRadialVector = true;
-        }
-        if (need == 3) {
+        } else if (need == 3) {
             m_calculateDistanceMatrix = true;
             m_calculateRadialVector = true;
         }
@@ -388,11 +386,18 @@ void System::setGlobalArraysToCalculate()
     int need = m_hamiltonian->getGlobalArrayNeed();
     if (need == 1) {
         m_calculateDistanceMatrix = true;
-    }
-    if (need == 2) {
+    } else if (need == 2) {
+        m_calculateRadialVector = true;
+    } else if (need == 3) {
+        m_calculateDistanceMatrix = true;
         m_calculateRadialVector = true;
     }
-    if (need == 3) {
+    need = m_interactionStyle->getGlobalArrayNeed();
+    if (need == 1) {
+        m_calculateDistanceMatrix = true;
+    } else if (need == 2) {
+        m_calculateRadialVector = true;
+    } else if (need == 3) {
         m_calculateDistanceMatrix = true;
         m_calculateRadialVector = true;
     }
@@ -551,13 +556,6 @@ void System::setWidth(const double sigma)
      * machine as the trial wave fucntion guess. */
     assert(sigma > 0);
     m_sigma = sigma;
-}
-
-void System::setInteraction(const bool interaction)
-{
-    /* Decided whether or not the electrons should be
-     * interacting. */
-    m_interaction = interaction;
 }
 
 void System::setConvergenceTools(int numberOfEnergies, double tolerance)
@@ -817,8 +815,6 @@ void System::parser(const std::string configFile)
                         m_totalSpin = std::stod(value);
                     } else if (key == "stepLength") {
                         m_stepLength = std::stod(value);
-                    } else if (key == "interaction") {
-                        std::istringstream(value) >> std::boolalpha >> m_interaction;
                     } else if (key == "checkConvergence") {
                         std::istringstream(value) >> std::boolalpha >> m_checkConvergence;
                     } else if (key == "applyAdaptiveSteps") {
