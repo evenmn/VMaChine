@@ -49,6 +49,7 @@ void System::initializeSystem()
     m_distanceMatrix = m_initialState->getDistanceMatrix();
     m_radialVector = m_initialState->getRadialVector();
     m_metropolis->initialize();
+    m_interactionStyle->initialize();
     //parser(m_configFile);
 
     m_sampler = new Sampler(this);
@@ -716,6 +717,12 @@ void System::setInitialWeights(InitialWeights *initialWeights)
     m_initialWeights = initialWeights;
 }
 
+void System::setInteractionStyle(Interaction *interaction)
+{
+    /* set itneraction style */
+    m_interactionStyle = interaction;
+}
+
 void System::setMetropolis(Metropolis *metropolis)
 {
     /* Specify sampling algorithm.
@@ -962,6 +969,15 @@ void System::parser(const std::string configFile)
                         } else {
                             std::cerr << "Wave function element does not exist" << std::endl;
                             MPI_Abort(MPI_COMM_WORLD, 143);
+                        }
+                    } else if (key == "interactionStyle") {
+                        if (value == "noInteraction") {
+                            setInteractionStyle(new class NoInteraction(this));
+                        } else if (value == "coulomb") {
+                            setInteractionStyle(new class Coulomb(this));
+                        } else {
+                          std::cerr << "Interaction style does not exist" << std::endl;
+                          MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else {
                       std::cerr << "Invalid key is passed to configuration file" << std::endl;

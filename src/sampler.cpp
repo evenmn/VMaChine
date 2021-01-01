@@ -60,7 +60,7 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber)
     }
     m_kineticEnergy = m_system->getKineticEnergy();
     m_externalEnergy = m_system->getHamiltonian()->getExternalEnergy();
-    m_interactionEnergy = m_system->getHamiltonian()->getInteractionEnergy();
+    m_interactionEnergy = m_system->getInteractionStyle()->getInteractionEnergy();
     m_instantEnergy = m_kineticEnergy + m_externalEnergy + m_interactionEnergy;
     m_instantGradients = m_system->getAllParameterGradients();
 

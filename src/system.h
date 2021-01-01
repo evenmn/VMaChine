@@ -141,6 +141,7 @@ public:
     void setBasis(class Basis *basis);
     void setInitialState(class InitialState *initialState);
     void setInitialWeights(class InitialWeights *initialWeights);
+    void setInteractionStyle(class Interaction *interaction);
     void setMetropolis(class Metropolis *metropolis);
     void setOptimization(class Optimization *optimization);
     void setRandomNumberGenerator(class RandomNumberGenerator *randomNumberGenerator);
@@ -157,6 +158,7 @@ public:
     class Optimization *getOptimization() { return m_optimization; }
     class InitialWeights *getInitialWeights() { return m_initialWeights; }
     class InitialState *getInitialState() { return m_initialState; }
+    class Interaction *getInteractionStyle() { return m_interactionStyle; }
     class RandomNumberGenerator *getRandomNumberGenerator() { return m_randomNumberGenerator; }
 
     int getNumberOfElements() { return m_numberOfElements; }
@@ -302,6 +304,7 @@ private:
     class Metropolis *m_metropolis = new ImportanceSampling(this);
     class Optimization *m_optimization = new ADAM(this);
     class RandomNumberGenerator *m_randomNumberGenerator = new MersenneTwister();
+    class Interaction *m_interactionStyle = new NoInteraction(this);
 
     std::vector<class WaveFunction *> m_waveFunctionElements;
     std::vector<class Layer *> m_layers;
