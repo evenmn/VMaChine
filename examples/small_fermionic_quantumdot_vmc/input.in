@@ -2,11 +2,7 @@
 # a two-dimensional quantum dot consisting of
 # two electrons is simulated. The trial wave 
 # function used is a Gaussian with a Padé-Jastrow
-# factor. The Slater determinant is
-# only needed when increasing the number of
-# particles. Resampling is done using the
-# Blocking method, which requires numSteps=2^N
-# where N is an integer (here N=17).
+# factor.
 
 
 # system
@@ -17,16 +13,10 @@ omega: 1.0
 interactionStyle: coulomb
 
 # wave function
-waveFunctionElement: slaterDeterminant
 waveFunctionElement: gaussian
 waveFunctionElement: padeJastrow
-basis: hermite
 
 # simulation
 numIterations: 100
-numSteps: 131072
+numSteps: 100000
 learningRate: 0.1
-stepLength: 0.1
-
-# resampling
-doResampling: true

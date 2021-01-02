@@ -1,0 +1,25 @@
+# This is a VMaChine configuration file where
+# a two-dimensional quantum dot consisting of
+# two electrons is simulated. The trial wave 
+# function used is a restricted Boltzmann 
+# machine (RBM).
+
+
+# system
+numParticles: 2
+numDimensions: 2
+hamiltonian: harmonicOscillator
+omega: 1.0
+interactionStyle: coulomb
+
+# wave function
+waveFunctionElement: RBMGaussian
+waveFunctionElement: RBMProduct
+waveFunctionElement: padeJastrow
+numHiddenNodes: 2
+
+# simulation
+numIterations: 1000
+numSteps: 50000
+learningRate: 0.05
+stepLength: 0.1

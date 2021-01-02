@@ -97,20 +97,17 @@ numParticles: 2
 numDimensions: 2
 hamiltonian: harmonicOscillator
 omega: 1.0
-interaction: true
+interactionStyle: coulomb
 
 # wave function
-waveFunctionElement: slaterDeterminant
 waveFunctionElement: gaussian
 waveFunctionElement: padeJastrow
-basis: hermite
 
 # simulation
 numIterations: 100
-numSteps: 131072
+numSteps: 100000
 learningRate: 0.1
 stepLength: 0.1
-printEnergyToFile: true
 ```
 The configuration file is simply run by
 ```bash

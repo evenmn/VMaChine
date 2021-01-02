@@ -1,0 +1,22 @@
+# This is a VMaChine configuration file where
+# a two-dimensional quantum dot consisting of
+# two electrons is simulated without
+# inter-particle interaction. The trial wave 
+# function used is a Gaussian. Gradient descent
+# optimization is used without momentum.
+
+
+# system
+numParticles: 2
+numDimensions: 2
+hamiltonian: harmonicOscillator
+omega: 1.0
+
+# wave function
+waveFunctionElement: gaussian
+
+# simulation
+numIterations: 100
+numSteps: 1000
+learningRate: 0.5
+optimization: gd

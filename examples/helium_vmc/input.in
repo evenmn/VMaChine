@@ -1,12 +1,8 @@
 # This is a VMaChine configuration file where
 # a helium atom is simulated. The trial wave 
 # function used is a Slater determinant with
-# a hydrogen-like orbital basis.
-# The number of Metropolis steps, numSteps, has
-# to be set such that numSteps=2^N where N is an
-# integer in order to resample efficiently.
-# Here N=17.
-
+# a hydrogen-like orbital basis and a Pade-
+# Jastrow factor.
 
 
 # system
@@ -23,7 +19,7 @@ basis: hydrogenOrbital
 
 # simulation
 numIterations: 100
-numSteps: 131072
-learningRate: 0.1
-stepLength: 0.1
-printEnergyToFile: true
+numSteps: 100000
+learningRate: 0.8
+stepLength: 0.05
+optimization: sgd
