@@ -77,19 +77,19 @@ void System::printSystemInformation()
     std::cout << "==============================================" << std::endl;
     std::cout << "Number of particles:      " << m_numberOfParticles << std::endl;
     std::cout << "Number of dimensions:     " << m_numberOfDimensions << std::endl;
-    std::cout << "Interaction style:        " << m_interactionStyle << std::endl;
-    std::cout << "Hamiltonian:              " << m_hamiltonian << std::endl;
-    std::cout << "Initial state:            " << m_initialState << std::endl;
+    std::cout << "Interaction style:        " << m_interactionStyle->getLabel() << std::endl;
+    std::cout << "Hamiltonian:              " << m_hamiltonian->getLabel() << std::endl;
+    std::cout << "Initial state:            " << m_initialState->getLabel() << std::endl;
     std::cout << "Oscillator frequency:     " << m_omega << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << "           WAVE FUNCTION INFORMATION" << std::endl;
     std::cout << "==============================================" << std::endl;
     for (int i = 0; i < m_numberOfElements; i++) {
-        std::cout << "Element " << i << ":                " << m_waveFunctionElements[unsigned(i)] << std::endl;
+        std::cout << "Element " << i << ":                " << m_waveFunctionElements[unsigned(i)]->getLabel() << std::endl;
     }
-    std::cout << "Basis:                    " << m_basis << std::endl;
-    std::cout << "Initial parameters:       " << m_initialWeights << std::endl;
+    std::cout << "Basis:                    " << m_basis->getLabel() << std::endl;
+    std::cout << "Initial parameters:       " << m_initialWeights->getLabel() << std::endl;
     std::cout << "Number of parameters:     " << this->getTotalNumberOfParameters() << std::endl;
     std::cout << "Number of hidden nodes:   " << m_numberOfHiddenUnits << std::endl;
     std::cout << "Print parameters to file: " << m_printParametersToFile << std::endl;
@@ -103,7 +103,8 @@ void System::printSystemInformation()
     std::cout << "Learning rate:            " << m_eta << std::endl;
     std::cout << "Step length:              " << m_stepLength << std::endl;
     std::cout << "Equilibration fraction:   " << m_equilibrationFraction << std::endl;
-    std::cout << "Sampling:                 " << m_metropolis << std::endl;
+    std::cout << "Sampling:                 " << m_metropolis->getLabel() << std::endl;
+    std::cout << "Optimization:             " << m_optimization->getLabel() << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << "               ELECTRON DENSITY" << std::endl;
@@ -962,6 +963,8 @@ void System::parser(const std::string configFile)
                             setWaveFunctionElement(new class RBMProduct(this));
                         } else if (value == "hydrogenLike") {
                             setWaveFunctionElement(new class HydrogenLike(this));
+                        //} else if (value == "hardCoreJastrow") {
+                        //    setWaveFunctionElement(new class HardCoreJastrow(this));
                         } else {
                             std::cerr << "Wave function element does not exist" << std::endl;
                             MPI_Abort(MPI_COMM_WORLD, 143);
@@ -1052,79 +1055,79 @@ void System::collectAllLabels()
     }
 
     std::vector<std::string> testVMC1;
-    testVMC1.push_back("gaussian");
+    testVMC1.push_back("Gaussian");
     searchShortning(testVMC1, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC2;
-    testVMC2.push_back("gaussian");
-    testVMC2.push_back("padejastrow");
+    testVMC2.push_back("Gaussian");
+    testVMC2.push_back("Padé-Jastrow");
     searchShortning(testVMC2, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC3;
-    testVMC3.push_back("gaussian");
-    testVMC3.push_back("padejastrow");
-    testVMC3.push_back("slaterdeterminant");
+    testVMC3.push_back("Gaussian");
+    testVMC3.push_back("Padé-Jastrow");
+    testVMC3.push_back("Slater determinant");
     searchShortning(testVMC3, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testRBM1;
-    testRBM1.push_back("rbmgaussian");
-    testRBM1.push_back("rbmproduct");
+    testRBM1.push_back("RBM-Gaussian");
+    testRBM1.push_back("RBM-product");
     searchShortning(testRBM1, "RBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBM2;
-    testRBM2.push_back("rbmgaussian");
-    testRBM2.push_back("rbmproduct");
-    testRBM2.push_back("slaterdeterminant");
+    testRBM2.push_back("RBM-Gaussian");
+    testRBM2.push_back("RBM-product");
+    testRBM2.push_back("Slater determinant");
     searchShortning(testRBM2, "RBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBMPJ1;
-    testRBMPJ1.push_back("rbmgaussian");
-    testRBMPJ1.push_back("rbmproduct");
-    testRBMPJ1.push_back("padejastrow");
+    testRBMPJ1.push_back("RBM-Gaussian");
+    testRBMPJ1.push_back("RBM-product");
+    testRBMPJ1.push_back("Padé-Jastrow");
     searchShortning(testRBMPJ1, "RBMPJ", m_trialWaveFunction);
 
     std::vector<std::string> testRBMPJ2;
-    testRBMPJ2.push_back("rbmgaussian");
-    testRBMPJ2.push_back("rbmproduct");
-    testRBMPJ2.push_back("padejastrow");
-    testRBMPJ2.push_back("slaterdeterminant");
+    testRBMPJ2.push_back("RBM-Gaussian");
+    testRBMPJ2.push_back("RBM-product");
+    testRBMPJ2.push_back("Padé-Jastrow");
+    testRBMPJ2.push_back("Slater determinant");
     searchShortning(testRBMPJ2, "RBMPJ", m_trialWaveFunction);
 
     std::vector<std::string> testPRBM1;
-    testPRBM1.push_back("rbmgaussian");
-    testPRBM1.push_back("rbmproduct");
+    testPRBM1.push_back("RBM-Gaussian");
+    testPRBM1.push_back("RBM-product");
     testPRBM1.push_back("partlyrestricted");
     searchShortning(testPRBM1, "PRBM", m_trialWaveFunction);
 
     std::vector<std::string> testPRBM2;
-    testPRBM2.push_back("rbmgaussian");
-    testPRBM2.push_back("rbmproduct");
+    testPRBM2.push_back("RBM-Gaussian");
+    testPRBM2.push_back("RBM-product");
     testPRBM2.push_back("partlyrestricted");
-    testPRBM2.push_back("slaterdeterminant");
+    testPRBM2.push_back("Slater determinant");
     searchShortning(testPRBM2, "PRBM", m_trialWaveFunction);
 
     std::vector<std::string> testDRBM1;
-    testDRBM1.push_back("rbmgaussian");
+    testDRBM1.push_back("RBM-Gaussian");
     testDRBM1.push_back("drbmproduct");
     searchShortning(testDRBM1, "DRBM", m_trialWaveFunction);
 
     std::vector<std::string> testDRBM2;
-    testDRBM2.push_back("rbmgaussian");
+    testDRBM2.push_back("RBM-Gaussian");
     testDRBM2.push_back("drbmproduct");
-    testDRBM2.push_back("slaterdeterminant");
+    testDRBM2.push_back("Slater determinant");
     searchShortning(testDRBM2, "DRBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBMSJ1;
-    testRBMSJ1.push_back("rbmgaussian");
-    testRBMSJ1.push_back("rbmproduct");
-    testRBMSJ1.push_back("simplejastrow");
+    testRBMSJ1.push_back("RBM-Gaussian");
+    testRBMSJ1.push_back("RBM-product");
+    testRBMSJ1.push_back("simple Jastrow");
     searchShortning(testRBMSJ1, "RBMSJ", m_trialWaveFunction);
 
     std::vector<std::string> testRBMSJ2;
-    testRBMSJ2.push_back("rbmgaussian");
-    testRBMSJ2.push_back("rbmproduct");
-    testRBMSJ2.push_back("simplejastrow");
-    testRBMSJ2.push_back("slaterdeterminant");
+    testRBMSJ2.push_back("RBM-Gaussian");
+    testRBMSJ2.push_back("RBM-product");
+    testRBMSJ2.push_back("simple Jastrow");
+    testRBMSJ2.push_back("Slater determinant");
     searchShortning(testRBMSJ2, "RBMSJ", m_trialWaveFunction);
 
     std::vector<std::string> testVMC4;
@@ -1132,33 +1135,33 @@ void System::collectAllLabels()
     searchShortning(testVMC4, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC5;
-    testVMC5.push_back("slaterdeterminant");
+    testVMC5.push_back("Slater determinant");
     searchShortning(testVMC5, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC6;
     testVMC6.push_back("hydrogenlike");
-    testVMC6.push_back("padejastrow");
+    testVMC6.push_back("Padé-Jastrow");
     searchShortning(testVMC6, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC7;
-    testVMC7.push_back("slaterdeterminant");
-    testVMC7.push_back("padejastrow");
+    testVMC7.push_back("Slater determinant");
+    testVMC7.push_back("Padé-Jastrow");
     searchShortning(testVMC7, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC8;
-    testVMC8.push_back("slaterdeterminant");
-    testVMC8.push_back("gaussian");
+    testVMC8.push_back("Slater determinant");
+    testVMC8.push_back("Gaussian");
     searchShortning(testVMC8, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testSSJ1;
-    testSSJ1.push_back("slaterdeterminant");
-    testSSJ1.push_back("gaussian");
-    testSSJ1.push_back("simplejastrow");
+    testSSJ1.push_back("Slater determinant");
+    testSSJ1.push_back("Gaussian");
+    testSSJ1.push_back("simple Jastrow");
     searchShortning(testSSJ1, "SSJ", m_trialWaveFunction);
 
     std::vector<std::string> testSSJ2;
-    testSSJ2.push_back("gaussian");
-    testSSJ2.push_back("simplejastrow");
+    testSSJ2.push_back("Gaussian");
+    testSSJ2.push_back("simple Jastrow");
     searchShortning(testSSJ2, "SSJ", m_trialWaveFunction);
 
     std::vector<std::string> testFNN;

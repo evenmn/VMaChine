@@ -14,5 +14,5 @@ public:
 private:
     double m_omegaSqrd = 0;
     int m_globalArrayNeed = 1;
-    std::string m_label = "quantumdot";
+    std::string m_label = "harmonic oscillator";
 };

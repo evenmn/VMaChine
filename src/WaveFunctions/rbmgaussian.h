@@ -42,5 +42,5 @@ private:
     Eigen::VectorXd m_a;
     Eigen::VectorXd m_gradients;
 
-    std::string m_label = "rbmgaussian";
+    std::string m_label = "RBM-Gaussian";
 };

@@ -284,7 +284,7 @@ private:
     bool m_computeOneBodyDensity2 = false;
     bool m_computeTwoBodyDensity = false;
     bool m_printEnergyToFile = false;
-    bool m_doResampling = true;
+    bool m_doResampling = false;
     bool m_printParametersToFile = false;
     bool m_calculateDistanceMatrix = false;
     bool m_calculateRadialVector = false;
@@ -294,7 +294,7 @@ private:
 
     class WaveFunction *m_waveFunction = nullptr;
     class Hamiltonian *m_hamiltonian = new HarmonicOscillator(this);
-    class Basis *m_basis = new Hermite(this);
+    class Basis *m_basis = new None(this);
     class InitialState *m_initialState = new RandomNormal(this);
     class InitialWeights *m_initialWeights = new Automatize(this);
     class Sampler *m_sampler = nullptr;

@@ -20,6 +20,7 @@ public:
     double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
     double basisElementPar(const int n, Eigen::VectorXd position);
 
+    std::string getLabel() { return m_label; }
     std::string generateFileName();
     void readCoefficientFile();
 
@@ -28,6 +29,8 @@ private:
     double m_omegaSqrt = 1;
     long m_basisSize = 1;
     std::string m_path = "Path is not given yet";
+    std::string m_label = "Hartree-Fock";
+
     Eigen::MatrixXd m_coefficients;
     //Eigen::MatrixXi m_listOfStates;
     class Basis *m_basis = nullptr;
