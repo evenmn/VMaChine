@@ -8,13 +8,15 @@ None::None(System *system)
     /* Constructor of the None class.
      * This is used when simulating small atomic systems. */
     m_system = system;
-    numberOfOrbitals();
+    //numberOfOrbitals();
 }
 /*
 void None::numberOfOrbitals() {
     m_numberOfOrbitals = 1;
 }
 */
+
+void None::initialize() {}
 
 void None::setParameters(Eigen::VectorXd /*parameters*/) {}
 
