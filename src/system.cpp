@@ -61,7 +61,7 @@ void System::printInitialInformation()
     m_start = std::chrono::system_clock::now();
     std::time_t start_time = std::chrono::system_clock::to_time_t(m_start);
     std::cout << "Started computation at " << std::ctime(&start_time)
-              << "Running on " << m_numberOfProcesses << " CPU threads using OpenMPI" << std::endl;
+              << "Running on " << m_numberOfProcesses << " CPU threads using Open MPI" << std::endl;
     std::cout << "Simulation is run from the directory: " << m_path << std::endl;
 }
 
@@ -107,7 +107,7 @@ void System::printSystemInformation()
     std::cout << "Optimization:             " << m_optimization->getLabel() << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
-    std::cout << "               ELECTRON DENSITY" << std::endl;
+    std::cout << "               PARTICLE DENSITY" << std::endl;
     std::cout << "==============================================" << std::endl;
     std::cout << "Compute radial one-body density:  " << m_computeOneBodyDensity << std::endl;
     std::cout << "Compute spatial one-body density: " << m_computeOneBodyDensity2 << std::endl;
@@ -769,6 +769,8 @@ void System::parser(const std::string configFile)
     std::ifstream infile;
     infile.open(configFile.c_str());
     if (!infile.is_open() && m_args >= 2) {
+        std::cout << std::endl;
+        std::cerr << "File: '" << configFile << "'" << std::endl;
         perror("File not found");
         MPI_Abort(MPI_COMM_WORLD, 143);
     }
@@ -854,9 +856,11 @@ void System::parser(const std::string configFile)
                         } else if (value == "hydrogenOrbital") {
                             setBasis(new HydrogenOrbital(this));
                         } else {
-                            std::cout << value << " is not a known basis" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Basis '"
+                                      << value
+                                      << "' is not implemented!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "hamiltonian") {
                         if (value == "harmonicOscillator") {
@@ -866,9 +870,11 @@ void System::parser(const std::string configFile)
                         } else if (value == "atomicNucleus") {
                             setHamiltonian(new AtomicNucleus(this));
                         } else {
-                            std::cout << value << " is not a known Hamiltonian" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "The Hamiltonian '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "optimization") {
                         if (value == "adam") {
@@ -878,9 +884,11 @@ void System::parser(const std::string configFile)
                         } else if (value == "sgd") {
                             setOptimization(new SGD(this, 0.0, 0.0));
                         } else {
-                            std::cout << value << " is not a known optimization tool" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Optimization method '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "initialWeights") {
                         if (value == "automatize") {
@@ -890,10 +898,11 @@ void System::parser(const std::string configFile)
                         } else if (value == "constant") {
                             setInitialWeights(new Constant(this, 1.0));
                         } else {
-                            std::cout << value << " is not a known initial weight configuration"
-                                      << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Initial parameter configuration '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "initialState") {
                         if (value == "randomNormal") {
@@ -901,10 +910,11 @@ void System::parser(const std::string configFile)
                         } else if (value == "randomUniform") {
                             setInitialState(new RandomUniform(this));
                         } else {
-                            std::cout << value << " is not a known initial state configuration"
-                                      << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Initial state configuration '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "sampling") {
                         if (value == "importanceSampling") {
@@ -912,9 +922,11 @@ void System::parser(const std::string configFile)
                         } else if (value == "bruteForce") {
                             setMetropolis(new BruteForce(this));
                         } else {
-                            std::cout << value << " is not a known sampling tool" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Sampling method '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "waveFunction") {
                         std::vector<class WaveFunction *> waveFunctionElements;
@@ -942,10 +954,11 @@ void System::parser(const std::string configFile)
                             waveFunctionElements.push_back(new class RBMProduct(this));
                             waveFunctionElements.push_back(new class PartlyRestricted(this));
                         } else {
-                            std::cout << "Error: " << value << " is not a known wave function configuration"
-                                      << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Wave function '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                         setWaveFunctionElements(waveFunctionElements);
                     } else if (key == "waveFunctionElement") {
@@ -966,7 +979,10 @@ void System::parser(const std::string configFile)
                         //} else if (value == "hardCoreJastrow") {
                         //    setWaveFunctionElement(new class HardCoreJastrow(this));
                         } else {
-                            std::cerr << "Wave function element does not exist" << std::endl;
+                            std::cout << std::endl;
+                            std::cerr << "Wave function element '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "interactionStyle") {
@@ -975,16 +991,26 @@ void System::parser(const std::string configFile)
                         } else if (value == "coulomb") {
                             setInteractionStyle(new class Coulomb(this));
                         } else {
-                          std::cerr << "Interaction style does not exist" << std::endl;
-                          MPI_Abort(MPI_COMM_WORLD, 143);
+                            std::cout << std::endl;
+                            std::cerr << "Interaction style '"
+                                      << value
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else {
-                      std::cerr << "Invalid key is passed to configuration file" << std::endl;
-                      MPI_Abort(MPI_COMM_WORLD, 143);
+                        std::cout << std::endl;
+                        std::cerr << "Invalid key '"
+                                  << key
+                                  << "' is passed to configuration file!" << std::endl;
+                        MPI_Abort(MPI_COMM_WORLD, 143);
                     }
                 }
             } else {
-                std::cerr << "Invalid key is passed to configuration file" << std::endl;
+                std::cout << std::endl;
+                std::cerr << "Invalid object detected in configuration file!" << std::endl;
+                std::cerr << "Error raised when tried to read: "
+                          << line
+                          << std::endl;
                 MPI_Abort(MPI_COMM_WORLD, 143);
             }
         }
