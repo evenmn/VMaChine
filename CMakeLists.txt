@@ -33,7 +33,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/WaveFunctions
     ${PROJECT_SOURCE_DIR}/src/Eigen
     ${PROJECT_SOURCE_DIR}/src/blocker/c++
-    ${PROJECT_SOURCE_DIR}/test
+#    ${PROJECT_SOURCE_DIR}/test
 #	   ${GTEST_INCLUDE_DIRS}
     ${MPI_INCLUDE_PATH}
 )
@@ -50,6 +50,7 @@ set(SOURCES
     src/Activation/sigmoid.cpp
     src/Hamiltonians/hamiltonian.cpp
     src/Hamiltonians/harmonicoscillator.cpp
+    src/Hamiltonians/ellipticalharmonicoscillator.cpp
     src/Hamiltonians/doublewell.cpp
     src/WaveFunctions/wavefunction.cpp
     src/InitialStates/initialstate.cpp
@@ -92,6 +93,7 @@ set(SOURCES
     src/Basis/none.cpp
     src/WaveFunctions/padejastrow.cpp
     src/WaveFunctions/simplejastrow.cpp
+    src/WaveFunctions/hardcorejastrow.cpp
     src/WaveFunctions/rbmgaussian.cpp
     src/WaveFunctions/rbmproduct.cpp
     src/WaveFunctions/fnn.cpp
