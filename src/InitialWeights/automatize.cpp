@@ -90,6 +90,8 @@ void Automatize::setupInitialWeights()
         m_method = new RandomUniformWeights(m_system, 0.2);
     } else if (m_trialWaveFunction == "FNN") {
         m_method = new RandomNormalWeights(m_system, 1);
+    } else if (m_trialWaveFunction == "BVMC") {
+        m_method = new Constant(m_system, 1.0);
     } else {
         m_method = new RandomUniformWeights(m_system, 0.01);
     }

@@ -173,7 +173,7 @@ void PadeJastrow::updatePrincipalDistance(int /*i*/, int /*i_p*/)
 {
     /* Update of the principal distance matrix
      * Arguments:
-     * 
+     *
      * {int} i:     The changed coordinate
      * {int} i_p:   The moved particle
      */
