@@ -11,6 +11,8 @@ public:
     virtual Eigen::VectorXd updateRadialVector() { return m_radialVector; }
     virtual Eigen::MatrixXd updateDistanceMatrix() { return m_distanceMatrix; }
 
+    virtual std::string getLabel() = 0;
+
     virtual void initialize() = 0;
     virtual bool acceptMove() = 0;
     virtual ~Metropolis() = 0;

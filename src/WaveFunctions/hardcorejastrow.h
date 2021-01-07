@@ -1,10 +1,10 @@
 #pragma once
 #include "wavefunction.h"
 
-class RBMGaussian : public WaveFunction
+class HardCoreJastrow : public WaveFunction
 {
 public:
-    RBMGaussian(class System *system);
+    HardCoreJastrow(class System *system, const double radius = 0.0043);
     int getNumberOfParameters() { return m_numberOfParameters; }
     int getGlobalArrayNeed() { return m_globalArrayNeed; }
     std::string getLabel() { return m_label; }
@@ -25,22 +25,30 @@ public:
     double computeLaplacian();
     Eigen::VectorXd computeParameterGradient();
 
+    void initializePrincipalDistance();
+    void updatePrincipalDistance(int i, int i_p);
+    void calculateProbabilityRatio(int particle);
+
 private:
     int m_numberOfParameters = 1;
-    int m_globalArrayNeed = 0;
+    int m_globalArrayNeed = 1;
     int m_elementNumber = 0;
-    double m_omega = 1;
-    double m_sigmaSqrd = 1;
 
-    double m_probabilityRatio = 0;
-    double m_probabilityRatioOld = 0;
+    double m_sphereRadius = 0.0043;
+    double m_probabilityRatioOld;
+    double m_probabilityRatio;
 
+    Eigen::VectorXd m_gradients;
     Eigen::VectorXd m_positions;
     Eigen::VectorXd m_positionsOld;
-    Eigen::VectorXd m_Xa;
-    Eigen::VectorXd m_XaOld;
-    Eigen::VectorXd m_a;
-    Eigen::VectorXd m_gradients;
 
-    std::string m_label = "RBM-Gaussian";
+    Eigen::MatrixXd m_beta;
+    Eigen::MatrixXd m_distanceMatrix;
+    Eigen::MatrixXd m_distanceMatrixOld;
+    Eigen::MatrixXd m_distanceMatrixSqrd;
+    Eigen::MatrixXd m_distanceMatrixSqrdOld;
+    Eigen::MatrixXd m_principalDistance;
+    Eigen::MatrixXd m_principalDistanceOld;
+
+    std::string m_label = "hard-core Jastrow";
 };

@@ -48,6 +48,5 @@ private:
     Eigen::MatrixXd m_principalDistance;
     Eigen::MatrixXd m_principalDistanceOld;
 
-    std::string m_label = "simplejastrow";
+    std::string m_label = "simple Jastrow";
 };
-

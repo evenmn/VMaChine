@@ -14,7 +14,7 @@ public:
 
 private:
     int m_globalArrayNeed = 1;
-    std::string m_label = "coulomb";
+    std::string m_label = "Coulomb";
 
     int m_numberOfParticles = 0;
     int m_numberOfDimensions = 0;

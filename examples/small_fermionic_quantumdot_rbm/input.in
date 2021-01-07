@@ -2,13 +2,7 @@
 # a two-dimensional quantum dot consisting of
 # two electrons is simulated. The trial wave 
 # function used is a restricted Boltzmann 
-# machine (RBM). The Slater determinant is
-# only needed when increasing the number of
-# particles.
-# The number of Metropolis steps, numSteps, has
-# to be set such that numSteps=2^N where N is an
-# integer in order to resample efficiently. 
-# Here N=16.
+# machine (RBM).
 
 
 # system
@@ -19,15 +13,12 @@ omega: 1.0
 interactionStyle: coulomb
 
 # wave function
-waveFunctionElement: slaterDeterminant
 waveFunctionElement: RBMGaussian
 waveFunctionElement: RBMProduct
-basis: hermite
 numHiddenNodes: 2
 
 # simulation
-numIterations: 1000
-numSteps: 65536
+numIterations: 500
+numSteps: 50000
 learningRate: 0.05
 stepLength: 0.1
-printEnergyToFile: true

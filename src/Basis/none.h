@@ -8,6 +8,7 @@ public:
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 
+    void initialize();
     void setParameters(Eigen::VectorXd parameters);
 
     double evaluate(double x, int n);
@@ -18,4 +19,9 @@ public:
     double basisElementDer(const int n, const int i, Eigen::VectorXd positions);
     double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
     double basisElementPar(const int n, Eigen::VectorXd position);
+
+    std::string getLabel() { return m_label; }
+
+private:
+    std::string m_label = "no basis";
 };

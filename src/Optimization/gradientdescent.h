@@ -18,5 +18,5 @@ private:
     double m_monotonicExp = 0;
     Eigen::MatrixXd m_v;
 
-    std::string m_label = "GD";
+    std::string m_label = "gradient descent";
 };

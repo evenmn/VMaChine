@@ -61,7 +61,7 @@ void System::printInitialInformation()
     m_start = std::chrono::system_clock::now();
     std::time_t start_time = std::chrono::system_clock::to_time_t(m_start);
     std::cout << "Started computation at " << std::ctime(&start_time)
-              << "Running on " << m_numberOfProcesses << " CPU threads using OpenMPI" << std::endl;
+              << "Running on " << m_numberOfProcesses << " CPU threads using Open MPI" << std::endl;
     std::cout << "Simulation is run from the directory: " << m_path << std::endl;
 }
 
@@ -77,19 +77,25 @@ void System::printSystemInformation()
     std::cout << "==============================================" << std::endl;
     std::cout << "Number of particles:      " << m_numberOfParticles << std::endl;
     std::cout << "Number of dimensions:     " << m_numberOfDimensions << std::endl;
-    std::cout << "Interaction style:        " << m_interactionStyle << std::endl;
-    std::cout << "Hamiltonian:              " << m_hamiltonian << std::endl;
-    std::cout << "Initial state:            " << m_initialState << std::endl;
-    std::cout << "Oscillator frequency:     " << m_omega << std::endl;
+    std::cout << "Interaction style:        " << m_interactionStyle->getLabel() << std::endl;
+    std::cout << "Hamiltonian:              " << m_hamiltonian->getLabel() << std::endl;
+    std::cout << "Initial state:            " << m_initialState->getLabel() << std::endl;
+    if (m_hamiltonian->getLabel() == "harmonic oscillator") {
+        std::cout << "Oscillator frequency:     " << m_omega << std::endl;
+    } else if (m_hamiltonian->getLabel() == "double well"){
+        std::cout << "Oscillator frequency:     " << m_omega << std::endl;
+    } else if (m_hamiltonian->getLabel() == "atom") {
+        std::cout << "Atomic number:            " << m_Z << std::endl;
+    }
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << "           WAVE FUNCTION INFORMATION" << std::endl;
     std::cout << "==============================================" << std::endl;
     for (int i = 0; i < m_numberOfElements; i++) {
-        std::cout << "Element " << i << ":                " << m_waveFunctionElements[unsigned(i)] << std::endl;
+        std::cout << "Element " << i << ":                " << m_waveFunctionElements[unsigned(i)]->getLabel() << std::endl;
     }
-    std::cout << "Basis:                    " << m_basis << std::endl;
-    std::cout << "Initial parameters:       " << m_initialWeights << std::endl;
+    std::cout << "Basis:                    " << m_basis->getLabel() << std::endl;
+    std::cout << "Initial parameters:       " << m_initialWeights->getLabel() << std::endl;
     std::cout << "Number of parameters:     " << this->getTotalNumberOfParameters() << std::endl;
     std::cout << "Number of hidden nodes:   " << m_numberOfHiddenUnits << std::endl;
     std::cout << "Print parameters to file: " << m_printParametersToFile << std::endl;
@@ -103,10 +109,12 @@ void System::printSystemInformation()
     std::cout << "Learning rate:            " << m_eta << std::endl;
     std::cout << "Step length:              " << m_stepLength << std::endl;
     std::cout << "Equilibration fraction:   " << m_equilibrationFraction << std::endl;
-    std::cout << "Sampling:                 " << m_metropolis << std::endl;
+    std::cout << "Sampling:                 " << m_metropolis->getLabel() << std::endl;
+    std::cout << "Optimization:             " << m_optimization->getLabel() << std::endl;
+    std::cout << "Random number generator:  " << m_randomNumberGenerator->getLabel() << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
-    std::cout << "               ELECTRON DENSITY" << std::endl;
+    std::cout << "               PARTICLE DENSITY" << std::endl;
     std::cout << "==============================================" << std::endl;
     std::cout << "Compute radial one-body density:  " << m_computeOneBodyDensity << std::endl;
     std::cout << "Compute spatial one-body density: " << m_computeOneBodyDensity2 << std::endl;
@@ -768,6 +776,8 @@ void System::parser(const std::string configFile)
     std::ifstream infile;
     infile.open(configFile.c_str());
     if (!infile.is_open() && m_args >= 2) {
+        std::cout << std::endl;
+        std::cerr << "File: '" << configFile << "'" << std::endl;
         perror("File not found");
         MPI_Abort(MPI_COMM_WORLD, 143);
     }
@@ -786,202 +796,256 @@ void System::parser(const std::string configFile)
                 key = trim(key);
                 std::string value;
                 if (std::getline(is_line, value)) {
-                    value = trim(value);
+                    std::vector<std::string> splitted = split(value);
                     if (key == "numParticles") {
-                        m_numberOfParticles = std::stoi(value);
+                        m_numberOfParticles = std::stoi(splitted.at(0));
                         m_numberOfHiddenUnits = m_numberOfParticles;
                         m_Z = m_numberOfParticles;
                     } else if (key == "numDimensions") {
-                        m_numberOfDimensions = std::stoi(value);
+                        m_numberOfDimensions = std::stoi(splitted.at(0));
                     } else if (key == "omega") {
-                        m_omega = std::stod(value);
+                        m_omega = std::stod(splitted.at(0));
                         m_stepLength = 0.1 / sqrt(m_omega);
                         m_sigma = 1.0 / sqrt(m_omega);
                     } else if (key == "atomicNumber") {
-                        m_Z = std::stoi(value);
+                        m_Z = std::stoi(splitted.at(0));
                     } else if (key == "learningRate") {
-                        m_eta = std::stod(value);
+                        m_eta = std::stod(splitted.at(0));
                     } else if (key == "maxRadius") {
-                        m_maxRadius = std::stod(value);
+                        m_maxRadius = std::stod(splitted.at(0));
                     } else if (key == "numIterations") {
-                        m_numberOfIterations = std::stoi(value);
+                        m_numberOfIterations = std::stoi(splitted.at(0));
                     } else if (key == "equilibration") {
-                        setEquilibrationFraction(std::stod(value));
+                        setEquilibrationFraction(std::stod(splitted.at(0)));
                     } else if (key == "numSteps") {
-                        setNumberOfMetropolisCycles(std::stoi(value));
+                        setNumberOfMetropolisCycles(std::stoi(splitted.at(0)));
                     } else if (key == "numHiddenNodes") {
-                        m_numberOfHiddenUnits = std::stoi(value);
+                        m_numberOfHiddenUnits = std::stoi(splitted.at(0));
                     } else if (key == "totalSpin") {
-                        m_totalSpin = std::stod(value);
+                        m_totalSpin = std::stod(splitted.at(0));
                     } else if (key == "stepLength") {
-                        m_stepLength = std::stod(value);
+                        m_stepLength = std::stod(splitted.at(0));
                     } else if (key == "checkConvergence") {
-                        std::istringstream(value) >> std::boolalpha >> m_checkConvergence;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_checkConvergence;
                     } else if (key == "applyAdaptiveSteps") {
-                        std::istringstream(value) >> std::boolalpha >> m_applyAdaptiveSteps;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_applyAdaptiveSteps;
                     } else if (key == "computeOneBodyDensity") {
-                        std::istringstream(value) >> std::boolalpha >> m_computeOneBodyDensity;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_computeOneBodyDensity;
                     } else if (key == "computeOneBodyDensity2") {
-                        std::istringstream(value) >> std::boolalpha >> m_computeOneBodyDensity2;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_computeOneBodyDensity2;
                     } else if (key == "computeTwoBodyDensity") {
-                        std::istringstream(value) >> std::boolalpha >> m_computeTwoBodyDensity;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_computeTwoBodyDensity;
                     } else if (key == "printEnergyToFile") {
-                        std::istringstream(value) >> std::boolalpha >> m_printEnergyToFile;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_printEnergyToFile;
                     } else if (key == "printParametersToFile") {
-                        std::istringstream(value) >> std::boolalpha >> m_printParametersToFile;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_printParametersToFile;
                     } else if (key == "doResampling") {
-                        std::istringstream(value) >> std::boolalpha >> m_doResampling;
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_doResampling;
                     } else if (key == "path") {
-                        m_path = value;
+                        m_path = splitted.at(0);
                     } else if (key == "numberOfEnergies") {
-                        m_numberOfEnergies = std::stoi(value);
+                        m_numberOfEnergies = std::stoi(splitted.at(0));
                     } else if (key == "tolerance") {
-                        m_tolerance = std::stod(value);
+                        m_tolerance = std::stod(splitted.at(0));
                     } else if (key == "rangeOfAdaptiveSteps") {
-                        m_rangeOfAdaptiveSteps = std::stoi(value);
+                        m_rangeOfAdaptiveSteps = std::stoi(splitted.at(0));
                     } else if (key == "additionalSteps") {
-                        m_additionalSteps = std::stoi(value);
+                        m_additionalSteps = std::stoi(splitted.at(0));
                     } else if (key == "additionalStepsLastIter") {
-                        m_additionalStepsLastIter = std::stoi(value);
+                        m_additionalStepsLastIter = std::stoi(splitted.at(0));
                     } else if (key == "numberOfBins") {
-                        m_numberOfBins = std::stoi(value);
+                        m_numberOfBins = std::stoi(splitted.at(0));
                     } else if (key == "basis") {
-                        if (value == "hermite") {
+                        if (splitted.at(0) == "hermite") {
                             setBasis(new Hermite(this));
-                        } else if (value == "hermiteExpansion") {
+                        } else if (splitted.at(0) == "hermiteExpansion") {
                             setBasis(new HermiteExpansion(this));
-                        } else if (value == "hydrogenOrbital") {
+                        } else if (splitted.at(0) == "hydrogenOrbital") {
                             setBasis(new HydrogenOrbital(this));
                         } else {
-                            std::cout << value << " is not a known basis" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Basis '"
+                                      << splitted.at(0)
+                                      << "' is not implemented!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "hamiltonian") {
-                        if (value == "harmonicOscillator") {
+                        if (splitted.at(0) == "harmonicOscillator") {
                             setHamiltonian(new HarmonicOscillator(this));
-                        } else if (value == "doubleWell") {
-                            setHamiltonian(new DoubleWell(this, 2));
-                        } else if (value == "atomicNucleus") {
+                        } else if (splitted.at(0) == "doubleWell") {
+                            setHamiltonian(new DoubleWell(this, std::stod(splitted.at(1))));
+                        } else if (splitted.at(0) == "atomicNucleus") {
                             setHamiltonian(new AtomicNucleus(this));
+                        } else if (splitted.at(0) == "ellipticalHarmonicOscillator") {
+                            setHamiltonian(new EllipticalHarmonicOscillator(this, std::stod(splitted.at(1))));
                         } else {
-                            std::cout << value << " is not a known Hamiltonian" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "The Hamiltonian '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "optimization") {
-                        if (value == "adam") {
+                        if (splitted.at(0) == "adam") {
                             setOptimization(new ADAM(this));
-                        } else if (value == "gd") {
-                            setOptimization(new GradientDescent(this, 0.0, 0.0));
-                        } else if (value == "sgd") {
-                            setOptimization(new SGD(this, 0.0, 0.0));
+                        } else if (splitted.at(0) == "gd") {
+                            if (splitted.size() >= 3) {
+                                setOptimization(new GradientDescent(this, std::stod(splitted.at(1)), std::stod(splitted.at(2))));
+                            } else {
+                                setOptimization(new GradientDescent(this, 0.0, 0.0));
+                            }
+                        } else if (splitted.at(0) == "sgd") {
+                          if (splitted.size() >= 3) {
+                              setOptimization(new SGD(this, std::stod(splitted.at(1)), std::stod(splitted.at(2))));
+                          } else {
+                              setOptimization(new SGD(this, 0.0, 0.0));
+                          }
                         } else {
-                            std::cout << value << " is not a known optimization tool" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Optimization method '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "initialWeights") {
-                        if (value == "automatize") {
+                        if (splitted.at(0) == "automatize") {
                             setInitialWeights(new Automatize(this));
-                        } else if (value == "randomuniform") {
-                            setInitialWeights(new RandomUniformWeights(this, 0.1));
-                        } else if (value == "constant") {
-                            setInitialWeights(new Constant(this, 1.0));
+                        } else if (splitted.at(0) == "randomuniform") {
+                            if (splitted.size() >= 2) {
+                                setInitialWeights(new RandomUniformWeights(this, std::stod(splitted.at(1))));
+                            } else {
+                                setInitialWeights(new RandomUniformWeights(this));
+                            }
+                        } else if (splitted.at(0) == "constant") {
+                            if (splitted.size() >= 2) {
+                                setInitialWeights(new Constant(this, std::stod(splitted.at(1))));
+                            } else {
+                                setInitialWeights(new Constant(this, 1.0));
+                            }
                         } else {
-                            std::cout << value << " is not a known initial weight configuration"
-                                      << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Initial parameter configuration '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "initialState") {
-                        if (value == "randomNormal") {
+                        if (splitted.at(0) == "randomNormal") {
                             setInitialState(new RandomNormal(this));
-                        } else if (value == "randomUniform") {
+                        } else if (splitted.at(0) == "randomUniform") {
                             setInitialState(new RandomUniform(this));
                         } else {
-                            std::cout << value << " is not a known initial state configuration"
-                                      << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Initial state configuration '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "sampling") {
-                        if (value == "importanceSampling") {
+                        if (splitted.at(0) == "importanceSampling") {
                             setMetropolis(new ImportanceSampling(this));
-                        } else if (value == "bruteForce") {
+                        } else if (splitted.at(0) == "bruteForce") {
                             setMetropolis(new BruteForce(this));
                         } else {
-                            std::cout << value << " is not a known sampling tool" << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Sampling method '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "waveFunction") {
                         std::vector<class WaveFunction *> waveFunctionElements;
-                        if (value == "VMC") {
+                        if (splitted.at(0) == "VMC") {
                             waveFunctionElements.push_back(new class Gaussian(this));
                             waveFunctionElements.push_back(new class SlaterDeterminant(this));
                             waveFunctionElements.push_back(new class PadeJastrow(this));
-                        } else if (value == "RBM") {
+                        } else if (splitted.at(0) == "RBM") {
                             waveFunctionElements.push_back(new class SlaterDeterminant(this));
                             waveFunctionElements.push_back(new class RBMGaussian(this));
                             waveFunctionElements.push_back(new class RBMProduct(this));
-                        } else if (value == "RBMPJ") {
+                        } else if (splitted.at(0) == "RBMPJ") {
                             waveFunctionElements.push_back(new class SlaterDeterminant(this));
                             waveFunctionElements.push_back(new class RBMGaussian(this));
                             waveFunctionElements.push_back(new class RBMProduct(this));
                             waveFunctionElements.push_back(new class PadeJastrow(this));
-                        } else if (value == "RBMSJ") {
+                        } else if (splitted.at(0) == "RBMSJ") {
                             waveFunctionElements.push_back(new class SlaterDeterminant(this));
                             waveFunctionElements.push_back(new class RBMGaussian(this));
                             waveFunctionElements.push_back(new class RBMProduct(this));
                             waveFunctionElements.push_back(new class SimpleJastrow(this));
-                        } else if (value == "PRBM") {
+                        } else if (splitted.at(0) == "PRBM") {
                             waveFunctionElements.push_back(new class SlaterDeterminant(this));
                             waveFunctionElements.push_back(new class RBMGaussian(this));
                             waveFunctionElements.push_back(new class RBMProduct(this));
                             waveFunctionElements.push_back(new class PartlyRestricted(this));
                         } else {
-                            std::cout << "Error: " << value << " is not a known wave function configuration"
-                                      << std::endl;
-                            MPI_Finalize();
-                            exit(0);
+                            std::cout << std::endl;
+                            std::cerr << "Wave function '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                         setWaveFunctionElements(waveFunctionElements);
                     } else if (key == "waveFunctionElement") {
-                        if (value == "gaussian") {
+                        if (splitted.at(0) == "gaussian") {
                             setWaveFunctionElement(new class Gaussian(this));
-                        } else if (value == "slaterDeterminant") {
+                        } else if (splitted.at(0) == "slaterDeterminant") {
                             setWaveFunctionElement(new class SlaterDeterminant(this));
-                        } else if (value == "padeJastrow") {
+                        } else if (splitted.at(0) == "padeJastrow") {
                             setWaveFunctionElement(new class PadeJastrow(this));
-                        } else if (value == "simpleJastrow") {
+                        } else if (splitted.at(0) == "simpleJastrow") {
                             setWaveFunctionElement(new class SimpleJastrow(this));
-                        } else if (value == "RBMGaussian") {
+                        } else if (splitted.at(0) == "RBMGaussian") {
                             setWaveFunctionElement(new class RBMGaussian(this));
-                        } else if (value == "RBMProduct") {
+                        } else if (splitted.at(0) == "RBMProduct") {
                             setWaveFunctionElement(new class RBMProduct(this));
-                        } else if (value == "hydrogenLike") {
+                        } else if (splitted.at(0) == "hydrogenLike") {
                             setWaveFunctionElement(new class HydrogenLike(this));
+                        } else if (splitted.at(0) == "hardCoreJastrow") {
+                            setWaveFunctionElement(new class HardCoreJastrow(this));
                         } else {
-                            std::cerr << "Wave function element does not exist" << std::endl;
+                            std::cout << std::endl;
+                            std::cerr << "Wave function element '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "interactionStyle") {
-                        if (value == "noInteraction") {
+                        if (splitted.at(0) == "noInteraction") {
                             setInteractionStyle(new class NoInteraction(this));
-                        } else if (value == "coulomb") {
+                        } else if (splitted.at(0) == "coulomb") {
                             setInteractionStyle(new class Coulomb(this));
                         } else {
-                          std::cerr << "Interaction style does not exist" << std::endl;
-                          MPI_Abort(MPI_COMM_WORLD, 143);
+                            std::cout << std::endl;
+                            std::cerr << "Interaction style '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
+                        }
+                    } else if (key == "rng") {
+                        if (splitted.at(0) == "MersenneTwister") {
+                            setRandomNumberGenerator(new class MersenneTwister());
+                        } else {
+                            std::cout << std::endl;
+                            std::cerr << "Random number generator '"
+                                      << splitted.at(0)
+                                      << "' does not exist!" << std::endl;
+                            MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else {
-                      std::cerr << "Invalid key is passed to configuration file" << std::endl;
-                      MPI_Abort(MPI_COMM_WORLD, 143);
+                        std::cout << std::endl;
+                        std::cerr << "Invalid key '"
+                                  << key
+                                  << "' is passed to configuration file!" << std::endl;
+                        MPI_Abort(MPI_COMM_WORLD, 143);
                     }
                 }
             } else {
-                std::cerr << "Invalid key is passed to configuration file" << std::endl;
+                std::cout << std::endl;
+                std::cerr << "Invalid object detected in configuration file!" << std::endl;
+                std::cerr << "Error raised when tried to read: "
+                          << line
+                          << std::endl;
                 MPI_Abort(MPI_COMM_WORLD, 143);
             }
         }
@@ -1052,79 +1116,79 @@ void System::collectAllLabels()
     }
 
     std::vector<std::string> testVMC1;
-    testVMC1.push_back("gaussian");
+    testVMC1.push_back("Gaussian");
     searchShortning(testVMC1, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC2;
-    testVMC2.push_back("gaussian");
-    testVMC2.push_back("padejastrow");
+    testVMC2.push_back("Gaussian");
+    testVMC2.push_back("Padé-Jastrow");
     searchShortning(testVMC2, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC3;
-    testVMC3.push_back("gaussian");
-    testVMC3.push_back("padejastrow");
-    testVMC3.push_back("slaterdeterminant");
+    testVMC3.push_back("Gaussian");
+    testVMC3.push_back("Padé-Jastrow");
+    testVMC3.push_back("Slater determinant");
     searchShortning(testVMC3, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testRBM1;
-    testRBM1.push_back("rbmgaussian");
-    testRBM1.push_back("rbmproduct");
+    testRBM1.push_back("RBM-Gaussian");
+    testRBM1.push_back("RBM-product");
     searchShortning(testRBM1, "RBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBM2;
-    testRBM2.push_back("rbmgaussian");
-    testRBM2.push_back("rbmproduct");
-    testRBM2.push_back("slaterdeterminant");
+    testRBM2.push_back("RBM-Gaussian");
+    testRBM2.push_back("RBM-product");
+    testRBM2.push_back("Slater determinant");
     searchShortning(testRBM2, "RBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBMPJ1;
-    testRBMPJ1.push_back("rbmgaussian");
-    testRBMPJ1.push_back("rbmproduct");
-    testRBMPJ1.push_back("padejastrow");
+    testRBMPJ1.push_back("RBM-Gaussian");
+    testRBMPJ1.push_back("RBM-product");
+    testRBMPJ1.push_back("Padé-Jastrow");
     searchShortning(testRBMPJ1, "RBMPJ", m_trialWaveFunction);
 
     std::vector<std::string> testRBMPJ2;
-    testRBMPJ2.push_back("rbmgaussian");
-    testRBMPJ2.push_back("rbmproduct");
-    testRBMPJ2.push_back("padejastrow");
-    testRBMPJ2.push_back("slaterdeterminant");
+    testRBMPJ2.push_back("RBM-Gaussian");
+    testRBMPJ2.push_back("RBM-product");
+    testRBMPJ2.push_back("Padé-Jastrow");
+    testRBMPJ2.push_back("Slater determinant");
     searchShortning(testRBMPJ2, "RBMPJ", m_trialWaveFunction);
 
     std::vector<std::string> testPRBM1;
-    testPRBM1.push_back("rbmgaussian");
-    testPRBM1.push_back("rbmproduct");
+    testPRBM1.push_back("RBM-Gaussian");
+    testPRBM1.push_back("RBM-product");
     testPRBM1.push_back("partlyrestricted");
     searchShortning(testPRBM1, "PRBM", m_trialWaveFunction);
 
     std::vector<std::string> testPRBM2;
-    testPRBM2.push_back("rbmgaussian");
-    testPRBM2.push_back("rbmproduct");
+    testPRBM2.push_back("RBM-Gaussian");
+    testPRBM2.push_back("RBM-product");
     testPRBM2.push_back("partlyrestricted");
-    testPRBM2.push_back("slaterdeterminant");
+    testPRBM2.push_back("Slater determinant");
     searchShortning(testPRBM2, "PRBM", m_trialWaveFunction);
 
     std::vector<std::string> testDRBM1;
-    testDRBM1.push_back("rbmgaussian");
+    testDRBM1.push_back("RBM-Gaussian");
     testDRBM1.push_back("drbmproduct");
     searchShortning(testDRBM1, "DRBM", m_trialWaveFunction);
 
     std::vector<std::string> testDRBM2;
-    testDRBM2.push_back("rbmgaussian");
+    testDRBM2.push_back("RBM-Gaussian");
     testDRBM2.push_back("drbmproduct");
-    testDRBM2.push_back("slaterdeterminant");
+    testDRBM2.push_back("Slater determinant");
     searchShortning(testDRBM2, "DRBM", m_trialWaveFunction);
 
     std::vector<std::string> testRBMSJ1;
-    testRBMSJ1.push_back("rbmgaussian");
-    testRBMSJ1.push_back("rbmproduct");
-    testRBMSJ1.push_back("simplejastrow");
+    testRBMSJ1.push_back("RBM-Gaussian");
+    testRBMSJ1.push_back("RBM-product");
+    testRBMSJ1.push_back("simple Jastrow");
     searchShortning(testRBMSJ1, "RBMSJ", m_trialWaveFunction);
 
     std::vector<std::string> testRBMSJ2;
-    testRBMSJ2.push_back("rbmgaussian");
-    testRBMSJ2.push_back("rbmproduct");
-    testRBMSJ2.push_back("simplejastrow");
-    testRBMSJ2.push_back("slaterdeterminant");
+    testRBMSJ2.push_back("RBM-Gaussian");
+    testRBMSJ2.push_back("RBM-product");
+    testRBMSJ2.push_back("simple Jastrow");
+    testRBMSJ2.push_back("Slater determinant");
     searchShortning(testRBMSJ2, "RBMSJ", m_trialWaveFunction);
 
     std::vector<std::string> testVMC4;
@@ -1132,36 +1196,41 @@ void System::collectAllLabels()
     searchShortning(testVMC4, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC5;
-    testVMC5.push_back("slaterdeterminant");
+    testVMC5.push_back("Slater determinant");
     searchShortning(testVMC5, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC6;
     testVMC6.push_back("hydrogenlike");
-    testVMC6.push_back("padejastrow");
+    testVMC6.push_back("Padé-Jastrow");
     searchShortning(testVMC6, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC7;
-    testVMC7.push_back("slaterdeterminant");
-    testVMC7.push_back("padejastrow");
+    testVMC7.push_back("Slater determinant");
+    testVMC7.push_back("Padé-Jastrow");
     searchShortning(testVMC7, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testVMC8;
-    testVMC8.push_back("slaterdeterminant");
-    testVMC8.push_back("gaussian");
+    testVMC8.push_back("Slater determinant");
+    testVMC8.push_back("Gaussian");
     searchShortning(testVMC8, "VMC", m_trialWaveFunction);
 
     std::vector<std::string> testSSJ1;
-    testSSJ1.push_back("slaterdeterminant");
-    testSSJ1.push_back("gaussian");
-    testSSJ1.push_back("simplejastrow");
+    testSSJ1.push_back("Slater determinant");
+    testSSJ1.push_back("Gaussian");
+    testSSJ1.push_back("simple Jastrow");
     searchShortning(testSSJ1, "SSJ", m_trialWaveFunction);
 
     std::vector<std::string> testSSJ2;
-    testSSJ2.push_back("gaussian");
-    testSSJ2.push_back("simplejastrow");
+    testSSJ2.push_back("Gaussian");
+    testSSJ2.push_back("simple Jastrow");
     searchShortning(testSSJ2, "SSJ", m_trialWaveFunction);
 
     std::vector<std::string> testFNN;
     testFNN.push_back("fnn");
     searchShortning(testFNN, "FNN", m_trialWaveFunction);
+
+    std::vector<std::string> testBVMC;
+    testBVMC.push_back("Gaussian");
+    testBVMC.push_back("hard-core Jastrow");
+    searchShortning(testBVMC, "BVMC", m_trialWaveFunction);
 }

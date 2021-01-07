@@ -4,12 +4,8 @@
 # function used is a Gaussian with a Padé-Jastrow
 # factor. The Slater determinant is
 # only needed when increasing the number of
-# particles. The radial one-body density is 
-# computed and written to the file "onebody.dat".
-# The number of Metropolis steps, numSteps, has
-# to be set such that numSteps=2^N where N is an
-# integer in order to resample efficiently. 
-# Here N=17.
+# particles. The spatial one-body density is 
+# computed and written to the file "onebody2.dat".
 
 
 # system
@@ -20,21 +16,18 @@ omega: 1.0
 interactionStyle: coulomb
 
 # wave function
-waveFunctionElement: slaterDeterminant
 waveFunctionElement: gaussian
 waveFunctionElement: padeJastrow
-basis: hermite
 
 # simulation
 numIterations: 100
-numSteps: 131072
+numSteps: 100000
 learningRate: 0.1
 stepLength: 0.1
-printEnergyToFile: true
 
 # electron density
 maxRadius: 3
 numberOfBins: 100
-computeOneBodyDensity: true
+computeOneBodyDensity: false
 computeTwoBodyDensity: false
-computeOneBodyDensity2: false
+computeOneBodyDensity2: true

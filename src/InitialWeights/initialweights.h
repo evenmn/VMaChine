@@ -7,6 +7,7 @@ class InitialWeights
 {
 public:
     InitialWeights(class System *system);
+    virtual std::string getLabel() = 0;
     virtual void setupInitialWeights() = 0;
     virtual Eigen::MatrixXd getParameters() = 0;
 

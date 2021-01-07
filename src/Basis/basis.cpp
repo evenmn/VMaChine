@@ -69,6 +69,7 @@ void Basis::numberOfOrbitals()
             m_numberOfOrbitals = counter + 1;
             break;
         } else if (orb > m_numberOfParticles) {
+            std::cout << std::endl;
             std::cout << "Warning: An open shell is chosen" << std::endl;
             m_numberOfOrbitals = counter + 1;
             break;
