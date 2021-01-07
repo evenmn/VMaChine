@@ -15,11 +15,10 @@ interactionStyle: coulomb
 # wave function
 waveFunctionElement: RBMGaussian
 waveFunctionElement: RBMProduct
-waveFunctionElement: padeJastrow
 numHiddenNodes: 2
 
 # simulation
-numIterations: 1000
+numIterations: 500
 numSteps: 50000
 learningRate: 0.05
 stepLength: 0.1
