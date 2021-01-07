@@ -42,5 +42,5 @@ private:
 
     Eigen::VectorXd m_gradients;
 
-    std::string m_label = "gaussian";
+    std::string m_label = "Gaussian";
 };

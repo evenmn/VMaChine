@@ -1,10 +1,10 @@
 #pragma once
 #include "hamiltonian.h"
 
-class HarmonicOscillator : public Hamiltonian
+class EllipticalHarmonicOscillator : public Hamiltonian
 {
 public:
-    HarmonicOscillator(System *system);
+    EllipticalHarmonicOscillator(System *system, const double beta);
     int getGlobalArrayNeed() { return m_globalArrayNeed; }
     std::string getLabel() { return m_label; }
 
@@ -12,7 +12,8 @@ public:
     double getExternalEnergy();
 
 private:
-    double m_omegaSqrd;
+    double m_omegaSqrd = 0;
+    double m_beta = sqrt(8);
     int m_globalArrayNeed = 1;
-    std::string m_label = "harmonic oscillator";
+    std::string m_label = "elliptical harmonic oscillator";
 };

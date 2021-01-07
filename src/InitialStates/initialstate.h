@@ -7,6 +7,7 @@ class InitialState
 {
 public:
     InitialState(class System *system);
+    virtual std::string getLabel() = 0;
     virtual void setupInitialState() = 0;
     Eigen::VectorXd getParticles() { return m_positions; }
     Eigen::MatrixXd getDistanceMatrix() { return m_distanceMatrix; }

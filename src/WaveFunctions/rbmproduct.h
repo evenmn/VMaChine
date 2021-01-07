@@ -51,7 +51,7 @@ private:
     Eigen::VectorXd m_gradients;
 
     // Properties of the element (DO NOT TOUCH!)
-    std::string m_label = "rbmproduct";
+    std::string m_label = "RBM-product";
     int m_globalArrayNeed = 0;
     int m_elementNumber = 1;
 };

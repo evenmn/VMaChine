@@ -5,6 +5,7 @@ class Automatize : public InitialWeights
 {
 public:
     Automatize(System *system);
+    std::string getLabel() { return m_method->getLabel(); }
     void setupInitialWeights();
 
     std::string generateFileName(std::string name, std::string extension);

@@ -22,6 +22,8 @@ public:
     double evaluateCartDerivative(Eigen::VectorXd position, int i, int n, int l, int m);
     double evaluateCartSecondDerivative(Eigen::VectorXd position, int i, int n, int l, int m);
 
+    std::string getLabel() { return m_label; }
+
     void generateLOS();
     void numberOfOrbitalss();
 
@@ -30,6 +32,8 @@ private:
     int m_numberOfOrbitalss = 1;
     int m_numberOfShells = 1;
     double m_alpha = 1;
+
+    std::string m_label = "hydrogen orbital";
 
     Eigen::MatrixX3i m_LOS;
 };

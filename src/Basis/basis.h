@@ -11,6 +11,8 @@ public:
     void numberOfOrbitals();
     void generateListOfStates();
 
+    virtual std::string getLabel() = 0;
+
     virtual void initialize() = 0;
     virtual void setParameters(Eigen::VectorXd parameters) = 0;
 

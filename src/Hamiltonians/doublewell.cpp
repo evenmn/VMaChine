@@ -11,8 +11,8 @@ DoubleWell::DoubleWell(System *system, double displacement)
 
 void DoubleWell::initialize()
 {
-    m_omega = m_system->getFrequency();
-    m_omega_sqrd = m_omega * m_omega;
+    double omega = m_system->getFrequency();
+    m_omega_sqrd = omega * omega;
     m_numberOfParticles = m_system->getNumberOfParticles();
     m_numberOfDimensions = m_system->getNumberOfDimensions();
     m_offset = m_numberOfParticles * m_b * m_b / 4;

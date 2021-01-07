@@ -10,7 +10,6 @@ void AtomicNucleus::initialize()
 {
     m_Z = m_system->getAtomicNumber();
     m_numberOfParticles = m_system->getNumberOfParticles();
-    m_numberOfDimensions = m_system->getNumberOfDimensions();
 }
 
 double AtomicNucleus::getExternalEnergy()

@@ -2,7 +2,6 @@
 #include "system.h"
 
 #include "WaveFunctions/doubleproduct.h"
-#include "WaveFunctions/drbmproduct.h"
 #include "WaveFunctions/gaussian.h"
 #include "WaveFunctions/hydrogenlike.h"
 #include "WaveFunctions/padejastrow.h"
@@ -13,6 +12,7 @@
 #include "WaveFunctions/slaterdeterminant.h"
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/fnn.h"
+#include "WaveFunctions/hardcorejastrow.h"
 
 #include "Activation/activation.h"
 #include "Activation/elu.h"
@@ -30,6 +30,7 @@
 #include "Hamiltonians/doublewell.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "Hamiltonians/harmonicoscillator.h"
+#include "Hamiltonians/ellipticalharmonicoscillator.h"
 
 #include "Basis/basis.h"
 #include "Basis/hartreefock.h"

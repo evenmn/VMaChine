@@ -69,7 +69,7 @@ private:
     double m_probabilityRatioOld = 0;
 
     Eigen::VectorXd m_gradients;
-    std::string m_label = "slaterdeterminant";
+    std::string m_label = "Slater determinant";
 
     class Basis *m_basis = nullptr;
 };

@@ -13,5 +13,5 @@ public:
 
 private:
     int m_globalArrayNeed = 0;
-    std::string m_label = "none";
+    std::string m_label = "no interaction";
 };

@@ -4,6 +4,7 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <mpi.h>
 #include <string>
 #include <vector>
@@ -83,6 +84,7 @@ public:
      * element and the number of wave function elements. This is
      * called automatically when all the wave function elements are
      * specified. */
+    void initializeMPI();
     void printLogo();
     void printInitialInformation();
     void printSystemInformation();
@@ -96,6 +98,12 @@ public:
     void runSimulation();
     void printToTerminal();
     void setNumberOfElements(const unsigned long numberOfElements);
+    void initializeFromConfig(int argc, char** argv);
+    void parser(const std::string configFile);
+    void searchShortning(const std::vector<std::string> labels,
+                         const std::string newLabel,
+                         std::string &allLabels);
+
     void setStepLength(const double stepLength);
     void setEquilibrationFraction(const double equilibrationFraction);
     void setFrequency(const double omega);
@@ -103,11 +111,6 @@ public:
     void setTotalSpin(const double totalSpin);
     void setLearningRate(const double eta);
     void setPath(const std::string path);
-    void initializeFromConfig(int argc, char** argv);
-    void parser(const std::string configFile);
-    void searchShortning(const std::vector<std::string> labels,
-                         const std::string newLabel,
-                         std::string &allLabels);
 
     void computeRadialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
     void computeSpatialOneBodyDensity(int numberOfBins = 1000, double maxRadius = 50);
@@ -121,7 +124,6 @@ public:
                               const int additionalStepsLastIteration = 8);
     void setScreeningTools(const double screeningStrength, const double dsl);
     void doBlocking(bool printInstantEnergyFile = true);
-    void initializeMPI();
 
     void updateAllParameters(const Eigen::MatrixXd parameters);
     void initializeAllArrays(const Eigen::VectorXd positions,
@@ -233,6 +235,14 @@ public:
         return ltrim(rtrim(s, t), t);
     }
 
+    // split string by whitespace
+    std::vector<std::string> split(const std::string s) {
+        std::istringstream iss(s);
+        std::vector<std::string> splitted((std::istream_iterator<std::string>(iss)),
+                                           std::istream_iterator<std::string>());
+        return splitted;
+    }
+
 private:
     int m_numberOfParticles;
     int m_numberOfDimensions;
@@ -284,7 +294,7 @@ private:
     bool m_computeOneBodyDensity2 = false;
     bool m_computeTwoBodyDensity = false;
     bool m_printEnergyToFile = false;
-    bool m_doResampling = true;
+    bool m_doResampling = false;
     bool m_printParametersToFile = false;
     bool m_calculateDistanceMatrix = false;
     bool m_calculateRadialVector = false;
@@ -293,8 +303,8 @@ private:
     std::chrono::system_clock::time_point m_start;
 
     class WaveFunction *m_waveFunction = nullptr;
-    class Hamiltonian *m_hamiltonian = new HarmonicOscillator(this);
-    class Basis *m_basis = new Hermite(this);
+    class Hamiltonian *m_hamiltonian = nullptr;
+    class Basis *m_basis = new None(this);
     class InitialState *m_initialState = new RandomNormal(this);
     class InitialWeights *m_initialWeights = new Automatize(this);
     class Sampler *m_sampler = nullptr;

@@ -97,45 +97,22 @@ numParticles: 2
 numDimensions: 2
 hamiltonian: harmonicOscillator
 omega: 1.0
-interaction: true
+interactionStyle: coulomb
 
 # wave function
-waveFunctionElement: slaterDeterminant
 waveFunctionElement: gaussian
 waveFunctionElement: padeJastrow
-basis: hermite
 
 # simulation
 numIterations: 100
-numSteps: 131072
+numSteps: 100000
 learningRate: 0.1
 stepLength: 0.1
-printEnergyToFile: true
 ```
 The configuration file is simply run by
 ```bash
 vmachine input.in
 ```
-
-## Analyze results
-### Energy and blocking results
-The current energy is printed to the terminal for every iteration, together with the estimated variance, standard deviation, acceptence ratio and CPU time. _System info_ presents the settings used for the current run.
-
-For the last iteration, blocking is performed and the blocking results are printed to the terminal in the very end. The terminal will typically look like this when a run is done:
-![terminal](screenshots/screenshot_terminal.png)
-
-The energies for all iterations are stored in a file found in the data folder. The exact location and file name is also printed to the terminal, see image above. To plot this energy file, run
-```bash
-python3 scripts/plot_energy.py
-```
-which also support multiple files.
-
-### One-body density
-The one-body density is calculated during the last iteration by default, and the file is stored in the same way as the energy files described above. The one-body density can be plotted by the command
-```bash
-python3 scripts/plot_ob_density.py
-```
-which again supports multiple files. Remember to set the correct number of dimensions inside the script!
 
 ## Licence
 [MIT](https://choosealicense.com/licenses/mit/)
