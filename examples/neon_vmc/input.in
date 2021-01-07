@@ -1,0 +1,25 @@
+# This is a VMaChine configuration file where
+# a neon atom is simulated. The trial wave
+# function used is a Slater determinant with
+# a hydrogen-like orbital basis and a Pade-
+# Jastrow factor.
+
+
+# system
+numParticles: 10
+numDimensions: 3
+atomicNumber: 10
+hamiltonian: atomicNucleus
+interactionStyle: coulomb
+
+# wave function
+waveFunctionElement: slaterDeterminant
+waveFunctionElement: padeJastrow
+basis: hydrogenOrbital
+
+# simulation
+numIterations: 100
+numSteps: 100000
+learningRate: 0.05
+stepLength: 0.005
+optimization: adam
