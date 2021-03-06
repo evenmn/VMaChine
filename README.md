@@ -114,5 +114,5 @@ The configuration file is simply run by
 vmachine input.in
 ```
 
-## Licence
+## License
 [MIT](https://choosealicense.com/licenses/mit/)
