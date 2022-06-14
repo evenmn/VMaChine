@@ -53,7 +53,7 @@ git clone https://github.com/evenmn/VMaChine.git
 Then copy Eigen header files and blocker files to VMaChine:
 ```bash
 cd ~/Download/eigen-3.3.9   # insert correct path here
-cp -r Eigen ~/VMaChine/src/
+cp -r Eigen ~/VMaChine/include/
 ```
 
 ## Build
