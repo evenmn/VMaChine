@@ -32,7 +32,8 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/RNG
     ${PROJECT_SOURCE_DIR}/src/WaveFunctions
     ${PROJECT_SOURCE_DIR}/src/Eigen
-    ${PROJECT_SOURCE_DIR}/src/blocker/c++
+    ${PROJECT_SOURCE_DIR}/include/block
+#    ${PROJECT_SOURCE_DIR}/src/blocker/c++
 #    ${PROJECT_SOURCE_DIR}/test
 #	   ${GTEST_INCLUDE_DIRS}
     ${MPI_INCLUDE_PATH}
