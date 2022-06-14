@@ -4,7 +4,7 @@
 #include "Optimization/optimization.h"
 #include "RNG/rng.h"
 #include "WaveFunctions/wavefunction.h"
-#include "block/c++/blocker.h"
+#include "block/blocker.h"
 #include "system.h"
 
 #include <Eigen/Dense>

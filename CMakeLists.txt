@@ -9,7 +9,7 @@ set(CMAKE_C_COMPILER mpicc)
 set(CMAKE_CXX_COMPILER mpicxx)
 
 # Compilation flags used
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -o -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -o -DNDEBUG -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 # Set default build configuration
@@ -31,9 +31,9 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/Optimization
     ${PROJECT_SOURCE_DIR}/src/RNG
     ${PROJECT_SOURCE_DIR}/src/WaveFunctions
+    ${PROJECT_SOURCE_DIR}/include
+#    ${PROJECT_SOURCE_DIR}/include/block
 #    ${PROJECT_SOURCE_DIR}/src/Eigen
-    ${PROJECT_SOURCE_DIR}/include/Eigen
-    ${PROJECT_SOURCE_DIR}/include/block
 #    ${PROJECT_SOURCE_DIR}/src/blocker/c++
 #    ${PROJECT_SOURCE_DIR}/test
 #	   ${GTEST_INCLUDE_DIRS}
@@ -99,15 +99,15 @@ set(SOURCES
     src/WaveFunctions/rbmgaussian.cpp
     src/WaveFunctions/rbmproduct.cpp
     src/WaveFunctions/fnn.cpp
-    src/block/c++/blocker.cpp
+    include/block/blocker.cpp
 )
 
-set(TESTSOURCES
-    tests/main.cpp
-    tests/test_basis.cpp
-)
+#set(TESTSOURCES
+#    tests/main.cpp
+#    tests/test_basis.cpp
+#)
 
-set(TEST_EXECUTABLE vmachinetest)
+#set(TEST_EXECUTABLE vmachinetest)
 set(PROJECT_EXECUTABLE vmachine)
 
 
@@ -131,20 +131,20 @@ endif()
 
 
 # Add test executable file
-add_executable(${TEST_EXECUTABLE} ${TESTSOURCES})
+#add_executable(${TEST_EXECUTABLE} ${TESTSOURCES})
 # target_link_libraries(${TEST_EXECUTABLE} ${GTEST_LIBRARIES} ${MPI_LIBRARIES})
-target_link_libraries(${TEST_EXECUTABLE} ${MPI_LIBRARIES})
-add_test(${TEST_EXECUTABLE} ${TEST_EXECUTABLE})
+#target_link_libraries(${TEST_EXECUTABLE} ${MPI_LIBRARIES})
+#add_test(${TEST_EXECUTABLE} ${TEST_EXECUTABLE})
 
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(${TEST_EXECUTABLE} PROPERTIES
-    COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
-endif()
+#if(MPI_COMPILE_FLAGS)
+#  set_target_properties(${TEST_EXECUTABLE} PROPERTIES
+#    COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
+#endif()
 
-if(MPI_LINK_FLAGS)
-  set_target_properties(${TEST_EXECUTABLE} PROPERTIES
-    LINK_FLAGS "${MPI_LINK_FLAGS}")
-endif()
+#if(MPI_LINK_FLAGS)
+#  set_target_properties(${TEST_EXECUTABLE} PROPERTIES
+#    LINK_FLAGS "${MPI_LINK_FLAGS}")
+#endif()
 
 # Add library to make source files visible for doxygen
 # add_library(SourceFiles ${SOURCES})
