@@ -9,7 +9,7 @@ set(CMAKE_C_COMPILER mpicc)
 set(CMAKE_CXX_COMPILER mpicxx)
 
 # Compilation flags used
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -o -DNDEBUG -std=c++11")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -o -DNDEBUG -std=c++14")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 # Set default build configuration

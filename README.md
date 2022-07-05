@@ -30,7 +30,6 @@ on 4 CPUs (might be any number).
 To run the code without issues, C++14 is required. In addition, a few external packages are needed:
 - MPI
 - Eigen
-- Blocker
 
 #### MPI
 MPI is used for parallel processing. On Linux, the package can be installed by the following commands
