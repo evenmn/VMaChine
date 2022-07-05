@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+
 #include "initialweights.h"
 
 class Automatize : public InitialWeights
@@ -20,5 +22,5 @@ private:
     bool m_interaction = 0;
     std::string m_path = "No path";
 
-    class InitialWeights *m_method = nullptr;
+    std::unique_ptr<class InitialWeights> m_method = nullptr;
 };

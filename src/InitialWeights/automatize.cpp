@@ -77,23 +77,23 @@ void Automatize::setupInitialWeights()
     m_trialWaveFunction = m_system->getTrialWaveFunction();
 
     if (m_trialWaveFunction == "VMC") {
-        m_method = new Constant(m_system, 1.0);
+        m_method = std::make_unique<Constant> (m_system, 1.0);
     } else if (m_trialWaveFunction == "RBM") {
-        m_method = new RandomUniformWeights(m_system, 0.2);
+        m_method = std::make_unique<RandomUniformWeights> (m_system, 0.2);
     } else if (m_trialWaveFunction == "RBMSJ") {
-        m_method = new RandomUniformWeights(m_system, 0.2);
+        m_method = std::make_unique<RandomUniformWeights> (m_system, 0.2);
     } else if (m_trialWaveFunction == "RBMPJ") {
-        m_method = new Constant(m_system, 0.0);
+        m_method = std::make_unique<Constant> (m_system, 0.0);
     } else if (m_trialWaveFunction == "PRBM") {
-        m_method = new Constant(m_system, 0.0);
+        m_method = std::make_unique<Constant> (m_system, 0.0);
     } else if (m_trialWaveFunction == "SSJ") {
-        m_method = new RandomUniformWeights(m_system, 0.2);
+        m_method = std::make_unique<RandomUniformWeights> (m_system, 0.2);
     } else if (m_trialWaveFunction == "FNN") {
-        m_method = new RandomNormalWeights(m_system, 1);
+        m_method = std::make_unique<RandomNormalWeights> (m_system, 1);
     } else if (m_trialWaveFunction == "BVMC") {
-        m_method = new Constant(m_system, 1.0);
+        m_method = std::make_unique<Constant> (m_system, 1.0);
     } else {
-        m_method = new RandomUniformWeights(m_system, 0.01);
+        m_method = std::make_unique<RandomUniformWeights> (m_system, 0.01);
     }
     m_method->setupInitialWeights();
     m_parameters = m_method->getParameters();
