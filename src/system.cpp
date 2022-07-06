@@ -1,4 +1,28 @@
+#include <iostream>
+#include <fstream>
+#include <cassert>
+#include <ctime>
+#include <chrono>
+#include <iterator>
+#include <mpi.h>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
+
 #include "system.h"
+
+System::System()
+{
+    // set default classes
+    m_basis = new None(this);
+    m_initialState = new RandomNormal(this);
+    m_initialWeights = new Automatize(this);
+    m_metropolis = new ImportanceSampling(this);
+    m_optimization = new ADAM(this);
+    m_randomNumberGenerator = new MersenneTwister();
+    m_interactionStyle = new NoInteraction(this);
+}
+
 
 void System::printLogo()
 {
@@ -35,7 +59,7 @@ void System::initializeSystem()
     initializeMPI();
     parser(m_configFile);
     setInputLayer(m_degreesOfFreedom);      // Add input layer
-    setOutputLayer(new Sigmoid(this));    // Add output layer
+    //setOutputLayer(new Sigmoid(this));      // Add output layer
     m_hamiltonian->initialize();
     m_basis->initialize();
     setAllConstants();
@@ -50,9 +74,8 @@ void System::initializeSystem()
     m_radialVector = m_initialState->getRadialVector();
     m_metropolis->initialize();
     m_interactionStyle->initialize();
-    //parser(m_configFile);
 
-    m_sampler = new Sampler(this);
+    m_sampler = new Sampler(this); //sampler has to be initialized lastly 
     m_sampler->openOutputFiles();
 }
 
@@ -770,9 +793,12 @@ void System::initializeFromConfig(int argc, char** argv) {
     }
 }
 
+/* ----------------------------------------------------------------------------
+  Parse input script
+---------------------------------------------------------------------------- */
+
 void System::parser(const std::string configFile)
 {
-    /* Parse from configuration file. */
     std::ifstream infile;
     infile.open(configFile.c_str());
     if (!infile.is_open() && m_args >= 2) {
@@ -856,6 +882,7 @@ void System::parser(const std::string configFile)
                     } else if (key == "numberOfBins") {
                         m_numberOfBins = std::stoi(splitted.at(0));
                     } else if (key == "basis") {
+                        delete m_basis;
                         if (splitted.at(0) == "hermite") {
                             setBasis(new Hermite(this));
                         } else if (splitted.at(0) == "hermiteExpansion") {
@@ -870,6 +897,7 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "hamiltonian") {
+                        delete m_hamiltonian;
                         if (splitted.at(0) == "harmonicOscillator") {
                             setHamiltonian(new HarmonicOscillator(this));
                         } else if (splitted.at(0) == "doubleWell") {
@@ -886,6 +914,7 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "optimization") {
+                        delete m_optimization;
                         if (splitted.at(0) == "adam") {
                             setOptimization(new ADAM(this));
                         } else if (splitted.at(0) == "gd") {
@@ -908,6 +937,7 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "initialWeights") {
+                        delete m_initialWeights;
                         if (splitted.at(0) == "automatize") {
                             setInitialWeights(new Automatize(this));
                         } else if (splitted.at(0) == "randomuniform") {
@@ -930,6 +960,7 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "initialState") {
+                        delete m_initialState;
                         if (splitted.at(0) == "randomNormal") {
                             setInitialState(new RandomNormal(this));
                         } else if (splitted.at(0) == "randomUniform") {
@@ -942,6 +973,7 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "sampling") {
+                        delete m_metropolis;
                         if (splitted.at(0) == "importanceSampling") {
                             setMetropolis(new ImportanceSampling(this));
                         } else if (splitted.at(0) == "bruteForce") {
@@ -954,9 +986,16 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "waveFunction") {
-                        std::vector<class WaveFunction *> waveFunctionElements;
+                        for (int i=m_numberOfElements; i--;)
+                        {
+                            delete m_waveFunctionElements[i];
+                        }
+                        m_waveFunctionElements.clear();
+
+                        std::vector<WaveFunction *> waveFunctionElements;
                         if (splitted.at(0) == "VMC") {
-                            waveFunctionElements.push_back(new class Gaussian(this));
+                            m_waveFunctionElements.push_back(new class Gaussian(this));
+                            //waveFunctionElements.push_back(new class Gaussian(this));
                             waveFunctionElements.push_back(new class SlaterDeterminant(this));
                             waveFunctionElements.push_back(new class PadeJastrow(this));
                         } else if (splitted.at(0) == "RBM") {
@@ -1011,6 +1050,7 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "interactionStyle") {
+                        delete m_interactionStyle;
                         if (splitted.at(0) == "noInteraction") {
                             setInteractionStyle(new class NoInteraction(this));
                         } else if (splitted.at(0) == "coulomb") {
@@ -1023,6 +1063,7 @@ void System::parser(const std::string configFile)
                             MPI_Abort(MPI_COMM_WORLD, 143);
                         }
                     } else if (key == "rng") {
+                        delete m_randomNumberGenerator;
                         if (splitted.at(0) == "MersenneTwister") {
                             setRandomNumberGenerator(new class MersenneTwister());
                         } else {
@@ -1053,12 +1094,15 @@ void System::parser(const std::string configFile)
     m_degreesOfFreedom = m_numberOfParticles * m_numberOfDimensions;
 }
 
+
+/* ----------------------------------------------------------------------------
+  Map a wave function abbreviation to the actual wave function elements
+---------------------------------------------------------------------------- */
+
 void System::searchShortning(const std::vector<std::string> labels,
                              const std::string newLabel,
                              std::string &allLabels)
 {
-    /* Search if a shortning of the specified wave function element
-     * configuration exist, and eventually label it as the shortning. */
     if (labels.size() == 1) {
         if (allLabels == "_" + labels.at(0)) {
             allLabels = newLabel;
@@ -1106,9 +1150,13 @@ void System::searchShortning(const std::vector<std::string> labels,
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  An overview of the possible trial wave function abbreviations
+---------------------------------------------------------------------------- */
+
 void System::collectAllLabels()
 {
-    /* Possible shortnings. */
     m_trialWaveFunction = "";
     for (auto &i : m_waveFunctionElements) {
         m_trialWaveFunction += "_";
@@ -1233,4 +1281,24 @@ void System::collectAllLabels()
     testBVMC.push_back("Gaussian");
     testBVMC.push_back("hard-core Jastrow");
     searchShortning(testBVMC, "BVMC", m_trialWaveFunction);
+}
+
+System::~System()
+{
+    // free memory
+    delete m_basis;
+    delete m_initialState;
+    delete m_initialWeights;
+    delete m_sampler;
+    delete m_optimization;
+    delete m_randomNumberGenerator;
+    delete m_interactionStyle;
+    for (int i=m_numberOfElements; i--;)
+    {
+        delete m_waveFunctionElements[i];
+    }
+    for (unsigned int i=m_layers.size(); i--;)
+    {
+        delete m_layers[i];
+    }
 }
