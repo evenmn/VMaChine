@@ -5,20 +5,20 @@ class Dense : public Layer
 {
 public:
     Dense(class System *system, int numberOfUnits, class Activation *activation);
-    int getNumberOfUnits() { return m_numberOfUnits; }
-    Eigen::VectorXd getA() { return m_a; }
-    Eigen::VectorXd getDA() { return m_da; }
-    Eigen::VectorXd getDDA() { return m_dda; }
-    Eigen::MatrixXd getWeights() { return m_W; }
-    class Activation *getActivation() { return m_activation; }
-    void initialize(int numberOfUnitsInPreviousLayer);
-    Eigen::VectorXd evaluate(Eigen::VectorXd a0);
-    Eigen::VectorXd activate();
-    Eigen::VectorXd activateDer();
-    Eigen::VectorXd activateSecDer();
-    Eigen::VectorXd calculateDelta(Eigen::VectorXd delta1);
-    void updateWeights(Eigen::MatrixXd m_WNew);
-    Vector2l getWeightDim();
+    int getNumberOfUnits() override { return m_numberOfUnits; }
+    Eigen::VectorXd getA() override { return m_a; }
+    Eigen::VectorXd getDA() override { return m_da; }
+    Eigen::VectorXd getDDA() override { return m_dda; }
+    Eigen::MatrixXd getWeights() override { return m_W; }
+    class Activation *getActivation() override { return m_activation; }
+    void initialize(int numberOfUnitsInPreviousLayer) override;
+    Eigen::VectorXd evaluate(Eigen::VectorXd a0) override;
+    Eigen::VectorXd activate() override;
+    Eigen::VectorXd activateDer() override;
+    Eigen::VectorXd activateSecDer() override;
+    Eigen::VectorXd calculateDelta(Eigen::VectorXd delta1) override;
+    void updateWeights(Eigen::MatrixXd m_WNew) override;
+    Vector2l getWeightDim() override;
     Eigen::MatrixXd calculateParameterGradient();
 
 private:
