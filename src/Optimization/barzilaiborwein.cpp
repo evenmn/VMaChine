@@ -16,6 +16,10 @@ BarzilaiBorwein::BarzilaiBorwein(System* system) :
     m_parameters                = m_system->getInitialWeights()->getParameters();
     m_gradients                 = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
     m_oldParameters             = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
+
+    m_omega = m_omega_sqrd = 0.;
+    m_step = 0;
+    m_numberOfBatches = 1;
 }
 
 Eigen::MatrixXd BarzilaiBorwein::updateParameters() {

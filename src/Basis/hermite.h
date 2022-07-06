@@ -8,19 +8,19 @@ public:
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 
-    void initialize();
-    void setParameters(Eigen::VectorXd parameters);
+    void initialize() override;
+    void setParameters(Eigen::VectorXd parameters) override;
 
-    double evaluate(double x, int n);
-    double evaluateDerivative(double x, int n);
-    double evaluateSecondDerivative(double x, int n);
+    double evaluate(double x, int n) override;
+    double evaluateDerivative(double x, int n) override;
+    double evaluateSecondDerivative(double x, int n) override;
 
-    double basisElement(const int n, Eigen::VectorXd positions);
-    double basisElementDer(const int n, const int i, Eigen::VectorXd positions);
-    double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions);
-    double basisElementPar(const int n, Eigen::VectorXd position);
+    double basisElement(const int n, Eigen::VectorXd positions) override;
+    double basisElementDer(const int n, const int i, Eigen::VectorXd positions) override;
+    double basisElementSecDer(const int n, const int i, Eigen::VectorXd positions) override;
+    double basisElementPar(const int n, Eigen::VectorXd position) override;
 
-    std::string getLabel() { return m_label; }
+    std::string getLabel() override { return m_label; }
 
 private:
     double m_omega = 1;

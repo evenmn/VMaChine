@@ -885,8 +885,8 @@ void System::parser(const std::string configFile)
                         delete m_basis;
                         if (splitted.at(0) == "hermite") {
                             setBasis(new Hermite(this));
-                        } else if (splitted.at(0) == "hermiteExpansion") {
-                            setBasis(new HermiteExpansion(this));
+                        //} else if (splitted.at(0) == "hermiteExpansion") {
+                        //    setBasis(new HermiteExpansion(this));
                         } else if (splitted.at(0) == "hydrogenOrbital") {
                             setBasis(new HydrogenOrbital(this));
                         } else {

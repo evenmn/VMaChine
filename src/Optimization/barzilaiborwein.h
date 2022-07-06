@@ -9,10 +9,8 @@ public:
     Eigen::MatrixXd updateParameters();
 
 private:
-    int    m_step = 0;
-    int    m_numberOfBatches = 1;
-    double m_omega = 0;
-    double m_omega_sqrd = 0;
+    int m_step, m_numberOfBatches, m_numberOfFreeDimensions;
+    double m_omega, m_omega_sqrd;
     Eigen::MatrixXd m_oldParameters;
     Eigen::MatrixXd m_parameters;
     Eigen::MatrixXd m_oldGradients;
