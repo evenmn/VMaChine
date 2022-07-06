@@ -5,11 +5,11 @@ class NoInteraction : public Interaction
 {
 public:
     NoInteraction(System *system);
-    int getGlobalArrayNeed() { return m_globalArrayNeed; }
-    std::string getLabel() { return m_label; }
+    int getGlobalArrayNeed() override { return m_globalArrayNeed; }
+    std::string getLabel() override { return m_label; }
 
-    void initialize();
-    double getInteractionEnergy();
+    void initialize() override;
+    double getInteractionEnergy() override;
 
 private:
     int m_globalArrayNeed = 0;
