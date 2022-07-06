@@ -3,6 +3,7 @@ import vmc
 
 
 rng = vmc.MersenneTwister()
+#rng.set_seed(1)
 
 print(rng)
 print(rng.next_int(10))

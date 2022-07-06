@@ -85,9 +85,9 @@ set(SOURCES
     src/Optimization/gradientdescent.cpp
     src/Basis/basis.cpp
     src/Basis/hermite.cpp
-    src/Basis/hartreefock.cpp
+    #src/Basis/hartreefock.cpp
     src/Basis/hydrogenorbital.cpp
-    src/Basis/hermiteexpansion.cpp
+    #src/Basis/hermiteexpansion.cpp
     src/WaveFunctions/hydrogenlike.cpp
     src/Optimization/sgd.cpp
     src/Optimization/asgd.cpp

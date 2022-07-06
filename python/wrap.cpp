@@ -35,6 +35,10 @@ PYBIND11_MODULE(vmc, m) {
         .def(py::init<>(),
             "Mersenne-Twister constructor"
         )
+        .def("set_seed", &MersenneTwister::setSeed,
+            "Set seed",
+            py::arg("seed")
+        )
         .def("next_int", &MersenneTwister::nextInt,
             "Get next integer in the sequence",
             py::arg("upper")
