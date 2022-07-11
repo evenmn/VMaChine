@@ -14,6 +14,10 @@ on 4 CPUs (might be any number).
 
 ## What's new?
 
+#### Update 2022-07-11
+- Added better comments
+- Splitted up system.cpp in several files to increase readability
+
 #### Update 2021-01-01
 - An interaction class is added. The old style "interaction: true" is now superseded by "interactionStyle: coulomb".
 
