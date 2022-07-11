@@ -3,10 +3,12 @@
 using std::cout;
 using std::endl;
 
+/* ----------------------------------------------------------------------------
+  Sampler constructor. Initialize everything that is needed in class.
+---------------------------------------------------------------------------- */
+
 Sampler::Sampler(System *system)
 {
-    /* Constructor.
-     * Initialize everything that is needed in class Sampler. */
     m_system = system;
     m_numberOfProcesses = m_system->getNumberOfProcesses();
     m_numberOfParticles = m_system->getNumberOfParticles();
@@ -42,9 +44,13 @@ Sampler::Sampler(System *system)
     m_particlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
 }
 
+
+/* ----------------------------------------------------------------------------
+  Sample particles
+---------------------------------------------------------------------------- */
+
 void Sampler::sample(const bool acceptedStep, const int stepNumber)
 {
-    /* Sample particles. */
     if (stepNumber == m_equilibriationSteps) {
         m_acceptence = 0;
         m_cumulativeKineticEnergy = 0;
@@ -83,20 +89,27 @@ void Sampler::sample(const bool acceptedStep, const int stepNumber)
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Set number of cycles for each iteration
+---------------------------------------------------------------------------- */
+
 void Sampler::setNumberOfSteps(int numberOfStepsWOEqui,
                                int totalNumberOfStepsWOEqui,
                                int totalNumberOfStepsWEqui)
 {
-    /* Set number of step for each iterations. */
     m_stepsWOEqui = numberOfStepsWOEqui;
     m_totalStepsWOEqui = totalNumberOfStepsWOEqui;
     m_totalStepsWEqui = totalNumberOfStepsWEqui;
     m_numberOfStepsPerBatch = int(m_totalStepsWOEqui / m_numberOfBatches);
 }
 
+
+/* ----------------------------------------------------------------------------
+  Sum the expectation values from all processes
+---------------------------------------------------------------------------- */
 void Sampler::computeTotals()
 {
-    /* Sum the expectation values from all processes. */
     int parameterSlots = int(m_numberOfElements * m_maxParameters);
     m_totalCumulativeGradients = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
     m_totalCumulativeGradientsE = Eigen::MatrixXd::Zero(m_numberOfElements, m_maxParameters);
@@ -173,9 +186,13 @@ void Sampler::computeTotals()
                MPI_COMM_WORLD);
 }
 
+
+/* ----------------------------------------------------------------------------
+  Compute the average of values over all processes
+---------------------------------------------------------------------------- */
+
 void Sampler::computeAverages()
 {
-    /* Compute the average of values over all processes. */
     m_averageKineticEnergy = m_totalCumulativeKineticEnergy / m_totalStepsWOEqui;
     m_averageExternalEnergy = m_totalCumulativeExternalEnergy / m_totalStepsWOEqui;
     m_averageInteractionEnergy = m_totalCumulativeInteractionEnergy / m_totalStepsWOEqui;
@@ -208,9 +225,12 @@ void Sampler::computeAverages()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print output to the terminal for an ordinary iteration
+---------------------------------------------------------------------------- */
 void Sampler::printOutputToTerminal(const int maxIter, const double time)
 {
-    /* Print output to terminal for an ordinary iteration. */
     m_iter += 1;
     //cout << endl;
     cout << std::fixed;
@@ -255,9 +275,13 @@ void Sampler::printOutputToTerminal(const int maxIter, const double time)
     //cout << endl;
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print output to terminal for final iteration
+---------------------------------------------------------------------------- */
+
 void Sampler::printFinalOutputToTerminal(std::chrono::system_clock::time_point start)
 {
-    /* Print output to terminal for final iteration. */
     cout << endl;
     cout << std::fixed;
     cout << std::setprecision(10);
@@ -285,11 +309,14 @@ void Sampler::printFinalOutputToTerminal(std::chrono::system_clock::time_point s
          << "Elapsed time: " << elapsed_seconds.count() << "s\n";
 }
 
+
+/* ----------------------------------------------------------------------------
+  Perform blocking, based on the method and code implemented by Marius Jonsson.
+  Please see github.com/computative
+---------------------------------------------------------------------------- */
+
 void Sampler::doResampling()
 {
-    /* Perform blocking, based on the code
-     * implemented by Marius Jonsson. See
-     * github.com/computative. */
     if (m_printInstantEnergyToFile) {
         appendInstantFiles(".dat");
         appendInstantFiles("_kin.dat");
@@ -371,10 +398,14 @@ void Sampler::doResampling()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Append the instant file from each process to a total instant file. To be used
+  for blocking
+---------------------------------------------------------------------------- */
+
 void Sampler::appendInstantFiles(const std::string extension)
 {
-    /* Append the instant file from each process to a total instant file.
-     * To be used for blocking. */
     std::string outfileName = m_path + std::to_string(m_instantNumber) + "_"
                               + std::to_string(m_rank) + extension;
     std::ofstream outfile(outfileName.c_str(), std::ios::out | std::ios::app);
@@ -393,10 +424,14 @@ void Sampler::appendInstantFiles(const std::string extension)
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Open the generated files to store local energy, electron densirt, weights
+  and so on
+---------------------------------------------------------------------------- */
+
 void Sampler::openOutputFiles()
 {
-    /* Open the generated files to store local energy, electron
-     * density, weight etc.. */
     //if (m_rank == 0) {
     //    m_instantNumber = m_system->getRandomNumberGenerator()->nextInt(1e6);
     //}
@@ -448,10 +483,14 @@ void Sampler::openOutputFiles()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print total energy, kinetic energy, external potential and interaction energy
+  to files
+---------------------------------------------------------------------------- */
+
 void Sampler::printEnergyToFile()
 {
-    /* Print total energy, kinetic energy, external potential and
-     * interaction energy to files. */
     if (m_printEnergyToFile && m_rank == 0) {
         m_averageEnergyFile << m_averageEnergy << endl;
         m_averageKineticEnergyFile << m_averageKineticEnergy << endl;
@@ -460,9 +499,13 @@ void Sampler::printEnergyToFile()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print parameters to file
+---------------------------------------------------------------------------- */
+
 void Sampler::printParametersToFile()
 {
-    /* Print parameters to file. */
     if (m_printParametersToFile && m_rank == 0) {
         std::string parameterFileName = m_path + "weights.dat";
         m_parameterFile.open(parameterFileName);
@@ -471,9 +514,13 @@ void Sampler::printParametersToFile()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print radial one-body density to file
+---------------------------------------------------------------------------- */
+
 void Sampler::printOneBodyDensityToFile()
 {
-    /* Print radial one-body density to file. */
     if (m_computeOneBodyDensity) {
         m_totalParticlesPerBin = Eigen::VectorXi::Zero(m_numberOfBins);
         MPI_Reduce(m_particlesPerBin.data(),
@@ -489,9 +536,13 @@ void Sampler::printOneBodyDensityToFile()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print spatial one-body density to file
+---------------------------------------------------------------------------- */
+
 void Sampler::printOneBodyDensity2ToFile()
 {
-    /* Print spatial one-body density to file. */
     if (m_computeOneBodyDensity2) {
         m_totalDensityGrid = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
         MPI_Reduce(m_densityGrid.data(),
@@ -507,9 +558,13 @@ void Sampler::printOneBodyDensity2ToFile()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print radial two-body density to file
+----------------------------------------------------------------------------- */
+
 void Sampler::printTwoBodyDensityToFile()
 {
-    /* Print radial two-body density to file. */
     if (m_computeTwoBodyDensity) {
         m_totalParticlesPerBinPairwise = Eigen::MatrixXi::Zero(m_numberOfBins, m_numberOfBins);
         MPI_Reduce(m_particlesPerBinPairwise.data(),
@@ -525,9 +580,13 @@ void Sampler::printTwoBodyDensityToFile()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Close all output files after printing
+---------------------------------------------------------------------------- */
+
 void Sampler::closeOutputFiles()
 {
-    /* Close all output files after printing. */
     if (m_averageEnergyFile.is_open()) {
         m_averageEnergyFile.close();
     }
@@ -557,9 +616,13 @@ void Sampler::closeOutputFiles()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Print instant energies to file for blocking
+---------------------------------------------------------------------------- */
+
 void Sampler::printInstantValuesToFile()
 {
-    /* Print instant energies to file for blocking. */
     if (m_printInstantEnergyToFile) {
         m_instantEnergyFile << m_instantEnergy << endl;
         m_instantKineticEnergyFile << m_kineticEnergy << endl;
@@ -568,9 +631,13 @@ void Sampler::printInstantValuesToFile()
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Compute radial one-body density
+---------------------------------------------------------------------------- */
+
 void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
 {
-    /* Compute radial one-body density. */
     if (m_computeOneBodyDensity) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             if(radialVector(i_p) < m_maxRadius) {
@@ -583,9 +650,13 @@ void Sampler::computeOneBodyDensity(const Eigen::VectorXd radialVector)
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Compute spatial one-body density
+---------------------------------------------------------------------------- */
+
 void Sampler::computeOneBodyDensity2(const Eigen::VectorXd positions)
 {
-    /* Compute spatial one-body density. */
     if (m_computeOneBodyDensity2) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             Eigen::VectorXi indices = Eigen::VectorXi::Zero(m_numberOfDimensions);
@@ -600,9 +671,13 @@ void Sampler::computeOneBodyDensity2(const Eigen::VectorXd positions)
     }
 }
 
+
+/* ----------------------------------------------------------------------------
+  Compute radial two-body density
+---------------------------------------------------------------------------- */
+
 void Sampler::computeTwoBodyDensity(const Eigen::VectorXd radialVector)
 {
-    /* Compute radial two-body density. */
     if (m_computeTwoBodyDensity) {
         for (int i_p = 0; i_p < m_numberOfParticles; i_p++) {
             int bin_i = int(radialVector(i_p) / m_radialStep) + 1;
