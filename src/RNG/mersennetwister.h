@@ -1,16 +1,21 @@
 #pragma once
+#include <random>
+#include <Eigen/Dense>
+
 #include "rng.h"
 
 class MersenneTwister : public RandomNumberGenerator
 {
 public:
     MersenneTwister();
-    int nextInt(int upperLimit);
-    double nextDouble();
-    double nextGaussian(double mean, double variance);
-    std::string getLabel() { return m_label; }
+    void setSeed(int seed) override;
+    int nextInt(int upperLimit) override;
+    double nextDouble() override;
+    double nextGaussian(double mean, double variance) override;
+    std::string getLabel() override { return m_label; }
     Eigen::MatrixXd randomUniformMatrix(Eigen::Index row, Eigen::Index col);
     Eigen::MatrixXd randomNormalMatrix(Eigen::Index row, Eigen::Index col, double mean, double variance);
 private:
+    std::mt19937 generator;
     std::string m_label = "Mersenne-Twister";
 };

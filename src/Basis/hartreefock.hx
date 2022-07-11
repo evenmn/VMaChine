@@ -1,10 +1,10 @@
 #pragma once
 #include "basis.h"
 
-class Hermite : public Basis
+class HartreeFock : public Basis
 {
 public:
-    Hermite(System *system);
+    HartreeFock(System *system, Basis *basis);
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 
@@ -21,10 +21,17 @@ public:
     double basisElementPar(const int n, Eigen::VectorXd position) override;
 
     std::string getLabel() override { return m_label; }
+    std::string generateFileName();
+    void readCoefficientFile();
 
 private:
     double m_omega = 1;
     double m_omegaSqrt = 1;
+    long m_basisSize = 1;
+    std::string m_path = "Path is not given yet";
+    std::string m_label = "Hartree-Fock";
+
+    Eigen::MatrixXd m_coefficients;
     //Eigen::MatrixXi m_listOfStates;
-    std::string m_label = "Hermite";
+    class Basis *m_basis = nullptr;
 };

@@ -44,6 +44,10 @@ include_directories(
 set(SOURCES
     src/main.cpp
     src/system.cpp
+    src/parser.cpp
+    src/printinfo.cpp
+    src/userinput.cpp
+    src/elementoperation.cpp
     src/Activation/activation.cpp
     src/Activation/elu.cpp
     src/Activation/leakyrelu.cpp
@@ -85,9 +89,9 @@ set(SOURCES
     src/Optimization/gradientdescent.cpp
     src/Basis/basis.cpp
     src/Basis/hermite.cpp
-    src/Basis/hartreefock.cpp
+    #src/Basis/hartreefock.cpp
     src/Basis/hydrogenorbital.cpp
-    src/Basis/hermiteexpansion.cpp
+    #src/Basis/hermiteexpansion.cpp
     src/WaveFunctions/hydrogenlike.cpp
     src/Optimization/sgd.cpp
     src/Optimization/asgd.cpp

@@ -33,10 +33,10 @@
 #include "Hamiltonians/ellipticalharmonicoscillator.h"
 
 #include "Basis/basis.h"
-#include "Basis/hartreefock.h"
+//#include "Basis/hartreefock.h"
 #include "Basis/hermite.h"
-#include "Basis/hermiteexpansion.h"
-#include "Basis/hermitespin.h"
+//#include "Basis/hermiteexpansion.h"
+//#include "Basis/hermitespin.h"
 #include "Basis/hydrogenorbital.h"
 #include "Basis/none.h"
 

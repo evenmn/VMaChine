@@ -21,6 +21,12 @@ class System
      * information about the system. This includes particle
      * configurations, parameter values etc.. */
 public:
+    /* Constructor */
+    System();
+
+    /* Destructor */
+    ~System();
+
     /* Call this function from main.cpp to specify the number
      * of particles used in the simulation. */
     void setNumberOfParticles(const int numberOfParticles);
