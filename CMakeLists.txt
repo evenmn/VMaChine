@@ -44,6 +44,10 @@ include_directories(
 set(SOURCES
     src/main.cpp
     src/system.cpp
+    src/parser.cpp
+    src/printinfo.cpp
+    src/userinput.cpp
+    src/elementoperation.cpp
     src/Activation/activation.cpp
     src/Activation/elu.cpp
     src/Activation/leakyrelu.cpp
