@@ -1,10 +1,13 @@
+#include <fstream>
+#include <memory>
+
 #include "automatize.h"
 #include "../Optimization/optimization.h"
 #include "../system.h"
+#include "javier.h"
 #include "constant.h"
 #include "randomuniform.h"
 #include "randomnormal.h"
-#include <fstream>
 
 Automatize::Automatize(System *system)
     : InitialWeights(system)
@@ -79,7 +82,7 @@ void Automatize::setupInitialWeights()
     if (m_trialWaveFunction == "VMC") {
         m_method = std::make_unique<Constant> (m_system, 1.0);
     } else if (m_trialWaveFunction == "RBM") {
-        m_method = std::make_unique<RandomUniformWeights> (m_system, 0.2);
+        m_method = std::make_unique<Javier> (m_system);
     } else if (m_trialWaveFunction == "RBMSJ") {
         m_method = std::make_unique<RandomUniformWeights> (m_system, 0.2);
     } else if (m_trialWaveFunction == "RBMPJ") {
