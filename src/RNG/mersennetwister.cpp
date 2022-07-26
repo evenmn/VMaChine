@@ -60,15 +60,15 @@ int MersenneTwister::nextInt(int upperLimit)
    Returns a double between 0 and 1 drawn from a uniform distribution
 ---------------------------------------------------------------------------- */
 
-double MersenneTwister::nextDouble()
+double MersenneTwister::nextDouble(double low, double high)
 {
-    std::uniform_real_distribution<double> dis(0, 1);
+    std::uniform_real_distribution<double> dis(low, high);
     return dis(generator);
 }
 
-Eigen::MatrixXd MersenneTwister::randomUniformMatrix(Eigen::Index row, Eigen::Index col)
+Eigen::MatrixXd MersenneTwister::randomUniformMatrix(Eigen::Index row, Eigen::Index col, double low, double high)
 {
-    std::uniform_real_distribution<double> dis(0, 1);
+    std::uniform_real_distribution<double> dis(low, high);
     return Eigen::MatrixXd::Zero(row, col).unaryExpr([&](double /*dummy*/){return dis(generator);});
 }
 
