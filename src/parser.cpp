@@ -177,6 +177,12 @@ void System::parser(const std::string configFile)
                             } else {
                                 setInitialWeights(new Constant(this, 1.0));
                             }
+                        } else if (splitted.at(0) == "fromfile") {
+                            if (splitted.size() >= 2) {
+                                setInitialWeights(new FromFile(this, splitted.at(1)));
+                            } else {
+                                setInitialWeights(new FromFile(this));
+                            }
                         } else {
                             std::cout << std::endl;
                             std::cerr << "Initial parameter configuration '"
