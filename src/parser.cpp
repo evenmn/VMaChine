@@ -76,6 +76,8 @@ void System::parser(const std::string configFile)
                         m_totalSpin = std::stod(splitted.at(0));
                     } else if (key == "stepLength") {
                         m_stepLength = std::stod(splitted.at(0));
+                    } else if (key == "checkpointFreq") {
+                        m_checkpointFreq = std::stod(splitted.at(0));
                     } else if (key == "checkConvergence") {
                         std::istringstream(splitted.at(0)) >> std::boolalpha >> m_checkConvergence;
                     } else if (key == "applyAdaptiveSteps") {

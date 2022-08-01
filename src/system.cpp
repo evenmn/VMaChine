@@ -113,7 +113,9 @@ void System::runSimulation()
             m_sampler->computeAverages();
             m_parameters -= m_optimization->updateParameters();
         }
-        m_sampler->printParametersToFile();
+        if (m_iter % m_checkpointFreq == 0) { // checkpointing
+            m_sampler->printParametersToFile("weights_" + std::to_string(m_iter) + ".dat");
+        }
         m_sampler->printEnergyToFile();
         if (m_iter == m_numberOfNormalIterations + m_rangeOfAdaptiveSteps) {
             m_sampler->printOneBodyDensityToFile();

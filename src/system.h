@@ -270,6 +270,7 @@ private:
     int m_numberOfBins = 1000;
     int m_iter = 0;
     int m_args = 1;
+    int m_checkpointFreq = 100;
 
     int m_totalStepsWOEqui = int(pow(2,19));
     int m_totalStepsWEqui = int(pow(2,19));
