@@ -13,7 +13,6 @@ Welcome to VMaChine's documentation!
    installation
    hamiltonian
    wavefunction
-   initialize
    sampling
    optimization
    rng
