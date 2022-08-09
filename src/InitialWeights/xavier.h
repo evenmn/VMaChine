@@ -1,15 +1,15 @@
 #pragma once
 #include "initialweights.h"
 
-class Javier: public InitialWeights
+class Xavier: public InitialWeights
 {
 public:
-    Javier(System *system);
+    Xavier(System *system);
     std::string getLabel() { return m_label; }
     void setupInitialWeights();
 
     Eigen::MatrixXd getParameters();
 
 private:
-    std::string m_label = "javier";
+    std::string m_label = "Xavier";
 };
