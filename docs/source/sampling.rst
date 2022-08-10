@@ -21,6 +21,7 @@ The number of steps per iteration is set using:
 
 If doing blocking resampling, make sure that the number of steps is an integer power of 2.
 
+
 Burn-in
 --------
 
@@ -28,6 +29,6 @@ Since the initial particle configuration might be an unlikely state, it is norma
 
 .. code-block::
 
-   equilibration 0.01
+   equilibration: 0.01
 
 This fraction is then added to the original number of steps. For instance, if the number of steps is set to 10,000 and the equilibration fraction is 0.01 (1%), the total number of steps will be 10,100.

@@ -15,7 +15,11 @@ Welcome to VMaChine's documentation!
    wavefunction
    sampling
    optimization
+   convergence_check
+   resampling
+   outputs
    rng
+
 
 
 Indices and tables
