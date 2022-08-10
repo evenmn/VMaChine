@@ -18,6 +18,7 @@ Welcome to VMaChine's documentation!
    convergence_check
    resampling
    outputs
+   parallel
    rng
 
 
