@@ -24,4 +24,10 @@ If doing blocking resampling, make sure that the number of steps is an integer p
 Burn-in
 --------
 
-Since the initial particle configuration might be an unlikely state, it is normal to run equilibriation steps before estimating expectation values. This period is called the burn-in time.
+Since the initial particle configuration might be an unlikely state, it is normal to run equilibriation steps before estimating expectation values. This period is called the burn-in time. In the code, one can set the equilibriation fraction, which is the fraction of hte number of steps to be used for equilibration. Can be set by
+
+.. code-block::
+
+   equilibration 0.01
+
+This fraction is then added to the original number of steps. For instance, if the number of steps is set to 10,000 and the equilibration fraction is 0.01 (1%), the total number of steps will be 10,100.
