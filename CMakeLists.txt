@@ -73,6 +73,7 @@ set(SOURCES
     src/InitialWeights/randomnormal.cpp
     src/InitialWeights/automatize.cpp
     src/InitialWeights/xavier.cpp
+    src/InitialWeights/fromfile.cpp
     src/InitialWeights/customized.cpp
     src/Interaction/interaction.cpp
     src/Interaction/nointeraction.cpp
