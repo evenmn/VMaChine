@@ -27,8 +27,7 @@ author = 'Even Marius Nordhagen'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-]
+extensions = [ "breathe" ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -50,3 +49,22 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# Breathe Configuration
+breathe_projects = {"VMaChine": "../doxygen_out/xml/"}
+
+breathe_projects_source = {
+    "system": ("../../src", ["system.h"]),
+    "sampler": ("../../src", ["sampler.h"]),
+    "basis": ("../../src/Basis", ["basis.h", "hermite.h", "hydrogenorbital.h", "none.h"]),
+    "hamiltonians": ("../../src/Hamiltonians", ["hamiltonian.h", "atomicnucleus.h", "doublewell.h", "ellipticalharmonicoscillator.h", "harmonicoscillator.h"]),
+    "initialStates": ("../../src/InitialStates", ["initialstate.h", "randomuniform.h", "randomnormal.h"]),
+    "initialWeights": ("../../src/InitialWeights", ["initialweights.h", "constant.h", "customized.h", "fromfile.h", "automatize.h", "randomnormal.h", "randomuniform.h", "xavier.h"]),
+    "interaction": ("../../src/Interaction", ["interaction.h", "coulomb.h", "nointeraction.h"]),
+    "metropolis": ("../../src/Metropolis", ["metropolis.h", "bruteforce.h", "importancesampling.h"]),
+    "optimization": ("../../src/Optimization", ["optimization.h", "adam.h", "asgd.h", "barzilaiborwein.h", "gradientdescent.h", "sgd.h"]),
+    "rng": ("../../src/RNG", ["rng.h", "mersennetwister.h"]),
+    "wavefunctions": ("../../src/WaveFunctions", ["wavefunction.h", "gaussian.h", "hydrogenlike.h", "padejastrow.h", "rbmgaussian.h", "rbmproduct.h", "simplejastrow.h", "slaterdeterminant.h"]),
+}
+
+breathe_default_project = 'VMaChine'
