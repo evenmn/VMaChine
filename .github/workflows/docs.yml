@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: | 
           python3 -m pip install -r ./docs/requirements.txt
-          python3 -m pip install .
+          #python3 -m pip install .
 
       - name: Activate Doxygen
         uses: mattnotmitt/doxygen-action@v1.9.4
