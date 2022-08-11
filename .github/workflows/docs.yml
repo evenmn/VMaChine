@@ -40,8 +40,8 @@ jobs:
       - name: Activate Doxygen
         uses: mattnotmitt/doxygen-action@v1.9.4
         with:
-          working-directory: 'docs/'
-          doxyfile-path: 'docs/Doxyfile'
+          working-directory: './docs'
+          doxyfile-path: 'Doxyfile'
           
       - name: Build 
         run: |
