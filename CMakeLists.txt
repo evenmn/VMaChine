@@ -12,6 +12,10 @@ set(CMAKE_CXX_COMPILER mpicxx)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -o -DNDEBUG -std=c++14")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
+
+# Add the cmake folder so the FindSphinx module is found
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
 # Set default build configuration
 if( NOT CMAKE_BUILD_TYPE )
    SET(CMAKE_BUILD_TYPE Release)
@@ -134,6 +138,8 @@ if(armadillo)
   target_link_libraries(${PROJECT_EXECUTABLE} ${ARMADILLO_LIBRARIES})
 endif()
 
+# Docs
+#add_subdirectory("docs")
 
 # Add test executable file
 #add_executable(${TEST_EXECUTABLE} ${TESTSOURCES})
