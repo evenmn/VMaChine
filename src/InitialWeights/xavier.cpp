@@ -1,13 +1,13 @@
-#include "javier.h"
+#include "xavier.h"
 #include "../system.h"
 
-Javier::Javier(System *system)
+Xavier::Xavier(System *system)
     : InitialWeights(system)
 {
     m_system = system;
 }
 
-void Javier::setupInitialWeights()
+void Xavier::setupInitialWeights()
 {
     double low, high, degreesOfFreedom;
     m_numberOfElements = m_system->getNumberOfElements();
@@ -19,7 +19,7 @@ void Javier::setupInitialWeights()
     m_system->updateAllParameters(m_parameters);
 }
 
-Eigen::MatrixXd Javier::getParameters()
+Eigen::MatrixXd Xavier::getParameters()
 {
     return m_parameters;
 }
