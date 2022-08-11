@@ -9,17 +9,31 @@ Welcome to VMaChine's documentation!
 .. toctree::
    :maxdepth: 2
 
-   about
-   installation
-   hamiltonian
-   wavefunction
-   sampling
-   optimization
-   convergence_check
-   resampling
-   outputs
-   parallel
-   rng
+   tutorial/about
+   tutorial/installation
+   tutorial/hamiltonian
+   tutorial/wavefunction
+   tutorial/sampling
+   tutorial/optimization
+   tutorial/convergence_check
+   tutorial/resampling
+   tutorial/outputs
+   tutorial/parallel
+   tutorial/rng
+   api/system
+   api/sampler
+   api/basis
+   api/hamiltonian
+   api/initialStates
+   api/initialWeights
+   api/interaction
+   api/metropolis
+   api/optimization
+   api/rng
+   api/wavefunction
+
+VMaChine API reference
+======================
 
 
 

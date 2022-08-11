@@ -1,0 +1,5 @@
+Sampler
+======
+
+.. autodoxygenindex::
+   :project: sampler

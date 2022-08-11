@@ -1,0 +1,5 @@
+Optimization
+============
+
+.. autodoxygenindex::
+   :project: optimization
