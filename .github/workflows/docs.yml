@@ -37,13 +37,11 @@ jobs:
           python3 -m pip install -r ./docs/requirements.txt
           #python3 -m pip install .
 
-      - name: Activate Doxygen
+      - name: Build with Doxygen
         uses: mattnotmitt/doxygen-action@v1.9.4
         with:
           working-directory: './docs'
           doxyfile-path: 'Doxyfile'
-          
-      - name: Build 
         run: |
           cd docs && make html
           
