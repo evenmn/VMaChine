@@ -1,5 +1,5 @@
 # VMaChine
-VMaChine is a general variational Monte Carlo (VMC) solver written in object-oriented C++. It was implemented with focus on quantum dot systems, and standard trial wave functions (Hermite functions) are implemented. However, we primary aim of examining trial wave functions where a less amount of physical intuition is required. Therefore, several trial wave functions based on neural networks and machine learning are also included, hence VMaChine. The code is also largely parallelizable and is made to be fast.
+VMaChine is a general variational Monte Carlo (VMC) solver written in object-oriented C++. It was implemented with focus on quantum dot systems, and standard trial wave functions (Hermite functions) are implemented. However, we primary aim of examining trial wave functions where a less amount of physical intuition is required. Therefore, several trial wave functions based on neural networks and machine learning are also included, hence VMaChine. The code is largely parallelizable and is well-suited for large clusters.
 
 ## Basic usage
 After compiling the code, a configuration file ```input.in``` is run by
@@ -13,6 +13,10 @@ mpirun -n 4 vmachine input.in
 on 4 CPUs (might be any number).
 
 ## What's new?
+
+#### Update 2022-08-01
+- Added Javier initialisation class
+- Now supporting weight initialisation from file
 
 #### Update 2022-07-11
 - Added better comments
