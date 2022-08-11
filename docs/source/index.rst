@@ -8,6 +8,7 @@ Welcome to VMaChine's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :includehidden:
 
    tutorial/about
    tutorial/installation
@@ -20,6 +21,13 @@ Welcome to VMaChine's documentation!
    tutorial/outputs
    tutorial/parallel
    tutorial/rng
+
+
+VMaChine API reference
+======================
+
+.. toctree::
+   :hidden:
    api/system
    api/sampler
    api/basis
@@ -31,10 +39,6 @@ Welcome to VMaChine's documentation!
    api/optimization
    api/rng
    api/wavefunction
-
-VMaChine API reference
-======================
-
 
 
 Indices and tables
