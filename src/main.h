@@ -50,6 +50,7 @@
 #include "InitialWeights/randomuniform.h"
 #include "InitialWeights/randomnormal.h"
 #include "InitialWeights/customized.h"
+#include "InitialWeights/fromfile.h"
 
 #include "Interaction/interaction.h"
 #include "Interaction/nointeraction.h"

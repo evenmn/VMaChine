@@ -291,6 +291,9 @@ void System::parser(const std::string configFile)
                         delete m_randomNumberGenerator;
                         if (splitted.at(0) == "MersenneTwister") {
                             setRandomNumberGenerator(new class MersenneTwister());
+                            if (splitted.size() > 1) {
+                                m_randomNumberGenerator.setSeed(std::stoi(splitted.at(1)));
+                            }
                         } else {
                             std::cout << std::endl;
                             std::cerr << "Random number generator '"
