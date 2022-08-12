@@ -504,10 +504,10 @@ void Sampler::printEnergyToFile()
   Print parameters to file
 ---------------------------------------------------------------------------- */
 
-void Sampler::printParametersToFile()
+void Sampler::printParametersToFile(const std::string &filename)
 {
     if (m_printParametersToFile && m_rank == 0) {
-        std::string parameterFileName = m_path + "weights.dat";
+        std::string parameterFileName = m_path + filename;
         m_parameterFile.open(parameterFileName);
         m_parameterFile << m_system->getWeights() << endl;
         m_parameterFile.close();

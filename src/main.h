@@ -51,6 +51,7 @@
 #include "InitialWeights/randomnormal.h"
 #include "InitialWeights/customized.h"
 #include "InitialWeights/fromfile.h"
+#include "InitialWeights/xavier.h"
 
 #include "Interaction/interaction.h"
 #include "Interaction/nointeraction.h"

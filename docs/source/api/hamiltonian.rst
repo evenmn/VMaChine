@@ -1,0 +1,5 @@
+Hamiltonian
+============
+
+.. autodoxygenindex::
+   :project: hamiltonians

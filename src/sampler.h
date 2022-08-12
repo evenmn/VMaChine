@@ -26,7 +26,7 @@ public:
     void printFinalOutputToTerminal(std::chrono::system_clock::time_point start);
     void openOutputFiles();
     void printEnergyToFile();
-    void printParametersToFile();
+    void printParametersToFile(const std::string &filename = "weights.dat");
     void printOneBodyDensityToFile();
     void printOneBodyDensity2ToFile();
     void printTwoBodyDensityToFile();

@@ -1,0 +1,9 @@
+sphinx
+sphinx_rtd_theme
+recommonmark
+sphinx.argparse
+pyqt5
+pyqtwebengine
+breathe
+flex
+bison

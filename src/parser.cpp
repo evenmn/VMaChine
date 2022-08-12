@@ -76,6 +76,8 @@ void System::parser(const std::string configFile)
                         m_totalSpin = std::stod(splitted.at(0));
                     } else if (key == "stepLength") {
                         m_stepLength = std::stod(splitted.at(0));
+                    } else if (key == "checkpointFreq") {
+                        m_checkpointFreq = std::stod(splitted.at(0));
                     } else if (key == "checkConvergence") {
                         std::istringstream(splitted.at(0)) >> std::boolalpha >> m_checkConvergence;
                     } else if (key == "applyAdaptiveSteps") {
@@ -176,6 +178,12 @@ void System::parser(const std::string configFile)
                                 setInitialWeights(new Constant(this, std::stod(splitted.at(1))));
                             } else {
                                 setInitialWeights(new Constant(this, 1.0));
+                            }
+                        } else if (splitted.at(0) == "fromfile") {
+                            if (splitted.size() >= 2) {
+                                setInitialWeights(new FromFile(this, splitted.at(1)));
+                            } else {
+                                setInitialWeights(new FromFile(this));
                             }
                         } else {
                             std::cout << std::endl;

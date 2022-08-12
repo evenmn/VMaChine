@@ -1,10 +1,11 @@
 #include <fstream>
 #include <memory>
+#include <Eigen/Dense>
 
 #include "automatize.h"
 #include "../Optimization/optimization.h"
 #include "../system.h"
-#include "javier.h"
+#include "xavier.h"
 #include "constant.h"
 #include "randomuniform.h"
 #include "randomnormal.h"
@@ -82,11 +83,11 @@ void Automatize::setupInitialWeights()
     if (m_trialWaveFunction == "VMC") {
         m_method = std::make_unique<Constant> (m_system, 1.0);
     } else if (m_trialWaveFunction == "RBM") {
-        m_method = std::make_unique<Javier> (m_system);
+        m_method = std::make_unique<Xavier> (m_system);
     } else if (m_trialWaveFunction == "RBMSJ") {
-        m_method = std::make_unique<RandomUniformWeights> (m_system, 0.2);
+        m_method = std::make_unique<Javier> (m_system);
     } else if (m_trialWaveFunction == "RBMPJ") {
-        m_method = std::make_unique<Constant> (m_system, 0.0);
+        m_method = std::make_unique<Javier> (m_system);
     } else if (m_trialWaveFunction == "PRBM") {
         m_method = std::make_unique<Constant> (m_system, 0.0);
     } else if (m_trialWaveFunction == "SSJ") {
