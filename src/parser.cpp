@@ -300,7 +300,7 @@ void System::parser(const std::string configFile)
                         if (splitted.at(0) == "MersenneTwister") {
                             setRandomNumberGenerator(new class MersenneTwister());
                             if (splitted.size() > 1) {
-                                m_randomNumberGenerator.setSeed(std::stoi(splitted.at(1)));
+                                m_randomNumberGenerator->setSeed(std::stoi(splitted.at(1)));
                             }
                         } else {
                             std::cout << std::endl;
