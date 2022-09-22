@@ -1,10 +1,11 @@
 #pragma once
+
 #include "basis.h"
 
 class Hermite : public Basis
 {
 public:
-    Hermite(System *system);
+    Hermite(System *system, bool = true);
     //void numberOfOrbitals();
     //void generateListOfStates(int orbitals);
 
@@ -23,8 +24,10 @@ public:
     std::string getLabel() override { return m_label; }
 
 private:
+    bool m_hardcoded;
     double m_omega = 1;
     double m_omegaSqrt = 1;
     //Eigen::MatrixXi m_listOfStates;
     std::string m_label = "Hermite";
+    Eigen::VectorXd m_prefactors;
 };

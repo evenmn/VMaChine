@@ -52,6 +52,7 @@
 #include "InitialWeights/customized.h"
 #include "InitialWeights/fromfile.h"
 #include "InitialWeights/xavier.h"
+#include "InitialWeights/fromfile.h"
 
 #include "Interaction/interaction.h"
 #include "Interaction/nointeraction.h"

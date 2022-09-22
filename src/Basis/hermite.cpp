@@ -3,10 +3,20 @@
 #include "../system.h"
 #include <iostream>
 
-Hermite::Hermite(System *system)
+Hermite::Hermite(System *system, bool hardcoded)
     : Basis(system)
 {
     /* Constructor for the Hermite class. */
+    m_hardcoded = hardcoded;
+
+    if (m_hardcoded) {
+        int max_n = 18;
+        m_prefactors = Eigen::VectorXd::Zero(max_n);
+        for (int n=0; n<max_n; n++) {
+            m_prefactors(n) = 1.0 / sqrt(pow(2, n) * factorial(n));
+        }
+        m_prefactors *= pow((m_omega / M_PI), 0.25);
+    }
 }
 
 void Hermite::initialize()
@@ -324,49 +334,49 @@ double DDHH17(const double x)
 double Hermite::evaluate(double x, int n)
 {
     /* Hermite polynomial of n'th degree. */
-    bool hardcoded = true;
+    //bool hardcoded = true;
 
-    double prefactor = 1.0 / sqrt(pow(2, n) * factorial(n));
-    prefactor *= pow((m_omega / M_PI), 1 / 4.);
+    //double m_prefactors(n) = 1.0 / sqrt(pow(2, n) * factorial(n));
+    //prefactor *= pow((m_omega / M_PI), 1 / 4.);
 
-    if (hardcoded) {
+    if (m_hardcoded) {
         switch (n) {
         case 0:
-            return prefactor * HH0(x);
+            return m_prefactors(n) * HH0(x);
         case 1:
-            return prefactor * HH1(x);
+            return m_prefactors(n) * HH1(x);
         case 2:
-            return prefactor * HH2(x);
+            return m_prefactors(n) * HH2(x);
         case 3:
-            return prefactor * HH3(x);
+            return m_prefactors(n) * HH3(x);
         case 4:
-            return prefactor * HH4(x);
+            return m_prefactors(n) * HH4(x);
         case 5:
-            return prefactor * HH5(x);
+            return m_prefactors(n) * HH5(x);
         case 6:
-            return prefactor * HH6(x);
+            return m_prefactors(n) * HH6(x);
         case 7:
-            return prefactor * HH7(x);
+            return m_prefactors(n) * HH7(x);
         case 8:
-            return prefactor * HH8(x);
+            return m_prefactors(n) * HH8(x);
         case 9:
-            return prefactor * HH9(x);
+            return m_prefactors(n) * HH9(x);
         case 10:
-            return prefactor * HH10(x);
+            return m_prefactors(n) * HH10(x);
         case 11:
-            return prefactor * HH11(x);
+            return m_prefactors(n) * HH11(x);
         case 12:
-            return prefactor * HH12(x);
+            return m_prefactors(n) * HH12(x);
         case 13:
-            return prefactor * HH13(x);
+            return m_prefactors(n) * HH13(x);
         case 14:
-            return prefactor * HH14(x);
+            return m_prefactors(n) * HH14(x);
         case 15:
-            return prefactor * HH15(x);
+            return m_prefactors(n) * HH15(x);
         case 16:
-            return prefactor * HH16(x);
+            return m_prefactors(n) * HH16(x);
         case 17:
-            return prefactor * HH17(x);
+            return m_prefactors(n) * HH17(x);
         default:
             return 0;
 
@@ -378,9 +388,9 @@ double Hermite::evaluate(double x, int n)
         if (n == 0) {
             return 1;
         } else if (n == 1) {
-            return 2 * prefactor * m_omegaSqrt * x;
+            return 2.0 / sqrt(pow(2, n) * factorial(n)) * pow((m_omega / M_PI), 0.25) * m_omegaSqrt * x;
         } else {
-            return 2 * prefactor
+            return 2.0 / sqrt(pow(2, n) * factorial(n)) * pow((m_omega / M_PI), 0.25) 
                    * (m_omegaSqrt * x * evaluate(x, n - 1) - (n - 1) * evaluate(x, n - 2));
         }
     }
@@ -389,49 +399,49 @@ double Hermite::evaluate(double x, int n)
 double Hermite::evaluateDerivative(double x, int n)
 {
     /* First derivative of Hermite polynomial of n'th degree. */
-    bool hardcoded = true;
+    //bool hardcoded = true;
 
-    double prefactor = 1.0 / sqrt(pow(2, n) * factorial(n));
-    prefactor *= pow((m_omega / M_PI), 1 / 4.);
+    //double m_prefactors(n) = 1.0 / sqrt(pow(2, n) * factorial(n));
+    //m_prefactors(n) *= pow((m_omega / M_PI), 1 / 4.);
 
-    if (hardcoded || n < 18) {
+    if (m_hardcoded || n < 18) {
         switch (n) {
         case 0:
-            return prefactor * DHH0(x);
+            return m_prefactors(n) * DHH0(x);
         case 1:
-            return prefactor * DHH1(x);
+            return m_prefactors(n) * DHH1(x);
         case 2:
-            return prefactor * DHH2(x);
+            return m_prefactors(n) * DHH2(x);
         case 3:
-            return prefactor * DHH3(x);
+            return m_prefactors(n) * DHH3(x);
         case 4:
-            return prefactor * DHH4(x);
+            return m_prefactors(n) * DHH4(x);
         case 5:
-            return prefactor * DHH5(x);
+            return m_prefactors(n) * DHH5(x);
         case 6:
-            return prefactor * DHH6(x);
+            return m_prefactors(n) * DHH6(x);
         case 7:
-            return prefactor * DHH7(x);
+            return m_prefactors(n) * DHH7(x);
         case 8:
-            return prefactor * DHH8(x);
+            return m_prefactors(n) * DHH8(x);
         case 9:
-            return prefactor * DHH9(x);
+            return m_prefactors(n) * DHH9(x);
         case 10:
-            return prefactor * DHH10(x);
+            return m_prefactors(n) * DHH10(x);
         case 11:
-            return prefactor * DHH11(x);
+            return m_prefactors(n) * DHH11(x);
         case 12:
-            return prefactor * DHH12(x);
+            return m_prefactors(n) * DHH12(x);
         case 13:
-            return prefactor * DHH13(x);
+            return m_prefactors(n) * DHH13(x);
         case 14:
-            return prefactor * DHH14(x);
+            return m_prefactors(n) * DHH14(x);
         case 15:
-            return prefactor * DHH15(x);
+            return m_prefactors(n) * DHH15(x);
         case 16:
-            return prefactor * DHH16(x);
+            return m_prefactors(n) * DHH16(x);
         case 17:
-            return prefactor * DHH17(x);
+            return m_prefactors(n) * DHH17(x);
         default:
             return 0;
         }
@@ -447,49 +457,44 @@ double Hermite::evaluateDerivative(double x, int n)
 double Hermite::evaluateSecondDerivative(const double x, const int n)
 {
     /* Second derivative of Hermite polynomial of n'th degree. */
-    bool hardcoded = true;
-
-    double prefactor = 1.0 / sqrt(pow(2, n) * factorial(n));
-    prefactor *= pow((m_omega / M_PI), 1 / 4.);
-
-    if (hardcoded || n < 18) {
+    if (m_hardcoded || n < 18) {
         switch (n) {
         case 0:
-            return prefactor * DDHH0(x);
+            return m_prefactors(n) * DDHH0(x);
         case 1:
-            return prefactor * DDHH1(x);
+            return m_prefactors(n) * DDHH1(x);
         case 2:
-            return prefactor * DDHH2(x);
+            return m_prefactors(n) * DDHH2(x);
         case 3:
-            return prefactor * DDHH3(x);
+            return m_prefactors(n) * DDHH3(x);
         case 4:
-            return prefactor * DDHH4(x);
+            return m_prefactors(n) * DDHH4(x);
         case 5:
-            return prefactor * DDHH5(x);
+            return m_prefactors(n) * DDHH5(x);
         case 6:
-            return prefactor * DDHH6(x);
+            return m_prefactors(n) * DDHH6(x);
         case 7:
-            return prefactor * DDHH7(x);
+            return m_prefactors(n) * DDHH7(x);
         case 8:
-            return prefactor * DDHH8(x);
+            return m_prefactors(n) * DDHH8(x);
         case 9:
-            return prefactor * DDHH9(x);
+            return m_prefactors(n) * DDHH9(x);
         case 10:
-            return prefactor * DDHH10(x);
+            return m_prefactors(n) * DDHH10(x);
         case 11:
-            return prefactor * DDHH11(x);
+            return m_prefactors(n) * DDHH11(x);
         case 12:
-            return prefactor * DDHH12(x);
+            return m_prefactors(n) * DDHH12(x);
         case 13:
-            return prefactor * DDHH13(x);
+            return m_prefactors(n) * DDHH13(x);
         case 14:
-            return prefactor * DDHH14(x);
+            return m_prefactors(n) * DDHH14(x);
         case 15:
-            return prefactor * DDHH15(x);
+            return m_prefactors(n) * DDHH15(x);
         case 16:
-            return prefactor * DDHH16(x);
+            return m_prefactors(n) * DDHH16(x);
         case 17:
-            return prefactor * DDHH17(x);
+            return m_prefactors(n) * DDHH17(x);
         default:
             return 0;
         }
