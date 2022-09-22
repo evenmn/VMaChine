@@ -15,7 +15,7 @@ on 4 CPUs (might be any number).
 ## What's new?
 
 #### Update 2022-08-01
-- Added Javier initialisation class
+- Added Xavier initialisation class
 - Now supporting weight initialisation from file
 
 #### Update 2022-07-11
