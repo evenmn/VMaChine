@@ -72,6 +72,8 @@ void System::parser(const std::string configFile)
                         setNumberOfMetropolisCycles(std::stoi(splitted.at(0)));
                     } else if (key == "numHiddenNodes") {
                         m_numberOfHiddenUnits = std::stoi(splitted.at(0));
+                    } else if (key == "sorting") {
+                        std::istringstream(splitted.at(0)) >> std::boolalpha >> m_sorting;
                     } else if (key == "totalSpin") {
                         m_totalSpin = std::stod(splitted.at(0));
                     } else if (key == "stepLength") {

@@ -15,6 +15,7 @@ void RBMProduct::setConstants(const int elementNumber)
     double sigma = 10 * m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
     m_sigmaQuad = m_sigmaSqrd * m_sigmaSqrd;
+    m_sorting = m_system->getSorting();
 }
 
 void RBMProduct::updateParameters(Eigen::MatrixXd parameters)
@@ -33,6 +34,8 @@ void RBMProduct::initializeArrays(const Eigen::VectorXd positions,
                                   const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
+    if (m_sorting) argsort(m_positions, m_sortidx);
+
     m_probabilityRatio = 1;
 
     m_n = Eigen::VectorXd::Zero(m_numberOfHiddenNodes);
@@ -46,6 +49,7 @@ void RBMProduct::updateArrays(const Eigen::VectorXd positions,
                               const int /*changedCoord*/)
 {
     m_positions = positions;
+    if (m_sorting) argsort(m_positions, m_sortidx);
     updateVectors();
     updateRatio();
 }
@@ -75,7 +79,12 @@ double RBMProduct::evaluateRatio()
 
 double RBMProduct::computeGradient(const int k)
 {
-    return double(m_W.row(k) * m_n) / m_sigmaSqrd;
+    if (m_sorting) {
+        return double(m_W.row(m_sortidx(k)) * m_n) / m_sigmaSqrd;
+    }
+    else {
+        return double(m_W.row(k) * m_n) / m_sigmaSqrd;
+    }
 }
 
 double RBMProduct::computeLaplacian()

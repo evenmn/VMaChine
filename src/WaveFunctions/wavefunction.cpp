@@ -1,3 +1,4 @@
+#include <numeric>
 #include "wavefunction.h"
 
 WaveFunction::WaveFunction(System *system)
@@ -31,5 +32,26 @@ Eigen::MatrixXd WaveFunction::stack(Eigen::VectorXd A, int n)
     }
     return stacked;
 }
+
+/* ----------------------------------------------------------------------------
+  Sort vector v and also return the mapping
+---------------------------------------------------------------------------- */
+
+void WaveFunction::argsort(Eigen::VectorXd &v, Eigen::VectorXi &map)
+{
+
+    // reset sorting map
+    map.resizeLike(v);
+    std::iota(map.data(), map.data() + map.size(), 0);
+
+    // sort v
+    std::sort(v.data(),v.data()+v.size());
+    
+    // sort map by value
+    std::sort(map.data(),
+              map.data() + map.size(),
+              [&](int i, int j){ return v(i) < v(j); });
+}
+
 
 WaveFunction::~WaveFunction() {}

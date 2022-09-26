@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cassert>
 #include <string>
+#include <vector>
 
 class WaveFunction
 {
@@ -43,6 +44,8 @@ protected:
     int m_numberOfParticles = 0;
     int m_numberOfDimensions = 0;
     int m_degreesOfFreedom = 0;
+
+    void argsort(Eigen::VectorXd &v, Eigen::VectorXi &map);
 
     class System *m_system = nullptr;
 };

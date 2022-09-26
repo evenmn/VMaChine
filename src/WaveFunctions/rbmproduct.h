@@ -29,6 +29,7 @@ public:
     void updateRatio();
 
 private:
+    bool m_sorting;
     int m_numberOfParameters = 1;
     int m_numberOfHiddenNodes = 1;
 
@@ -49,6 +50,7 @@ private:
     Eigen::VectorXd m_pOld;
     Eigen::VectorXd m_p;
     Eigen::VectorXd m_gradients;
+    Eigen::VectorXi m_sortidx;
 
     // Properties of the element (DO NOT TOUCH!)
     std::string m_label = "RBM-product";

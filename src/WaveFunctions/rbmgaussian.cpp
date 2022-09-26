@@ -13,6 +13,7 @@ void RBMGaussian::setConstants(const int elementNumber)
     m_omega = m_system->getFrequency();
     double sigma = m_system->getWidth();
     m_sigmaSqrd = sigma * sigma;
+    m_sorting = m_system->getSorting();
 }
 
 void RBMGaussian::updateParameters(const Eigen::MatrixXd parameters)
@@ -25,6 +26,7 @@ void RBMGaussian::initializeArrays(const Eigen::VectorXd positions,
                                    const Eigen::MatrixXd /*distanceMatrix*/)
 {
     m_positions = positions;
+    if (m_sorting) argsort(m_positions, m_sortidx);
     m_Xa = positions - m_a;
     m_probabilityRatio = 1;
 }
@@ -35,6 +37,9 @@ void RBMGaussian::updateArrays(const Eigen::VectorXd positions,
                                const int i)
 {
     m_positions = positions;
+    if (m_sorting) {
+        argsort(m_positions, m_sortidx);
+    }
     m_Xa = positions - m_a;
     double expDiff = m_XaOld(i) * m_XaOld(i) - m_Xa(i) * m_Xa(i);
     m_probabilityRatio = exp(expDiff / (2 * m_sigmaSqrd));
@@ -61,7 +66,12 @@ double RBMGaussian::evaluateRatio()
 
 double RBMGaussian::computeGradient(const int k)
 {
-    return -m_Xa(k) / m_sigmaSqrd;
+    if (m_sorting) {
+        return -m_Xa(m_sortidx(k)) / m_sigmaSqrd;
+    }
+    else {
+        return -m_Xa(k) / m_sigmaSqrd;
+    }
 }
 
 double RBMGaussian::computeLaplacian()
