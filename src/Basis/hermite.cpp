@@ -15,7 +15,7 @@ Hermite::Hermite(System *system, bool hardcoded)
         for (int n=0; n<max_n; n++) {
             m_prefactors(n) = 1.0 / sqrt(pow(2, n) * factorial(n));
         }
-        m_prefactors *= pow((m_omega / M_PI), 0.25);
+        //m_prefactors *= pow((m_omega / M_PI), 0.25);
     }
 }
 
@@ -388,9 +388,9 @@ double Hermite::evaluate(double x, int n)
         if (n == 0) {
             return 1;
         } else if (n == 1) {
-            return 2.0 / sqrt(pow(2, n) * factorial(n)) * pow((m_omega / M_PI), 0.25) * m_omegaSqrt * x;
+            return 2.0 / sqrt(pow(2, n) * factorial(n))  * m_omegaSqrt * x;
         } else {
-            return 2.0 / sqrt(pow(2, n) * factorial(n)) * pow((m_omega / M_PI), 0.25) 
+            return 2.0 / sqrt(pow(2, n) * factorial(n)) //* pow((m_omega / M_PI), 0.25) 
                    * (m_omegaSqrt * x * evaluate(x, n - 1) - (n - 1) * evaluate(x, n - 2));
         }
     }
