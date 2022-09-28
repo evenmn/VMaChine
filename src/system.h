@@ -192,6 +192,7 @@ public:
     double getEquilibrationFraction() { return m_equilibrationFraction; }
     double getFrequency() { return m_omega; }
     double getWidth() { return m_sigma; }
+    double getSorting() { return m_sorting; }
     double getLearningRate() { return m_eta; }
     double getStepLength() { return m_stepLength; }
     double getTotalSpin() { return m_totalSpin; }
@@ -306,6 +307,7 @@ private:
     bool m_calculateDistanceMatrix = false;
     bool m_calculateRadialVector = false;
     bool m_screening = false;
+    bool m_sorting = true;
 
     std::chrono::system_clock::time_point m_start;
 

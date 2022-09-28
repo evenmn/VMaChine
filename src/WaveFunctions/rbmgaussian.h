@@ -1,4 +1,5 @@
 #pragma once
+
 #include "wavefunction.h"
 
 class RBMGaussian : public WaveFunction
@@ -26,6 +27,7 @@ public:
     Eigen::VectorXd computeParameterGradient();
 
 private:
+    bool m_sorting;
     int m_numberOfParameters = 1;
     int m_globalArrayNeed = 0;
     int m_elementNumber = 0;
@@ -41,6 +43,7 @@ private:
     Eigen::VectorXd m_XaOld;
     Eigen::VectorXd m_a;
     Eigen::VectorXd m_gradients;
+    Eigen::VectorXi m_sortidx;
 
     std::string m_label = "RBM-Gaussian";
 };

@@ -31,6 +31,13 @@ This latter method will also include the Slater determinant. The number of hidde
 
    numHiddenNodes: 2
 
+Sorting of inputs is a common method to ensure that the artificial neural network is symmetric (such that the entire wave function becomes antisymmetric). Apply this by setting
+
+.. code-block::
+
+   sorting: true
+
+
 Slater determinant and basis set
 ----------------------------------
 
