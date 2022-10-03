@@ -71,13 +71,13 @@ void System::setNumberOfMetropolisCycles(const int steps)
     m_initialTotalStepsWOEqui = m_totalStepsWOEqui;
 
     // Calculate the number of equilibriation steps (needs to be unaffected by the number of processes)
-    m_equilibriationSteps = int(m_totalStepsWOEqui * m_equilibrationFraction);
-    m_totalEquilibriationSteps = int(m_totalStepsWOEqui * m_equilibrationFraction
-                                     * m_numberOfProcesses);
+    //m_burnInSteps = int(m_totalStepsWOEqui * m_equilibrationFraction);
+    m_totalBurnInSteps = m_burnInSteps * m_numberOfProcesses; //int(m_totalStepsWOEqui * m_equilibrationFraction
+                                     //* m_numberOfProcesses);
 
     // Calculate the number of steps included equilibriation
-    m_totalStepsWEqui = m_totalStepsWOEqui + m_totalEquilibriationSteps;
-    m_stepsWEqui = m_stepsWOEqui + m_equilibriationSteps;
+    m_totalStepsWEqui = m_totalStepsWOEqui + m_totalBurnInSteps;
+    m_stepsWEqui = m_stepsWOEqui + m_burnInSteps;
 }
 
 
@@ -120,10 +120,10 @@ void System::setStepLength(const double stepLength)
   Set equilibriation fraction (burn-in period)
 ---------------------------------------------------------------------------- */
 
-void System::setEquilibrationFraction(const double equilibrationFraction)
+void System::setBurnInSteps(const int burnInSteps)
 {
-    assert(equilibrationFraction >= 0);
-    m_equilibrationFraction = equilibrationFraction;
+    assert(burnInSteps >= 0);
+    m_burnInSteps = burnInSteps;
     setNumberOfMetropolisCycles(m_totalStepsWOEqui);
 }
 

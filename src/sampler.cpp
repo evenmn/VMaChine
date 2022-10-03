@@ -20,7 +20,7 @@ Sampler::Sampler(System *system)
     m_totalStepsWEqui = m_system->getTotalStepsWEqui();
     m_stepsWOEqui = m_system->getStepsWOEqui();
     m_initialTotalStepsWOEqui = m_system->getInitialTotalStepsWOEqui();
-    m_equilibriationSteps = m_system->getEquilibriationSteps();
+    m_burnInSteps = m_system->getBurnInSteps();
 
     m_omega = m_system->getFrequency();
     m_numberOfBatches = m_system->getOptimization()->getNumberOfBatches();
@@ -51,7 +51,7 @@ Sampler::Sampler(System *system)
 
 void Sampler::sample(const bool acceptedStep, const int stepNumber)
 {
-    if (stepNumber == m_equilibriationSteps) {
+    if (stepNumber == m_burnInSteps) {
         m_acceptence = 0;
         m_cumulativeKineticEnergy = 0;
         m_cumulativeExternalEnergy = 0;

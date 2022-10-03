@@ -53,7 +53,7 @@ private:
     int m_stepsWOEqui = 0;
     int m_totalStepsWOEqui = 0;
     int m_totalStepsWEqui = 0;
-    int m_equilibriationSteps = 0;
+    int m_burnInSteps = 0;
     int m_initialTotalStepsWOEqui = 0;
 
     int m_maxParameters = 0;

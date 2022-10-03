@@ -81,10 +81,10 @@ void System::printSystemInformation()
     std::cout << "==============================================" << std::endl;
     std::cout << "Max number of iterations: " << m_numberOfIterations << std::endl;
     std::cout << "Number of MC cycles:      " << m_totalStepsWOEqui << std::endl;
-    std::cout << "Number of burn-in cycles: " << m_equilibriationSteps << std::endl;
+    std::cout << "Number of burn-in cycles: " << m_burnInSteps << std::endl;
     std::cout << "Learning rate:            " << m_eta << std::endl;
     std::cout << "Step length:              " << m_stepLength << std::endl;
-    std::cout << "Equilibration fraction:   " << m_equilibrationFraction << std::endl;
+    //std::cout << "Equilibration fraction:   " << m_equilibrationFraction << std::endl;
     std::cout << "Sampling:                 " << m_metropolis->getLabel() << std::endl;
     std::cout << "Optimization:             " << m_optimization->getLabel() << std::endl;
     std::cout << "Random number generator:  " << m_randomNumberGenerator->getLabel() << std::endl;

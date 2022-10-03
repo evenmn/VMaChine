@@ -66,8 +66,10 @@ void System::parser(const std::string configFile)
                         m_maxRadius = std::stod(splitted.at(0));
                     } else if (key == "numIterations") {
                         m_numberOfIterations = std::stoi(splitted.at(0));
-                    } else if (key == "equilibration") {
-                        setEquilibrationFraction(std::stod(splitted.at(0)));
+                    //} else if (key == "equilibration") {
+                    //    setEquilibrationFraction(std::stod(splitted.at(0)));
+                    } else if (key == "burnin") {
+                        setBurnInSteps(std::stoi(splitted.at(0)));
                     } else if (key == "numSteps") {
                         setNumberOfMetropolisCycles(std::stoi(splitted.at(0)));
                     } else if (key == "numHiddenNodes") {

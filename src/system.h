@@ -111,7 +111,8 @@ public:
                          std::string &allLabels);
 
     void setStepLength(const double stepLength);
-    void setEquilibrationFraction(const double equilibrationFraction);
+    //void setEquilibrationFraction(const double equilibrationFraction);
+    void setBurnInSteps(const int burnInSteps);
     void setFrequency(const double omega);
     void setWidth(const double sigma);
     void setTotalSpin(const double totalSpin);
@@ -182,14 +183,14 @@ public:
 
     int getTotalStepsWOEqui() { return m_totalStepsWOEqui; }
     int getTotalStepsWEqui() { return m_totalStepsWEqui; }
-    int getTotalEquilibriationSteps() { return m_totalEquilibriationSteps; }
+    int getTotalBurnInSteps() { return m_totalBurnInSteps; }
     int getStepsWOEqui() { return m_stepsWOEqui; }
     int getStepsWEqui() { return m_stepsWEqui; }
     int getInitialTotalStepsWOEqui() { return m_initialTotalStepsWOEqui; }
-    int getEquilibriationSteps() { return m_equilibriationSteps; }
+    int getBurnInSteps() { return m_burnInSteps; }
 
     double getMaxRadius() { return m_maxRadius; }
-    double getEquilibrationFraction() { return m_equilibrationFraction; }
+    //double getEquilibrationFraction() { return m_equilibrationFraction; }
     double getFrequency() { return m_omega; }
     double getWidth() { return m_sigma; }
     double getSorting() { return m_sorting; }
@@ -275,14 +276,14 @@ private:
 
     int m_totalStepsWOEqui = int(pow(2,19));
     int m_totalStepsWEqui = int(pow(2,19));
-    int m_totalEquilibriationSteps = 0;
+    int m_totalBurnInSteps = 0;
     int m_stepsWOEqui = int(pow(2, 17));
     int m_stepsWEqui = int(pow(2, 17));
-    int m_equilibriationSteps = 0;
+    int m_burnInSteps = 0;
     int m_initialStepsWOEqui = int(pow(2, 17));
     int m_initialTotalStepsWOEqui = int(pow(2, 19));
 
-    double m_equilibrationFraction = 0;
+    //double m_equilibrationFraction = 0;
     double m_tolerance = 1e-7;
     double m_maxRadius = 5;
     double m_totalTime = 0;
@@ -307,7 +308,7 @@ private:
     bool m_calculateDistanceMatrix = false;
     bool m_calculateRadialVector = false;
     bool m_screening = false;
-    bool m_sorting = true;
+    bool m_sorting = false;
 
     std::chrono::system_clock::time_point m_start;
 

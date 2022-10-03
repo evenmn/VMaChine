@@ -93,9 +93,9 @@ void System::runSimulation()
     for (m_iter = 0; m_iter < m_numberOfIterations; m_iter++) {
         if (m_applyAdaptiveSteps) {
             m_stepsWOEqui = m_initialStepsWOEqui * adaptiveSteps();
-            m_stepsWEqui = m_stepsWOEqui + m_equilibriationSteps;
+            m_stepsWEqui = m_stepsWOEqui + m_burnInSteps;
             m_totalStepsWOEqui = m_initialTotalStepsWOEqui * adaptiveSteps();
-            m_totalStepsWEqui = m_totalStepsWOEqui + m_totalEquilibriationSteps;
+            m_totalStepsWEqui = m_totalStepsWOEqui + m_totalBurnInSteps;
         }
         m_sampler->setNumberOfSteps(m_stepsWOEqui, m_totalStepsWOEqui, m_totalStepsWEqui);
         double startTime = MPI_Wtime();
@@ -151,7 +151,7 @@ void System::runMetropolisCycles()
         m_positions = m_metropolis->updatePositions();
         m_distanceMatrix = m_metropolis->updateDistanceMatrix();
         m_radialVector = m_metropolis->updateRadialVector();
-        if (i >= m_equilibriationSteps) {
+        if (i >= m_burnInSteps) {
             m_sampler->sample(acceptedStep, i);
             if (m_iter == m_numberOfNormalIterations + m_rangeOfAdaptiveSteps) {
                 m_sampler->printInstantValuesToFile();
